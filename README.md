@@ -27,13 +27,21 @@ ctr run <appname|package-name> <command> [...args]
 ctr test [appname|package-name] [...jestArgs]
 ```
 
+```bash
+ctr new <new-name> <react|node|serverless|js-package|react-component>
+```
+
+```bash
+ctr init [template-name]
+```
+
 # Things to keep in mind
 
 ## Required
 
-- Start additional process which watches TS types
 - InjectManifest plugin only in production
 - How to handle React/ReactDOM dependecies?
+- Handle env vars professionally
 - CSS Modules (xyz.module.css)
 - Use plugins same as Facebook does:
   - https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/config/webpack.config.js

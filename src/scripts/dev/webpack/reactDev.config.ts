@@ -1,8 +1,8 @@
 import { Configuration } from 'webpack';
 
-import babelConfig from './babel.config';
-import { CantaraApplication } from '../../../util/types';
+import babelConfig from './babel.react.config';
 import { existsSync } from 'fs';
+import { CreateWebpackConfigParams } from './types';
 
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -16,12 +16,6 @@ const { InjectManifest } = require('workbox-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const path = require('path');
-
-interface CreateWebpackConfigParams {
-  app: CantaraApplication;
-  /** Root of user's project */
-  projectDir: string;
-}
 
 export default function createReactWebpackDevConfig({
   app,

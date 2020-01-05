@@ -41,6 +41,7 @@
     "friendly-errors-webpack-plugin": "^1.7.0",
     "html-webpack-plugin": "^4.0.0-beta.11",
     "ncp": "^2.0.0",
+    "nodemon-webpack-plugin": "^4.2.2",
     "react-refresh": "^0.7.1",
     "webpack": "^4.41.5",
     "webpack-dev-server": "^3.10.1",

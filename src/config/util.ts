@@ -57,6 +57,12 @@ export default function getAllApps(rootDir: string): CantaraApplication[] {
           : 'js-package';
       }
 
+      if (type === 'node') {
+        type = existsSync(path.join(dir, 'serverless.yml'))
+          ? 'serverless'
+          : 'node';
+      }
+
       const packageJsonPath = path.join(dir, 'package.json');
       if (existsSync(packageJsonPath)) {
         const packageJSON = JSON.parse(

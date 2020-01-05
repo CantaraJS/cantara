@@ -8,7 +8,7 @@ import onPreBootstrap from './bootstrap';
 
 const packageJSON = require('../package.json');
 
-const TEST_CMD = 'dev places';
+const TEST_CMD = 'dev auth-api';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
