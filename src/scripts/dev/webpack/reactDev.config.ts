@@ -11,16 +11,21 @@ const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const path = require('path');
 
 interface CreateWebpackConfigParams {
   app: CantaraApplication;
+  /** Root of user's project */
+  projectDir: string;
 }
 
 export default function createReactWebpackDevConfig({
   app,
+  projectDir,
 }: CreateWebpackConfigParams): Configuration {
   let iconPathToUse = undefined;
   const appIconPathPng = path.join(app.paths.assets, 'app_icon.png');
@@ -57,6 +62,10 @@ export default function createReactWebpackDevConfig({
       chunkFilename: '[name].[chunkhash:4].js',
     },
     plugins: [
+      new ForkTsCheckerWebpackPlugin({
+        tsconfig: path.join(projectDir, 'tsconfig.json'),
+      }),
+      new CaseSensitivePathsPlugin(),
       new webpack.HotModuleReplacementPlugin(),
       new WebpackNotifierPlugin({
         excludeWarnings: true,

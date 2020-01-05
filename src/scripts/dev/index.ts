@@ -9,10 +9,12 @@ export default function startDevelopmentServer() {
   const {
     runtime: {
       currentCommand: { app: activeApp },
+      projectDir,
     },
   } = getGlobalConfig();
   const webpackConfig = createReactWebpackDevConfig({
     app: activeApp,
+    projectDir,
   });
 
   const compiler = webpack(webpackConfig);

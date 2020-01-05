@@ -7,6 +7,7 @@ import getGlobalConfig from '../config';
 import { CantaraApplication } from '../util/types';
 import execCmd from '../util/exec';
 import prepareReactApps from './react';
+import { createOrUpdatePackageJSON } from './util';
 
 const ncp = promisify(ncpCb);
 
@@ -15,7 +16,12 @@ async function prepareCantaraProject() {
   const globalCantaraConfig = getGlobalConfig();
   const rootDir = globalCantaraConfig.runtime.projectDir;
   // Static files/folders to copy to the project's root
-  const STATIC_PATHS_TO_COPY = ['.vscode', '.gitignore', '.prettierrc'];
+  const STATIC_PATHS_TO_COPY = [
+    '.vscode',
+    '.gitignore',
+    '.prettierrc',
+    'tsconfig.json',
+  ];
   for (const pathToCopy of STATIC_PATHS_TO_COPY) {
     const fullPath = path.join(rootDir, pathToCopy);
     if (!existsSync(fullPath)) {
@@ -25,6 +31,11 @@ async function prepareCantaraProject() {
       );
     }
   }
+  // Install React dependencies globally for project
+  await createOrUpdatePackageJSON({
+    rootDir,
+    expectedDependencies: globalCantaraConfig.dependencies.react,
+  });
 }
 
 /**
