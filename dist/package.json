@@ -1,0 +1,27 @@
+{
+    "name": "cantara",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "bin": {
+        "cantara": "dist/index.js",
+        "ctra": "dist/index.js"
+    },
+    "scripts": {
+        "start": "nodemon --watch src/**/*.ts --exec cross-env NODE_ENV=development ts-node src/index.ts",
+        "build": "tsc -p ."
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^13.1.1",
+        "cross-env": "^6.0.3",
+        "nodemon": "^2.0.2",
+        "ts-node": "^8.5.4",
+        "typescript": "^3.7.4"
+    },
+    "dependencies": {
+        "commander": "^4.0.1"
+    }
+}
