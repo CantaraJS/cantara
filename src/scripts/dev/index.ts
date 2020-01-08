@@ -6,6 +6,7 @@ import clearConsole from '../../util/clearConsole';
 import createNodeWebpackDevConfig from './webpack/nodeDev.config';
 import { startReactAppDevelopmentServer } from './react';
 import { startNodeAppDevelopmentServer } from './node';
+import startServerlessEndpointDevelopmentServer from './serverless';
 
 export default function startDevelopmentServer() {
   const {
@@ -20,6 +21,9 @@ export default function startDevelopmentServer() {
       break;
     case 'node':
       startNodeAppDevelopmentServer();
+      break;
+    case 'serverless':
+      startServerlessEndpointDevelopmentServer();
       break;
     default:
       throw new Error(

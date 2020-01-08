@@ -8,6 +8,7 @@ import { CantaraApplication } from '../util/types';
 import execCmd from '../util/exec';
 import prepareReactApps from './react';
 import { createOrUpdatePackageJSON } from './util';
+import prepareServerlessApp from './serverless';
 
 const ncp = promisify(ncpCb);
 
@@ -50,6 +51,9 @@ export default async function onPreBootstrap() {
     // Each app type is bootstrapped slightly different
     if (app.type === 'react') {
       await prepareReactApps(app);
+    }
+    if (app.type === 'serverless') {
+      await prepareServerlessApp(app);
     }
   }
 }

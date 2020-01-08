@@ -3,7 +3,6 @@ import { copyFileSync, existsSync, readFileSync } from 'fs';
 
 import getGlobalConfig from '../config';
 import { CantaraApplication } from '../util/types';
-import execCmd from '../util/exec';
 import { createOrUpdatePackageJSON } from './util';
 
 /** Prepares React App Folder */

@@ -25,6 +25,7 @@ interface CantaraGlobalConfig {
   /** Paths used internally by Cantara */
   internalPaths: {
     static: string;
+    /** Where the cantara package itself lives */
     root: string;
   };
   /** Current runtime configuration (e.g. the command the user executed, the location of it etc.) */

@@ -1,0 +1,12 @@
+# <--CANTARA specific configuration START --> Do not edit this!
+plugins:
+  - <--MODULES_PATH-->serverless-offline
+  - <--MODULES_PATH-->serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: '<--WEBPACK_CONFIG_PATH-->'
+    includeModules:
+      packagePath: './package.json'
+    packager: 'npm'
+# <--CANTARA specific configuration END -->

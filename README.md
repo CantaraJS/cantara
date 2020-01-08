@@ -41,10 +41,13 @@ ctr init [template-name]
 
 - InjectManifest plugin only in production
 - How to handle React/ReactDOM dependecies?
-- Handle env vars professionally
+- Handle env vars conveniently
+- What about different stages?
 - CSS Modules (xyz.module.css)
-- Use plugins same as Facebook does:
-  - https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/config/webpack.config.js
+- Create a common webpack config
+- Replace Nodemon with custom Chokidar implementation
+- More user friendly UI for serverless:
+  - With a "verbose" option where standard serverless output is shown
 
 ## Nice to have
 

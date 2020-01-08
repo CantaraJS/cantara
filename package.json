@@ -24,6 +24,7 @@
     "typescript": "^3.7.4"
   },
   "dependencies": {
+    "@alexlafroscia/yaml-merge": "^1.0.4",
     "@babel/core": "^7.7.7",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
     "@babel/plugin-proposal-decorators": "^7.7.4",
@@ -43,6 +44,10 @@
     "ncp": "^2.0.0",
     "nodemon-webpack-plugin": "^4.2.2",
     "react-refresh": "^0.7.1",
+    "serverless": "^1.60.5",
+    "serverless-offline": "^5.12.1",
+    "serverless-webpack": "^5.3.1",
+    "slash": "^3.0.0",
     "webpack": "^4.41.5",
     "webpack-dev-server": "^3.10.1",
     "webpack-notifier": "^1.8.0",

@@ -52,13 +52,13 @@ export default function getAllApps(rootDir: string): CantaraApplication[] {
       let userAddedMetadata = {};
       if (type === 'package') {
         const packageSrc = path.join(dir, 'src');
-        type = existsSync(path.join(packageSrc, 'index.tsx'))
+        typeToUse = existsSync(path.join(packageSrc, 'index.tsx'))
           ? 'react-component'
           : 'js-package';
       }
 
       if (type === 'node') {
-        type = existsSync(path.join(dir, 'serverless.yml'))
+        typeToUse = existsSync(path.join(dir, 'serverless.yml'))
           ? 'serverless'
           : 'node';
       }

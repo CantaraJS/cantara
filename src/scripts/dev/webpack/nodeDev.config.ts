@@ -1,7 +1,7 @@
 import { Configuration } from 'webpack';
 import { CreateWebpackConfigParams } from './types';
-import babelConfig from './babel.node.config';
 import path from 'path';
+import babelConfig from './babel.node.config';
 
 const NodemonPlugin = require('nodemon-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');

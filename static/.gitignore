@@ -115,6 +115,6 @@ gen
 .webpack
 .env
 
-temp
 build/**/*
 build
+.temp
