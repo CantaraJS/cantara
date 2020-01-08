@@ -4,6 +4,7 @@ import getAllApps from './util';
 import { CantaraApplication } from '../util/types';
 
 import { readFileSync } from 'fs';
+import getAllPackageAliases from './aliases';
 
 interface CantaraInitialConfig {
   /** Where the cantara package itself lives */
@@ -18,6 +19,11 @@ interface CantaraInitialConfig {
 
 interface CantaraGlobalConfig {
   allApps: CantaraApplication[];
+  allPackages: {
+    aliases: { [key: string]: string };
+    /** Include all those paths into webpack configs */
+    include: string[];
+  };
   dependencies: {
     /** Dependecies for React apps/components */
     react: { [key: string]: string };
@@ -68,6 +74,14 @@ export function configureCantara(config: CantaraInitialConfig) {
   }
   const configToUse: CantaraGlobalConfig = {
     allApps,
+    allPackages: {
+      aliases: getAllPackageAliases(allApps),
+      include: allApps
+        .filter(
+          app => app.type === 'js-package' || app.type === 'react-component',
+        )
+        .map(app => app.paths.src),
+    },
     dependencies: {
       react: reactDependecies,
     },

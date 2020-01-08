@@ -20,6 +20,8 @@ const path = require('path');
 export default function createReactWebpackDevConfig({
   app,
   projectDir,
+  alias = {},
+  include = [],
 }: CreateWebpackConfigParams): Configuration {
   let iconPathToUse = undefined;
   const appIconPathPng = path.join(app.paths.assets, 'app_icon.png');
@@ -45,7 +47,7 @@ export default function createReactWebpackDevConfig({
         '.ts',
         '.tsx',
       ],
-      alias: {},
+      alias,
     },
     mode: 'development',
     devtool: 'eval-source-map',
@@ -115,7 +117,7 @@ export default function createReactWebpackDevConfig({
             loader: 'babel-loader',
             options: babelConfig,
           },
-          include: [app.paths.src],
+          include: [app.paths.src, ...include],
           exclude: [/node_modules/],
         },
         {

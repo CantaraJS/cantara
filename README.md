@@ -39,6 +39,10 @@ ctr init [template-name]
 
 ## Required
 
+- Better serverless webpack config (same as novitas)
+- Make packages work
+- Make building and deploying work!
+
 - InjectManifest plugin only in production
 - How to handle React/ReactDOM dependecies?
 - Handle env vars conveniently
