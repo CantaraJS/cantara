@@ -39,21 +39,23 @@ ctr init [template-name]
 
 ## Required
 
-- Make building and deploying work!
+- NPM commands can be executed from the top level folder for each package
+- Make building packages work
 - Handle env vars conveniently
 - CSS Modules (xyz.module.css)
 - What about different stages?
 - Implement "test" command
 - Custom e2e testing command can be provided. Cantara takes care of starting all the neccessary servers.
-- NPM commands can be executed from the top level folder for each package
-
-  - Provide good UX, e.g. instead of typing out "cantara <appname> install express" provide a dropdown list --> Do all of that stuff in the "cockpit" mode
-
 - Provide "publish" command with good UX for publishing a package to NPM
+- Implement "new" command
+- Implement templates
 - Deployment should work out of the box for all parts an application can have
   - Defaults can be overriden
 - "CI" command
   - Only rebuilds and deploys the parts of the application that changed
+- Create a few useful starter templates
+- Perfect UX for all cantara commands
+  - Everything is a "wizard"
 
 ## Nice to have
 

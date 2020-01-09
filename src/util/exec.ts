@@ -7,8 +7,10 @@ interface ExecOptions {
   workingDirectory?: string;
   /** Redirect stdin and stdio to current process */
   redirectIo?: boolean;
-  /** Set additional environment variables for this command */
-  envVars?: { [key: string]: string | number | boolean | undefined };
+  /** If set to true, variables defined in user's .secrets.json
+   * file are set as env vars for this command
+   */
+  withSecrets?: boolean;
 }
 
 /** Execute commands in different contexts and
@@ -16,7 +18,11 @@ interface ExecOptions {
  */
 export default function execCmd(
   cmd: string,
-  { workingDirectory = process.cwd(), redirectIo, envVars }: ExecOptions = {},
+  {
+    workingDirectory = process.cwd(),
+    redirectIo,
+    withSecrets,
+  }: ExecOptions = {},
 ) {
   const globalCantaraConfig = getGlobalConfig();
   return new Promise((resolve, reject) => {
@@ -33,11 +39,19 @@ export default function execCmd(
       ? process.env.PATH
       : process.env.PATH + path.delimiter + localNodeModulesBinPath;
 
+    const secretsEnvVars = withSecrets
+      ? globalCantaraConfig.runtime.secrets
+      : {};
+
     const newProcess = exec(
       cmd,
       {
         cwd: workingDirectory,
-        env: { ...process.env, ...envVars, PATH: NEW_PATH_ENV },
+        env: {
+          ...process.env,
+          ...secretsEnvVars,
+          PATH: NEW_PATH_ENV,
+        },
       },
       (err, stdout, stderr) => {
         if (err) {

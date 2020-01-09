@@ -27,6 +27,6 @@ export default function deployActiveApp() {
   execCmd(serverlessCmd, {
     workingDirectory: activeApp.paths.root,
     redirectIo: true,
-    envVars: secrets,
+    withSecrets: true,
   });
 }
