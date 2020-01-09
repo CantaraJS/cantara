@@ -7,6 +7,7 @@ import getGlobalConfig from '../config';
 import prepareReactApps from './react';
 import { createOrUpdatePackageJSON } from './util';
 import prepareServerlessApp from './serverless';
+import prepareJsPackage from './packages';
 
 const ncp = promisify(ncpCb);
 
@@ -81,6 +82,9 @@ export default async function onPreBootstrap() {
     }
     if (app.type === 'serverless') {
       await prepareServerlessApp(app);
+    }
+    if (app.type === 'react-component' || app.type === 'js-package') {
+      await prepareJsPackage(app);
     }
   }
 }

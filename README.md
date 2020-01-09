@@ -42,6 +42,9 @@ ctr init [template-name]
 - Better serverless webpack config (same as novitas)
 - Make packages work
 - Make building and deploying work!
+- NPM commands can be executed from the top level folder for each package
+
+  - Provide good UX, e.g. instead of typing out "cantara <appname> install express" provide a dropdown list --> Do all of that stuff in the "cockpit" mode
 
 - InjectManifest plugin only in production
 - How to handle React/ReactDOM dependecies?

@@ -5,6 +5,7 @@ import { CantaraApplication } from '../util/types';
 
 import { readFileSync } from 'fs';
 import getAllPackageAliases from './aliases';
+import { readFileAsJSON } from '../util/fs';
 
 interface CantaraInitialConfig {
   /** Where the cantara package itself lives */
@@ -17,6 +18,8 @@ interface CantaraInitialConfig {
   };
 }
 
+type Dependencies = { [key: string]: string };
+
 interface CantaraGlobalConfig {
   allApps: CantaraApplication[];
   allPackages: {
@@ -25,8 +28,10 @@ interface CantaraGlobalConfig {
     include: string[];
   };
   dependencies: {
-    /** Dependecies for React apps/components */
-    react: { [key: string]: string };
+    /** Current React and React DOM version */
+    react: Dependencies;
+    /** Dependencies needed for TS */
+    typescript: Dependencies;
   };
   /** Paths used internally by Cantara */
   internalPaths: {
@@ -57,10 +62,11 @@ export default function getGlobalConfig() {
 /** Config can only be set once */
 export function configureCantara(config: CantaraInitialConfig) {
   const staticFilesPath = path.join(config.packageRootDir, 'static');
-  const reactDependecies = JSON.parse(
-    readFileSync(
-      path.join(staticFilesPath, 'react-dependencies.json'),
-    ).toString(),
+  const reactDependecies = readFileAsJSON(
+    path.join(staticFilesPath, 'react-dependencies.json'),
+  );
+  const typescriptDependencies = readFileAsJSON(
+    path.join(staticFilesPath, 'ts-dependencies.json'),
   );
   const projectDir = config.projectDir || process.cwd();
   const allApps = getAllApps(projectDir);
@@ -84,6 +90,7 @@ export function configureCantara(config: CantaraInitialConfig) {
     },
     dependencies: {
       react: reactDependecies,
+      typescript: typescriptDependencies,
     },
     internalPaths: {
       root: config.packageRootDir,
