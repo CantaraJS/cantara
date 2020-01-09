@@ -4,17 +4,19 @@
  * All loaders need to be prefixed with it.
  */
 
-const babelConfig = require('./serverlessBabelConfig');
 const path = require('path');
 
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const slsw = require('serverless-webpack');
+const nodeExternals = require('webpack-node-externals');
+
+const babelConfig = require('./serverlessBabelConfig');
 
 module.exports = {
   entry: slsw.lib.entries,
   target: 'node',
-  mode: 'development',
+  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
   resolve: {
     extensions: [
       '.web.js',
@@ -27,6 +29,11 @@ module.exports = {
       '.d.ts',
     ],
   },
+  externals: [
+    nodeExternals({
+      modulesDir: path.resolve('node_modules'),
+    }),
+  ],
   module: {
     rules: [
       {
@@ -41,6 +48,10 @@ module.exports = {
           loader: '<--MODULES_PATH-->babel-loader',
           options: babelConfig,
         },
+      },
+      {
+        test: /\.graphql?$/,
+        loader: '<--MODULES_PATH-->webpack-graphql-loader',
       },
     ],
   },

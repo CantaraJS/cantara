@@ -3,7 +3,7 @@ import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 
 import getGlobalConfig from '../../config';
-import createReactWebpackDevConfig from './webpack/reactDev.config';
+import createReactWebpackConfig from './webpack/react.config';
 import clearConsole from '../../util/clearConsole';
 
 export function startReactAppDevelopmentServer() {
@@ -14,7 +14,7 @@ export function startReactAppDevelopmentServer() {
       projectDir,
     },
   } = getGlobalConfig();
-  const webpackConfig = createReactWebpackDevConfig({
+  const webpackConfig = createReactWebpackConfig({
     alias: aliases,
     app: activeApp,
     projectDir,

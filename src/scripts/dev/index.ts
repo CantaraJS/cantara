@@ -1,9 +1,4 @@
-import WebpackDevServer from 'webpack-dev-server';
-import webpack, { Configuration } from 'webpack';
-import createReactWebpackDevConfig from './webpack/reactDev.config';
 import getGlobalConfig from '../../config';
-import clearConsole from '../../util/clearConsole';
-import createNodeWebpackDevConfig from './webpack/nodeDev.config';
 import { startReactAppDevelopmentServer } from './react';
 import { startNodeAppDevelopmentServer } from './node';
 import startServerlessEndpointDevelopmentServer from './serverless';

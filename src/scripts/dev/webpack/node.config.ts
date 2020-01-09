@@ -7,7 +7,7 @@ const NodemonPlugin = require('nodemon-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
-export default function createNodeWebpackDevConfig({
+export default function createNodeWebpackConfig({
   app,
   projectDir,
 }: CreateWebpackConfigParams): Configuration {
