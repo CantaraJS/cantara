@@ -3,16 +3,15 @@ import path from 'path';
 import { CantaraApplication } from '../util/types';
 import { createOrUpdatePackageJSON } from './util';
 import getGlobalConfig from '../config';
-import { readFileAsJSON } from '../util/fs';
-import { writeFileSync } from 'fs';
+import { readFileAsJSON, writeJson } from '../util/fs';
 
 function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
-  const packagJson = readFileAsJSON(packageJsonPath);
+  const packageJson = readFileAsJSON(packageJsonPath);
   const newPackageJson = {
-    ...packagJson,
+    ...packageJson,
     peerDependencies: deps,
   };
-  writeFileSync(packageJsonPath, JSON.stringify(newPackageJson));
+  writeJson(packageJsonPath, newPackageJson);
 }
 
 /** Prepares a JavaScript package or React Component */

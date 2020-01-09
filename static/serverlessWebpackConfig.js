@@ -37,13 +37,10 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.mjs$/,
-        type: 'javascript/auto',
-      },
-      {
         test: [/\.js$/, /\.tsx?$/],
         // include: app.paths.src,
         exclude: [/node_modules/],
+        include: 'C:\\Users\\maxim\\DEV\\cantare-example\\node-apps\\places-api\\src',
         use: {
           loader: 'C:/Users/maxim/DEV/cantara/node_modules/babel-loader',
           options: babelConfig,
@@ -52,6 +49,7 @@ module.exports = {
       {
         test: /\.graphql?$/,
         loader: 'C:/Users/maxim/DEV/cantara/node_modules/webpack-graphql-loader',
+        include: 'C:\\Users\\maxim\\DEV\\cantare-example\\node-apps\\places-api\\src',
       },
     ],
   },

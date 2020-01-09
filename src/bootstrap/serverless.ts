@@ -8,7 +8,7 @@ import { renderTemplate } from './util';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 
-function createWebpackAndBabelConfigFromTemplate() {
+function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   const globalCantaraConfig = getGlobalConfig();
   const babelConfigTemplate = readFileSync(
     path.join(
@@ -30,6 +30,7 @@ function createWebpackAndBabelConfigFromTemplate() {
     TSCONFIG_PATH: slash(
       path.join(globalCantaraConfig.runtime.projectDir, 'tsconfig.json'),
     ),
+    ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
   };
 
   const newBabelConfig = renderTemplate({
@@ -105,7 +106,7 @@ function createServerlessYml(app: CantaraApplication) {
 /** Prepares Serverless App Folder */
 export default async function prepareServerlessApp(app: CantaraApplication) {
   // First, create the webpack and the babel config with the correct paths
-  createWebpackAndBabelConfigFromTemplate();
+  createWebpackAndBabelConfigFromTemplate(app);
 
   // Now, create the custom serverless.yml file with the correct paths
   // The main serverless.yml file needs to inherit from it!

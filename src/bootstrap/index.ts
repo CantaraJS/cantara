@@ -8,6 +8,7 @@ import prepareReactApps from './react';
 import { createOrUpdatePackageJSON } from './util';
 import prepareServerlessApp from './serverless';
 import prepareJsPackage from './packages';
+import { writeJson } from '../util/fs';
 
 const ncp = promisify(ncpCb);
 
@@ -55,10 +56,7 @@ async function prepareCantaraProject() {
       paths: aliasesAbsoluteToRelative(aliases),
     },
   };
-  writeFileSync(
-    path.join(rootDir, 'tsconfig.json'),
-    JSON.stringify(newTsConfig),
-  );
+  writeJson(path.join(rootDir, 'tsconfig.json'), newTsConfig);
 
   // Install React dependencies globally for project
   await createOrUpdatePackageJSON({
