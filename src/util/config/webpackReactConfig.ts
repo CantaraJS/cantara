@@ -1,8 +1,8 @@
 import { Configuration } from 'webpack';
-
-import babelConfig from './babel.react.config';
 import { existsSync } from 'fs';
+
 import { CreateWebpackConfigParams } from './types';
+import getBabelConfig from './babelReactConfig';
 
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -14,15 +14,21 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const cssnano = require('cssnano');
 
 const path = require('path');
 
-export default function createReactWebpackDevConfig({
+export default function createReactWebpackConfig({
   app,
   projectDir,
   alias = {},
   include = [],
+  mode = 'development',
 }: CreateWebpackConfigParams): Configuration {
+  const isDevelopment = mode === 'development';
+  const isProduction = mode === 'production';
   let iconPathToUse = undefined;
   const appIconPathPng = path.join(app.paths.assets, 'app_icon.png');
   const appIconPathSvg = path.join(app.paths.assets, 'app_icon.svg');
@@ -49,8 +55,8 @@ export default function createReactWebpackDevConfig({
       ],
       alias,
     },
-    mode: 'development',
-    devtool: 'eval-source-map',
+    mode,
+    devtool: isDevelopment ? 'eval-source-map' : undefined,
     output: {
       // publicPath: '/',
       filename: '[name].[hash:4].js',
@@ -60,9 +66,10 @@ export default function createReactWebpackDevConfig({
     plugins: [
       new ForkTsCheckerWebpackPlugin({
         tsconfig: path.join(projectDir, 'tsconfig.json'),
+        watch: app.paths.src,
       }),
       new CaseSensitivePathsPlugin(),
-      new webpack.HotModuleReplacementPlugin(),
+      isDevelopment ? new webpack.HotModuleReplacementPlugin() : undefined,
       new WebpackNotifierPlugin({
         excludeWarnings: true,
         title: app.meta.displayName,
@@ -80,7 +87,9 @@ export default function createReactWebpackDevConfig({
           })
         : undefined,
       // disableRefreshCheck: true needs to be set because of https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/15
-      new ReactRefreshWebpackPlugin({ disableRefreshCheck: true }),
+      isDevelopment
+        ? new ReactRefreshWebpackPlugin({ disableRefreshCheck: true })
+        : undefined,
       iconPathToUse
         ? new WebpackPwaManifest({
             // gcm_sender_id,
@@ -103,11 +112,37 @@ export default function createReactWebpackDevConfig({
       //   STAGE: process.env.STAGE,
       //   IS_INTEGRATION_TEST: process.env.IS_INTEGRATION_TEST || false,
       // }),
-      doesServiceWorkerExist
+      doesServiceWorkerExist && isProduction
         ? new InjectManifest({
             swSrc: path.join(app.paths.src, 'sw.js'),
           })
         : undefined,
+      isProduction
+        ? new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: [app.paths.build],
+            dangerouslyAllowCleanPatternsOutsideProject: true,
+            dry: false,
+          })
+        : undefined,
+      isProduction
+        ? new OptimizeCSSAssetsPlugin({
+            cssProcessor: cssnano,
+            cssProcessorOptions: {
+              discardComments: {
+                removeAll: true,
+              },
+              // Run cssnano in safe mode to avoid
+              // potentially unsafe transformations.
+              safe: true,
+            },
+            canPrint: false,
+          })
+        : undefined,
+      isProduction
+        ? new webpack.BannerPlugin({
+            banner: 'filename:[name]',
+          })
+        : false,
     ].filter(Boolean),
     module: {
       rules: [
@@ -115,7 +150,7 @@ export default function createReactWebpackDevConfig({
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           use: {
             loader: 'babel-loader',
-            options: babelConfig,
+            options: getBabelConfig(mode),
           },
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],
@@ -141,8 +176,18 @@ export default function createReactWebpackDevConfig({
       ],
     },
     performance: {
-      hints: process.env.NODE_ENV === 'production' ? 'warning' : false,
+      hints: false,
     },
+    optimization: isProduction
+      ? {
+          splitChunks: {
+            chunks: 'initial',
+          },
+          runtimeChunk: {
+            name: 'manifest',
+          },
+        }
+      : undefined,
     node: {
       fs: 'empty',
       dns: 'empty',

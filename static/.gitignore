@@ -118,3 +118,5 @@ gen
 build/**/*
 build
 .temp
+
+.secrets.json

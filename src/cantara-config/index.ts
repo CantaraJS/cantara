@@ -1,6 +1,6 @@
 import path from 'path';
 
-import getAllApps from './util';
+import getAllApps, { loadSecrets } from './util';
 import { CantaraApplication } from '../util/types';
 
 import { readFileSync } from 'fs';
@@ -47,6 +47,11 @@ interface CantaraGlobalConfig {
     currentCommand: {
       name: string;
       app: CantaraApplication;
+    };
+    /** Secrets from user's .secrets.json file */
+    secrets: {
+      AWS_ACCESS_KEY_ID?: string;
+      AWS_SECRET_ACCESS_KEY?: string;
     };
   };
 }
@@ -102,6 +107,7 @@ export function configureCantara(config: CantaraInitialConfig) {
         name: config.currentCommand.name,
         app: currentActiveApp,
       },
+      secrets: loadSecrets(projectDir),
     },
   };
   globalConfig = Object.freeze(configToUse);

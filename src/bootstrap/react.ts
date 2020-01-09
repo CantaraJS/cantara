@@ -1,7 +1,7 @@
 import path from 'path';
 import { copyFileSync, existsSync, readFileSync } from 'fs';
 
-import getGlobalConfig from '../config';
+import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
 import { createOrUpdatePackageJSON } from './util';
 

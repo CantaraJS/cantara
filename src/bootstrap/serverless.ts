@@ -2,7 +2,7 @@ import path from 'path';
 import { readFileSync, writeFileSync } from 'fs';
 import slash from 'slash';
 
-import getGlobalConfig from '../config';
+import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
 import { renderTemplate } from './util';
 

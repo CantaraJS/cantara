@@ -1,22 +1,28 @@
 import { Configuration } from 'webpack';
 import { CreateWebpackConfigParams } from './types';
 import path from 'path';
-import babelConfig from './babel.node.config';
+import babelConfig from './babelNodeConfig';
 
 const NodemonPlugin = require('nodemon-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 export default function createNodeWebpackConfig({
   app,
   projectDir,
+  mode,
+  alias,
 }: CreateWebpackConfigParams): Configuration {
+  const isDevelopment = mode === 'development';
+  const isProduction = mode === 'production';
   return {
     entry: app.paths.src,
     output: { path: app.paths.build },
     node: { __dirname: true },
     target: 'node',
-    mode: 'development',
+    mode,
     resolve: {
       extensions: [
         '.web.js',
@@ -28,13 +34,10 @@ export default function createNodeWebpackConfig({
         '.tsx',
         '.d.ts',
       ],
+      alias,
     },
     module: {
       rules: [
-        {
-          test: /\.mjs$/,
-          type: 'javascript/auto',
-        },
         {
           test: [/\.js$/, /\.tsx?$/],
           include: app.paths.src,
@@ -50,12 +53,23 @@ export default function createNodeWebpackConfig({
       new CaseSensitivePathsPlugin(),
       new ForkTsCheckerWebpackPlugin({
         tsconfig: path.join(projectDir, 'tsconfig.json'),
+        watch: app.paths.src,
       }),
-      new NodemonPlugin({
-        ext: 'js,graphql,ts,ps1,yaml,json',
-        nodeArgs: ['--inspect'],
-        watch: app.paths.root,
-      }),
-    ],
+      new FriendlyErrorsWebpackPlugin(),
+      isDevelopment
+        ? new NodemonPlugin({
+            ext: 'js,graphql,ts,ps1,yaml,json',
+            nodeArgs: ['--inspect'],
+            watch: app.paths.root,
+          })
+        : undefined,
+      isProduction
+        ? new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: [app.paths.build],
+            dangerouslyAllowCleanPatternsOutsideProject: true,
+            dry: false,
+          })
+        : undefined,
+    ].filter(Boolean),
   };
 }

@@ -3,7 +3,7 @@ import ncpCb from 'ncp';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { promisify } from 'util';
 
-import getGlobalConfig from '../config';
+import getGlobalConfig from '../cantara-config';
 import prepareReactApps from './react';
 import { createOrUpdatePackageJSON } from './util';
 import prepareServerlessApp from './serverless';

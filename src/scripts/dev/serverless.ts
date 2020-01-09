@@ -1,4 +1,4 @@
-import getGlobalConfig from '../../config';
+import getGlobalConfig from '../../cantara-config';
 import execCmd from '../../util/exec';
 import path = require('path');
 

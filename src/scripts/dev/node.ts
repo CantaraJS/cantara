@@ -1,7 +1,7 @@
 import webpack from 'webpack';
 
-import getGlobalConfig from '../../config';
-import createNodeWebpackConfig from './webpack/node.config';
+import getGlobalConfig from '../../cantara-config';
+import createNodeWebpackConfig from '../../util/config/webpackNodeConfig';
 
 export function startNodeAppDevelopmentServer() {
   const {

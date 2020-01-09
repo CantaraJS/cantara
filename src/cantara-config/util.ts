@@ -1,6 +1,8 @@
 import { existsSync, lstatSync, readdirSync, readFileSync } from 'fs';
 import path = require('path');
 import { CantaraApplication, CantaraApplicationType } from '../util/types';
+import getGlobalConfig from '.';
+import { readFileAsJSON } from '../util/fs';
 
 const isDirectory = (source: string) => lstatSync(source).isDirectory();
 const getDirectories = (source: string) =>
@@ -103,10 +105,23 @@ export default function getAllApps(rootDir: string): CantaraApplication[] {
     const doesIndexFileExist = indexTsFileExists || indexTsxFileExists;
     if (!doesIndexFileExist) {
       throw new Error(
-        `Index file for ${app.name} was not found. Please create it.`,
+        `Index file for "${app.name}" was not found. Please create it.`,
       );
     }
   });
 
   return allApps;
+}
+
+/** Loads and parses the content from the user's .secrets.json file
+ * in the project root. Here, Cantara specific secrets can be stored.
+ * E.g. AWS keys
+ */
+export function loadSecrets(projectDir: string) {
+  const secretsFilePath = path.join(projectDir, '.secrets.json');
+  let secrets = {};
+  if (existsSync(secretsFilePath)) {
+    secrets = readFileAsJSON(secretsFilePath);
+  }
+  return secrets;
 }

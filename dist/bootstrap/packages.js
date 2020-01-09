@@ -1,5 +1,15 @@
-#!/usr/bin/env node
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,82 +46,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var commander_1 = __importDefault(require("commander"));
-var dev_1 = __importDefault(require("./scripts/dev"));
-var cantara_config_1 = require("./cantara-config");
 var path_1 = __importDefault(require("path"));
-var bootstrap_1 = __importDefault(require("./bootstrap"));
-var build_1 = __importDefault(require("./scripts/build"));
-// import execCmd from './exec';
-var packageJSON = require('../package.json');
-var TEST_CMD = 'build places';
-var cantaraPath = process.env.NODE_ENV === 'development'
-    ? 'C:\\Users\\maxim\\DEV\\cantare-example'
-    : process.cwd();
-var cmdToParse = process.env.NODE_ENV === 'development'
-    ? __spreadArrays(['', ''], TEST_CMD.split(' ')) : process.argv;
-var cantaraRootDir = path_1.default.join(__dirname, '..');
-/** Execute this function before each command */
-function prepareCantara(_a) {
-    var appname = _a.appname, cmdName = _a.cmdName;
+var util_1 = require("./util");
+var cantara_config_1 = __importDefault(require("../cantara-config"));
+var fs_1 = require("../util/fs");
+function addPeerDeps(packageJsonPath, deps) {
+    var packageJson = fs_1.readFileAsJSON(packageJsonPath);
+    var newPackageJson = __assign(__assign({}, packageJson), { peerDependencies: deps });
+    fs_1.writeJson(packageJsonPath, newPackageJson);
+}
+/** Prepares a JavaScript package or React Component */
+function prepareJsPackage(app) {
     return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var reactDeps;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
-                    cantara_config_1.configureCantara({
-                        projectDir: cantaraPath,
-                        packageRootDir: cantaraRootDir,
-                        currentCommand: {
-                            appname: appname,
-                            name: cmdName,
-                        },
-                    });
-                    return [4 /*yield*/, bootstrap_1.default()];
+                    reactDeps = cantara_config_1.default().dependencies.react;
+                    // Create package.json if none exists
+                    return [4 /*yield*/, util_1.createOrUpdatePackageJSON({
+                            rootDir: app.paths.root,
+                            expectedDependencies: {},
+                        })];
                 case 1:
-                    _b.sent();
+                    // Create package.json if none exists
+                    _a.sent();
+                    // For React Components, add react and react-dom to the peer dependencies
+                    if (app.type === 'react-component') {
+                        addPeerDeps(path_1.default.join(app.paths.root, 'package.json'), reactDeps);
+                    }
                     return [2 /*return*/];
             }
         });
     });
 }
-commander_1.default.version(packageJSON.version);
-commander_1.default
-    .command('dev <appname>')
-    .description('Start the specified app in development mode.')
-    .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'dev' })];
-            case 1:
-                _a.sent();
-                dev_1.default();
-                return [2 /*return*/];
-        }
-    });
-}); });
-commander_1.default
-    .command('build <appname>')
-    .description('Create a production build for the specified app or package.')
-    .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'build' })];
-            case 1:
-                _a.sent();
-                build_1.default();
-                return [2 /*return*/];
-        }
-    });
-}); });
-commander_1.default.parse(cmdToParse);
+exports.default = prepareJsPackage;

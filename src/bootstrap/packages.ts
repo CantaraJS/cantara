@@ -2,7 +2,7 @@ import path from 'path';
 
 import { CantaraApplication } from '../util/types';
 import { createOrUpdatePackageJSON } from './util';
-import getGlobalConfig from '../config';
+import getGlobalConfig from '../cantara-config';
 import { readFileAsJSON, writeJson } from '../util/fs';
 
 function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {

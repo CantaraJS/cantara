@@ -39,29 +39,32 @@ ctr init [template-name]
 
 ## Required
 
-- Better serverless webpack config (same as novitas)
-- Make packages work
 - Make building and deploying work!
+- Handle env vars conveniently
+- CSS Modules (xyz.module.css)
+- What about different stages?
+- Implement "test" command
+- Custom e2e testing command can be provided. Cantara takes care of starting all the neccessary servers.
 - NPM commands can be executed from the top level folder for each package
 
   - Provide good UX, e.g. instead of typing out "cantara <appname> install express" provide a dropdown list --> Do all of that stuff in the "cockpit" mode
 
-- InjectManifest plugin only in production
-- How to handle React/ReactDOM dependecies?
-- Handle env vars conveniently
-- What about different stages?
-- CSS Modules (xyz.module.css)
-- Create a common webpack config
-- Replace Nodemon with custom Chokidar implementation
-- More user friendly UI for serverless:
-  - With a "verbose" option where standard serverless output is shown
+- Provide "publish" command with good UX for publishing a package to NPM
+- Deployment should work out of the box for all parts an application can have
+  - Defaults can be overriden
+- "CI" command
+  - Only rebuilds and deploys the parts of the application that changed
 
 ## Nice to have
 
 - Interactive mode, "Cockpit", where multiple Cantara commands can be started and monitored
+- Add bundleanalyzer option to build cmd
+- Replace Nodemon with custom Chokidar implementation
 - Maybe install actual scripts as own package?
 - When new version is available, show message.
 - corejs?
 - Warn when required files (e.g. index.js/index.tsx) are missing
 - Add greenkeeper
 - Add bundle analyzer (react apps and packages only)
+- Faster build times
+  - https://github.com/amireh/happypack

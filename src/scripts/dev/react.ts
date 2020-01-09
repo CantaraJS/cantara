@@ -2,8 +2,8 @@ import webpack from 'webpack';
 
 import WebpackDevServer from 'webpack-dev-server';
 
-import getGlobalConfig from '../../config';
-import createReactWebpackConfig from './webpack/react.config';
+import getGlobalConfig from '../../cantara-config';
+import createReactWebpackConfig from '../../util/config/webpackReactConfig';
 import clearConsole from '../../util/clearConsole';
 
 export function startReactAppDevelopmentServer() {

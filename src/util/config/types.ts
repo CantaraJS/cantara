@@ -1,4 +1,4 @@
-import { CantaraApplication } from '../../../util/types';
+import { CantaraApplication } from '../types';
 
 export interface CreateWebpackConfigParams {
   app: CantaraApplication;
@@ -6,4 +6,5 @@ export interface CreateWebpackConfigParams {
   projectDir: string;
   alias?: { [key: string]: string };
   include?: string[];
+  mode?: 'production' | 'development';
 }

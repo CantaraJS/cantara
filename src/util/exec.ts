@@ -1,12 +1,14 @@
 import { exec } from 'child_process';
 import path from 'path';
-import getGlobalConfig from '../config';
+import getGlobalConfig from '../cantara-config';
 
 interface ExecOptions {
   /** Defaults to current process.cwd() */
   workingDirectory?: string;
   /** Redirect stdin and stdio to current process */
   redirectIo?: boolean;
+  /** Set additional environment variables for this command */
+  envVars?: { [key: string]: string | number | boolean | undefined };
 }
 
 /** Execute commands in different contexts and
@@ -14,7 +16,7 @@ interface ExecOptions {
  */
 export default function execCmd(
   cmd: string,
-  { workingDirectory = process.cwd(), redirectIo }: ExecOptions = {},
+  { workingDirectory = process.cwd(), redirectIo, envVars }: ExecOptions = {},
 ) {
   const globalCantaraConfig = getGlobalConfig();
   return new Promise((resolve, reject) => {
@@ -33,7 +35,10 @@ export default function execCmd(
 
     const newProcess = exec(
       cmd,
-      { cwd: workingDirectory, env: { ...process.env, PATH: NEW_PATH_ENV } },
+      {
+        cwd: workingDirectory,
+        env: { ...process.env, ...envVars, PATH: NEW_PATH_ENV },
+      },
       (err, stdout, stderr) => {
         if (err) {
           reject(stderr);
