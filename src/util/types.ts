@@ -20,5 +20,14 @@ export interface CantaraApplication {
     themeColor?: string;
     /** Object to override/add to config of WebpackPwaManifest plugin */
     pwaManifest?: any;
+    /** If this is set to true, nodemon is used
+     * to manually restart serverless offline
+     * after each change. Can be used to avoid
+     * reaching the maximum number of DB connection
+     * and the need to establish a new DB connection
+     * for every new call. Depends on your architecture
+     * if you need this.
+     */
+    skipCacheInvalidation?: boolean;
   };
 }

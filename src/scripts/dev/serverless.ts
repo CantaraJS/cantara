@@ -8,9 +8,15 @@ export default function startServerlessEndpointDevelopmentServer() {
       currentCommand: { app: activeApp },
     },
   } = getGlobalConfig();
-  const serverlessCmd = `serverless offline start --stage dev --dontPrintOutput --webpack-no-watch --skipCacheInvalidation`;
+  const { skipCacheInvalidation } = activeApp.meta;
+  const serverlessParametersToAdd = skipCacheInvalidation
+    ? '--webpack-no-watch --skipCacheInvalidation'
+    : '';
+  const serverlessCmd = `serverless offline start --stage dev --dontPrintOutput ${serverlessParametersToAdd}`;
   const nodemonCmd = `nodemon --exec "${serverlessCmd}" --watch ${activeApp.paths.root} --ext js,ts,json,graphql`;
-  execCmd(nodemonCmd, {
+
+  const cmdToExecute = skipCacheInvalidation ? nodemonCmd : serverlessCmd;
+  execCmd(cmdToExecute, {
     workingDirectory: activeApp.paths.root,
     redirectIo: true,
   });

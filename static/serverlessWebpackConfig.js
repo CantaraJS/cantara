@@ -13,8 +13,6 @@ const nodeExternals = require('webpack-node-externals');
 
 const babelConfig = require('./serverlessBabelConfig');
 
-console.log(path.resolve('node_modules'));
-
 module.exports = {
   entry: slsw.lib.entries,
   target: 'node',
