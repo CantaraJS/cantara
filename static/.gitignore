@@ -115,8 +115,6 @@ gen
 .webpack
 .env
 
-build/**/*
-build
 .temp
 
 .secrets.json

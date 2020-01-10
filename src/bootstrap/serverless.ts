@@ -4,7 +4,7 @@ import slash from 'slash';
 
 import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
-import { renderTemplate } from './util';
+import renderTemplate from '../util/configTemplates';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 

@@ -42,18 +42,23 @@ ctr init [template-name]
 - Make building packages work
   - https://zellwk.com/blog/publish-to-npm/
   - https://dev.to/egeriis/on-npm-packages-and-bundle-size-impact-54f5
+- Fully enable tree shaking
+  - https://medium.com/@zwegrzyniak/webpack-4-1-and-es-modules-esm-dd0bd7dca4da
+- Always set "private" to true in every package.json
 - Handle env vars conveniently
 - CSS Modules (xyz.module.css)
 - What about different stages?
 - Implement "test" command
-- Custom e2e testing command can be provided. Cantara takes care of starting all the neccessary servers.
 - Provide "publish" command with good UX for publishing a package to NPM
+  - Look at "np"
 - Implement "new" command
 - Implement templates
-- Deployment should work out of the box for all parts an application can have
-  - Defaults can be overriden
+- Webpack, Babel, TSconfig ecc. can be modified externally
 - "CI" command
   - Only rebuilds and deploys the parts of the application that changed
+- Custom e2e testing command can be provided. Cantara takes care of starting all the neccessary servers.
+- Deployment should work out of the box for all parts an application can have
+  - Defaults can be overriden
 - Create a few useful starter templates
 - Perfect UX for all cantara commands
   - Everything is a "wizard"

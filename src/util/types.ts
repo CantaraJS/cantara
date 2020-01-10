@@ -29,5 +29,6 @@ export interface CantaraApplication {
      * if you need this.
      */
     skipCacheInvalidation?: boolean;
+    libraryTargets?: ('umd' | 'commonjs')[];
   };
 }

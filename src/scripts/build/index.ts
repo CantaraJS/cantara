@@ -2,43 +2,28 @@ import createReactWebpackConfig from '../../util/config/webpackReactConfig';
 import getGlobalConfig from '../../cantara-config';
 import webpack = require('webpack');
 import createNodeWebpackConfig from '../../util/config/webpackNodeConfig';
+import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
+import buildNodeApp from './node';
+import buildReactApp from './react';
+import buildPackage from './packages';
 
 /** Creates a production build of the currently active app/package */
 export default function buildActiveApp() {
   const {
-    allPackages: { aliases, include },
     runtime: {
       currentCommand: { app: activeApp },
-      projectDir,
     },
   } = getGlobalConfig();
-  let webpackConfig: webpack.Configuration | undefined = undefined;
 
   if (activeApp.type === 'react') {
-    webpackConfig = createReactWebpackConfig({
-      alias: aliases,
-      app: activeApp,
-      mode: 'production',
-      projectDir,
-      include,
-    });
+    buildReactApp(activeApp);
   }
 
   if (activeApp.type === 'node') {
-    webpackConfig = createNodeWebpackConfig({
-      alias: aliases,
-      app: activeApp,
-      mode: 'production',
-      projectDir,
-      include,
-    });
+    buildNodeApp(activeApp);
   }
 
-  const compiler = webpack(webpackConfig);
-  compiler.run((err, stats) => {
-    if (err) {
-      throw new Error('Error while compiling.');
-    }
-    console.log('Successfully compiled!');
-  });
+  if (activeApp.type === 'js-package' || activeApp.type === 'react-component') {
+    buildPackage(activeApp);
+  }
 }

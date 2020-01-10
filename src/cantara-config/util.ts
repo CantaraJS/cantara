@@ -76,7 +76,7 @@ export default function getAllApps(rootDir: string): CantaraApplication[] {
       const cantaraConfigPath = path.join(dir, 'cantara.config.js');
       if (existsSync(cantaraConfigPath)) {
         const userAppConfig = require(cantaraConfigPath);
-        userAddedMetadata = userAppConfig.app;
+        userAddedMetadata = userAppConfig;
       }
 
       return {
