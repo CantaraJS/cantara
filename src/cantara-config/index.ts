@@ -86,7 +86,7 @@ export function configureCantara(config: CantaraInitialConfig) {
   const configToUse: CantaraGlobalConfig = {
     allApps,
     allPackages: {
-      aliases: getAllPackageAliases(allApps),
+      aliases: getAllPackageAliases({ allApps, activeApp: currentActiveApp }),
       include: allApps
         .filter(
           app => app.type === 'js-package' || app.type === 'react-component',
