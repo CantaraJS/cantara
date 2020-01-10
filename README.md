@@ -39,8 +39,9 @@ ctr init [template-name]
 
 ## Required
 
-- NPM commands can be executed from the top level folder for each package
 - Make building packages work
+  - https://zellwk.com/blog/publish-to-npm/
+  - https://dev.to/egeriis/on-npm-packages-and-bundle-size-impact-54f5
 - Handle env vars conveniently
 - CSS Modules (xyz.module.css)
 - What about different stages?
@@ -60,6 +61,7 @@ ctr init [template-name]
 ## Nice to have
 
 - Interactive mode, "Cockpit", where multiple Cantara commands can be started and monitored
+- Optional Chaining
 - Add bundleanalyzer option to build cmd
 - Replace Nodemon with custom Chokidar implementation
 - Maybe install actual scripts as own package?
@@ -70,3 +72,12 @@ ctr init [template-name]
 - Add bundle analyzer (react apps and packages only)
 - Faster build times
   - https://github.com/amireh/happypack
+
+## Cool libs
+
+- https://www.npmjs.com/package/figlet
+- https://github.com/vadimdemedes/ink
+- chalk
+- commander
+- program
+- Inquirer

@@ -11,7 +11,7 @@ import executeArbitraryCmdWithinApp from './scripts/arbitrary';
 
 const packageJSON = require('../package.json');
 
-const TEST_CMD = 'places-api serverless info --stage prod';
+const TEST_CMD = 'dev places';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'

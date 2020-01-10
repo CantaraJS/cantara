@@ -19,15 +19,20 @@ export default async function prepareJsPackage(app: CantaraApplication) {
   const {
     dependencies: { react: reactDeps },
   } = getGlobalConfig();
-  // Create package.json if none exists
 
+  const isReactComponent = app.type === 'react-component';
+
+  const expectedDevDependencies = isReactComponent ? reactDeps : {};
+
+  // Create package.json if none exists
   await createOrUpdatePackageJSON({
     rootDir: app.paths.root,
+    expectedDevDependencies,
     expectedDependencies: {},
   });
 
   // For React Components, add react and react-dom to the peer dependencies
-  if (app.type === 'react-component') {
+  if (isReactComponent) {
     addPeerDeps(path.join(app.paths.root, 'package.json'), reactDeps);
   }
 }
