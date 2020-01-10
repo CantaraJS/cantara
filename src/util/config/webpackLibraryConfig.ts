@@ -107,6 +107,7 @@ export default function createLibraryWebpackConfig({
       rules: [
         {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
+          type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
             options: getBabelConfig('production'),

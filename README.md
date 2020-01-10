@@ -39,12 +39,8 @@ ctr init [template-name]
 
 ## Required
 
-- Make building packages work
-  - https://zellwk.com/blog/publish-to-npm/
-  - https://dev.to/egeriis/on-npm-packages-and-bundle-size-impact-54f5
 - Fully enable tree shaking
   - https://medium.com/@zwegrzyniak/webpack-4-1-and-es-modules-esm-dd0bd7dca4da
-- Always set "private" to true in every package.json
 - Handle env vars conveniently
 - CSS Modules (xyz.module.css)
 - What about different stages?

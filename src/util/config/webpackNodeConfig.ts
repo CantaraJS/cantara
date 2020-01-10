@@ -41,6 +41,7 @@ export default function createNodeWebpackConfig({
         {
           test: [/\.js$/, /\.tsx?$/],
           include: app.paths.src,
+          type: 'javascript/esm',
           exclude: [/node_modules/],
           use: {
             loader: 'babel-loader',
