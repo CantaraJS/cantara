@@ -45,6 +45,7 @@ ctr init [template-name]
   - Look at "np"
 - Implement "new" command
 - Implement templates
+  - "init" command
 - Serverless and different stages
 - Webpack, Babel, TSconfig ecc. can be modified externally
 - "CI" command

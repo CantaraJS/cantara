@@ -16,6 +16,8 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const cssnano = require('cssnano');
+const postcssPresetEnv = require('postcss-preset-env');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const path = require('path');
 
@@ -39,6 +41,31 @@ export default function createReactWebpackConfig({
   } else if (existsSync(appIconPathSvg)) {
     iconPathToUse = appIconPathSvg;
   }
+
+  const cssLoaders = (modules: boolean) => [
+    ...(isDevelopment ? ['style-loader'] : [MiniCssExtractPlugin.loader]),
+    {
+      loader: 'css-loader',
+      options: modules
+        ? {
+            modules: isDevelopment
+              ? {
+                  localIdentName: '[path][name]__[local]--[hash:base64:5]',
+                }
+              : true,
+            localsConvention: 'camelCase',
+            importLoaders: 1,
+          }
+        : {},
+    },
+    {
+      loader: 'postcss-loader',
+      options: {
+        ident: 'postcss',
+        plugins: () => [postcssPresetEnv()],
+      },
+    },
+  ];
 
   return {
     entry: path.join(app.paths.src, 'index.tsx'),
@@ -172,6 +199,16 @@ export default function createReactWebpackConfig({
               name: 'fonts/[name].[hash:4].[ext]',
             },
           },
+        },
+        {
+          test: /\.css$/,
+          include: /\.module\.css$/,
+          use: cssLoaders(true),
+        },
+        {
+          test: /\.css$/,
+          exclude: /\.module\.css$/,
+          use: cssLoaders(false),
         },
       ],
     },
