@@ -12,6 +12,7 @@ export default function buildNodeApp(app: CantaraApplication) {
   const webpackConfig = createNodeWebpackConfig({
     alias: aliases,
     app,
+    env: app.env,
     mode: 'production',
     projectDir,
     include,

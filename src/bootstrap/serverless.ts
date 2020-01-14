@@ -31,6 +31,8 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
       path.join(globalCantaraConfig.runtime.projectDir, 'tsconfig.json'),
     ),
     ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
+    ALIASES: JSON.stringify(globalCantaraConfig.allPackages.aliases),
+    ENV_VARS: JSON.stringify(app.env || {}),
   };
 
   const newBabelConfig = renderTemplate({
@@ -44,7 +46,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
 
   writeFileSync(
     path.join(
-      globalCantaraConfig.internalPaths.static,
+      globalCantaraConfig.internalPaths.temp,
       'serverlessBabelConfig.js',
     ),
     newBabelConfig,
@@ -52,7 +54,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
 
   writeFileSync(
     path.join(
-      globalCantaraConfig.internalPaths.static,
+      globalCantaraConfig.internalPaths.temp,
       'serverlessWebpackConfig.js',
     ),
     newWebpackConfig,
@@ -64,7 +66,7 @@ function createServerlessYml(app: CantaraApplication) {
 
   const relativeWebpackConfigPath = slash(
     path.join(
-      path.relative(app.paths.root, globalCantaraConfig.internalPaths.static),
+      path.relative(app.paths.root, globalCantaraConfig.internalPaths.temp),
       'serverlessWebpackConfig.js',
     ),
   );

@@ -1,6 +1,6 @@
 import path from 'path';
 import ncpCb from 'ncp';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { promisify } from 'util';
 
 import getGlobalConfig from '../cantara-config';
@@ -63,6 +63,11 @@ async function prepareCantaraProject() {
     rootDir,
     expectedDependencies: globalCantaraConfig.dependencies.react,
   });
+
+  // Create .temp folder if it doesn't exist yet
+  if (!existsSync(globalCantaraConfig.internalPaths.temp)) {
+    mkdirSync(globalCantaraConfig.internalPaths.temp);
+  }
 }
 
 /**

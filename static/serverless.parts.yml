@@ -5,7 +5,7 @@ plugins:
 
 custom:
   webpack:
-    webpackConfig: '../../../cantara/static/serverlessWebpackConfig.js'
+    webpackConfig: '../../../cantara/static/.temp/serverlessWebpackConfig.js'
     includeModules:
       packagePath: './package.json'
     packager: 'npm'

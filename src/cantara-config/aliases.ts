@@ -59,7 +59,7 @@ export default function getAllPackageAliases({
     activeApp.type === 'react'
       ? getDependencyAliases(activeApp)
       : {};
-  console.log({ appDependencyAliases });
+
   return {
     ...packageAliases,
     ...appDependencyAliases,

@@ -1,6 +1,5 @@
 import getGlobalConfig from '../../cantara-config';
 import execCmd from '../../util/exec';
-import path = require('path');
 
 export default function startServerlessEndpointDevelopmentServer() {
   const {

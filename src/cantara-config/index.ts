@@ -16,6 +16,7 @@ interface CantaraInitialConfig {
     name: string;
     appname: string;
   };
+  stage: string;
 }
 
 type Dependencies = { [key: string]: string };
@@ -38,6 +39,8 @@ interface CantaraGlobalConfig {
     static: string;
     /** Where the cantara package itself lives */
     root: string;
+    /** Folder for temporary files (excluded from version control) */
+    temp: string;
   };
   /** Current runtime configuration (e.g. the command the user executed, the location of it etc.) */
   runtime: {
@@ -67,6 +70,7 @@ export default function getGlobalConfig() {
 /** Config can only be set once */
 export function configureCantara(config: CantaraInitialConfig) {
   const staticFilesPath = path.join(config.packageRootDir, 'static');
+  const tempFolder = path.join(staticFilesPath, '.temp');
   const reactDependecies = readFileAsJSON(
     path.join(staticFilesPath, 'react-dependencies.json'),
   );
@@ -74,7 +78,7 @@ export function configureCantara(config: CantaraInitialConfig) {
     path.join(staticFilesPath, 'ts-dependencies.json'),
   );
   const projectDir = config.projectDir || process.cwd();
-  const allApps = getAllApps(projectDir);
+  const allApps = getAllApps({ rootDir: projectDir, stage: config.stage });
   const currentActiveApp = allApps.find(
     app => app.name === config.currentCommand.appname,
   );
@@ -100,6 +104,7 @@ export function configureCantara(config: CantaraInitialConfig) {
     internalPaths: {
       root: config.packageRootDir,
       static: staticFilesPath,
+      temp: tempFolder,
     },
     runtime: {
       projectDir,

@@ -10,6 +10,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
+const webpack = require("webpack")
 
 const babelConfig = require('./serverlessBabelConfig');
 
@@ -28,6 +29,7 @@ module.exports = {
       '.tsx',
       '.d.ts',
     ],
+    alias: <--ALIASES-->,
   },
   externals: [
     nodeExternals({
@@ -54,6 +56,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.EnvironmentPlugin(<--ENV_VARS-->),
     new CaseSensitivePathsPlugin(),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: '<--TSCONFIG_PATH-->',

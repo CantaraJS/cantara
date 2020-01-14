@@ -1,4 +1,4 @@
-import { Configuration } from 'webpack';
+import webpack, { Configuration } from 'webpack';
 import { CreateWebpackConfigParams } from './types';
 import path from 'path';
 import babelConfig from './babelNodeConfig';
@@ -12,8 +12,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 export default function createNodeWebpackConfig({
   app,
   projectDir,
-  mode,
+  mode = 'development',
   alias,
+  env = {},
 }: CreateWebpackConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -52,6 +53,7 @@ export default function createNodeWebpackConfig({
     },
     plugins: [
       new CaseSensitivePathsPlugin(),
+      new webpack.EnvironmentPlugin(env),
       new ForkTsCheckerWebpackPlugin({
         tsconfig: path.join(projectDir, 'tsconfig.json'),
         watch: app.paths.src,

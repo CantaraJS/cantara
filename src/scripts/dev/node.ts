@@ -13,6 +13,7 @@ export function startNodeAppDevelopmentServer() {
   const webpackConfig = createNodeWebpackConfig({
     app: activeApp,
     projectDir,
+    env: activeApp.env,
   });
 
   const compiler = webpack(webpackConfig);

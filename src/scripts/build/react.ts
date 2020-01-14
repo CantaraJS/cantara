@@ -12,6 +12,7 @@ export default function buildReactApp(app: CantaraApplication) {
   const webpackConfig = createReactWebpackConfig({
     alias: aliases,
     app,
+    env: app.env,
     mode: 'production',
     projectDir,
     include,

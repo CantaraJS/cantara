@@ -10,6 +10,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
+const webpack = require("webpack")
 
 const babelConfig = require('./serverlessBabelConfig');
 
@@ -28,6 +29,7 @@ module.exports = {
       '.tsx',
       '.d.ts',
     ],
+    alias: {"places-auth":"C:/Users/maxim/DEV/cantare-example/packages/places-auth/src","places-auth-react":"C:/Users/maxim/DEV/cantare-example/packages/places-auth-react/src","places-suggestions":"C:/Users/maxim/DEV/cantare-example/packages/places-suggestions/src","@types/node":"C:\\Users\\maxim\\DEV\\cantare-example\\react-apps\\places\\node_modules\\@types\\node","@types/react":"C:\\Users\\maxim\\DEV\\cantare-example\\react-apps\\places\\node_modules\\@types\\react","@types/react-dom":"C:\\Users\\maxim\\DEV\\cantare-example\\react-apps\\places\\node_modules\\@types\\react-dom","react":"C:\\Users\\maxim\\DEV\\cantare-example\\react-apps\\places\\node_modules\\react","react-dom":"C:\\Users\\maxim\\DEV\\cantare-example\\react-apps\\places\\node_modules\\react-dom","typescript":"C:\\Users\\maxim\\DEV\\cantare-example\\react-apps\\places\\node_modules\\typescript"},
   },
   externals: [
     nodeExternals({
@@ -54,6 +56,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.EnvironmentPlugin({"STAGE":"development","SECRET_API_KEY":"1234"}),
     new CaseSensitivePathsPlugin(),
     new ForkTsCheckerWebpackPlugin({
       tsconfig: 'C:/Users/maxim/DEV/cantare-example/tsconfig.json',

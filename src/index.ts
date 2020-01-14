@@ -11,7 +11,7 @@ import executeArbitraryCmdWithinApp from './scripts/arbitrary';
 
 const packageJSON = require('../package.json');
 
-const TEST_CMD = 'dev places';
+const TEST_CMD = 'dev auth-api';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
@@ -48,11 +48,28 @@ async function prepareCantara({ appname, cmdName }: PrepareCantaraOptions) {
       appname,
       name: cmdName,
     },
+    stage:
+      !program.stage || program.stage === 'not_set'
+        ? 'development'
+        : program.stage,
   });
   await onPreBootstrap();
 }
 
 program.version(packageJSON.version);
+
+/** Stage can be configured externally via --stage
+ * parameter. If not defined, the current stage is
+ * derived from the current command as follows:
+ * - dev: development
+ * - build: production
+ * - test: test
+ */
+program.option(
+  '-s, --stage <development|production|custom>',
+  'This parameter affects which environment variables are used.',
+  'not_set',
+);
 
 program
   .command('dev <appname>')

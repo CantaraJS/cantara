@@ -1,10 +1,9 @@
-import { Configuration } from 'webpack';
+import webpack, { Configuration } from 'webpack';
 import { existsSync } from 'fs';
 
 import { CreateWebpackConfigParams } from './types';
 import getBabelConfig from './babelReactConfig';
 
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
@@ -26,6 +25,7 @@ export default function createReactWebpackConfig({
   alias = {},
   include = [],
   mode = 'development',
+  env = {},
 }: CreateWebpackConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -88,7 +88,9 @@ export default function createReactWebpackConfig({
         : undefined,
       // disableRefreshCheck: true needs to be set because of https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/15
       isDevelopment
-        ? new ReactRefreshWebpackPlugin({ disableRefreshCheck: true })
+        ? new ReactRefreshWebpackPlugin({
+            disableRefreshCheck: true,
+          })
         : undefined,
       iconPathToUse
         ? new WebpackPwaManifest({
@@ -107,11 +109,7 @@ export default function createReactWebpackConfig({
             ...app.meta.pwaManifest,
           })
         : undefined,
-      // new webpack.EnvironmentPlugin({
-      //   ...envVars,
-      //   STAGE: process.env.STAGE,
-      //   IS_INTEGRATION_TEST: process.env.IS_INTEGRATION_TEST || false,
-      // }),
+      new webpack.EnvironmentPlugin(env),
       doesServiceWorkerExist && isProduction
         ? new InjectManifest({
             swSrc: path.join(app.paths.src, 'sw.js'),
@@ -148,13 +146,14 @@ export default function createReactWebpackConfig({
       rules: [
         {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
-          type: 'javascript/esm',
+          /** For some reason, using 'javascript/esm' causes ReactRefresh to fail */
+          // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
             options: getBabelConfig(mode),
           },
           include: [app.paths.src, ...include],
-          exclude: [/node_modules/],
+          // exclude: [/node_modules/],
         },
         {
           test: /\.(jpg|png|svg|gif)$/,

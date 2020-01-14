@@ -1,6 +1,10 @@
 import { existsSync, lstatSync, readdirSync, readFileSync } from 'fs';
 import path = require('path');
-import { CantaraApplication, CantaraApplicationType } from '../util/types';
+import {
+  CantaraApplication,
+  CantaraApplicationType,
+  CantaraApplicationMetaInformation,
+} from '../util/types';
 import getGlobalConfig from '.';
 import { readFileAsJSON } from '../util/fs';
 
@@ -20,8 +24,16 @@ function requireAtLeastOneFolder(paths: string[]) {
   }
 }
 
+interface GetAllAppsOptions {
+  rootDir: string;
+  stage: string;
+}
+
 /** Returns list of all React Apps, Packages and Node Apps */
-export default function getAllApps(rootDir: string): CantaraApplication[] {
+export default function getAllApps({
+  rootDir,
+  stage,
+}: GetAllAppsOptions): CantaraApplication[] {
   const FOLDER_NAMES: { [key: string]: string } = {
     REACT_APPS: 'react-apps',
     NODE_APPS: 'node-apps',
@@ -51,7 +63,9 @@ export default function getAllApps(rootDir: string): CantaraApplication[] {
     ({ dir, type }) => {
       let typeToUse: CantaraApplicationType = type as CantaraApplicationType;
       let displayName = path.basename(dir);
-      let userAddedMetadata = {};
+      let userAddedMetadata:
+        | CantaraApplicationMetaInformation
+        | undefined = undefined;
       if (type === 'package') {
         const packageSrc = path.join(dir, 'src');
         typeToUse = existsSync(path.join(packageSrc, 'index.tsx'))
@@ -75,13 +89,19 @@ export default function getAllApps(rootDir: string): CantaraApplication[] {
 
       const cantaraConfigPath = path.join(dir, 'cantara.config.js');
       if (existsSync(cantaraConfigPath)) {
-        const userAppConfig = require(cantaraConfigPath);
-        userAddedMetadata = userAppConfig;
+        userAddedMetadata = require(cantaraConfigPath);
       }
+
+      let envVars = loadAppEnvVars({
+        appRootDir: dir,
+        currentStage: stage,
+        expectedEnvVars: userAddedMetadata ? userAddedMetadata.env || [] : [],
+      });
 
       return {
         name: path.basename(dir),
         type: typeToUse,
+        env: envVars,
         paths: {
           root: dir,
           src: path.join(dir, 'src'),
@@ -124,4 +144,84 @@ export function loadSecrets(projectDir: string) {
     secrets = readFileAsJSON(secretsFilePath);
   }
   return secrets;
+}
+
+/**
+ * Parses a .env file and returns and object
+ * with it's values.
+ * If the file is not found, an empty object
+ * is returned.
+ */
+function parseEnvFile(filePath: string): { [key: string]: string } {
+  if (!existsSync(filePath)) return {};
+  let result: { [key: string]: string } = {};
+  const lines = readFileSync(filePath)
+    .toString()
+    .split('\n');
+  for (const line of lines) {
+    const match = line.match(/^([^=:#]+?)[=:](.*)/);
+    if (match) {
+      const key = match[1].trim();
+      const value = match[2].trim();
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+interface LoadAppEnvVarsOptions {
+  appRootDir: string;
+  /** Can be specified in app's cantara.config.js */
+  expectedEnvVars: string[];
+  currentStage: string;
+}
+
+/**
+ * Loads env vars from either the current
+ * stage's env file (.env.<stage>) or, if
+ * not defined, from process.env.
+ * If an env var in the array expectedEnvVars
+ * is not defined, an error is thrown.
+ * Additional env vars in the .env file
+ * are ignored and a warning is shown.
+ * The resulting object can later on
+ * be used by the WebpackDefinePlugin.
+ * STAGE is always added as an env var
+ * with the current stage as it's value.
+ */
+function loadAppEnvVars({
+  appRootDir,
+  currentStage,
+  expectedEnvVars,
+}: LoadAppEnvVarsOptions) {
+  let envVarsToReturn: { [key: string]: string } = { STAGE: currentStage };
+  if (expectedEnvVars.length === 0) return envVarsToReturn;
+  const envFileName = `.env.${currentStage.toLowerCase()}`;
+  const currentStageEnvFile = path.join(appRootDir, envFileName);
+  const envFileContent = parseEnvFile(currentStageEnvFile);
+  for (const expectedEnvVarName of expectedEnvVars) {
+    const envVarValue =
+      envFileContent[expectedEnvVarName] || process.env[expectedEnvVarName];
+    if (envVarValue === undefined || envVarValue === null) {
+      throw new Error(
+        `File ${envFileName} contains no variable named "${expectedEnvVarName}" and it is not defined in the current environment. It is marked as required in crana.config.js`,
+      );
+    }
+    envVarsToReturn[expectedEnvVarName] = envVarValue;
+  }
+
+  // Warnings for ignored env vars in .env file
+  const allEnvVarsInEnvFile = Object.keys(envFileContent);
+  const ignoredEnvVars = allEnvVarsInEnvFile.filter(
+    envName => !expectedEnvVars.includes(envName),
+  );
+  if (ignoredEnvVars.length > 0) {
+    console.warn(
+      `The following environment variables are ignored, because they are not present in the crana.config.js file:\n\t${ignoredEnvVars.join(
+        '\n\t',
+      )}`,
+    );
+  }
+
+  return envVarsToReturn;
 }

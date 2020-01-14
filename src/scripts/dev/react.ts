@@ -18,6 +18,7 @@ export function startReactAppDevelopmentServer() {
     alias: aliases,
     app: activeApp,
     projectDir,
+    env: activeApp.env,
     include,
   });
 

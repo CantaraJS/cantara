@@ -39,36 +39,34 @@ ctr init [template-name]
 
 ## Required
 
-- Fully enable tree shaking
-  - https://medium.com/@zwegrzyniak/webpack-4-1-and-es-modules-esm-dd0bd7dca4da
-- Handle env vars conveniently
 - CSS Modules (xyz.module.css)
-- What about different stages?
 - Implement "test" command
 - Provide "publish" command with good UX for publishing a package to NPM
   - Look at "np"
 - Implement "new" command
 - Implement templates
+- Serverless and different stages
 - Webpack, Babel, TSconfig ecc. can be modified externally
 - "CI" command
   - Only rebuilds and deploys the parts of the application that changed
 - Custom e2e testing command can be provided. Cantara takes care of starting all the neccessary servers.
+- Scripts for DB migrations
 - Deployment should work out of the box for all parts an application can have
   - Defaults can be overriden
 - Create a few useful starter templates
 - Perfect UX for all cantara commands
   - Everything is a "wizard"
+- Make type checking optional via flag
 
 ## Nice to have
 
 - Interactive mode, "Cockpit", where multiple Cantara commands can be started and monitored
 - Optional Chaining
+- I18n / Intl
 - Add bundleanalyzer option to build cmd
 - Replace Nodemon with custom Chokidar implementation
-- Maybe install actual scripts as own package?
 - When new version is available, show message.
 - corejs?
-- Warn when required files (e.g. index.js/index.tsx) are missing
 - Add greenkeeper
 - Add bundle analyzer (react apps and packages only)
 - Faster build times

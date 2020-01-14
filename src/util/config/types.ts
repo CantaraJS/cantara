@@ -15,4 +15,8 @@ export interface CreateWebpackConfigParams {
    * Only set to false for last compilation.
    */
   noChecks?: boolean;
+  /** Environment variables which are replaced
+   * in the bundle
+   */
+  env?: { [key: string]: string };
 }
