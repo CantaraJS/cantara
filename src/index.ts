@@ -8,26 +8,50 @@ import buildActiveApp from './scripts/build';
 import deployActiveApp from './scripts/deploy';
 import executeArbitraryCmdWithinApp from './scripts/arbitrary';
 import executeTests from './scripts/test';
-// import execCmd from './exec';
-
 const packageJSON = require('../package.json');
 
-const TEST_CMD = 'test places';
+/** Takes CLI command and removes unknown options
+ * from it, so that no error is thrown. Those
+ * unknown options are then passed to Cantara,
+ * so that they can be used internally to e.g.
+ * pass them to another program, for example Jest
+ */
+function prepareCmdForCommander(cmd: string[]) {
+  let { unknown } = program.parseOptions(cmd);
+  const unknownParams = unknown.join(' ');
+
+  const cmdWithoutUnknownParams = cmd.filter((cmd, i) => {
+    if (i <= 2) return true;
+    const shouldKeep = !unknown.includes(cmd);
+    // Only remove it once
+    unknown = unknown.filter(uCmd => uCmd !== cmd);
+    return shouldKeep;
+  });
+  return { cmd: cmdWithoutUnknownParams, unknownParams };
+}
+
+const TEST_CMD = 'test places --watch';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
     : process.cwd();
 
-const cmdToParse =
+const cmdArr =
   process.env.NODE_ENV === 'development'
     ? ['', '', ...TEST_CMD.split(' ')]
     : process.argv;
+
+const {
+  cmd: cmdToParse,
+  unknownParams: additionalCliOptions,
+} = prepareCmdForCommander(cmdArr);
 
 const cantaraRootDir = path.join(__dirname, '..');
 
 interface PrepareCantaraOptions {
   appname: string;
   cmdName: string;
+  additionalCliOptions: string;
 }
 
 /** Is set to true if any Cantara command was executed.
@@ -40,9 +64,14 @@ interface PrepareCantaraOptions {
 let wasCantaraCommandExecuted = false;
 
 /** Execute this function before each command */
-async function prepareCantara({ appname, cmdName }: PrepareCantaraOptions) {
+async function prepareCantara({
+  appname,
+  cmdName,
+  additionalCliOptions,
+}: PrepareCantaraOptions) {
   wasCantaraCommandExecuted = true;
   configureCantara({
+    additionalCliOptions,
     projectDir: cantaraPath,
     packageRootDir: cantaraRootDir,
     currentCommand: {
@@ -76,7 +105,7 @@ program
   .command('dev <appname>')
   .description('Start the specified app in development mode.')
   .action(async appname => {
-    await prepareCantara({ appname, cmdName: 'dev' });
+    await prepareCantara({ appname, cmdName: 'dev', additionalCliOptions });
     startDevelopmentServer();
   });
 
@@ -84,7 +113,7 @@ program
   .command('build <appname>')
   .description('Create a production build for the specified app or package.')
   .action(async appname => {
-    await prepareCantara({ appname, cmdName: 'build' });
+    await prepareCantara({ appname, cmdName: 'build', additionalCliOptions });
     buildActiveApp();
   });
 
@@ -92,7 +121,7 @@ program
   .command('deploy <appname>')
   .description('Deploy an application.')
   .action(async appname => {
-    await prepareCantara({ appname, cmdName: 'deploy' });
+    await prepareCantara({ appname, cmdName: 'deploy', additionalCliOptions });
     deployActiveApp();
   });
 
@@ -101,8 +130,9 @@ program
   .description(
     'Execute Jest tests for the specified application or for all applications if none was specified.',
   )
+  .option('*')
   .action(async appname => {
-    await prepareCantara({ appname, cmdName: 'test' });
+    await prepareCantara({ appname, cmdName: 'test', additionalCliOptions });
     executeTests();
   });
 
@@ -122,10 +152,12 @@ if (!wasCantaraCommandExecuted) {
   if (program.args.length <= 1) {
     program.help();
   }
-  prepareCantara({ appname: program.args[0], cmdName: program.args[1] }).then(
-    () => {
-      const allCmds = cmdToParse.slice(2);
-      executeArbitraryCmdWithinApp(allCmds);
-    },
-  );
+  prepareCantara({
+    appname: program.args[0],
+    cmdName: program.args[1],
+    additionalCliOptions,
+  }).then(() => {
+    const allCmds = cmdToParse.slice(2);
+    executeArbitraryCmdWithinApp(allCmds);
+  });
 }

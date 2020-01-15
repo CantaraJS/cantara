@@ -17,6 +17,11 @@ interface CantaraInitialConfig {
     appname: string;
   };
   stage: string;
+  /** Unknown options for 3rd party CLI programs, e.g. Jest.
+   * Options which are foreign to Cantara are included
+   * in this string.
+   */
+  additionalCliOptions?: string;
 }
 
 type Dependencies = { [key: string]: string };
@@ -49,6 +54,7 @@ interface CantaraGlobalConfig {
     /** Information about current command */
     currentCommand: {
       name: string;
+      additionalCliOptions: string;
       app: CantaraApplication;
     };
     /** Secrets from user's .secrets.json file */
@@ -111,6 +117,7 @@ export function configureCantara(config: CantaraInitialConfig) {
       currentCommand: {
         name: config.currentCommand.name,
         app: currentActiveApp,
+        additionalCliOptions: config.additionalCliOptions || '',
       },
       secrets: loadSecrets(projectDir),
     },
