@@ -21,9 +21,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var webpack_1 = __importDefault(require("webpack"));
 var fs_1 = require("fs");
 var babelReactConfig_1 = __importDefault(require("./babelReactConfig"));
-var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var WebpackPwaManifest = require('webpack-pwa-manifest');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
@@ -36,9 +36,11 @@ var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 var OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 var cssnano = require('cssnano');
+var postcssPresetEnv = require('postcss-preset-env');
+var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 var path = require('path');
 function createReactWebpackConfig(_a) {
-    var app = _a.app, projectDir = _a.projectDir, _b = _a.alias, alias = _b === void 0 ? {} : _b, _c = _a.include, include = _c === void 0 ? [] : _c, _d = _a.mode, mode = _d === void 0 ? 'development' : _d;
+    var app = _a.app, projectDir = _a.projectDir, _b = _a.alias, alias = _b === void 0 ? {} : _b, _c = _a.include, include = _c === void 0 ? [] : _c, _d = _a.mode, mode = _d === void 0 ? 'development' : _d, _e = _a.env, env = _e === void 0 ? {} : _e;
     var isDevelopment = mode === 'development';
     var isProduction = mode === 'production';
     var iconPathToUse = undefined;
@@ -51,6 +53,29 @@ function createReactWebpackConfig(_a) {
     else if (fs_1.existsSync(appIconPathSvg)) {
         iconPathToUse = appIconPathSvg;
     }
+    var cssLoaders = function (modules) { return __spreadArrays((isDevelopment ? ['style-loader'] : [MiniCssExtractPlugin.loader]), [
+        {
+            loader: 'css-loader',
+            options: modules
+                ? {
+                    modules: isDevelopment
+                        ? {
+                            localIdentName: '[path][name]__[local]--[hash:base64:5]',
+                        }
+                        : true,
+                    localsConvention: 'camelCase',
+                    importLoaders: 1,
+                }
+                : {},
+        },
+        {
+            loader: 'postcss-loader',
+            options: {
+                ident: 'postcss',
+                plugins: function () { return [postcssPresetEnv()]; },
+            },
+        },
+    ]); };
     return {
         entry: path.join(app.paths.src, 'index.tsx'),
         resolve: {
@@ -80,7 +105,7 @@ function createReactWebpackConfig(_a) {
                 watch: app.paths.src,
             }),
             new CaseSensitivePathsPlugin(),
-            isDevelopment ? new webpack.HotModuleReplacementPlugin() : undefined,
+            isDevelopment ? new webpack_1.default.HotModuleReplacementPlugin() : undefined,
             new WebpackNotifierPlugin({
                 excludeWarnings: true,
                 title: app.meta.displayName,
@@ -99,7 +124,9 @@ function createReactWebpackConfig(_a) {
                 : undefined,
             // disableRefreshCheck: true needs to be set because of https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/15
             isDevelopment
-                ? new ReactRefreshWebpackPlugin({ disableRefreshCheck: true })
+                ? new ReactRefreshWebpackPlugin({
+                    disableRefreshCheck: true,
+                })
                 : undefined,
             iconPathToUse
                 ? new WebpackPwaManifest(__assign({ 
@@ -111,11 +138,7 @@ function createReactWebpackConfig(_a) {
                         },
                     ] }, app.meta.pwaManifest))
                 : undefined,
-            // new webpack.EnvironmentPlugin({
-            //   ...envVars,
-            //   STAGE: process.env.STAGE,
-            //   IS_INTEGRATION_TEST: process.env.IS_INTEGRATION_TEST || false,
-            // }),
+            new webpack_1.default.EnvironmentPlugin(env),
             doesServiceWorkerExist && isProduction
                 ? new InjectManifest({
                     swSrc: path.join(app.paths.src, 'sw.js'),
@@ -143,7 +166,7 @@ function createReactWebpackConfig(_a) {
                 })
                 : undefined,
             isProduction
-                ? new webpack.BannerPlugin({
+                ? new webpack_1.default.BannerPlugin({
                     banner: 'filename:[name]',
                 })
                 : false,
@@ -152,12 +175,13 @@ function createReactWebpackConfig(_a) {
             rules: [
                 {
                     test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
+                    /** For some reason, using 'javascript/esm' causes ReactRefresh to fail */
+                    // type: 'javascript/esm',
                     use: {
                         loader: 'babel-loader',
                         options: babelReactConfig_1.default(mode),
                     },
                     include: __spreadArrays([app.paths.src], include),
-                    exclude: [/node_modules/],
                 },
                 {
                     test: /\.(jpg|png|svg|gif)$/,
@@ -177,10 +201,20 @@ function createReactWebpackConfig(_a) {
                         },
                     },
                 },
+                {
+                    test: /\.css$/,
+                    include: /\.module\.css$/,
+                    use: cssLoaders(true),
+                },
+                {
+                    test: /\.css$/,
+                    exclude: /\.module\.css$/,
+                    use: cssLoaders(false),
+                },
             ],
         },
         performance: {
-            hints: 'warning',
+            hints: false,
         },
         optimization: isProduction
             ? {

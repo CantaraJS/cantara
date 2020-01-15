@@ -8,6 +8,7 @@ interface CantaraInitialConfig {
         name: string;
         appname: string;
     };
+    stage: string;
 }
 declare type Dependencies = {
     [key: string]: string;
@@ -32,6 +33,8 @@ interface CantaraGlobalConfig {
         static: string;
         /** Where the cantara package itself lives */
         root: string;
+        /** Folder for temporary files (excluded from version control) */
+        temp: string;
     };
     /** Current runtime configuration (e.g. the command the user executed, the location of it etc.) */
     runtime: {
@@ -41,6 +44,11 @@ interface CantaraGlobalConfig {
         currentCommand: {
             name: string;
             app: CantaraApplication;
+        };
+        /** Secrets from user's .secrets.json file */
+        secrets: {
+            AWS_ACCESS_KEY_ID?: string;
+            AWS_SECRET_ACCESS_KEY?: string;
         };
     };
 }

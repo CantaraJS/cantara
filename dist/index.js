@@ -53,15 +53,26 @@ var cantara_config_1 = require("./cantara-config");
 var path_1 = __importDefault(require("path"));
 var bootstrap_1 = __importDefault(require("./bootstrap"));
 var build_1 = __importDefault(require("./scripts/build"));
+var deploy_1 = __importDefault(require("./scripts/deploy"));
+var arbitrary_1 = __importDefault(require("./scripts/arbitrary"));
+var test_1 = __importDefault(require("./scripts/test"));
 // import execCmd from './exec';
 var packageJSON = require('../package.json');
-var TEST_CMD = 'build places';
+var TEST_CMD = 'test places';
 var cantaraPath = process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
     : process.cwd();
 var cmdToParse = process.env.NODE_ENV === 'development'
     ? __spreadArrays(['', ''], TEST_CMD.split(' ')) : process.argv;
 var cantaraRootDir = path_1.default.join(__dirname, '..');
+/** Is set to true if any Cantara command was executed.
+ * If no cantara command was matched,
+ * the tool tries to execute the npm command
+ * for the specified app/package. If no NPM command with this name
+ * exists, it tries to execute it as an arbitrary
+ * command with the specified app/package as the CWD.
+ */
+var wasCantaraCommandExecuted = false;
 /** Execute this function before each command */
 function prepareCantara(_a) {
     var appname = _a.appname, cmdName = _a.cmdName;
@@ -69,6 +80,7 @@ function prepareCantara(_a) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
+                    wasCantaraCommandExecuted = true;
                     cantara_config_1.configureCantara({
                         projectDir: cantaraPath,
                         packageRootDir: cantaraRootDir,
@@ -76,6 +88,9 @@ function prepareCantara(_a) {
                             appname: appname,
                             name: cmdName,
                         },
+                        stage: !commander_1.default.stage || commander_1.default.stage === 'not_set'
+                            ? 'development'
+                            : commander_1.default.stage,
                     });
                     return [4 /*yield*/, bootstrap_1.default()];
                 case 1:
@@ -86,6 +101,14 @@ function prepareCantara(_a) {
     });
 }
 commander_1.default.version(packageJSON.version);
+/** Stage can be configured externally via --stage
+ * parameter. If not defined, the current stage is
+ * derived from the current command as follows:
+ * - dev: development
+ * - build: production
+ * - test: test
+ */
+commander_1.default.option('-s, --stage <development|production|custom>', 'This parameter affects which environment variables are used.', 'not_set');
 commander_1.default
     .command('dev <appname>')
     .description('Start the specified app in development mode.')
@@ -114,4 +137,52 @@ commander_1.default
         }
     });
 }); });
+commander_1.default
+    .command('deploy <appname>')
+    .description('Deploy an application.')
+    .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'deploy' })];
+            case 1:
+                _a.sent();
+                deploy_1.default();
+                return [2 /*return*/];
+        }
+    });
+}); });
+commander_1.default
+    .command('test [appname]')
+    .description('Execute Jest tests for the specified application or for all applications if none was specified.')
+    .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'test' })];
+            case 1:
+                _a.sent();
+                test_1.default();
+                return [2 /*return*/];
+        }
+    });
+}); });
+/** Execute npm commands in the scope of a package/app */
+commander_1.default
+    .command('<appname> <command> [parameters...]')
+    .description('Execute npm commands for the specified app or package. If you want to e.g. install a package from npm for your React Component named "button", you can execute: "cantara button install @emotion/core".')
+    .action(function (appname, command) {
+    var parameters = [];
+    for (var _i = 2; _i < arguments.length; _i++) {
+        parameters[_i - 2] = arguments[_i];
+    }
+    console.log({ appname: appname, command: command, parameters: parameters });
+});
 commander_1.default.parse(cmdToParse);
+if (!wasCantaraCommandExecuted) {
+    if (commander_1.default.args.length <= 1) {
+        commander_1.default.help();
+    }
+    prepareCantara({ appname: commander_1.default.args[0], cmdName: commander_1.default.args[1] }).then(function () {
+        var allCmds = cmdToParse.slice(2);
+        arbitrary_1.default(allCmds);
+    });
+}

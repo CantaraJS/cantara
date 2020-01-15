@@ -6,18 +6,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var webpack_1 = __importDefault(require("webpack"));
 var cantara_config_1 = __importDefault(require("../../cantara-config"));
 var webpackNodeConfig_1 = __importDefault(require("../../util/config/webpackNodeConfig"));
-function startNodeAppDevelopmentServer() {
-    var _a = cantara_config_1.default().runtime, activeApp = _a.currentCommand.app, projectDir = _a.projectDir;
+function buildNodeApp(app) {
+    var _a = cantara_config_1.default(), _b = _a.allPackages, aliases = _b.aliases, include = _b.include, projectDir = _a.runtime.projectDir;
     var webpackConfig = webpackNodeConfig_1.default({
-        app: activeApp,
+        alias: aliases,
+        app: app,
+        env: app.env,
+        mode: 'production',
         projectDir: projectDir,
-        env: activeApp.env,
+        include: include,
     });
     var compiler = webpack_1.default(webpackConfig);
-    compiler.watch({}, function (err, stats) {
+    compiler.run(function (err, stats) {
         if (err) {
-            throw new Error('Build error.');
+            throw new Error('Error while compiling.');
         }
+        console.log('Successfully compiled!');
     });
 }
-exports.startNodeAppDevelopmentServer = startNodeAppDevelopmentServer;
+exports.default = buildNodeApp;

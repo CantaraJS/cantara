@@ -42,76 +42,105 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var fs_1 = require("fs");
 var exec_1 = __importDefault(require("../util/exec"));
+/** Returns a string of dependecies that
+ * need to be installed in the form of:
+ * "react@16.0.0 react-dom@16.0.0"
+ */
+function getDependenciesInstallationString(_a) {
+    var expectedDependencies = _a.expectedDependencies, actualDependencies = _a.actualDependencies;
+    var dependenciesToInstall = Object.keys(expectedDependencies)
+        .reduce(function (depsStr, depName) {
+        var appDependencyVersion = actualDependencies[depName];
+        var expectedVersion = expectedDependencies[depName];
+        if (expectedVersion && expectedVersion !== appDependencyVersion) {
+            return depName + "@" + expectedVersion + " " + depsStr;
+        }
+        return depsStr;
+    }, '')
+        .trim();
+    return dependenciesToInstall;
+}
 /** Updates/installs the specified dependecies in the
  * specified folder. Creates a package.json if none exists.
  */
 function createOrUpdatePackageJSON(_a) {
-    var rootDir = _a.rootDir, expectedDependencies = _a.expectedDependencies;
+    var rootDir = _a.rootDir, expectedDependencies = _a.expectedDependencies, expectedDevDependencies = _a.expectedDevDependencies;
     return __awaiter(this, void 0, void 0, function () {
-        var localPackageJsonPath, dependencies_1, dependenciesToInstall, dependenciesToInstall;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var localPackageJsonPath, _b, dependencies, devDependencies, dependenciesToInstall, devDependenciesToInstall, dependenciesToInstall, devDependenciesToInstall;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     localPackageJsonPath = path_1.default.join(rootDir, 'package.json');
-                    if (!fs_1.existsSync(localPackageJsonPath)) return [3 /*break*/, 3];
-                    dependencies_1 = JSON.parse(fs_1.readFileSync(localPackageJsonPath).toString()).dependencies;
-                    dependenciesToInstall = Object.keys(expectedDependencies)
-                        .reduce(function (depsStr, depName) {
-                        var appDependencyVersion = dependencies_1[depName];
-                        var expectedVersion = expectedDependencies[depName];
-                        if (expectedVersion && expectedVersion !== appDependencyVersion) {
-                            return depName + "@" + expectedVersion + " " + depsStr;
-                        }
-                        return depsStr;
-                    }, '')
-                        .trim();
+                    if (!fs_1.existsSync(localPackageJsonPath)) return [3 /*break*/, 5];
+                    _b = JSON.parse(fs_1.readFileSync(localPackageJsonPath).toString()), dependencies = _b.dependencies, devDependencies = _b.devDependencies;
+                    if (!expectedDependencies) return [3 /*break*/, 2];
+                    dependenciesToInstall = getDependenciesInstallationString({
+                        expectedDependencies: expectedDependencies,
+                        actualDependencies: dependencies,
+                    });
                     if (!dependenciesToInstall) return [3 /*break*/, 2];
                     return [4 /*yield*/, exec_1.default("npm install -S " + dependenciesToInstall, {
                             workingDirectory: rootDir,
                             redirectIo: true,
                         })];
                 case 1:
-                    _b.sent();
-                    _b.label = 2;
-                case 2: return [3 /*break*/, 6];
-                case 3: 
+                    _c.sent();
+                    _c.label = 2;
+                case 2:
+                    if (!expectedDevDependencies) return [3 /*break*/, 4];
+                    devDependenciesToInstall = getDependenciesInstallationString({
+                        expectedDependencies: expectedDevDependencies,
+                        actualDependencies: devDependencies,
+                    });
+                    if (!devDependenciesToInstall) return [3 /*break*/, 4];
+                    return [4 /*yield*/, exec_1.default("npm install -D " + devDependenciesToInstall, {
+                            workingDirectory: rootDir,
+                            redirectIo: true,
+                        })];
+                case 3:
+                    _c.sent();
+                    _c.label = 4;
+                case 4: return [3 /*break*/, 10];
+                case 5: 
                 // Create new packageJSON and install dependencies
                 return [4 /*yield*/, exec_1.default("npm init -y", {
                         workingDirectory: rootDir,
                     })];
-                case 4:
+                case 6:
                     // Create new packageJSON and install dependencies
-                    _b.sent();
+                    _c.sent();
+                    if (!expectedDependencies) return [3 /*break*/, 8];
                     dependenciesToInstall = Object.keys(expectedDependencies)
                         .reduce(function (depsStr, depName) {
                         return depName + "@" + expectedDependencies[depName] + " " + depsStr;
                     }, '')
                         .trim();
+                    if (!dependenciesToInstall) return [3 /*break*/, 8];
                     return [4 /*yield*/, exec_1.default("npm install -S " + dependenciesToInstall, {
                             workingDirectory: rootDir,
                             redirectIo: true,
                         })];
-                case 5:
-                    _b.sent();
-                    _b.label = 6;
-                case 6: return [2 /*return*/];
+                case 7:
+                    _c.sent();
+                    _c.label = 8;
+                case 8:
+                    if (!expectedDevDependencies) return [3 /*break*/, 10];
+                    devDependenciesToInstall = Object.keys(expectedDevDependencies)
+                        .reduce(function (depsStr, depName) {
+                        return depName + "@" + expectedDevDependencies[depName] + " " + depsStr;
+                    }, '')
+                        .trim();
+                    if (!devDependenciesToInstall) return [3 /*break*/, 10];
+                    return [4 /*yield*/, exec_1.default("npm install -D " + devDependenciesToInstall, {
+                            workingDirectory: rootDir,
+                            redirectIo: true,
+                        })];
+                case 9:
+                    _c.sent();
+                    _c.label = 10;
+                case 10: return [2 /*return*/];
             }
         });
     });
 }
 exports.createOrUpdatePackageJSON = createOrUpdatePackageJSON;
-/** Takes a template and variables in the form of "<--VARIABLE_NAME-->" and replaces
- * all variables with the values passed */
-function renderTemplate(_a) {
-    var template = _a.template, variables = _a.variables;
-    var variablesNames = Object.keys(variables);
-    var renderedTemplate = template;
-    for (var _i = 0, variablesNames_1 = variablesNames; _i < variablesNames_1.length; _i++) {
-        var varName = variablesNames_1[_i];
-        var varValue = variables[varName];
-        var replaceVal = "<--" + varName + "-->";
-        renderedTemplate = renderedTemplate.replace(new RegExp(replaceVal, 'g'), varValue.toString());
-    }
-    return renderedTemplate;
-}
-exports.renderTemplate = renderTemplate;

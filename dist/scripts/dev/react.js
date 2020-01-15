@@ -14,6 +14,7 @@ function startReactAppDevelopmentServer() {
         alias: aliases,
         app: activeApp,
         projectDir: projectDir,
+        env: activeApp.env,
         include: include,
     });
     var compiler = webpack_1.default(webpackConfig);

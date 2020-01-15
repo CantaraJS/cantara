@@ -50,54 +50,62 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var webpack_1 = __importDefault(require("webpack"));
 var path_1 = __importDefault(require("path"));
-var util_1 = require("./util");
-var cantara_config_1 = __importDefault(require("../cantara-config"));
-var fs_1 = require("../util/fs");
-var configTemplates_1 = __importDefault(require("../util/configTemplates"));
-var fs_2 = require("fs");
-function addPeerDeps(packageJsonPath, deps) {
-    var packageJson = fs_1.readFileAsJSON(packageJsonPath);
-    var newPackageJson = __assign(__assign({}, packageJson), { peerDependencies: deps });
-    fs_1.writeJson(packageJsonPath, newPackageJson);
+var cantara_config_1 = __importDefault(require("../../cantara-config"));
+var webpackLibraryConfig_1 = __importDefault(require("../../util/config/webpackLibraryConfig"));
+var fs_1 = require("../../util/fs");
+var exec_1 = __importDefault(require("../../util/exec"));
+function compile(config) {
+    var compiler = webpack_1.default(config);
+    return new Promise(function (resolve, reject) {
+        compiler.run(function (err, stats) {
+            if (err) {
+                reject(new Error('Error while compiling.'));
+                return;
+            }
+            console.log('Successfully compiled!');
+            resolve();
+        });
+    });
 }
-/** Prepares a JavaScript package or React Component */
-function prepareJsPackage(app) {
+function buildPackage(app) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, reactDeps, staticFilesFolder, indexFileName, isReactComponent, expectedDevDependencies, packageTsConfigTemplate, renderedTsConfig, packageTsConfigPath;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _a, _b, aliases, include, projectDir, commonOptions, webpackCommonJsConfig, webpackUmdConfig, _c, libraryTargets, packageJsonPath, packageJson, newPackageJson;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
-                    _a = cantara_config_1.default(), reactDeps = _a.dependencies.react, staticFilesFolder = _a.internalPaths.static;
-                    indexFileName = 'index.ts';
-                    isReactComponent = app.type === 'react-component';
-                    expectedDevDependencies = isReactComponent ? reactDeps : {};
-                    // Create package.json if none exists
-                    return [4 /*yield*/, util_1.createOrUpdatePackageJSON({
-                            rootDir: app.paths.root,
-                            expectedDevDependencies: expectedDevDependencies,
-                            expectedDependencies: {},
-                        })];
+                    _a = cantara_config_1.default(), _b = _a.allPackages, aliases = _b.aliases, include = _b.include, projectDir = _a.runtime.projectDir;
+                    commonOptions = {
+                        alias: aliases,
+                        app: app,
+                        projectDir: projectDir,
+                        include: include,
+                    };
+                    webpackCommonJsConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'commonjs2', noChecks: true }));
+                    webpackUmdConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'umd' }));
+                    _c = app.meta.libraryTargets, libraryTargets = _c === void 0 ? [] : _c;
+                    if (!libraryTargets.includes('commonjs')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, compile(webpackCommonJsConfig)];
                 case 1:
-                    // Create package.json if none exists
-                    _b.sent();
-                    // For React Components, add react and react-dom to the peer dependencies
-                    if (isReactComponent) {
-                        addPeerDeps(path_1.default.join(app.paths.root, 'package.json'), reactDeps);
-                        indexFileName = 'index.tsx';
-                    }
-                    packageTsConfigTemplate = fs_2.readFileSync(path_1.default.join(staticFilesFolder, 'packageTsConfigTemplate.json')).toString();
-                    renderedTsConfig = configTemplates_1.default({
-                        template: packageTsConfigTemplate,
-                        variables: {
-                            INDEX_FILE_NAME: indexFileName,
-                        },
-                    });
-                    packageTsConfigPath = path_1.default.join(app.paths.root, 'tsconfig.json');
-                    fs_1.writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
+                    _d.sent();
+                    _d.label = 2;
+                case 2:
+                    if (!libraryTargets.includes('umd')) return [3 /*break*/, 4];
+                    return [4 /*yield*/, compile(webpackUmdConfig)];
+                case 3:
+                    _d.sent();
+                    _d.label = 4;
+                case 4:
+                    // Generate types
+                    exec_1.default('tsc', { workingDirectory: app.paths.root, redirectIo: true });
+                    packageJsonPath = path_1.default.join(app.paths.root, 'package.json');
+                    packageJson = fs_1.readFileAsJSON(packageJsonPath);
+                    newPackageJson = __assign(__assign({}, packageJson), { main: "./" + path_1.default.relative(app.paths.root, app.paths.build) + "/index.js" });
+                    fs_1.writeJson(packageJsonPath, newPackageJson);
                     return [2 /*return*/];
             }
         });
     });
 }
-exports.default = prepareJsPackage;
+exports.default = buildPackage;

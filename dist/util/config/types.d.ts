@@ -8,4 +8,18 @@ export interface CreateWebpackConfigParams {
     };
     include?: string[];
     mode?: 'production' | 'development';
+    libraryTarget?: 'commonjs2' | 'umd';
+    /** Set this to true if you want to skip type checks and
+     * other things which should just be executed once.
+     * Set to true if you need to compile multiple
+     * bundles one after another.
+     * Only set to false for last compilation.
+     */
+    noChecks?: boolean;
+    /** Environment variables which are replaced
+     * in the bundle
+     */
+    env?: {
+        [key: string]: string;
+    };
 }

@@ -8,5 +8,8 @@ export default function executeTests() {
     },
   } = getGlobalConfig();
 
-  execCmd('jest', { workingDirectory: activeApp.paths.root, redirectIo: true });
+  execCmd('jest --watch', {
+    workingDirectory: activeApp.paths.root,
+    redirectIo: true,
+  });
 }

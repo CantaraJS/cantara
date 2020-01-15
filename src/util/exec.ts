@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 import path from 'path';
 import getGlobalConfig from '../cantara-config';
 
@@ -43,28 +43,21 @@ export default function execCmd(
       ? globalCantaraConfig.runtime.secrets
       : {};
 
-    const newProcess = exec(
-      cmd,
-      {
-        cwd: workingDirectory,
-        env: {
-          ...process.env,
-          ...secretsEnvVars,
-          PATH: NEW_PATH_ENV,
-        },
+    const options = {
+      cwd: workingDirectory,
+      env: {
+        ...process.env,
+        ...secretsEnvVars,
+        PATH: NEW_PATH_ENV,
       },
-      (err, stdout, stderr) => {
-        if (err) {
-          reject(stderr);
-        } else {
-          resolve(stdout);
-        }
-      },
-    );
+    };
 
-    if (redirectIo && newProcess.stdout && newProcess.stderr) {
-      newProcess.stdout.pipe(process.stdout);
-      newProcess.stderr.pipe(process.stderr);
-    }
+    const [programCmd, ...params] = cmd.split(' ');
+
+    spawn(programCmd, params, {
+      ...options,
+      shell: true,
+      stdio: redirectIo ? 'inherit' : 'ignore',
+    });
   });
 }

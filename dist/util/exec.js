@@ -21,7 +21,7 @@ var cantara_config_1 = __importDefault(require("../cantara-config"));
  * with different folders in PATH.
  */
 function execCmd(cmd, _a) {
-    var _b = _a === void 0 ? {} : _a, _c = _b.workingDirectory, workingDirectory = _c === void 0 ? process.cwd() : _c, redirectIo = _b.redirectIo;
+    var _b = _a === void 0 ? {} : _a, _c = _b.workingDirectory, workingDirectory = _c === void 0 ? process.cwd() : _c, redirectIo = _b.redirectIo, withSecrets = _b.withSecrets;
     var globalCantaraConfig = cantara_config_1.default();
     return new Promise(function (resolve, reject) {
         var localNodeModulesBinPath = globalCantaraConfig.internalPaths.root +
@@ -33,18 +33,15 @@ function execCmd(cmd, _a) {
         var NEW_PATH_ENV = localNodeModulesAlreadyInPath
             ? process.env.PATH
             : process.env.PATH + path_1.default.delimiter + localNodeModulesBinPath;
-        var newProcess = child_process_1.exec(cmd, { cwd: workingDirectory, env: __assign(__assign({}, process.env), { PATH: NEW_PATH_ENV }) }, function (err, stdout, stderr) {
-            if (err) {
-                reject(stderr);
-            }
-            else {
-                resolve(stdout);
-            }
-        });
-        if (redirectIo && newProcess.stdout && newProcess.stderr) {
-            newProcess.stdout.pipe(process.stdout);
-            newProcess.stderr.pipe(process.stderr);
-        }
+        var secretsEnvVars = withSecrets
+            ? globalCantaraConfig.runtime.secrets
+            : {};
+        var options = {
+            cwd: workingDirectory,
+            env: __assign(__assign(__assign({}, process.env), secretsEnvVars), { PATH: NEW_PATH_ENV }),
+        };
+        var _a = cmd.split(' '), programCmd = _a[0], params = _a.slice(1);
+        child_process_1.spawn(programCmd, params, __assign(__assign({}, options), { shell: true, stdio: redirectIo ? 'inherit' : 'ignore' }));
     });
 }
 exports.default = execCmd;

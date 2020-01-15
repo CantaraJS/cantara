@@ -107,6 +107,18 @@ function prepareCantaraProject() {
                 case 5:
                     // Install React dependencies globally for project
                     _a.sent();
+                    // Install Typescript dependencies globally for project
+                    return [4 /*yield*/, util_2.createOrUpdatePackageJSON({
+                            rootDir: rootDir,
+                            expectedDevDependencies: globalCantaraConfig.dependencies.typescript,
+                        })];
+                case 6:
+                    // Install Typescript dependencies globally for project
+                    _a.sent();
+                    // Create .temp folder if it doesn't exist yet
+                    if (!fs_1.existsSync(globalCantaraConfig.internalPaths.temp)) {
+                        fs_1.mkdirSync(globalCantaraConfig.internalPaths.temp);
+                    }
                     return [2 /*return*/];
             }
         });
