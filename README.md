@@ -39,8 +39,10 @@ ctr init [template-name]
 
 ## Required
 
-- CSS Modules (xyz.module.css)
 - Implement "test" command
+  - Encapsulate jest.config.js
+- Fix aliases (look at generated tsconfig.json)
+  - Make sure that _only_ package aliases are included (intelli sense also suggests exports from e.g. node-apps folder)
 - Provide "publish" command with good UX for publishing a package to NPM
   - Look at "np"
 - Implement "new" command

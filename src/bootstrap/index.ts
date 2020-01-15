@@ -64,6 +64,12 @@ async function prepareCantaraProject() {
     expectedDependencies: globalCantaraConfig.dependencies.react,
   });
 
+  // Install Typescript dependencies globally for project
+  await createOrUpdatePackageJSON({
+    rootDir,
+    expectedDevDependencies: globalCantaraConfig.dependencies.typescript,
+  });
+
   // Create .temp folder if it doesn't exist yet
   if (!existsSync(globalCantaraConfig.internalPaths.temp)) {
     mkdirSync(globalCantaraConfig.internalPaths.temp);

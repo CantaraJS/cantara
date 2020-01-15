@@ -7,11 +7,12 @@ import onPreBootstrap from './bootstrap';
 import buildActiveApp from './scripts/build';
 import deployActiveApp from './scripts/deploy';
 import executeArbitraryCmdWithinApp from './scripts/arbitrary';
+import executeTests from './scripts/test';
 // import execCmd from './exec';
 
 const packageJSON = require('../package.json');
 
-const TEST_CMD = 'dev places';
+const TEST_CMD = 'test places';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
@@ -93,6 +94,16 @@ program
   .action(async appname => {
     await prepareCantara({ appname, cmdName: 'deploy' });
     deployActiveApp();
+  });
+
+program
+  .command('test [appname]')
+  .description(
+    'Execute Jest tests for the specified application or for all applications if none was specified.',
+  )
+  .action(async appname => {
+    await prepareCantara({ appname, cmdName: 'test' });
+    executeTests();
   });
 
 /** Execute npm commands in the scope of a package/app */

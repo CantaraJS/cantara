@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from 'fs';
 import execCmd from '../util/exec';
 
 interface CreateOrUpdatePackageJSONParams {
-  expectedDependencies: { [key: string]: string };
+  expectedDependencies?: { [key: string]: string };
   expectedDevDependencies?: { [key: string]: string };
   rootDir: string;
 }
@@ -58,15 +58,17 @@ export async function createOrUpdatePackageJSON({
       dependencies: KeyValueStore;
       devDependencies: KeyValueStore;
     } = JSON.parse(readFileSync(localPackageJsonPath).toString());
-    const dependenciesToInstall = getDependenciesInstallationString({
-      expectedDependencies,
-      actualDependencies: dependencies,
-    });
-    if (dependenciesToInstall) {
-      await execCmd(`npm install -S ${dependenciesToInstall}`, {
-        workingDirectory: rootDir,
-        redirectIo: true,
+    if (expectedDependencies) {
+      const dependenciesToInstall = getDependenciesInstallationString({
+        expectedDependencies,
+        actualDependencies: dependencies,
       });
+      if (dependenciesToInstall) {
+        await execCmd(`npm install -S ${dependenciesToInstall}`, {
+          workingDirectory: rootDir,
+          redirectIo: true,
+        });
+      }
     }
     if (expectedDevDependencies) {
       const devDependenciesToInstall = getDependenciesInstallationString({
@@ -85,16 +87,18 @@ export async function createOrUpdatePackageJSON({
     await execCmd(`npm init -y`, {
       workingDirectory: rootDir,
     });
-    const dependenciesToInstall = Object.keys(expectedDependencies)
-      .reduce((depsStr, depName) => {
-        return `${depName}@${expectedDependencies[depName]} ${depsStr}`;
-      }, '')
-      .trim();
-    if (dependenciesToInstall) {
-      await execCmd(`npm install -S ${dependenciesToInstall}`, {
-        workingDirectory: rootDir,
-        redirectIo: true,
-      });
+    if (expectedDependencies) {
+      const dependenciesToInstall = Object.keys(expectedDependencies)
+        .reduce((depsStr, depName) => {
+          return `${depName}@${expectedDependencies[depName]} ${depsStr}`;
+        }, '')
+        .trim();
+      if (dependenciesToInstall) {
+        await execCmd(`npm install -S ${dependenciesToInstall}`, {
+          workingDirectory: rootDir,
+          redirectIo: true,
+        });
+      }
     }
 
     if (expectedDevDependencies) {
