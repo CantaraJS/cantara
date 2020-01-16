@@ -5,6 +5,7 @@ import getGlobalConfig from '../cantara-config';
 import slash from 'slash';
 import renderTemplate from '../util/configTemplates';
 import { CantaraApplication } from '../util/types';
+import { writeJson } from '../util/fs';
 
 interface CreateOrUpdatePackageJSONParams {
   expectedDependencies?: { [key: string]: string };
@@ -121,8 +122,36 @@ export async function createOrUpdatePackageJSON({
   }
 }
 
+/** Converts webpack compatible aliases
+ * into Jest's `moduleNameMapper` aliases
+ */
+function getJestAliases() {
+  const {
+    aliases: { packageAliases },
+    runtime: {
+      currentCommand: { app: activeApp },
+    },
+  } = getGlobalConfig();
+  const jestAliases = Object.keys(packageAliases).reduce(
+    (aliasObj, packageName) => {
+      const packageAbsolutePath = packageAliases[packageName];
+      const relativePathToPackage = path.relative(
+        activeApp.paths.root,
+        packageAbsolutePath,
+      );
+      return {
+        ...aliasObj,
+        [`^${packageName}$`]: `<rootDir>/${slash(relativePathToPackage)}`,
+      };
+    },
+    {},
+  );
+  return jestAliases;
+}
+
 export function createReactJestConfig(app: CantaraApplication) {
   const globalCantaraConfig = getGlobalConfig();
+  const jestAliases = getJestAliases();
 
   // Copy setup file to project root
   const setupFilePath = path.join(
@@ -144,6 +173,7 @@ export function createReactJestConfig(app: CantaraApplication) {
     MODULES_PATH: slash(
       path.join(globalCantaraConfig.internalPaths.root, 'node_modules'),
     ),
+    PACKAGE_ALIASES: JSON.stringify(jestAliases, null, 2),
   };
 
   const newJestConfig = renderTemplate({
@@ -157,6 +187,9 @@ export function createReactJestConfig(app: CantaraApplication) {
 
 export function createNodeJestConfig(app: CantaraApplication) {
   const globalCantaraConfig = getGlobalConfig();
+
+  const jestAliases = getJestAliases();
+
   const jestConfigTemplate = readFileSync(
     path.join(
       globalCantaraConfig.internalPaths.static,
@@ -169,6 +202,7 @@ export function createNodeJestConfig(app: CantaraApplication) {
     MODULES_PATH: slash(
       path.join(globalCantaraConfig.internalPaths.root, 'node_modules'),
     ),
+    PACKAGE_ALIASES: JSON.stringify(jestAliases, null, 2),
   };
 
   const newJestConfig = renderTemplate({
