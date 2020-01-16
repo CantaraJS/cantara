@@ -9,6 +9,7 @@ import { createOrUpdatePackageJSON } from './util';
 import prepareServerlessApp from './serverless';
 import prepareJsPackage from './packages';
 import { writeJson } from '../util/fs';
+import prepareNodeApp from './node';
 
 const ncp = promisify(ncpCb);
 
@@ -58,16 +59,14 @@ async function prepareCantaraProject() {
   };
   writeJson(path.join(rootDir, 'tsconfig.json'), newTsConfig);
 
-  // Install React dependencies globally for project
+  // Install React + Typescript dependencies globally for project
   await createOrUpdatePackageJSON({
     rootDir,
     expectedDependencies: globalCantaraConfig.dependencies.react,
-  });
-
-  // Install Typescript dependencies globally for project
-  await createOrUpdatePackageJSON({
-    rootDir,
-    expectedDevDependencies: globalCantaraConfig.dependencies.typescript,
+    expectedDevDependencies: {
+      ...globalCantaraConfig.dependencies.typescript,
+      ...globalCantaraConfig.dependencies.testing,
+    },
   });
 
   // Create .temp folder if it doesn't exist yet
@@ -94,6 +93,9 @@ export default async function onPreBootstrap() {
     }
     if (app.type === 'react-component' || app.type === 'js-package') {
       await prepareJsPackage(app);
+    }
+    if (app.type === 'node') {
+      await prepareNodeApp(app);
     }
   }
 }

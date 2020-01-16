@@ -1,6 +1,10 @@
 import path from 'path';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, copyFileSync } from 'fs';
 import execCmd from '../util/exec';
+import getGlobalConfig from '../cantara-config';
+import slash from 'slash';
+import renderTemplate from '../util/configTemplates';
+import { CantaraApplication } from '../util/types';
 
 interface CreateOrUpdatePackageJSONParams {
   expectedDependencies?: { [key: string]: string };
@@ -115,4 +119,62 @@ export async function createOrUpdatePackageJSON({
       }
     }
   }
+}
+
+export function createReactJestConfig(app: CantaraApplication) {
+  const globalCantaraConfig = getGlobalConfig();
+
+  // Copy setup file to project root
+  const setupFilePath = path.join(
+    globalCantaraConfig.internalPaths.static,
+    'jestReact.setup.ts',
+  );
+  const setupFileDestination = path.join(app.paths.root, 'jest.setup.ts');
+  copyFileSync(setupFilePath, setupFileDestination);
+
+  // create jest.config.js
+  const jestConfigTemplate = readFileSync(
+    path.join(
+      globalCantaraConfig.internalPaths.static,
+      'jestReactConfig.template.js',
+    ),
+  ).toString();
+
+  const templateVariables = {
+    MODULES_PATH: slash(
+      path.join(globalCantaraConfig.internalPaths.root, 'node_modules'),
+    ),
+  };
+
+  const newJestConfig = renderTemplate({
+    template: jestConfigTemplate,
+    variables: templateVariables,
+  });
+  const newJestConfigPath = path.join(app.paths.root, 'jest.config.js');
+
+  writeFileSync(newJestConfigPath, newJestConfig);
+}
+
+export function createNodeJestConfig(app: CantaraApplication) {
+  const globalCantaraConfig = getGlobalConfig();
+  const jestConfigTemplate = readFileSync(
+    path.join(
+      globalCantaraConfig.internalPaths.static,
+      'jestNodeConfig.template.js',
+    ),
+  ).toString();
+  const newJestConfigPath = path.join(app.paths.root, 'jest.config.js');
+
+  const templateVariables = {
+    MODULES_PATH: slash(
+      path.join(globalCantaraConfig.internalPaths.root, 'node_modules'),
+    ),
+  };
+
+  const newJestConfig = renderTemplate({
+    template: jestConfigTemplate,
+    variables: templateVariables,
+  });
+
+  writeFileSync(newJestConfigPath, newJestConfig);
 }

@@ -5,6 +5,7 @@ import slash from 'slash';
 import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
+import { createNodeJestConfig } from './util';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 
@@ -90,7 +91,7 @@ function createServerlessYml(app: CantaraApplication) {
   });
 
   const serverlessPartsFilePath = path.join(
-    globalCantaraConfig.internalPaths.static,
+    globalCantaraConfig.internalPaths.temp,
     'serverless.parts.yml',
   );
   writeFileSync(serverlessPartsFilePath, newServerlessYmlParts);
@@ -113,4 +114,7 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
   // Now, create the custom serverless.yml file with the correct paths
   // The main serverless.yml file needs to inherit from it!
   createServerlessYml(app);
+
+  // Create jest config
+  createNodeJestConfig(app);
 }

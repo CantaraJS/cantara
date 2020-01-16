@@ -54,10 +54,13 @@ export default function execCmd(
 
     const [programCmd, ...params] = cmd.split(' ');
 
-    spawn(programCmd, params, {
+    const newProcess = spawn(programCmd, params, {
       ...options,
       shell: true,
       stdio: redirectIo ? 'inherit' : 'ignore',
     });
+    newProcess.on('close', resolve);
+    newProcess.on('exit', resolve);
+    newProcess.on('disconnect', resolve);
   });
 }

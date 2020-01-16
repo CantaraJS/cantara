@@ -40,7 +40,9 @@ ctr init [template-name]
 ## Required
 
 - Implement "test" command
-  - Encapsulate jest.config.js
+  - Env vars
+  - Aliases
+  - Install testing dependencies in the project's root?
 - Fix aliases (look at generated tsconfig.json)
   - Make sure that _only_ package aliases are included (intelli sense also suggests exports from e.g. node-apps folder)
 - Provide "publish" command with good UX for publishing a package to NPM
@@ -63,7 +65,8 @@ ctr init [template-name]
 
 ## Nice to have
 
-- Interactive mode, "Cockpit", where multiple Cantara commands can be started and monitored
+- "Mission Control": Intuitive Web Interface
+  - Interface to manage all available Cantara Commands
 - Optional Chaining
 - I18n / Intl
 - Add bundleanalyzer option to build cmd

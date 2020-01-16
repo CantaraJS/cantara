@@ -3,7 +3,7 @@ import { copyFileSync, existsSync, readFileSync } from 'fs';
 
 import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
-import { createOrUpdatePackageJSON } from './util';
+import { createOrUpdatePackageJSON, createReactJestConfig } from './util';
 
 /** Prepares React App Folder */
 export default async function prepareReactApps(app: CantaraApplication) {
@@ -22,7 +22,13 @@ export default async function prepareReactApps(app: CantaraApplication) {
   // Install/update dependencies
   await createOrUpdatePackageJSON({
     expectedDependencies: globalCantaraConfig.dependencies.react,
-    expectedDevDependencies: globalCantaraConfig.dependencies.typescript,
+    // expectedDevDependencies: {
+    //   ...globalCantaraConfig.dependencies.typescript,
+    //   ...globalCantaraConfig.dependencies.testing,
+    // },
     rootDir: app.paths.root,
   });
+
+  // Create react Jest config file and copy to current project
+  createReactJestConfig(app);
 }

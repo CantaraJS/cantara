@@ -6,6 +6,7 @@ import getGlobalConfig from '../../cantara-config';
 import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { readFileAsJSON, writeJson } from '../../util/fs';
 import execCmd from '../../util/exec';
+import { unlinkSync } from 'fs';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
@@ -53,7 +54,7 @@ export default async function buildPackage(app: CantaraApplication) {
   }
 
   // Generate types
-  execCmd('tsc', { workingDirectory: app.paths.root, redirectIo: true });
+  await execCmd('tsc', { workingDirectory: app.paths.root, redirectIo: true });
 
   // Set correct path to index.js in packageJson's "main" field
   const packageJsonPath = path.join(app.paths.root, 'package.json');
@@ -63,4 +64,12 @@ export default async function buildPackage(app: CantaraApplication) {
     main: `./${path.relative(app.paths.root, app.paths.build)}/index.js`,
   };
   writeJson(packageJsonPath, newPackageJson);
+
+  // Delete generated declaration files for jest setup script
+  try {
+    unlinkSync(path.join(app.paths.build, 'jest.setup.d.ts'));
+    unlinkSync(path.join(app.paths.build, 'jest.setup.d.ts.map'));
+  } catch (e) {
+    console.log('err', e);
+  }
 }

@@ -1,7 +1,11 @@
 import path from 'path';
 
 import { CantaraApplication } from '../util/types';
-import { createOrUpdatePackageJSON } from './util';
+import {
+  createOrUpdatePackageJSON,
+  createReactJestConfig,
+  createNodeJestConfig,
+} from './util';
 import getGlobalConfig from '../cantara-config';
 import { readFileAsJSON, writeJson } from '../util/fs';
 import renderTemplate from '../util/configTemplates';
@@ -19,14 +23,18 @@ function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
 /** Prepares a JavaScript package or React Component */
 export default async function prepareJsPackage(app: CantaraApplication) {
   const {
-    dependencies: { react: reactDeps },
+    dependencies: {
+      react: reactDeps,
+      testing: testingDeps,
+      typescript: typescriptDeps,
+    },
     internalPaths: { static: staticFilesFolder },
   } = getGlobalConfig();
 
   let indexFileName = 'index.ts';
   const isReactComponent = app.type === 'react-component';
 
-  const expectedDevDependencies = isReactComponent ? reactDeps : {};
+  const expectedDevDependencies = isReactComponent ? { ...reactDeps } : {};
 
   // Create package.json if none exists
   await createOrUpdatePackageJSON({
@@ -35,10 +43,14 @@ export default async function prepareJsPackage(app: CantaraApplication) {
     expectedDependencies: {},
   });
 
-  // For React Components, add react and react-dom to the peer dependencies
   if (isReactComponent) {
+    // For React Components, add react and react-dom to the peer dependencies
     addPeerDeps(path.join(app.paths.root, 'package.json'), reactDeps);
+    // Create jest config files
+    createReactJestConfig(app);
     indexFileName = 'index.tsx';
+  } else {
+    createNodeJestConfig(app);
   }
 
   // Create local tsconfig which extends from global one.
@@ -50,6 +62,7 @@ export default async function prepareJsPackage(app: CantaraApplication) {
     template: packageTsConfigTemplate,
     variables: {
       INDEX_FILE_NAME: indexFileName,
+      JEST_SETUP_FILE: './jest.setup.ts',
     },
   });
   const packageTsConfigPath = path.join(app.paths.root, 'tsconfig.json');

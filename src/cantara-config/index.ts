@@ -3,9 +3,10 @@ import path from 'path';
 import getAllApps, { loadSecrets } from './util';
 import { CantaraApplication } from '../util/types';
 
-import { readFileSync } from 'fs';
 import getAllPackageAliases from './aliases';
-import { readFileAsJSON } from '../util/fs';
+import { reactDependencies } from './dependencies/react';
+import { typescriptDependencies } from './dependencies/types';
+import { testingDependencies } from './dependencies/testing';
 
 interface CantaraInitialConfig {
   /** Where the cantara package itself lives */
@@ -36,8 +37,12 @@ interface CantaraGlobalConfig {
   dependencies: {
     /** Current React and React DOM version */
     react: Dependencies;
-    /** Dependencies needed for TS */
+    /** Dependencies needed for TS
+     * (including all type declarations packages)
+     */
     typescript: Dependencies;
+    /** Dependecies needed for testing */
+    testing: Dependencies;
   };
   /** Paths used internally by Cantara */
   internalPaths: {
@@ -77,12 +82,6 @@ export default function getGlobalConfig() {
 export function configureCantara(config: CantaraInitialConfig) {
   const staticFilesPath = path.join(config.packageRootDir, 'static');
   const tempFolder = path.join(staticFilesPath, '.temp');
-  const reactDependecies = readFileAsJSON(
-    path.join(staticFilesPath, 'react-dependencies.json'),
-  );
-  const typescriptDependencies = readFileAsJSON(
-    path.join(staticFilesPath, 'ts-dependencies.json'),
-  );
   const projectDir = config.projectDir || process.cwd();
   const allApps = getAllApps({ rootDir: projectDir, stage: config.stage });
   const currentActiveApp = allApps.find(
@@ -104,8 +103,9 @@ export function configureCantara(config: CantaraInitialConfig) {
         .map(app => app.paths.src),
     },
     dependencies: {
-      react: reactDependecies,
+      react: reactDependencies,
       typescript: typescriptDependencies,
+      testing: testingDependencies,
     },
     internalPaths: {
       root: config.packageRootDir,
