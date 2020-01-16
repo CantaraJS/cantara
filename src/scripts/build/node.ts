@@ -5,12 +5,13 @@ import createNodeWebpackConfig from '../../util/config/webpackNodeConfig';
 
 export default function buildNodeApp(app: CantaraApplication) {
   const {
-    allPackages: { aliases, include },
+    allPackages: { include },
+    aliases: { packageAliases },
     runtime: { projectDir },
   } = getGlobalConfig();
 
   const webpackConfig = createNodeWebpackConfig({
-    alias: aliases,
+    alias: packageAliases,
     app,
     env: app.env,
     mode: 'production',

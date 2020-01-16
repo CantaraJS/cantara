@@ -48,13 +48,13 @@ async function prepareCantaraProject() {
     ).toString(),
   );
   const {
-    allPackages: { aliases },
+    aliases: { packageAliases },
   } = globalCantaraConfig;
   const newTsConfig = {
     ...tsConfig,
     compilerOptions: {
       ...tsConfig.compilerOptions,
-      paths: aliasesAbsoluteToRelative(aliases),
+      paths: aliasesAbsoluteToRelative(packageAliases),
     },
   };
   writeJson(path.join(rootDir, 'tsconfig.json'), newTsConfig);

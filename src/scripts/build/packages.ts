@@ -24,11 +24,13 @@ function compile(config: webpack.Configuration) {
 
 export default async function buildPackage(app: CantaraApplication) {
   const {
-    allPackages: { aliases, include },
+    allPackages: { include },
+    aliases: { appDependencyAliases, packageAliases },
     runtime: { projectDir },
   } = getGlobalConfig();
+  const allAliases = { ...appDependencyAliases, ...packageAliases };
   const commonOptions = {
-    alias: aliases,
+    alias: allAliases,
     app,
     projectDir,
     include,

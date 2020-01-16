@@ -3,7 +3,7 @@ import path from 'path';
 import getAllApps, { loadSecrets } from './util';
 import { CantaraApplication } from '../util/types';
 
-import getAllPackageAliases from './aliases';
+import getAllPackageAliases, { getDependencyAliases } from './aliases';
 import { reactDependencies } from './dependencies/react';
 import { typescriptDependencies } from './dependencies/types';
 import { testingDependencies } from './dependencies/testing';
@@ -30,9 +30,12 @@ type Dependencies = { [key: string]: string };
 interface CantaraGlobalConfig {
   allApps: CantaraApplication[];
   allPackages: {
-    aliases: { [key: string]: string };
     /** Include all those paths into webpack configs */
     include: string[];
+  };
+  aliases: {
+    packageAliases: { [key: string]: string };
+    appDependencyAliases: { [key: string]: string };
   };
   dependencies: {
     /** Current React and React DOM version */
@@ -95,12 +98,18 @@ export function configureCantara(config: CantaraInitialConfig) {
   const configToUse: CantaraGlobalConfig = {
     allApps,
     allPackages: {
-      aliases: getAllPackageAliases({ allApps, activeApp: currentActiveApp }),
       include: allApps
         .filter(
           app => app.type === 'js-package' || app.type === 'react-component',
         )
         .map(app => app.paths.src),
+    },
+    aliases: {
+      packageAliases: getAllPackageAliases({
+        allApps,
+        activeApp: currentActiveApp,
+      }),
+      appDependencyAliases: getDependencyAliases(currentActiveApp),
     },
     dependencies: {
       react: reactDependencies,

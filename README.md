@@ -42,7 +42,6 @@ ctr init [template-name]
 - Implement "test" command
   - Env vars
   - Aliases
-  - Install testing dependencies in the project's root?
 - Fix aliases (look at generated tsconfig.json)
   - Make sure that _only_ package aliases are included (intelli sense also suggests exports from e.g. node-apps folder)
 - Provide "publish" command with good UX for publishing a package to NPM

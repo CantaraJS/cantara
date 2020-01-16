@@ -24,6 +24,10 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ),
   ).toString();
 
+  const allAliases = {
+    ...globalCantaraConfig.aliases.appDependencyAliases,
+    ...globalCantaraConfig.aliases.packageAliases,
+  };
   const templateVariables = {
     MODULES_PATH:
       slash(path.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
@@ -32,7 +36,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
       path.join(globalCantaraConfig.runtime.projectDir, 'tsconfig.json'),
     ),
     ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
-    ALIASES: JSON.stringify(globalCantaraConfig.allPackages.aliases),
+    ALIASES: JSON.stringify(allAliases),
     ENV_VARS: JSON.stringify(app.env || {}),
   };
 

@@ -5,12 +5,13 @@ import webpack from 'webpack';
 
 export default function buildReactApp(app: CantaraApplication) {
   const {
-    allPackages: { aliases, include },
+    allPackages: { include },
+    aliases: { packageAliases },
     runtime: { projectDir },
   } = getGlobalConfig();
 
   const webpackConfig = createReactWebpackConfig({
-    alias: aliases,
+    alias: packageAliases,
     app,
     env: app.env,
     mode: 'production',

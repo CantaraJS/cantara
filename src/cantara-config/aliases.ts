@@ -12,7 +12,11 @@ import { existsSync } from 'fs';
     that there's only one instance present,
     e.g. React, styled-components, ...
  */
-function getDependencyAliases(app: CantaraApplication) {
+export function getDependencyAliases(app: CantaraApplication) {
+  const doSetAliasesForThisAppType =
+    app.type === 'serverless' || app.type === 'node' || app.type === 'react';
+
+  if (!doSetAliasesForThisAppType) return {};
   let dependencies = {};
   const packageJsonPath = path.join(app.paths.root, 'package.json');
   if (existsSync(packageJsonPath)) {
@@ -53,15 +57,6 @@ export default function getAllPackageAliases({
         [currentApp.name]: slash(currentApp.paths.src),
       };
     }, {});
-  const appDependencyAliases =
-    activeApp.type === 'serverless' ||
-    activeApp.type === 'node' ||
-    activeApp.type === 'react'
-      ? getDependencyAliases(activeApp)
-      : {};
 
-  return {
-    ...packageAliases,
-    ...appDependencyAliases,
-  };
+  return packageAliases;
 }

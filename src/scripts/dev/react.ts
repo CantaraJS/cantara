@@ -8,14 +8,15 @@ import clearConsole from '../../util/clearConsole';
 
 export function startReactAppDevelopmentServer() {
   const {
-    allPackages: { aliases, include },
+    allPackages: { include },
+    aliases: { packageAliases },
     runtime: {
       currentCommand: { app: activeApp },
       projectDir,
     },
   } = getGlobalConfig();
   const webpackConfig = createReactWebpackConfig({
-    alias: aliases,
+    alias: packageAliases,
     app: activeApp,
     projectDir,
     env: activeApp.env,

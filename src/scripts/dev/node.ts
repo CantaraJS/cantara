@@ -9,9 +9,11 @@ export function startNodeAppDevelopmentServer() {
       currentCommand: { app: activeApp },
       projectDir,
     },
+    aliases: { packageAliases },
   } = getGlobalConfig();
   const webpackConfig = createNodeWebpackConfig({
     app: activeApp,
+    alias: packageAliases,
     projectDir,
     env: activeApp.env,
   });
