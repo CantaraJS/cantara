@@ -6,6 +6,7 @@ import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
 import { createNodeJestConfig } from './util';
+import getAllWebpackExternals from '../util/externals';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 
@@ -28,6 +29,8 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ...globalCantaraConfig.aliases.appDependencyAliases,
     ...globalCantaraConfig.aliases.packageAliases,
   };
+  const externals = getAllWebpackExternals();
+
   const templateVariables = {
     MODULES_PATH:
       slash(path.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
@@ -38,6 +41,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
     ALIASES: JSON.stringify(allAliases),
     ENV_VARS: JSON.stringify(app.env || {}),
+    EXTERNALS_ARRAY: JSON.stringify(externals),
   };
 
   const newBabelConfig = renderTemplate({
@@ -75,6 +79,7 @@ function createServerlessYml(app: CantaraApplication) {
       'serverlessWebpackConfig.js',
     ),
   );
+
   const templateVariables = {
     MODULES_PATH:
       slash(path.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
@@ -104,8 +109,8 @@ function createServerlessYml(app: CantaraApplication) {
 
   // Merge user's yaml file and this one
   const newServerlessYml = mergeYaml(
-    serverlessPartsFilePath,
     userServerlessYmlPath,
+    serverlessPartsFilePath,
   );
   writeFileSync(userServerlessYmlPath, newServerlessYml);
 }

@@ -9,7 +9,6 @@ const path = require('path');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const slsw = require('serverless-webpack');
-const nodeExternals = require('webpack-node-externals');
 const webpack = require("webpack")
 
 const babelConfig = require('./serverlessBabelConfig');
@@ -31,11 +30,7 @@ module.exports = {
     ],
     alias: <--ALIASES-->,
   },
-  externals: [
-    nodeExternals({
-      modulesDir: path.resolve('node_modules'),
-    }),
-  ],
+  externals: <--EXTERNALS_ARRAY-->,
   module: {
     rules: [
       {

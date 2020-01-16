@@ -2,6 +2,7 @@ import webpack, { Configuration } from 'webpack';
 import { CreateWebpackConfigParams } from './types';
 import path from 'path';
 import babelConfig from './babelNodeConfig';
+import getAllWebpackExternals from '../externals';
 
 const NodemonPlugin = require('nodemon-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -18,12 +19,16 @@ export default function createNodeWebpackConfig({
 }: CreateWebpackConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
+
+  const externals = getAllWebpackExternals();
+
   return {
     entry: app.paths.src,
     output: { path: app.paths.build },
     node: { __dirname: true },
     target: 'node',
     mode,
+    externals,
     resolve: {
       extensions: [
         '.web.js',

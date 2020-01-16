@@ -2,7 +2,7 @@ import { CreateWebpackConfigParams } from './types';
 
 import { Configuration } from 'webpack';
 import getBabelConfig from './babelReactConfig';
-import { readFileAsJSON } from '../fs';
+import getAllWebpackExternals from '../externals';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -16,22 +16,6 @@ function camalize(str: string) {
   return str
     .toLowerCase()
     .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase());
-}
-
-interface GetLibraryExternalsOptions {
-  packageJsonPath: string;
-  peerOnly?: boolean;
-}
-
-export function getLibraryExternals({
-  packageJsonPath,
-  peerOnly,
-}: GetLibraryExternalsOptions) {
-  const { dependencies = {}, peerDependencies = {} } = readFileAsJSON(
-    packageJsonPath,
-  );
-  if (peerOnly) return Object.keys(peerDependencies);
-  return [...Object.keys(dependencies), ...Object.keys(peerDependencies)];
 }
 
 /**
@@ -51,8 +35,7 @@ export default function createLibraryWebpackConfig({
       : path.join(app.paths.src, 'index.ts');
 
   // For UMD builds (CDN ready) only exclude peer deps
-  const externals = getLibraryExternals({
-    packageJsonPath: path.join(app.paths.root, 'package.json'),
+  const externals = getAllWebpackExternals({
     peerOnly: libraryTarget === 'umd',
   });
 

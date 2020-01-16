@@ -3,6 +3,7 @@ import { existsSync } from 'fs';
 
 import { CreateWebpackConfigParams } from './types';
 import getBabelConfig from './babelReactConfig';
+import getAllWebpackExternals from '../externals';
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
@@ -35,6 +36,7 @@ export default function createReactWebpackConfig({
   const appIconPathPng = path.join(app.paths.assets, 'app_icon.png');
   const appIconPathSvg = path.join(app.paths.assets, 'app_icon.svg');
   const doesServiceWorkerExist = existsSync(path.join(app.paths.root, 'sw.js'));
+  const externals = getAllWebpackExternals();
 
   if (existsSync(appIconPathPng)) {
     iconPathToUse = appIconPathPng;
@@ -83,6 +85,7 @@ export default function createReactWebpackConfig({
       alias,
     },
     mode,
+    externals,
     devtool: isDevelopment ? 'eval-source-map' : undefined,
     output: {
       // publicPath: '/',
