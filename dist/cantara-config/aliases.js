@@ -28,6 +28,9 @@ var fs_2 = require("fs");
     e.g. React, styled-components, ...
  */
 function getDependencyAliases(app) {
+    var doSetAliasesForThisAppType = app.type === 'serverless' || app.type === 'node' || app.type === 'react';
+    if (!doSetAliasesForThisAppType)
+        return {};
     var dependencies = {};
     var packageJsonPath = path_1.default.join(app.paths.root, 'package.json');
     if (fs_2.existsSync(packageJsonPath)) {
@@ -42,6 +45,7 @@ function getDependencyAliases(app) {
     }, {});
     return dependencyAliases;
 }
+exports.getDependencyAliases = getDependencyAliases;
 /** Returns all aliases for packages in the form
  * { 'package-name': 'path/to/package/index.tx }.
  */
@@ -53,11 +57,6 @@ function getAllPackageAliases(_a) {
         var _a;
         return __assign(__assign({}, aliasesObj), (_a = {}, _a[currentApp.name] = slash_1.default(currentApp.paths.src), _a));
     }, {});
-    var appDependencyAliases = activeApp.type === 'serverless' ||
-        activeApp.type === 'node' ||
-        activeApp.type === 'react'
-        ? getDependencyAliases(activeApp)
-        : {};
-    return __assign(__assign({}, packageAliases), appDependencyAliases);
+    return packageAliases;
 }
 exports.default = getAllPackageAliases;

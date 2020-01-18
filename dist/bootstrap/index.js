@@ -60,6 +60,7 @@ var util_2 = require("./util");
 var serverless_1 = __importDefault(require("./serverless"));
 var packages_1 = __importDefault(require("./packages"));
 var fs_2 = require("../util/fs");
+var node_1 = __importDefault(require("./node"));
 var ncp = util_1.promisify(ncp_1.default);
 /** Make paths relative for typescript */
 function aliasesAbsoluteToRelative(aliases) {
@@ -73,7 +74,7 @@ function aliasesAbsoluteToRelative(aliases) {
 /** Prepares user's project */
 function prepareCantaraProject() {
     return __awaiter(this, void 0, void 0, function () {
-        var globalCantaraConfig, rootDir, STATIC_PATHS_TO_COPY, _i, STATIC_PATHS_TO_COPY_1, pathToCopy, fullPath, tsConfig, aliases, newTsConfig;
+        var globalCantaraConfig, rootDir, STATIC_PATHS_TO_COPY, _i, STATIC_PATHS_TO_COPY_1, pathToCopy, fullPath, tsConfig, packageAliases, newTsConfig;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -96,29 +97,23 @@ function prepareCantaraProject() {
                     return [3 /*break*/, 1];
                 case 4:
                     tsConfig = JSON.parse(fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'tsconfig.json')).toString());
-                    aliases = globalCantaraConfig.allPackages.aliases;
-                    newTsConfig = __assign(__assign({}, tsConfig), { compilerOptions: __assign(__assign({}, tsConfig.compilerOptions), { paths: aliasesAbsoluteToRelative(aliases) }) });
+                    packageAliases = globalCantaraConfig.aliases.packageAliases;
+                    newTsConfig = __assign(__assign({}, tsConfig), { compilerOptions: __assign(__assign({}, tsConfig.compilerOptions), { paths: aliasesAbsoluteToRelative(packageAliases) }) });
                     fs_2.writeJson(path_1.default.join(rootDir, 'tsconfig.json'), newTsConfig);
-                    // Install React dependencies globally for project
+                    // Install React + Typescript dependencies globally for project
                     return [4 /*yield*/, util_2.createOrUpdatePackageJSON({
                             rootDir: rootDir,
                             expectedDependencies: globalCantaraConfig.dependencies.react,
+                            expectedDevDependencies: __assign(__assign({}, globalCantaraConfig.dependencies.typescript), globalCantaraConfig.dependencies.testing),
                         })];
                 case 5:
-                    // Install React dependencies globally for project
-                    _a.sent();
-                    // Install Typescript dependencies globally for project
-                    return [4 /*yield*/, util_2.createOrUpdatePackageJSON({
-                            rootDir: rootDir,
-                            expectedDevDependencies: globalCantaraConfig.dependencies.typescript,
-                        })];
-                case 6:
-                    // Install Typescript dependencies globally for project
+                    // Install React + Typescript dependencies globally for project
                     _a.sent();
                     // Create .temp folder if it doesn't exist yet
                     if (!fs_1.existsSync(globalCantaraConfig.internalPaths.temp)) {
                         fs_1.mkdirSync(globalCantaraConfig.internalPaths.temp);
                     }
+                    util_2.createTempEnvJsonFile();
                     return [2 /*return*/];
             }
         });
@@ -140,7 +135,7 @@ function onPreBootstrap() {
                     _i = 0, _a = globalCantaraConfig.allApps;
                     _b.label = 2;
                 case 2:
-                    if (!(_i < _a.length)) return [3 /*break*/, 9];
+                    if (!(_i < _a.length)) return [3 /*break*/, 11];
                     app = _a[_i];
                     if (!(app.type === 'react')) return [3 /*break*/, 4];
                     return [4 /*yield*/, react_1.default(app)];
@@ -160,9 +155,15 @@ function onPreBootstrap() {
                     _b.sent();
                     _b.label = 8;
                 case 8:
+                    if (!(app.type === 'node')) return [3 /*break*/, 10];
+                    return [4 /*yield*/, node_1.default(app)];
+                case 9:
+                    _b.sent();
+                    _b.label = 10;
+                case 10:
                     _i++;
                     return [3 /*break*/, 2];
-                case 9: return [2 /*return*/];
+                case 11: return [2 /*return*/];
             }
         });
     });

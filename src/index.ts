@@ -9,6 +9,7 @@ import deployActiveApp from './scripts/deploy';
 import executeArbitraryCmdWithinApp from './scripts/arbitrary';
 import executeTests from './scripts/test';
 import deriveStageNameFromCmd from './util/deriveStage';
+import publishPackage from './scripts/publish';
 const packageJSON = require('../package.json');
 
 /** Takes CLI command and removes unknown options
@@ -31,7 +32,7 @@ function prepareCmdForCommander(cmd: string[]) {
   return { cmd: cmdWithoutUnknownParams, unknownParams };
 }
 
-const TEST_CMD = 'build places-auth-react';
+const TEST_CMD = 'publish places-auth-react';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
@@ -127,14 +128,27 @@ program
   });
 
 program
-  .command('test [appname]')
+  .command('test <appname>')
   .description(
-    'Execute Jest tests for the specified application or for all applications if none was specified.',
+    'Execute Jest tests for the specified application. Jest parameters can be appended at the end of the command.',
   )
-  .option('*')
   .action(async appname => {
     await prepareCantara({ appname, cmdName: 'test', additionalCliOptions });
     executeTests();
+  });
+
+program
+  .command('publish <package-name>')
+  .description(
+    'Publish a package to npm. Make sure to execute tests yourself before publishing.',
+  )
+  .action(async packageName => {
+    await prepareCantara({
+      appname: packageName,
+      cmdName: 'publish',
+      additionalCliOptions,
+    });
+    publishPackage();
   });
 
 /** Execute npm commands in the scope of a package/app */

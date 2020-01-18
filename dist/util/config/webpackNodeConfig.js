@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var webpack_1 = __importDefault(require("webpack"));
 var path_1 = __importDefault(require("path"));
 var babelNodeConfig_1 = __importDefault(require("./babelNodeConfig"));
+var externals_1 = __importDefault(require("../externals"));
 var NodemonPlugin = require('nodemon-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -15,12 +16,14 @@ function createNodeWebpackConfig(_a) {
     var app = _a.app, projectDir = _a.projectDir, _b = _a.mode, mode = _b === void 0 ? 'development' : _b, alias = _a.alias, _c = _a.env, env = _c === void 0 ? {} : _c;
     var isDevelopment = mode === 'development';
     var isProduction = mode === 'production';
+    var externals = externals_1.default();
     return {
         entry: app.paths.src,
         output: { path: app.paths.build },
         node: { __dirname: true },
         target: 'node',
         mode: mode,
+        externals: externals,
         resolve: {
             extensions: [
                 '.web.js',

@@ -9,7 +9,7 @@ import {
 import getGlobalConfig from '../cantara-config';
 import { readFileAsJSON, writeJson } from '../util/fs';
 import renderTemplate from '../util/configTemplates';
-import { readFileSync } from 'fs';
+import { readFileSync, copyFileSync } from 'fs';
 
 function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
   const packageJson = readFileAsJSON(packageJsonPath);
@@ -23,11 +23,7 @@ function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
 /** Prepares a JavaScript package or React Component */
 export default async function prepareJsPackage(app: CantaraApplication) {
   const {
-    dependencies: {
-      react: reactDeps,
-      testing: testingDeps,
-      typescript: typescriptDeps,
-    },
+    dependencies: { react: reactDeps },
     internalPaths: { static: staticFilesFolder },
   } = getGlobalConfig();
 
@@ -67,4 +63,9 @@ export default async function prepareJsPackage(app: CantaraApplication) {
   });
   const packageTsConfigPath = path.join(app.paths.root, 'tsconfig.build.json');
   writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
+
+  // Copy .npmignore ignore file
+  const npmignorePath = path.join(staticFilesFolder, '.npmignore');
+  const npmignoreDestPath = path.join(app.paths.root, '.npmignore');
+  copyFileSync(npmignorePath, npmignoreDestPath);
 }

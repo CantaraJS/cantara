@@ -9,6 +9,11 @@ interface CantaraInitialConfig {
         appname: string;
     };
     stage: string;
+    /** Unknown options for 3rd party CLI programs, e.g. Jest.
+     * Options which are foreign to Cantara are included
+     * in this string.
+     */
+    additionalCliOptions?: string;
 }
 declare type Dependencies = {
     [key: string]: string;
@@ -16,17 +21,26 @@ declare type Dependencies = {
 interface CantaraGlobalConfig {
     allApps: CantaraApplication[];
     allPackages: {
-        aliases: {
-            [key: string]: string;
-        };
         /** Include all those paths into webpack configs */
         include: string[];
+    };
+    aliases: {
+        packageAliases: {
+            [key: string]: string;
+        };
+        appDependencyAliases: {
+            [key: string]: string;
+        };
     };
     dependencies: {
         /** Current React and React DOM version */
         react: Dependencies;
-        /** Dependencies needed for TS */
+        /** Dependencies needed for TS
+         * (including all type declarations packages)
+         */
         typescript: Dependencies;
+        /** Dependecies needed for testing */
+        testing: Dependencies;
     };
     /** Paths used internally by Cantara */
     internalPaths: {
@@ -43,6 +57,7 @@ interface CantaraGlobalConfig {
         /** Information about current command */
         currentCommand: {
             name: string;
+            additionalCliOptions: string;
             app: CantaraApplication;
         };
         /** Secrets from user's .secrets.json file */

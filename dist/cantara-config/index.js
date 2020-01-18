@@ -12,8 +12,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var util_1 = __importStar(require("./util"));
-var aliases_1 = __importDefault(require("./aliases"));
-var fs_1 = require("../util/fs");
+var aliases_1 = __importStar(require("./aliases"));
+var react_1 = require("./dependencies/react");
+var types_1 = require("./dependencies/types");
+var testing_1 = require("./dependencies/testing");
 var globalConfig = undefined;
 function getGlobalConfig() {
     if (!globalConfig)
@@ -25,8 +27,6 @@ exports.default = getGlobalConfig;
 function configureCantara(config) {
     var staticFilesPath = path_1.default.join(config.packageRootDir, 'static');
     var tempFolder = path_1.default.join(staticFilesPath, '.temp');
-    var reactDependecies = fs_1.readFileAsJSON(path_1.default.join(staticFilesPath, 'react-dependencies.json'));
-    var typescriptDependencies = fs_1.readFileAsJSON(path_1.default.join(staticFilesPath, 'ts-dependencies.json'));
     var projectDir = config.projectDir || process.cwd();
     var allApps = util_1.default({ rootDir: projectDir, stage: config.stage });
     var currentActiveApp = allApps.find(function (app) { return app.name === config.currentCommand.appname; });
@@ -36,14 +36,21 @@ function configureCantara(config) {
     var configToUse = {
         allApps: allApps,
         allPackages: {
-            aliases: aliases_1.default({ allApps: allApps, activeApp: currentActiveApp }),
             include: allApps
                 .filter(function (app) { return app.type === 'js-package' || app.type === 'react-component'; })
                 .map(function (app) { return app.paths.src; }),
         },
+        aliases: {
+            packageAliases: aliases_1.default({
+                allApps: allApps,
+                activeApp: currentActiveApp,
+            }),
+            appDependencyAliases: aliases_1.getDependencyAliases(currentActiveApp),
+        },
         dependencies: {
-            react: reactDependecies,
-            typescript: typescriptDependencies,
+            react: react_1.reactDependencies,
+            typescript: types_1.typescriptDependencies,
+            testing: testing_1.testingDependencies,
         },
         internalPaths: {
             root: config.packageRootDir,
@@ -55,6 +62,7 @@ function configureCantara(config) {
             currentCommand: {
                 name: config.currentCommand.name,
                 app: currentActiveApp,
+                additionalCliOptions: config.additionalCliOptions || '',
             },
             secrets: util_1.loadSecrets(projectDir),
         },

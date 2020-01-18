@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,6 +53,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var fs_1 = require("fs");
 var exec_1 = __importDefault(require("../util/exec"));
+var cantara_config_1 = __importDefault(require("../cantara-config"));
+var slash_1 = __importDefault(require("slash"));
+var configTemplates_1 = __importDefault(require("../util/configTemplates"));
+var fs_2 = require("../util/fs");
 /** Returns a string of dependecies that
  * need to be installed in the form of:
  * "react@16.0.0 react-dom@16.0.0"
@@ -144,3 +159,79 @@ function createOrUpdatePackageJSON(_a) {
     });
 }
 exports.createOrUpdatePackageJSON = createOrUpdatePackageJSON;
+/** Converts webpack compatible aliases
+ * into Jest's `moduleNameMapper` aliases
+ */
+function getJestAliases() {
+    var _a = cantara_config_1.default(), packageAliases = _a.aliases.packageAliases, activeApp = _a.runtime.currentCommand.app;
+    var jestAliases = Object.keys(packageAliases).reduce(function (aliasObj, packageName) {
+        var _a;
+        var packageAbsolutePath = packageAliases[packageName];
+        var relativePathToPackage = path_1.default.relative(activeApp.paths.root, packageAbsolutePath);
+        return __assign(__assign({}, aliasObj), (_a = {}, _a["^" + packageName + "$"] = "<rootDir>/" + slash_1.default(relativePathToPackage), _a));
+    }, {});
+    return jestAliases;
+}
+function createJestConfig(_a) {
+    var app = _a.app, configTemplateFileName = _a.configTemplateFileName, _b = _a.setupScriptImports, setupScriptImports = _b === void 0 ? [] : _b;
+    var globalCantaraConfig = cantara_config_1.default();
+    var jestAliases = getJestAliases();
+    // Copy setup file to project root
+    var setupFileTemplatePath = path_1.default.join(globalCantaraConfig.internalPaths.static, 'jestSetup.template.ts');
+    var renderedSetupFile = configTemplates_1.default({
+        template: fs_1.readFileSync(setupFileTemplatePath).toString(),
+        variables: {
+            ENV_FILE_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.temp, '.env.json')),
+            IMPORTS: setupScriptImports.reduce(function (importStr, importName) {
+                return importStr + "import '" + importName + "'\n";
+            }, ''),
+        },
+    });
+    var setupFileDestination = path_1.default.join(app.paths.root, 'jest.setup.ts');
+    fs_1.writeFileSync(setupFileDestination, renderedSetupFile);
+    // create jest.config.js
+    var jestConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, configTemplateFileName)).toString();
+    var templateVariables = {
+        MODULES_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.root, 'node_modules')),
+        PACKAGE_ALIASES: JSON.stringify(jestAliases, null, 2),
+    };
+    var newJestConfig = configTemplates_1.default({
+        template: jestConfigTemplate,
+        variables: templateVariables,
+    });
+    var newJestConfigPath = path_1.default.join(app.paths.root, 'jest.config.js');
+    fs_1.writeFileSync(newJestConfigPath, newJestConfig);
+}
+exports.createJestConfig = createJestConfig;
+function createNodeJestConfig(app) {
+    createJestConfig({
+        app: app,
+        configTemplateFileName: 'jestNodeConfig.template.js',
+    });
+}
+exports.createNodeJestConfig = createNodeJestConfig;
+function createReactJestConfig(app) {
+    createJestConfig({
+        app: app,
+        configTemplateFileName: 'jestReactConfig.template.js',
+        setupScriptImports: [
+            '@testing-library/jest-dom',
+            '@testing-library/jest-dom/extend-expect',
+        ],
+    });
+}
+exports.createReactJestConfig = createReactJestConfig;
+/** Takes all env vars defined
+ * for the current stage and writes them
+ * to 'static/.temp/.env.json'
+ * so that parts of the application
+ * which don't have access to the runtime
+ * can read them, e.g. the Jest setup file
+ * in the user's project
+ */
+function createTempEnvJsonFile() {
+    var _a = cantara_config_1.default(), env = _a.runtime.currentCommand.app.env, temp = _a.internalPaths.temp;
+    var jsonFilePath = path_1.default.join(temp, '.env.json');
+    fs_2.writeJson(jsonFilePath, env || {});
+}
+exports.createTempEnvJsonFile = createTempEnvJsonFile;

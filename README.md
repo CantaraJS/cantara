@@ -39,7 +39,6 @@ ctr init [template-name]
 
 ## Required
 
-- Make sure intellisense always shows right suggestions
 - Provide "publish" command with good UX for publishing a package to NPM
   - Look at "np"
 - Implement "new" command

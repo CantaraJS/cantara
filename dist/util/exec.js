@@ -41,7 +41,10 @@ function execCmd(cmd, _a) {
             env: __assign(__assign(__assign({}, process.env), secretsEnvVars), { PATH: NEW_PATH_ENV }),
         };
         var _a = cmd.split(' '), programCmd = _a[0], params = _a.slice(1);
-        child_process_1.spawn(programCmd, params, __assign(__assign({}, options), { shell: true, stdio: redirectIo ? 'inherit' : 'ignore' }));
+        var newProcess = child_process_1.spawn(programCmd, params, __assign(__assign({}, options), { shell: true, stdio: redirectIo ? 'inherit' : 'ignore' }));
+        newProcess.on('close', resolve);
+        newProcess.on('exit', resolve);
+        newProcess.on('disconnect', resolve);
     });
 }
 exports.default = execCmd;

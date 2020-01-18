@@ -11,7 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var babelReactConfig_1 = __importDefault(require("./babelReactConfig"));
-var fs_1 = require("../fs");
+var externals_1 = __importDefault(require("../externals"));
 var WebpackNotifierPlugin = require('webpack-notifier');
 var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -23,14 +23,6 @@ function camalize(str) {
         .toLowerCase()
         .replace(/[^a-zA-Z0-9]+(.)/g, function (_, chr) { return chr.toUpperCase(); });
 }
-function getLibraryExternals(_a) {
-    var packageJsonPath = _a.packageJsonPath, peerOnly = _a.peerOnly;
-    var _b = fs_1.readFileAsJSON(packageJsonPath), _c = _b.dependencies, dependencies = _c === void 0 ? {} : _c, _d = _b.peerDependencies, peerDependencies = _d === void 0 ? {} : _d;
-    if (peerOnly)
-        return Object.keys(peerDependencies);
-    return __spreadArrays(Object.keys(dependencies), Object.keys(peerDependencies));
-}
-exports.getLibraryExternals = getLibraryExternals;
 /**
  * Build React, isomorphic, node or browser libraries
  */
@@ -40,8 +32,7 @@ function createLibraryWebpackConfig(_a) {
         ? path.join(app.paths.src, 'index.tsx')
         : path.join(app.paths.src, 'index.ts');
     // For UMD builds (CDN ready) only exclude peer deps
-    var externals = getLibraryExternals({
-        packageJsonPath: path.join(app.paths.root, 'package.json'),
+    var externals = externals_1.default({
         peerOnly: libraryTarget === 'umd',
     });
     return {

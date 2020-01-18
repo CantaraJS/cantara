@@ -64,14 +64,14 @@ function addPeerDeps(packageJsonPath, deps) {
 /** Prepares a JavaScript package or React Component */
 function prepareJsPackage(app) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, reactDeps, staticFilesFolder, indexFileName, isReactComponent, expectedDevDependencies, packageTsConfigTemplate, renderedTsConfig, packageTsConfigPath;
+        var _a, reactDeps, staticFilesFolder, indexFileName, isReactComponent, expectedDevDependencies, packageTsConfigTemplate, renderedTsConfig, packageTsConfigPath, npmignorePath, npmignoreDestPath;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _a = cantara_config_1.default(), reactDeps = _a.dependencies.react, staticFilesFolder = _a.internalPaths.static;
                     indexFileName = 'index.ts';
                     isReactComponent = app.type === 'react-component';
-                    expectedDevDependencies = isReactComponent ? reactDeps : {};
+                    expectedDevDependencies = isReactComponent ? __assign({}, reactDeps) : {};
                     // Create package.json if none exists
                     return [4 /*yield*/, util_1.createOrUpdatePackageJSON({
                             rootDir: app.paths.root,
@@ -81,20 +81,29 @@ function prepareJsPackage(app) {
                 case 1:
                     // Create package.json if none exists
                     _b.sent();
-                    // For React Components, add react and react-dom to the peer dependencies
                     if (isReactComponent) {
+                        // For React Components, add react and react-dom to the peer dependencies
                         addPeerDeps(path_1.default.join(app.paths.root, 'package.json'), reactDeps);
+                        // Create jest config files
+                        util_1.createReactJestConfig(app);
                         indexFileName = 'index.tsx';
+                    }
+                    else {
+                        util_1.createNodeJestConfig(app);
                     }
                     packageTsConfigTemplate = fs_2.readFileSync(path_1.default.join(staticFilesFolder, 'packageTsConfigTemplate.json')).toString();
                     renderedTsConfig = configTemplates_1.default({
                         template: packageTsConfigTemplate,
                         variables: {
                             INDEX_FILE_NAME: indexFileName,
+                            JEST_SETUP_FILE: './jest.setup.ts',
                         },
                     });
-                    packageTsConfigPath = path_1.default.join(app.paths.root, 'tsconfig.json');
+                    packageTsConfigPath = path_1.default.join(app.paths.root, 'tsconfig.build.json');
                     fs_1.writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
+                    npmignorePath = path_1.default.join(staticFilesFolder, '.npmignore');
+                    npmignoreDestPath = path_1.default.join(app.paths.root, '.npmignore');
+                    fs_2.copyFileSync(npmignorePath, npmignoreDestPath);
                     return [2 /*return*/];
             }
         });

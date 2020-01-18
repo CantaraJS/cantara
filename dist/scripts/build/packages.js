@@ -71,20 +71,21 @@ function compile(config) {
 }
 function buildPackage(app) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, _b, aliases, include, projectDir, commonOptions, webpackCommonJsConfig, webpackUmdConfig, _c, libraryTargets, packageJsonPath, packageJson, newPackageJson;
+        var _a, include, _b, appDependencyAliases, packageAliases, projectDir, allAliases, commonOptions, webpackCommonJsConfig, webpackUmdConfig, _c, libraryTargets, packageJsonPath, packageJson, newPackageJson;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
-                    _a = cantara_config_1.default(), _b = _a.allPackages, aliases = _b.aliases, include = _b.include, projectDir = _a.runtime.projectDir;
+                    _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.aliases, appDependencyAliases = _b.appDependencyAliases, packageAliases = _b.packageAliases, projectDir = _a.runtime.projectDir;
+                    allAliases = __assign(__assign({}, appDependencyAliases), packageAliases);
                     commonOptions = {
-                        alias: aliases,
+                        alias: allAliases,
                         app: app,
                         projectDir: projectDir,
                         include: include,
                     };
                     webpackCommonJsConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'commonjs2', noChecks: true }));
                     webpackUmdConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'umd' }));
-                    _c = app.meta.libraryTargets, libraryTargets = _c === void 0 ? [] : _c;
+                    _c = app.meta.libraryTargets, libraryTargets = _c === void 0 ? ['umd', 'commonjs'] : _c;
                     if (!libraryTargets.includes('commonjs')) return [3 /*break*/, 2];
                     return [4 /*yield*/, compile(webpackCommonJsConfig)];
                 case 1:
@@ -96,9 +97,15 @@ function buildPackage(app) {
                 case 3:
                     _d.sent();
                     _d.label = 4;
-                case 4:
+                case 4: 
+                // Generate types
+                return [4 /*yield*/, exec_1.default('tsc --project ./tsconfig.build.json', {
+                        workingDirectory: app.paths.root,
+                        redirectIo: true,
+                    })];
+                case 5:
                     // Generate types
-                    exec_1.default('tsc', { workingDirectory: app.paths.root, redirectIo: true });
+                    _d.sent();
                     packageJsonPath = path_1.default.join(app.paths.root, 'package.json');
                     packageJson = fs_1.readFileAsJSON(packageJsonPath);
                     newPackageJson = __assign(__assign({}, packageJson), { main: "./" + path_1.default.relative(app.paths.root, app.paths.build) + "/index.js" });

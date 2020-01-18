@@ -7,9 +7,10 @@ var webpack_1 = __importDefault(require("webpack"));
 var cantara_config_1 = __importDefault(require("../../cantara-config"));
 var webpackNodeConfig_1 = __importDefault(require("../../util/config/webpackNodeConfig"));
 function startNodeAppDevelopmentServer() {
-    var _a = cantara_config_1.default().runtime, activeApp = _a.currentCommand.app, projectDir = _a.projectDir;
+    var _a = cantara_config_1.default(), _b = _a.runtime, activeApp = _b.currentCommand.app, projectDir = _b.projectDir, packageAliases = _a.aliases.packageAliases;
     var webpackConfig = webpackNodeConfig_1.default({
         app: activeApp,
+        alias: packageAliases,
         projectDir: projectDir,
         env: activeApp.env,
     });

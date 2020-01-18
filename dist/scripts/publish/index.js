@@ -39,42 +39,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __importDefault(require("path"));
-var fs_1 = require("fs");
-var cantara_config_1 = __importDefault(require("../cantara-config"));
-var util_1 = require("./util");
-/** Prepares React App Folder */
-function prepareReactApps(app) {
+var exec_1 = __importDefault(require("../../util/exec"));
+var cantara_config_1 = __importDefault(require("../../cantara-config"));
+function publishPackage() {
     return __awaiter(this, void 0, void 0, function () {
-        var globalCantaraConfig, defaultIndexHtmlTemplatePath, indexHtmlDestinationPath;
+        var packageToPublish;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    globalCantaraConfig = cantara_config_1.default();
-                    defaultIndexHtmlTemplatePath = path_1.default.join(globalCantaraConfig.internalPaths.static, 'default-index.html');
-                    if (!app.paths.assets)
-                        return [2 /*return*/];
-                    indexHtmlDestinationPath = path_1.default.join(app.paths.assets, 'index.html');
-                    if (!fs_1.existsSync(indexHtmlDestinationPath)) {
-                        fs_1.copyFileSync(defaultIndexHtmlTemplatePath, indexHtmlDestinationPath);
+                    packageToPublish = cantara_config_1.default().runtime.currentCommand.app;
+                    if (packageToPublish.type !== 'js-package' &&
+                        packageToPublish.type !== 'react-component') {
+                        throw new Error('Only packages can be published!');
                     }
-                    // Install/update dependencies
-                    return [4 /*yield*/, util_1.createOrUpdatePackageJSON({
-                            expectedDependencies: globalCantaraConfig.dependencies.react,
-                            // expectedDevDependencies: {
-                            //   ...globalCantaraConfig.dependencies.typescript,
-                            //   ...globalCantaraConfig.dependencies.testing,
-                            // },
-                            rootDir: app.paths.root,
+                    return [4 /*yield*/, exec_1.default('np --no-tests', {
+                            redirectIo: true,
+                            workingDirectory: packageToPublish.paths.root,
                         })];
                 case 1:
-                    // Install/update dependencies
                     _a.sent();
-                    // Create react Jest config file and copy to current project
-                    util_1.createReactJestConfig(app);
                     return [2 /*return*/];
             }
         });
     });
 }
-exports.default = prepareReactApps;
+exports.default = publishPackage;

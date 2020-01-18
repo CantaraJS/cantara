@@ -56,14 +56,35 @@ var build_1 = __importDefault(require("./scripts/build"));
 var deploy_1 = __importDefault(require("./scripts/deploy"));
 var arbitrary_1 = __importDefault(require("./scripts/arbitrary"));
 var test_1 = __importDefault(require("./scripts/test"));
-// import execCmd from './exec';
+var deriveStage_1 = __importDefault(require("./util/deriveStage"));
+var publish_1 = __importDefault(require("./scripts/publish"));
 var packageJSON = require('../package.json');
-var TEST_CMD = 'test places';
+/** Takes CLI command and removes unknown options
+ * from it, so that no error is thrown. Those
+ * unknown options are then passed to Cantara,
+ * so that they can be used internally to e.g.
+ * pass them to another program, for example Jest
+ */
+function prepareCmdForCommander(cmd) {
+    var unknown = commander_1.default.parseOptions(cmd).unknown;
+    var unknownParams = unknown.join(' ');
+    var cmdWithoutUnknownParams = cmd.filter(function (cmd, i) {
+        if (i <= 2)
+            return true;
+        var shouldKeep = !unknown.includes(cmd);
+        // Only remove it once
+        unknown = unknown.filter(function (uCmd) { return uCmd !== cmd; });
+        return shouldKeep;
+    });
+    return { cmd: cmdWithoutUnknownParams, unknownParams: unknownParams };
+}
+var TEST_CMD = 'publish places-auth-react';
 var cantaraPath = process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
     : process.cwd();
-var cmdToParse = process.env.NODE_ENV === 'development'
+var cmdArr = process.env.NODE_ENV === 'development'
     ? __spreadArrays(['', ''], TEST_CMD.split(' ')) : process.argv;
+var _a = prepareCmdForCommander(cmdArr), cmdToParse = _a.cmd, additionalCliOptions = _a.unknownParams;
 var cantaraRootDir = path_1.default.join(__dirname, '..');
 /** Is set to true if any Cantara command was executed.
  * If no cantara command was matched,
@@ -75,13 +96,14 @@ var cantaraRootDir = path_1.default.join(__dirname, '..');
 var wasCantaraCommandExecuted = false;
 /** Execute this function before each command */
 function prepareCantara(_a) {
-    var appname = _a.appname, cmdName = _a.cmdName;
+    var appname = _a.appname, cmdName = _a.cmdName, additionalCliOptions = _a.additionalCliOptions;
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     wasCantaraCommandExecuted = true;
                     cantara_config_1.configureCantara({
+                        additionalCliOptions: additionalCliOptions,
                         projectDir: cantaraPath,
                         packageRootDir: cantaraRootDir,
                         currentCommand: {
@@ -89,7 +111,7 @@ function prepareCantara(_a) {
                             name: cmdName,
                         },
                         stage: !commander_1.default.stage || commander_1.default.stage === 'not_set'
-                            ? 'development'
+                            ? deriveStage_1.default(cmdName)
                             : commander_1.default.stage,
                     });
                     return [4 /*yield*/, bootstrap_1.default()];
@@ -115,7 +137,7 @@ commander_1.default
     .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'dev' })];
+            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'dev', additionalCliOptions: additionalCliOptions })];
             case 1:
                 _a.sent();
                 dev_1.default();
@@ -129,7 +151,7 @@ commander_1.default
     .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'build' })];
+            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'build', additionalCliOptions: additionalCliOptions })];
             case 1:
                 _a.sent();
                 build_1.default();
@@ -143,7 +165,7 @@ commander_1.default
     .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'deploy' })];
+            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'deploy', additionalCliOptions: additionalCliOptions })];
             case 1:
                 _a.sent();
                 deploy_1.default();
@@ -152,15 +174,33 @@ commander_1.default
     });
 }); });
 commander_1.default
-    .command('test [appname]')
-    .description('Execute Jest tests for the specified application or for all applications if none was specified.')
+    .command('test <appname>')
+    .description('Execute Jest tests for the specified application. Jest parameters can be appended at the end of the command.')
     .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'test' })];
+            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'test', additionalCliOptions: additionalCliOptions })];
             case 1:
                 _a.sent();
                 test_1.default();
+                return [2 /*return*/];
+        }
+    });
+}); });
+commander_1.default
+    .command('publish <package-name>')
+    .description('Publish a package to npm. Make sure to execute tests yourself before publishing.')
+    .action(function (packageName) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prepareCantara({
+                    appname: packageName,
+                    cmdName: 'publish',
+                    additionalCliOptions: additionalCliOptions,
+                })];
+            case 1:
+                _a.sent();
+                publish_1.default();
                 return [2 /*return*/];
         }
     });
@@ -181,7 +221,11 @@ if (!wasCantaraCommandExecuted) {
     if (commander_1.default.args.length <= 1) {
         commander_1.default.help();
     }
-    prepareCantara({ appname: commander_1.default.args[0], cmdName: commander_1.default.args[1] }).then(function () {
+    prepareCantara({
+        appname: commander_1.default.args[0],
+        cmdName: commander_1.default.args[1],
+        additionalCliOptions: additionalCliOptions,
+    }).then(function () {
         var allCmds = cmdToParse.slice(2);
         arbitrary_1.default(allCmds);
     });

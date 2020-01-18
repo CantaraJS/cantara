@@ -6,8 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var cantara_config_1 = __importDefault(require("../../cantara-config"));
 var exec_1 = __importDefault(require("../../util/exec"));
 function executeTests() {
-    var activeApp = cantara_config_1.default().runtime.currentCommand.app;
-    exec_1.default('jest --watch', {
+    var _a = cantara_config_1.default().runtime.currentCommand, activeApp = _a.app, additionalCliOptions = _a.additionalCliOptions;
+    var cmdToExecute = "jest " + additionalCliOptions;
+    exec_1.default(cmdToExecute, {
         workingDirectory: activeApp.paths.root,
         redirectIo: true,
     });

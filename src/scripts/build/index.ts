@@ -1,13 +1,10 @@
-import createReactWebpackConfig from '../../util/config/webpackReactConfig';
-import getGlobalConfig from '../../cantara-config';
-import webpack = require('webpack');
-import createNodeWebpackConfig from '../../util/config/webpackNodeConfig';
-import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import buildNodeApp from './node';
 import buildReactApp from './react';
 import buildPackage from './packages';
+import getGlobalConfig from '../../cantara-config';
 
-/** Creates a production build of the currently active app/package */
+/** Creates a production build
+ * of the currently active app/package */
 export default function buildActiveApp() {
   const {
     runtime: {

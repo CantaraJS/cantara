@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -44,18 +55,23 @@ var fs_1 = require("fs");
 var slash_1 = __importDefault(require("slash"));
 var cantara_config_1 = __importDefault(require("../cantara-config"));
 var configTemplates_1 = __importDefault(require("../util/configTemplates"));
+var util_1 = require("./util");
+var externals_1 = __importDefault(require("../util/externals"));
 var mergeYaml = require('@alexlafroscia/yaml-merge');
 function createWebpackAndBabelConfigFromTemplate(app) {
     var globalCantaraConfig = cantara_config_1.default();
     var babelConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverlessBabelConfig.template.js')).toString();
     var webpackConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverlessWebpackConfig.template.js')).toString();
+    var allAliases = __assign(__assign({}, globalCantaraConfig.aliases.appDependencyAliases), globalCantaraConfig.aliases.packageAliases);
+    var externals = externals_1.default();
     var templateVariables = {
         MODULES_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
             '/',
         TSCONFIG_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.runtime.projectDir, 'tsconfig.json')),
         ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
-        ALIASES: JSON.stringify(globalCantaraConfig.allPackages.aliases),
+        ALIASES: JSON.stringify(allAliases),
         ENV_VARS: JSON.stringify(app.env || {}),
+        EXTERNALS_ARRAY: JSON.stringify(externals),
     };
     var newBabelConfig = configTemplates_1.default({
         template: babelConfigTemplate,
@@ -81,11 +97,11 @@ function createServerlessYml(app) {
         template: serverlessYmlTemplate,
         variables: templateVariables,
     });
-    var serverlessPartsFilePath = path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverless.parts.yml');
+    var serverlessPartsFilePath = path_1.default.join(globalCantaraConfig.internalPaths.temp, 'serverless.parts.yml');
     fs_1.writeFileSync(serverlessPartsFilePath, newServerlessYmlParts);
     var userServerlessYmlPath = path_1.default.join(app.paths.root, 'serverless.yml');
     // Merge user's yaml file and this one
-    var newServerlessYml = mergeYaml(serverlessPartsFilePath, userServerlessYmlPath);
+    var newServerlessYml = mergeYaml(userServerlessYmlPath, serverlessPartsFilePath);
     fs_1.writeFileSync(userServerlessYmlPath, newServerlessYml);
 }
 /** Prepares Serverless App Folder */
@@ -97,6 +113,8 @@ function prepareServerlessApp(app) {
             // Now, create the custom serverless.yml file with the correct paths
             // The main serverless.yml file needs to inherit from it!
             createServerlessYml(app);
+            // Create jest config
+            util_1.createNodeJestConfig(app);
             return [2 /*return*/];
         });
     });

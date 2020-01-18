@@ -9,9 +9,9 @@ var cantara_config_1 = __importDefault(require("../../cantara-config"));
 var webpackReactConfig_1 = __importDefault(require("../../util/config/webpackReactConfig"));
 var clearConsole_1 = __importDefault(require("../../util/clearConsole"));
 function startReactAppDevelopmentServer() {
-    var _a = cantara_config_1.default(), _b = _a.allPackages, aliases = _b.aliases, include = _b.include, _c = _a.runtime, activeApp = _c.currentCommand.app, projectDir = _c.projectDir;
+    var _a = cantara_config_1.default(), include = _a.allPackages.include, packageAliases = _a.aliases.packageAliases, _b = _a.runtime, activeApp = _b.currentCommand.app, projectDir = _b.projectDir;
     var webpackConfig = webpackReactConfig_1.default({
-        alias: aliases,
+        alias: packageAliases,
         app: activeApp,
         projectDir: projectDir,
         env: activeApp.env,
