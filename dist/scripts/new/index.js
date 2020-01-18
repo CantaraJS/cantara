@@ -40,44 +40,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
+var ncp_1 = __importDefault(require("ncp"));
+var util_1 = require("util");
 var fs_1 = require("fs");
-var cantara_config_1 = __importDefault(require("../cantara-config"));
-var util_1 = require("./util");
-/** Prepares React App Folder */
-function prepareReactApps(app) {
+var ncp = util_1.promisify(ncp_1.default);
+function createNewAppOrPackage(_a) {
+    var type = _a.type, name = _a.name, staticFolderPath = _a.staticFolderPath, projectDir = _a.projectDir;
     return __awaiter(this, void 0, void 0, function () {
-        var globalCantaraConfig, defaultIndexHtmlTemplatePath, indexHtmlDestinationPath;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var templateFolderPath, destinationPath;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    globalCantaraConfig = cantara_config_1.default();
-                    defaultIndexHtmlTemplatePath = path_1.default.join(globalCantaraConfig.internalPaths.static, 'default-index.html');
-                    if (!app.paths.assets)
-                        return [2 /*return*/];
-                    if (!fs_1.existsSync(app.paths.assets)) {
-                        fs_1.mkdirSync(app.paths.assets);
+                    templateFolderPath = '';
+                    destinationPath = '';
+                    if (type === 'react-app') {
+                        destinationPath = path_1.default.join(projectDir, 'react-apps', name);
+                        templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/react-app');
                     }
-                    indexHtmlDestinationPath = path_1.default.join(app.paths.assets, 'index.html');
-                    if (!fs_1.existsSync(indexHtmlDestinationPath)) {
-                        fs_1.copyFileSync(defaultIndexHtmlTemplatePath, indexHtmlDestinationPath);
+                    if (type === 'react-cmp' || type === 'react-component') {
+                        destinationPath = path_1.default.join(projectDir, 'packages', name);
+                        templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/react-component');
                     }
-                    // Install/update dependencies
-                    return [4 /*yield*/, util_1.createOrUpdatePackageJSON({
-                            expectedDependencies: globalCantaraConfig.dependencies.react,
-                            // expectedDevDependencies: {
-                            //   ...globalCantaraConfig.dependencies.typescript,
-                            //   ...globalCantaraConfig.dependencies.testing,
-                            // },
-                            rootDir: app.paths.root,
-                        })];
+                    if (type === 'node-app') {
+                        destinationPath = path_1.default.join(projectDir, 'node-apps', name);
+                        templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/node-app');
+                    }
+                    if (type === 'serverless') {
+                        destinationPath = path_1.default.join(projectDir, 'node-apps', name);
+                        templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/serverless');
+                    }
+                    if (type === 'package') {
+                        destinationPath = path_1.default.join(projectDir, 'packages', name);
+                        templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/js-package');
+                    }
+                    if (fs_1.existsSync(destinationPath)) {
+                        throw new Error(destinationPath + " already exists! Delete the folder if you want to override it.");
+                    }
+                    return [4 /*yield*/, ncp(templateFolderPath, destinationPath)];
                 case 1:
-                    // Install/update dependencies
-                    _a.sent();
-                    // Create react Jest config file and copy to current project
-                    util_1.createReactJestConfig(app);
+                    _b.sent();
+                    console.log("Created new " + type + " at " + destinationPath + "!");
                     return [2 /*return*/];
             }
         });
     });
 }
-exports.default = prepareReactApps;
+exports.default = createNewAppOrPackage;

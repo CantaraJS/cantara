@@ -28,7 +28,7 @@ ctr test [appname|package-name] [...jestArgs]
 ```
 
 ```bash
-ctr new <new-name> <react|node|serverless|js-package|react-component>
+ctr new <react-app|node-app|serverless|js-package|react-component> <new-name>
 ```
 
 ```bash
@@ -39,8 +39,6 @@ ctr init [template-name]
 
 ## Required
 
-- Provide "publish" command with good UX for publishing a package to NPM
-  - Look at "np"
 - Implement "new" command
 - Implement templates
   - "init" command

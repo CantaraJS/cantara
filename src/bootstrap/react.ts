@@ -1,5 +1,5 @@
 import path from 'path';
-import { copyFileSync, existsSync, readFileSync } from 'fs';
+import { copyFileSync, existsSync, readFileSync, mkdirSync } from 'fs';
 
 import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
@@ -14,6 +14,9 @@ export default async function prepareReactApps(app: CantaraApplication) {
     'default-index.html',
   );
   if (!app.paths.assets) return;
+  if (!existsSync(app.paths.assets)) {
+    mkdirSync(app.paths.assets);
+  }
   const indexHtmlDestinationPath = path.join(app.paths.assets, 'index.html');
   if (!existsSync(indexHtmlDestinationPath)) {
     copyFileSync(defaultIndexHtmlTemplatePath, indexHtmlDestinationPath);

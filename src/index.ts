@@ -10,6 +10,7 @@ import executeArbitraryCmdWithinApp from './scripts/arbitrary';
 import executeTests from './scripts/test';
 import deriveStageNameFromCmd from './util/deriveStage';
 import publishPackage from './scripts/publish';
+import createNewAppOrPackage from './scripts/new';
 const packageJSON = require('../package.json');
 
 /** Takes CLI command and removes unknown options
@@ -32,7 +33,7 @@ function prepareCmdForCommander(cmd: string[]) {
   return { cmd: cmdWithoutUnknownParams, unknownParams };
 }
 
-const TEST_CMD = 'publish places-auth-react';
+const TEST_CMD = 'new react-app awesome-frontend';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
@@ -151,6 +152,20 @@ program
     publishPackage();
   });
 
+program
+  .command(
+    'new <react-app|node-app|serverless|package|react-component|react-cmp> <name>',
+  )
+  .action(async (type, name) => {
+    wasCantaraCommandExecuted = true;
+    createNewAppOrPackage({
+      type,
+      name,
+      projectDir: cantaraPath,
+      staticFolderPath: path.join(cantaraRootDir, 'static'),
+    });
+  });
+
 /** Execute npm commands in the scope of a package/app */
 program
   .command('<appname> <command> [parameters...]')
@@ -158,7 +173,7 @@ program
     'Execute npm commands for the specified app or package. If you want to e.g. install a package from npm for your React Component named "button", you can execute: "cantara button install @emotion/core".',
   )
   .action((appname, command, ...parameters) => {
-    console.log({ appname, command, parameters });
+    // console.log({ appname, command, parameters });
   });
 
 program.parse(cmdToParse);

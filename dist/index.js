@@ -58,6 +58,7 @@ var arbitrary_1 = __importDefault(require("./scripts/arbitrary"));
 var test_1 = __importDefault(require("./scripts/test"));
 var deriveStage_1 = __importDefault(require("./util/deriveStage"));
 var publish_1 = __importDefault(require("./scripts/publish"));
+var new_1 = __importDefault(require("./scripts/new"));
 var packageJSON = require('../package.json');
 /** Takes CLI command and removes unknown options
  * from it, so that no error is thrown. Those
@@ -78,7 +79,7 @@ function prepareCmdForCommander(cmd) {
     });
     return { cmd: cmdWithoutUnknownParams, unknownParams: unknownParams };
 }
-var TEST_CMD = 'publish places-auth-react';
+var TEST_CMD = 'new react-app awesome-frontend';
 var cantaraPath = process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
     : process.cwd();
@@ -205,6 +206,20 @@ commander_1.default
         }
     });
 }); });
+commander_1.default
+    .command('new <react-app|node-app|serverless|package|react-component|react-cmp> <name>')
+    .action(function (type, name) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        wasCantaraCommandExecuted = true;
+        new_1.default({
+            type: type,
+            name: name,
+            projectDir: cantaraPath,
+            staticFolderPath: path_1.default.join(cantaraRootDir, 'static'),
+        });
+        return [2 /*return*/];
+    });
+}); });
 /** Execute npm commands in the scope of a package/app */
 commander_1.default
     .command('<appname> <command> [parameters...]')
@@ -214,7 +229,7 @@ commander_1.default
     for (var _i = 2; _i < arguments.length; _i++) {
         parameters[_i - 2] = arguments[_i];
     }
-    console.log({ appname: appname, command: command, parameters: parameters });
+    // console.log({ appname, command, parameters });
 });
 commander_1.default.parse(cmdToParse);
 if (!wasCantaraCommandExecuted) {
