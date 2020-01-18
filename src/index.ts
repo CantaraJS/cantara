@@ -8,6 +8,7 @@ import buildActiveApp from './scripts/build';
 import deployActiveApp from './scripts/deploy';
 import executeArbitraryCmdWithinApp from './scripts/arbitrary';
 import executeTests from './scripts/test';
+import deriveStageNameFromCmd from './util/deriveStage';
 const packageJSON = require('../package.json');
 
 /** Takes CLI command and removes unknown options
@@ -30,7 +31,7 @@ function prepareCmdForCommander(cmd: string[]) {
   return { cmd: cmdWithoutUnknownParams, unknownParams };
 }
 
-const TEST_CMD = 'test places-api';
+const TEST_CMD = 'test places';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
@@ -80,7 +81,7 @@ async function prepareCantara({
     },
     stage:
       !program.stage || program.stage === 'not_set'
-        ? 'development'
+        ? deriveStageNameFromCmd(cmdName)
         : program.stage,
   });
   await onPreBootstrap();

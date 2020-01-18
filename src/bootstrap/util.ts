@@ -149,24 +149,42 @@ function getJestAliases() {
   return jestAliases;
 }
 
-export function createReactJestConfig(app: CantaraApplication) {
+interface CreateJestConfigOptions {
+  app: CantaraApplication;
+  configTemplateFileName: string;
+  setupScriptImports?: string[];
+}
+
+export function createJestConfig({
+  app,
+  configTemplateFileName,
+  setupScriptImports = [],
+}: CreateJestConfigOptions) {
   const globalCantaraConfig = getGlobalConfig();
   const jestAliases = getJestAliases();
 
   // Copy setup file to project root
-  const setupFilePath = path.join(
+  const setupFileTemplatePath = path.join(
     globalCantaraConfig.internalPaths.static,
-    'jestReact.setup.ts',
+    'jestSetup.template.ts',
   );
+  const renderedSetupFile = renderTemplate({
+    template: readFileSync(setupFileTemplatePath).toString(),
+    variables: {
+      ENV_FILE_PATH: slash(
+        path.join(globalCantaraConfig.internalPaths.temp, '.env.json'),
+      ),
+      IMPORTS: setupScriptImports.reduce((importStr, importName) => {
+        return `${importStr}import '${importName}'\n`;
+      }, ''),
+    },
+  });
   const setupFileDestination = path.join(app.paths.root, 'jest.setup.ts');
-  copyFileSync(setupFilePath, setupFileDestination);
+  writeFileSync(setupFileDestination, renderedSetupFile);
 
   // create jest.config.js
   const jestConfigTemplate = readFileSync(
-    path.join(
-      globalCantaraConfig.internalPaths.static,
-      'jestReactConfig.template.js',
-    ),
+    path.join(globalCantaraConfig.internalPaths.static, configTemplateFileName),
   ).toString();
 
   const templateVariables = {
@@ -186,29 +204,40 @@ export function createReactJestConfig(app: CantaraApplication) {
 }
 
 export function createNodeJestConfig(app: CantaraApplication) {
-  const globalCantaraConfig = getGlobalConfig();
-
-  const jestAliases = getJestAliases();
-
-  const jestConfigTemplate = readFileSync(
-    path.join(
-      globalCantaraConfig.internalPaths.static,
-      'jestNodeConfig.template.js',
-    ),
-  ).toString();
-  const newJestConfigPath = path.join(app.paths.root, 'jest.config.js');
-
-  const templateVariables = {
-    MODULES_PATH: slash(
-      path.join(globalCantaraConfig.internalPaths.root, 'node_modules'),
-    ),
-    PACKAGE_ALIASES: JSON.stringify(jestAliases, null, 2),
-  };
-
-  const newJestConfig = renderTemplate({
-    template: jestConfigTemplate,
-    variables: templateVariables,
+  createJestConfig({
+    app,
+    configTemplateFileName: 'jestNodeConfig.template.js',
   });
+}
 
-  writeFileSync(newJestConfigPath, newJestConfig);
+export function createReactJestConfig(app: CantaraApplication) {
+  createJestConfig({
+    app,
+    configTemplateFileName: 'jestReactConfig.template.js',
+    setupScriptImports: [
+      '@testing-library/jest-dom',
+      '@testing-library/jest-dom/extend-expect',
+    ],
+  });
+}
+
+/** Takes all env vars defined
+ * for the current stage and writes them
+ * to 'static/.temp/.env.json'
+ * so that parts of the application
+ * which don't have access to the runtime
+ * can read them, e.g. the Jest setup file
+ * in the user's project
+ */
+export function createTempEnvJsonFile() {
+  const {
+    runtime: {
+      currentCommand: {
+        app: { env },
+      },
+    },
+    internalPaths: { temp },
+  } = getGlobalConfig();
+  const jsonFilePath = path.join(temp, '.env.json');
+  writeJson(jsonFilePath, env || {});
 }

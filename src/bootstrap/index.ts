@@ -5,7 +5,7 @@ import { promisify } from 'util';
 
 import getGlobalConfig from '../cantara-config';
 import prepareReactApps from './react';
-import { createOrUpdatePackageJSON } from './util';
+import { createOrUpdatePackageJSON, createTempEnvJsonFile } from './util';
 import prepareServerlessApp from './serverless';
 import prepareJsPackage from './packages';
 import { writeJson } from '../util/fs';
@@ -73,6 +73,8 @@ async function prepareCantaraProject() {
   if (!existsSync(globalCantaraConfig.internalPaths.temp)) {
     mkdirSync(globalCantaraConfig.internalPaths.temp);
   }
+
+  createTempEnvJsonFile();
 }
 
 /**

@@ -119,3 +119,5 @@ gen
 .temp
 
 .secrets.json
+
+jest.setup.ts

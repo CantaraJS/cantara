@@ -41,6 +41,9 @@ ctr init [template-name]
 
 - Implement "test" command
   - Env vars
+    - If available, use .env.test
+    - Fallback to .env.development
+    - or just use process.env.TEST\_\*
   - Aliases
 - Make sure intellisense always shows right suggestions
 - Provide "publish" command with good UX for publishing a package to NPM
