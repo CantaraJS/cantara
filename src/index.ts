@@ -31,7 +31,7 @@ function prepareCmdForCommander(cmd: string[]) {
   return { cmd: cmdWithoutUnknownParams, unknownParams };
 }
 
-const TEST_CMD = 'test places';
+const TEST_CMD = 'build places-auth-react';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'

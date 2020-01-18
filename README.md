@@ -39,12 +39,6 @@ ctr init [template-name]
 
 ## Required
 
-- Implement "test" command
-  - Env vars
-    - If available, use .env.test
-    - Fallback to .env.development
-    - or just use process.env.TEST\_\*
-  - Aliases
 - Make sure intellisense always shows right suggestions
 - Provide "publish" command with good UX for publishing a package to NPM
   - Look at "np"
@@ -52,11 +46,11 @@ ctr init [template-name]
 - Implement templates
   - "init" command
 - Serverless and different stages
-- Webpack, Babel, TSconfig ecc. can be modified externally
 - "CI" command
   - Only rebuilds and deploys the parts of the application that changed
 - Custom e2e testing command can be provided. Cantara takes care of starting all the neccessary servers.
 - Scripts for DB migrations
+- Webpack, Babel, TSconfig ecc. can be modified externally
 - Deployment should work out of the box for all parts an application can have
   - Defaults can be overriden
 - Create a few useful starter templates

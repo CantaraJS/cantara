@@ -65,6 +65,6 @@ export default async function prepareJsPackage(app: CantaraApplication) {
       JEST_SETUP_FILE: './jest.setup.ts',
     },
   });
-  const packageTsConfigPath = path.join(app.paths.root, 'tsconfig.json');
+  const packageTsConfigPath = path.join(app.paths.root, 'tsconfig.build.json');
   writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
 }

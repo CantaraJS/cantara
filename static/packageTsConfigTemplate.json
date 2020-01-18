@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["./src/<--INDEX_FILE_NAME-->", "<--JEST_SETUP_FILE-->"],
+  "include": ["./src/<--INDEX_FILE_NAME-->"],
   "exclude": ["node_modules", "build"],
   "compilerOptions": {
     "emitDeclarationOnly": true,

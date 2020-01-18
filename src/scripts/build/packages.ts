@@ -46,7 +46,7 @@ export default async function buildPackage(app: CantaraApplication) {
     libraryTarget: 'umd',
   });
 
-  const { libraryTargets = [] } = app.meta;
+  const { libraryTargets = ['umd', 'commonjs'] } = app.meta;
 
   if (libraryTargets.includes('commonjs')) {
     await compile(webpackCommonJsConfig);
@@ -56,7 +56,10 @@ export default async function buildPackage(app: CantaraApplication) {
   }
 
   // Generate types
-  await execCmd('tsc', { workingDirectory: app.paths.root, redirectIo: true });
+  await execCmd('tsc --project ./tsconfig.build.json', {
+    workingDirectory: app.paths.root,
+    redirectIo: true,
+  });
 
   // Set correct path to index.js in packageJson's "main" field
   const packageJsonPath = path.join(app.paths.root, 'package.json');
@@ -66,12 +69,4 @@ export default async function buildPackage(app: CantaraApplication) {
     main: `./${path.relative(app.paths.root, app.paths.build)}/index.js`,
   };
   writeJson(packageJsonPath, newPackageJson);
-
-  // Delete generated declaration files for jest setup script
-  try {
-    unlinkSync(path.join(app.paths.build, 'jest.setup.d.ts'));
-    unlinkSync(path.join(app.paths.build, 'jest.setup.d.ts.map'));
-  } catch (e) {
-    console.log('err', e);
-  }
 }
