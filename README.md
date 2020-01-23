@@ -39,8 +39,6 @@ ctr init [template-name]
 
 ## Required
 
-- Implement templates
-  - "init" command
 - Serverless and different stages
 - "CI" command
   - Only rebuilds and deploys the parts of the application that changed

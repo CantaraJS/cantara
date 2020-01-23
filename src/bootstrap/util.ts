@@ -5,7 +5,29 @@ import getGlobalConfig from '../cantara-config';
 import slash from 'slash';
 import renderTemplate from '../util/configTemplates';
 import { CantaraApplication } from '../util/types';
-import { writeJson } from '../util/fs';
+import { writeJson, readFileAsJSON } from '../util/fs';
+
+interface CreatePackageJsonOptions {
+  folderPath: string;
+}
+
+/** Create new package.json
+ * where none exists.
+ */
+async function createPackageJson({ folderPath }: CreatePackageJsonOptions) {
+  await execCmd(`npm init -y`, {
+    workingDirectory: folderPath,
+  });
+  // Set private to true
+  const packageJsonPath = path.join(folderPath, 'package.json');
+  const packageJsonContent = readFileAsJSON(packageJsonPath);
+  const newPackageJsonContent = {
+    ...packageJsonContent,
+    private: true,
+    main: 'build/index.js',
+  };
+  writeJson(packageJsonPath, newPackageJsonContent);
+}
 
 interface CreateOrUpdatePackageJSONParams {
   expectedDependencies?: { [key: string]: string };
@@ -89,9 +111,7 @@ export async function createOrUpdatePackageJSON({
     }
   } else {
     // Create new packageJSON and install dependencies
-    await execCmd(`npm init -y`, {
-      workingDirectory: rootDir,
-    });
+    createPackageJson({ folderPath: rootDir });
     if (expectedDependencies) {
       const dependenciesToInstall = Object.keys(expectedDependencies)
         .reduce((depsStr, depName) => {

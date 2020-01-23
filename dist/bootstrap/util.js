@@ -57,6 +57,29 @@ var cantara_config_1 = __importDefault(require("../cantara-config"));
 var slash_1 = __importDefault(require("slash"));
 var configTemplates_1 = __importDefault(require("../util/configTemplates"));
 var fs_2 = require("../util/fs");
+/** Create new package.json
+ * where none exists.
+ */
+function createPackageJson(_a) {
+    var folderPath = _a.folderPath;
+    return __awaiter(this, void 0, void 0, function () {
+        var packageJsonPath, packageJsonContent, newPackageJsonContent;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, exec_1.default("npm init -y", {
+                        workingDirectory: folderPath,
+                    })];
+                case 1:
+                    _b.sent();
+                    packageJsonPath = path_1.default.join(folderPath, 'package.json');
+                    packageJsonContent = fs_2.readFileAsJSON(packageJsonPath);
+                    newPackageJsonContent = __assign(__assign({}, packageJsonContent), { private: true, main: 'build/index.js' });
+                    fs_2.writeJson(packageJsonPath, newPackageJsonContent);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 /** Returns a string of dependecies that
  * need to be installed in the form of:
  * "react@16.0.0 react-dom@16.0.0"
@@ -115,45 +138,40 @@ function createOrUpdatePackageJSON(_a) {
                 case 3:
                     _e.sent();
                     _e.label = 4;
-                case 4: return [3 /*break*/, 10];
-                case 5: 
-                // Create new packageJSON and install dependencies
-                return [4 /*yield*/, exec_1.default("npm init -y", {
-                        workingDirectory: rootDir,
-                    })];
-                case 6:
+                case 4: return [3 /*break*/, 9];
+                case 5:
                     // Create new packageJSON and install dependencies
-                    _e.sent();
-                    if (!expectedDependencies) return [3 /*break*/, 8];
+                    createPackageJson({ folderPath: rootDir });
+                    if (!expectedDependencies) return [3 /*break*/, 7];
                     dependenciesToInstall = Object.keys(expectedDependencies)
                         .reduce(function (depsStr, depName) {
                         return depName + "@" + expectedDependencies[depName] + " " + depsStr;
                     }, '')
                         .trim();
-                    if (!dependenciesToInstall) return [3 /*break*/, 8];
+                    if (!dependenciesToInstall) return [3 /*break*/, 7];
                     return [4 /*yield*/, exec_1.default("npm install -S " + dependenciesToInstall, {
                             workingDirectory: rootDir,
                             redirectIo: true,
                         })];
-                case 7:
+                case 6:
                     _e.sent();
-                    _e.label = 8;
-                case 8:
-                    if (!expectedDevDependencies) return [3 /*break*/, 10];
+                    _e.label = 7;
+                case 7:
+                    if (!expectedDevDependencies) return [3 /*break*/, 9];
                     devDependenciesToInstall = Object.keys(expectedDevDependencies)
                         .reduce(function (depsStr, depName) {
                         return depName + "@" + expectedDevDependencies[depName] + " " + depsStr;
                     }, '')
                         .trim();
-                    if (!devDependenciesToInstall) return [3 /*break*/, 10];
+                    if (!devDependenciesToInstall) return [3 /*break*/, 9];
                     return [4 /*yield*/, exec_1.default("npm install -D " + devDependenciesToInstall, {
                             workingDirectory: rootDir,
                             redirectIo: true,
                         })];
-                case 9:
+                case 8:
                     _e.sent();
-                    _e.label = 10;
-                case 10: return [2 /*return*/];
+                    _e.label = 9;
+                case 9: return [2 /*return*/];
             }
         });
     });
