@@ -41,7 +41,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
     ALIASES: JSON.stringify(allAliases),
     ENV_VARS: JSON.stringify(app.env || {}),
-    EXTERNALS_ARRAY: JSON.stringify([]),
+    EXTERNALS_ARRAY: JSON.stringify(externals),
   };
 
   const newBabelConfig = renderTemplate({

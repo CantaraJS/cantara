@@ -59,5 +59,9 @@ export default function getAllWebpackExternals({
   const allPackageJsonPaths = allApps.map(app =>
     path.join(app.paths.root, 'package.json'),
   );
-  return getAllExternals({ packageJsonPaths: allPackageJsonPaths, peerOnly });
+  const allWebpackExternals = getAllExternals({
+    packageJsonPaths: allPackageJsonPaths,
+    peerOnly,
+  });
+  return allWebpackExternals;
 }
