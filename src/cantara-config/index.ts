@@ -132,4 +132,5 @@ export function configureCantara(config: CantaraInitialConfig) {
     },
   };
   globalConfig = Object.freeze(configToUse);
+  return globalConfig;
 }

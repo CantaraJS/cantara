@@ -11,7 +11,20 @@ import executeTests from './scripts/test';
 import deriveStageNameFromCmd from './util/deriveStage';
 import publishPackage from './scripts/publish';
 import createNewAppOrPackage from './scripts/new';
+import { writeJson } from './util/fs';
 const packageJSON = require('../package.json');
+
+const cantaraRootDir = path.join(__dirname, '..');
+
+/** "Normalizes" the behaviour of the CLI
+ * no matter if Cantara is executed by the user
+ * in a project folder or by nodemon in
+ * development mode
+ */
+function setupCliContext() {
+  // Set CWD to path of Cantara
+  process.chdir(cantaraRootDir);
+}
 
 /** Takes CLI command and removes unknown options
  * from it, so that no error is thrown. Those
@@ -33,7 +46,7 @@ function prepareCmdForCommander(cmd: string[]) {
   return { cmd: cmdWithoutUnknownParams, unknownParams };
 }
 
-const TEST_CMD = 'new react-app awesome-frontend';
+const TEST_CMD = 'dev places-api';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
@@ -49,7 +62,7 @@ const {
   unknownParams: additionalCliOptions,
 } = prepareCmdForCommander(cmdArr);
 
-const cantaraRootDir = path.join(__dirname, '..');
+setupCliContext();
 
 interface PrepareCantaraOptions {
   appname: string;
@@ -73,7 +86,8 @@ async function prepareCantara({
   additionalCliOptions,
 }: PrepareCantaraOptions) {
   wasCantaraCommandExecuted = true;
-  configureCantara({
+  const saveConfToFile = false;
+  const conf = configureCantara({
     additionalCliOptions,
     projectDir: cantaraPath,
     packageRootDir: cantaraRootDir,
@@ -86,6 +100,15 @@ async function prepareCantara({
         ? deriveStageNameFromCmd(cmdName)
         : program.stage,
   });
+  if (saveConfToFile) {
+    writeJson(
+      path.join(
+        conf.internalPaths.temp,
+        `./cantara-globconf.${process.env.NODE_ENV}.json`,
+      ),
+      conf,
+    );
+  }
   await onPreBootstrap();
 }
 

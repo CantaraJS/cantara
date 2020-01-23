@@ -69,5 +69,5 @@ interface CantaraGlobalConfig {
 }
 export default function getGlobalConfig(): CantaraGlobalConfig;
 /** Config can only be set once */
-export declare function configureCantara(config: CantaraInitialConfig): void;
+export declare function configureCantara(config: CantaraInitialConfig): CantaraGlobalConfig;
 export {};

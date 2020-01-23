@@ -59,7 +59,18 @@ var test_1 = __importDefault(require("./scripts/test"));
 var deriveStage_1 = __importDefault(require("./util/deriveStage"));
 var publish_1 = __importDefault(require("./scripts/publish"));
 var new_1 = __importDefault(require("./scripts/new"));
+var fs_1 = require("./util/fs");
 var packageJSON = require('../package.json');
+var cantaraRootDir = path_1.default.join(__dirname, '..');
+/** "Normalizes" the behaviour of the CLI
+ * no matter if Cantara is executed by the user
+ * in a project folder or by nodemon in
+ * development mode
+ */
+function setupCliContext() {
+    // Set CWD to path of Cantara
+    process.chdir(cantaraRootDir);
+}
 /** Takes CLI command and removes unknown options
  * from it, so that no error is thrown. Those
  * unknown options are then passed to Cantara,
@@ -79,14 +90,14 @@ function prepareCmdForCommander(cmd) {
     });
     return { cmd: cmdWithoutUnknownParams, unknownParams: unknownParams };
 }
-var TEST_CMD = 'new react-app awesome-frontend';
+var TEST_CMD = 'dev places';
 var cantaraPath = process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
     : process.cwd();
 var cmdArr = process.env.NODE_ENV === 'development'
     ? __spreadArrays(['', ''], TEST_CMD.split(' ')) : process.argv;
 var _a = prepareCmdForCommander(cmdArr), cmdToParse = _a.cmd, additionalCliOptions = _a.unknownParams;
-var cantaraRootDir = path_1.default.join(__dirname, '..');
+setupCliContext();
 /** Is set to true if any Cantara command was executed.
  * If no cantara command was matched,
  * the tool tries to execute the npm command
@@ -99,11 +110,13 @@ var wasCantaraCommandExecuted = false;
 function prepareCantara(_a) {
     var appname = _a.appname, cmdName = _a.cmdName, additionalCliOptions = _a.additionalCliOptions;
     return __awaiter(this, void 0, void 0, function () {
+        var saveConfToFile, conf;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     wasCantaraCommandExecuted = true;
-                    cantara_config_1.configureCantara({
+                    saveConfToFile = false;
+                    conf = cantara_config_1.configureCantara({
                         additionalCliOptions: additionalCliOptions,
                         projectDir: cantaraPath,
                         packageRootDir: cantaraRootDir,
@@ -115,6 +128,9 @@ function prepareCantara(_a) {
                             ? deriveStage_1.default(cmdName)
                             : commander_1.default.stage,
                     });
+                    if (saveConfToFile) {
+                        fs_1.writeJson(path_1.default.join(conf.internalPaths.temp, "./cantara-globconf." + process.env.NODE_ENV + ".json"), conf);
+                    }
                     return [4 /*yield*/, bootstrap_1.default()];
                 case 1:
                     _b.sent();

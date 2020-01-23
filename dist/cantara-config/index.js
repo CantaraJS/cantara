@@ -68,5 +68,6 @@ function configureCantara(config) {
         },
     };
     globalConfig = Object.freeze(configToUse);
+    return globalConfig;
 }
 exports.configureCantara = configureCantara;
