@@ -25,10 +25,7 @@ export default async function prepareReactApps(app: CantaraApplication) {
   // Install/update dependencies
   await createOrUpdatePackageJSON({
     expectedDependencies: globalCantaraConfig.dependencies.react,
-    // expectedDevDependencies: {
-    //   ...globalCantaraConfig.dependencies.typescript,
-    //   ...globalCantaraConfig.dependencies.testing,
-    // },
+    expectedDevDependencies: globalCantaraConfig.dependencies.testing,
     rootDir: app.paths.root,
   });
 

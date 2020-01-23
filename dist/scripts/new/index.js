@@ -41,13 +41,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var ncp_1 = __importDefault(require("ncp"));
+var del_1 = __importDefault(require("del"));
 var util_1 = require("util");
 var fs_1 = require("fs");
+var string_manipulation_1 = require("../../util/string-manipulation");
 var ncp = util_1.promisify(ncp_1.default);
-function createNewAppOrPackage(_a) {
-    var type = _a.type, name = _a.name, staticFolderPath = _a.staticFolderPath, projectDir = _a.projectDir;
+function createReactComponent(_a) {
+    var name = _a.name, staticFolderPath = _a.staticFolderPath, tempFolderPath = _a.tempFolderPath, projectDir = _a.projectDir;
     return __awaiter(this, void 0, void 0, function () {
-        var templateFolderPath, destinationPath;
+        var destinationPath, origTemplateFolderPath, templateFolderPath, reactIndexFilePath, origReactIndexFileContent, newReactIndexFileContent;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    destinationPath = path_1.default.join(projectDir, 'packages', name);
+                    origTemplateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/react-component');
+                    templateFolderPath = path_1.default.join(tempFolderPath, 'react-component-app-template');
+                    if (!fs_1.existsSync(templateFolderPath)) return [3 /*break*/, 2];
+                    return [4 /*yield*/, del_1.default(templateFolderPath)];
+                case 1:
+                    _b.sent();
+                    _b.label = 2;
+                case 2:
+                    fs_1.mkdirSync(templateFolderPath);
+                    return [4 /*yield*/, ncp(origTemplateFolderPath, templateFolderPath)];
+                case 3:
+                    _b.sent();
+                    reactIndexFilePath = path_1.default.join(templateFolderPath, 'src/index.tsx');
+                    origReactIndexFileContent = fs_1.readFileSync(reactIndexFilePath).toString();
+                    newReactIndexFileContent = origReactIndexFileContent.replace(new RegExp('Index', 'g'), string_manipulation_1.camalize(name));
+                    fs_1.writeFileSync(reactIndexFilePath, newReactIndexFileContent);
+                    return [2 /*return*/, { destinationPath: destinationPath, templateFolderPath: templateFolderPath }];
+            }
+        });
+    });
+}
+function createNewAppOrPackage(_a) {
+    var type = _a.type, name = _a.name, staticFolderPath = _a.staticFolderPath, tempFolderPath = _a.tempFolderPath, projectDir = _a.projectDir;
+    return __awaiter(this, void 0, void 0, function () {
+        var templateFolderPath, destinationPath, resObj;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -57,10 +88,19 @@ function createNewAppOrPackage(_a) {
                         destinationPath = path_1.default.join(projectDir, 'react-apps', name);
                         templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/react-app');
                     }
-                    if (type === 'react-cmp' || type === 'react-component') {
-                        destinationPath = path_1.default.join(projectDir, 'packages', name);
-                        templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/react-component');
-                    }
+                    if (!(type === 'react-cmp' || type === 'react-component')) return [3 /*break*/, 2];
+                    return [4 /*yield*/, createReactComponent({
+                            name: name,
+                            staticFolderPath: staticFolderPath,
+                            tempFolderPath: tempFolderPath,
+                            projectDir: projectDir,
+                        })];
+                case 1:
+                    resObj = _b.sent();
+                    templateFolderPath = resObj.templateFolderPath;
+                    destinationPath = resObj.destinationPath;
+                    _b.label = 2;
+                case 2:
                     if (type === 'node-app') {
                         destinationPath = path_1.default.join(projectDir, 'node-apps', name);
                         templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/node-app');
@@ -77,7 +117,7 @@ function createNewAppOrPackage(_a) {
                         throw new Error(destinationPath + " already exists! Delete the folder if you want to override it.");
                     }
                     return [4 /*yield*/, ncp(templateFolderPath, destinationPath)];
-                case 1:
+                case 3:
                     _b.sent();
                     console.log("Created new " + type + " at " + destinationPath + "!");
                     return [2 /*return*/];

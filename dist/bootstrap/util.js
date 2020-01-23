@@ -81,13 +81,13 @@ function getDependenciesInstallationString(_a) {
 function createOrUpdatePackageJSON(_a) {
     var rootDir = _a.rootDir, expectedDependencies = _a.expectedDependencies, expectedDevDependencies = _a.expectedDevDependencies;
     return __awaiter(this, void 0, void 0, function () {
-        var localPackageJsonPath, _b, dependencies, devDependencies, dependenciesToInstall, devDependenciesToInstall, dependenciesToInstall, devDependenciesToInstall;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        var localPackageJsonPath, _b, _c, dependencies, _d, devDependencies, dependenciesToInstall, devDependenciesToInstall, dependenciesToInstall, devDependenciesToInstall;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
                     localPackageJsonPath = path_1.default.join(rootDir, 'package.json');
                     if (!fs_1.existsSync(localPackageJsonPath)) return [3 /*break*/, 5];
-                    _b = JSON.parse(fs_1.readFileSync(localPackageJsonPath).toString()), dependencies = _b.dependencies, devDependencies = _b.devDependencies;
+                    _b = JSON.parse(fs_1.readFileSync(localPackageJsonPath).toString()), _c = _b.dependencies, dependencies = _c === void 0 ? {} : _c, _d = _b.devDependencies, devDependencies = _d === void 0 ? {} : _d;
                     if (!expectedDependencies) return [3 /*break*/, 2];
                     dependenciesToInstall = getDependenciesInstallationString({
                         expectedDependencies: expectedDependencies,
@@ -99,8 +99,8 @@ function createOrUpdatePackageJSON(_a) {
                             redirectIo: true,
                         })];
                 case 1:
-                    _c.sent();
-                    _c.label = 2;
+                    _e.sent();
+                    _e.label = 2;
                 case 2:
                     if (!expectedDevDependencies) return [3 /*break*/, 4];
                     devDependenciesToInstall = getDependenciesInstallationString({
@@ -113,8 +113,8 @@ function createOrUpdatePackageJSON(_a) {
                             redirectIo: true,
                         })];
                 case 3:
-                    _c.sent();
-                    _c.label = 4;
+                    _e.sent();
+                    _e.label = 4;
                 case 4: return [3 /*break*/, 10];
                 case 5: 
                 // Create new packageJSON and install dependencies
@@ -123,7 +123,7 @@ function createOrUpdatePackageJSON(_a) {
                     })];
                 case 6:
                     // Create new packageJSON and install dependencies
-                    _c.sent();
+                    _e.sent();
                     if (!expectedDependencies) return [3 /*break*/, 8];
                     dependenciesToInstall = Object.keys(expectedDependencies)
                         .reduce(function (depsStr, depName) {
@@ -136,8 +136,8 @@ function createOrUpdatePackageJSON(_a) {
                             redirectIo: true,
                         })];
                 case 7:
-                    _c.sent();
-                    _c.label = 8;
+                    _e.sent();
+                    _e.label = 8;
                 case 8:
                     if (!expectedDevDependencies) return [3 /*break*/, 10];
                     devDependenciesToInstall = Object.keys(expectedDevDependencies)
@@ -151,8 +151,8 @@ function createOrUpdatePackageJSON(_a) {
                             redirectIo: true,
                         })];
                 case 9:
-                    _c.sent();
-                    _c.label = 10;
+                    _e.sent();
+                    _e.label = 10;
                 case 10: return [2 /*return*/];
             }
         });

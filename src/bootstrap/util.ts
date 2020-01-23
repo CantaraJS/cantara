@@ -57,11 +57,11 @@ export async function createOrUpdatePackageJSON({
     // Look if dependencies need to be updated
     type KeyValueStore = { [key: string]: string };
     const {
-      dependencies,
-      devDependencies,
+      dependencies = {},
+      devDependencies = {},
     }: {
-      dependencies: KeyValueStore;
-      devDependencies: KeyValueStore;
+      dependencies?: KeyValueStore;
+      devDependencies?: KeyValueStore;
     } = JSON.parse(readFileSync(localPackageJsonPath).toString());
     if (expectedDependencies) {
       const dependenciesToInstall = getDependenciesInstallationString({

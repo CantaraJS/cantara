@@ -12,17 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var babelReactConfig_1 = __importDefault(require("./babelReactConfig"));
 var externals_1 = __importDefault(require("../externals"));
+var string_manipulation_1 = require("../string-manipulation");
 var WebpackNotifierPlugin = require('webpack-notifier');
 var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 var path = require('path');
-function camalize(str) {
-    return str
-        .toLowerCase()
-        .replace(/[^a-zA-Z0-9]+(.)/g, function (_, chr) { return chr.toUpperCase(); });
-}
 /**
  * Build React, isomorphic, node or browser libraries
  */
@@ -56,7 +52,7 @@ function createLibraryWebpackConfig(_a) {
             // publicPath: '/',
             filename: libraryTarget === 'commonjs2' ? 'index.js' : app.name + ".umd.min.js",
             path: app.paths.build,
-            library: camalize(app.name),
+            library: string_manipulation_1.camalize(app.name),
             /** For bundlers and NodeJS, CommonJS is used.
              * As soon webpack supports ESM as a libraryTarget,
              * ESMs are favoured

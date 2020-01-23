@@ -23,14 +23,16 @@ function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
 /** Prepares a JavaScript package or React Component */
 export default async function prepareJsPackage(app: CantaraApplication) {
   const {
-    dependencies: { react: reactDeps },
+    dependencies: { react: reactDeps, testing: testingDeps },
     internalPaths: { static: staticFilesFolder },
   } = getGlobalConfig();
 
   let indexFileName = 'index.ts';
   const isReactComponent = app.type === 'react-component';
 
-  const expectedDevDependencies = isReactComponent ? { ...reactDeps } : {};
+  const expectedDevDependencies = isReactComponent
+    ? { ...reactDeps, ...testingDeps }
+    : {};
 
   // Create package.json if none exists
   await createOrUpdatePackageJSON({

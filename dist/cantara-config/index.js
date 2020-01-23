@@ -16,6 +16,7 @@ var aliases_1 = __importStar(require("./aliases"));
 var react_1 = require("./dependencies/react");
 var types_1 = require("./dependencies/types");
 var testing_1 = require("./dependencies/testing");
+var common_1 = require("./dependencies/common");
 var globalConfig = undefined;
 function getGlobalConfig() {
     if (!globalConfig)
@@ -51,6 +52,7 @@ function configureCantara(config) {
             react: react_1.reactDependencies,
             typescript: types_1.typescriptDependencies,
             testing: testing_1.testingDependencies,
+            common: common_1.commonDependencies,
         },
         internalPaths: {
             root: config.packageRootDir,

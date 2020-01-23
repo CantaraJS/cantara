@@ -64,14 +64,15 @@ function addPeerDeps(packageJsonPath, deps) {
 /** Prepares a JavaScript package or React Component */
 function prepareJsPackage(app) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, reactDeps, staticFilesFolder, indexFileName, isReactComponent, expectedDevDependencies, packageTsConfigTemplate, renderedTsConfig, packageTsConfigPath, npmignorePath, npmignoreDestPath;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _a, _b, reactDeps, testingDeps, staticFilesFolder, indexFileName, isReactComponent, expectedDevDependencies, packageTsConfigTemplate, renderedTsConfig, packageTsConfigPath, npmignorePath, npmignoreDestPath;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
-                    _a = cantara_config_1.default(), reactDeps = _a.dependencies.react, staticFilesFolder = _a.internalPaths.static;
+                    _a = cantara_config_1.default(), _b = _a.dependencies, reactDeps = _b.react, testingDeps = _b.testing, staticFilesFolder = _a.internalPaths.static;
                     indexFileName = 'index.ts';
                     isReactComponent = app.type === 'react-component';
-                    expectedDevDependencies = isReactComponent ? __assign({}, reactDeps) : {};
+                    expectedDevDependencies = isReactComponent
+                        ? __assign(__assign({}, reactDeps), testingDeps) : {};
                     // Create package.json if none exists
                     return [4 /*yield*/, util_1.createOrUpdatePackageJSON({
                             rootDir: app.paths.root,
@@ -80,7 +81,7 @@ function prepareJsPackage(app) {
                         })];
                 case 1:
                     // Create package.json if none exists
-                    _b.sent();
+                    _c.sent();
                     if (isReactComponent) {
                         // For React Components, add react and react-dom to the peer dependencies
                         addPeerDeps(path_1.default.join(app.paths.root, 'package.json'), reactDeps);

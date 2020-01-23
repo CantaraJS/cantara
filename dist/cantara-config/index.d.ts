@@ -41,6 +41,8 @@ interface CantaraGlobalConfig {
         typescript: Dependencies;
         /** Dependecies needed for testing */
         testing: Dependencies;
+        /** Commonly needed, global dependencies. E.g. prettier */
+        common: Dependencies;
     };
     /** Paths used internally by Cantara */
     internalPaths: {

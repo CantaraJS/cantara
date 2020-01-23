@@ -64,10 +64,7 @@ function prepareReactApps(app) {
                     // Install/update dependencies
                     return [4 /*yield*/, util_1.createOrUpdatePackageJSON({
                             expectedDependencies: globalCantaraConfig.dependencies.react,
-                            // expectedDevDependencies: {
-                            //   ...globalCantaraConfig.dependencies.typescript,
-                            //   ...globalCantaraConfig.dependencies.testing,
-                            // },
+                            // expectedDevDependencies: globalCantaraConfig.dependencies.testing,
                             rootDir: app.paths.root,
                         })];
                 case 1:

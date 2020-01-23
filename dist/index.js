@@ -90,9 +90,9 @@ function prepareCmdForCommander(cmd) {
     });
     return { cmd: cmdWithoutUnknownParams, unknownParams: unknownParams };
 }
-var TEST_CMD = 'dev places-api';
+var TEST_CMD = 'test lucky-number';
 var cantaraPath = process.env.NODE_ENV === 'development'
-    ? 'C:\\Users\\maxim\\DEV\\cantare-example'
+    ? 'C:\\Users\\maxim\\DEV\\cantara-simple-starter'
     : process.cwd();
 var cmdArr = process.env.NODE_ENV === 'development'
     ? __spreadArrays(['', ''], TEST_CMD.split(' ')) : process.argv;
@@ -232,6 +232,7 @@ commander_1.default
             name: name,
             projectDir: cantaraPath,
             staticFolderPath: path_1.default.join(cantaraRootDir, 'static'),
+            tempFolderPath: path_1.default.join(cantaraRootDir, 'static/.temp'),
         });
         return [2 /*return*/];
     });

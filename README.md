@@ -39,7 +39,6 @@ ctr init [template-name]
 
 ## Required
 
-- Implement "new" command
 - Implement templates
   - "init" command
 - Serverless and different stages

@@ -104,7 +104,7 @@ function prepareCantaraProject() {
                     return [4 /*yield*/, util_2.createOrUpdatePackageJSON({
                             rootDir: rootDir,
                             expectedDependencies: globalCantaraConfig.dependencies.react,
-                            expectedDevDependencies: __assign(__assign({}, globalCantaraConfig.dependencies.typescript), globalCantaraConfig.dependencies.testing),
+                            expectedDevDependencies: __assign(__assign({}, globalCantaraConfig.dependencies.typescript), globalCantaraConfig.dependencies.common),
                         })];
                 case 5:
                     // Install React + Typescript dependencies globally for project

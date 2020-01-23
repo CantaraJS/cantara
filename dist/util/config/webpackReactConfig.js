@@ -78,6 +78,12 @@ function createReactWebpackConfig(_a) {
             },
         },
     ]); };
+    var reactDependencyAliases = app.type === 'react'
+        ? {
+            react: path.join(app.paths.root, 'node_modules', 'react'),
+            'react-dom': path.join(app.paths.root, 'node_modules', 'react-dom'),
+        }
+        : {};
     return {
         entry: path.join(app.paths.src, 'index.tsx'),
         resolve: {
@@ -91,7 +97,7 @@ function createReactWebpackConfig(_a) {
                 '.ts',
                 '.tsx',
             ],
-            alias: alias,
+            alias: __assign(__assign({}, alias), reactDependencyAliases),
         },
         mode: mode,
         externals: app.type === 'react' ? [] : externals,
