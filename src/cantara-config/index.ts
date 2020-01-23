@@ -7,6 +7,7 @@ import getAllPackageAliases, { getDependencyAliases } from './aliases';
 import { reactDependencies } from './dependencies/react';
 import { typescriptDependencies } from './dependencies/types';
 import { testingDependencies } from './dependencies/testing';
+import { commonDependencies } from './dependencies/common';
 
 interface CantaraInitialConfig {
   /** Where the cantara package itself lives */
@@ -46,6 +47,8 @@ interface CantaraGlobalConfig {
     typescript: Dependencies;
     /** Dependecies needed for testing */
     testing: Dependencies;
+    /** Commonly needed, global dependencies. E.g. prettier */
+    common: Dependencies;
   };
   /** Paths used internally by Cantara */
   internalPaths: {
@@ -115,6 +118,7 @@ export function configureCantara(config: CantaraInitialConfig) {
       react: reactDependencies,
       typescript: typescriptDependencies,
       testing: testingDependencies,
+      common: commonDependencies,
     },
     internalPaths: {
       root: config.packageRootDir,

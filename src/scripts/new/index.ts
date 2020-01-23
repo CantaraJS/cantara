@@ -2,13 +2,7 @@ import path from 'path';
 import ncpCb from 'ncp';
 import del from 'del';
 import { promisify } from 'util';
-import {
-  existsSync,
-  readFileSync,
-  writeFileSync,
-  mkdirSync,
-  rmdirSync,
-} from 'fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { camalize } from '../../util/string-manipulation';
 
 const ncp = promisify(ncpCb);

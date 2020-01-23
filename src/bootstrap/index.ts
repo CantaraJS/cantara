@@ -66,6 +66,7 @@ async function prepareCantaraProject() {
     expectedDevDependencies: {
       ...globalCantaraConfig.dependencies.typescript,
       ...globalCantaraConfig.dependencies.testing,
+      ...globalCantaraConfig.dependencies.common,
     },
   });
 
