@@ -60,6 +60,7 @@ var deriveStage_1 = __importDefault(require("./util/deriveStage"));
 var publish_1 = __importDefault(require("./scripts/publish"));
 var new_1 = __importDefault(require("./scripts/new"));
 var fs_1 = require("./util/fs");
+var init_1 = __importDefault(require("./scripts/init"));
 var packageJSON = require('../package.json');
 var cantaraRootDir = path_1.default.join(__dirname, '..');
 /** "Normalizes" the behaviour of the CLI
@@ -97,7 +98,6 @@ var cantaraPath = process.env.NODE_ENV === 'development'
 var cmdArr = process.env.NODE_ENV === 'development'
     ? __spreadArrays(['', ''], TEST_CMD.split(' ')) : process.argv;
 var _a = prepareCmdForCommander(cmdArr), cmdToParse = _a.cmd, additionalCliOptions = _a.unknownParams;
-setupCliContext();
 /** Is set to true if any Cantara command was executed.
  * If no cantara command was matched,
  * the tool tries to execute the npm command
@@ -115,6 +115,7 @@ function prepareCantara(_a) {
             switch (_b.label) {
                 case 0:
                     wasCantaraCommandExecuted = true;
+                    setupCliContext();
                     saveConfToFile = false;
                     conf = cantara_config_1.configureCantara({
                         additionalCliOptions: additionalCliOptions,
@@ -235,6 +236,27 @@ commander_1.default
             tempFolderPath: path_1.default.join(cantaraRootDir, 'static/.temp'),
         });
         return [2 /*return*/];
+    });
+}); });
+commander_1.default
+    .command('init [path] [template]')
+    .description("Initialize a new project from a template.\n    If no path is specified, the current working directory is used (if empty).\n    If no template is specified, cantara-simple-starter is used.")
+    .action(function (userPath, template) { return __awaiter(void 0, void 0, void 0, function () {
+    var templateToUse, pathToUse;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                wasCantaraCommandExecuted = true;
+                templateToUse = template ? template : 'cantara-simple-starter';
+                pathToUse = userPath ? path_1.default.resolve(userPath) : process.cwd();
+                return [4 /*yield*/, init_1.default({
+                        projectDir: pathToUse,
+                        templateName: templateToUse,
+                    })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
     });
 }); });
 /** Execute npm commands in the scope of a package/app */

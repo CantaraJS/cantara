@@ -1,11 +1,16 @@
-interface ExecOptions {
+interface CommonOptions {
     /** Defaults to current process.cwd() */
     workingDirectory?: string;
     /** Redirect stdin and stdio to current process */
     redirectIo?: boolean;
-    /** If set to true, variables defined in user's .secrets.json
-     * file are set as env vars for this command
-     */
+}
+interface SpawnOptions extends CommonOptions {
+    env?: {
+        [key: string]: string | undefined;
+    };
+}
+export declare function spawnCmd(cmd: string, { workingDirectory, redirectIo, env }?: SpawnOptions): Promise<unknown>;
+interface ExecOptions extends CommonOptions {
     withSecrets?: boolean;
 }
 /** Execute commands in different contexts and

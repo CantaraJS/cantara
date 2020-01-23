@@ -40,41 +40,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
+var del_1 = __importDefault(require("del"));
+var exec_1 = require("../../util/exec");
 var fs_1 = require("fs");
-var cantara_config_1 = __importDefault(require("../cantara-config"));
-var util_1 = require("./util");
-/** Prepares React App Folder */
-function prepareReactApps(app) {
+function initializeNewProject(_a) {
+    var projectDir = _a.projectDir, templateName = _a.templateName;
     return __awaiter(this, void 0, void 0, function () {
-        var globalCantaraConfig, defaultIndexHtmlTemplatePath, indexHtmlDestinationPath;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var isDirEmpty, finalGitLink, gitFolderToDelete;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    globalCantaraConfig = cantara_config_1.default();
-                    defaultIndexHtmlTemplatePath = path_1.default.join(globalCantaraConfig.internalPaths.static, 'default-index.html');
-                    if (!app.paths.assets)
-                        return [2 /*return*/];
-                    if (!fs_1.existsSync(app.paths.assets)) {
-                        fs_1.mkdirSync(app.paths.assets);
+                    isDirEmpty = !fs_1.existsSync(projectDir) || fs_1.readdirSync(projectDir).length === 0;
+                    if (!isDirEmpty) {
+                        throw new Error(projectDir + " is not empty. Aborting...");
                     }
-                    indexHtmlDestinationPath = path_1.default.join(app.paths.assets, 'index.html');
-                    if (!fs_1.existsSync(indexHtmlDestinationPath)) {
-                        fs_1.copyFileSync(defaultIndexHtmlTemplatePath, indexHtmlDestinationPath);
+                    finalGitLink = templateName;
+                    if (!templateName.includes('/')) {
+                        // It's not a link and not a username/repo pair
+                        finalGitLink = "https://github.com/scriptify/" + templateName + ".git";
                     }
-                    // Install/update dependencies
-                    return [4 /*yield*/, util_1.createOrUpdatePackageJSON({
-                            expectedDependencies: globalCantaraConfig.dependencies.react,
-                            expectedDevDependencies: globalCantaraConfig.dependencies.testing,
-                            rootDir: app.paths.root,
+                    if (!templateName.includes('.git') && templateName.includes('/')) {
+                        finalGitLink = "https://github.com/" + templateName + ".git";
+                    }
+                    return [4 /*yield*/, exec_1.spawnCmd("git clone " + finalGitLink + " " + projectDir, {
+                            redirectIo: true,
                         })];
                 case 1:
-                    // Install/update dependencies
-                    _a.sent();
-                    // Create react Jest config file and copy to current project
-                    util_1.createReactJestConfig(app);
+                    _b.sent();
+                    gitFolderToDelete = path_1.default.join(projectDir, '.git');
+                    return [4 /*yield*/, del_1.default(gitFolderToDelete)];
+                case 2:
+                    _b.sent();
+                    return [4 /*yield*/, exec_1.spawnCmd("git init " + projectDir)];
+                case 3:
+                    _b.sent();
+                    console.log('Initialized new Cantara project. Type cantara --help to see what you can do next.');
                     return [2 /*return*/];
             }
         });
     });
 }
-exports.default = prepareReactApps;
+exports.default = initializeNewProject;

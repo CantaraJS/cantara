@@ -46,13 +46,16 @@ ctr init [template-name]
   - Only rebuilds and deploys the parts of the application that changed
 - Custom e2e testing command can be provided. Cantara takes care of starting all the neccessary servers.
 - Scripts for DB migrations
+- Make type checking optional via flag
+- Write docs
+- Port a project to Cantara (DA)
 - Webpack, Babel, TSconfig ecc. can be modified externally
-- Deployment should work out of the box for all parts an application can have
-  - Defaults can be overriden
+- Write integration tests for CLI
 - Create a few useful starter templates
 - Perfect UX for all cantara commands
   - Everything is a "wizard"
-- Make type checking optional via flag
+- Deployment should work out of the box for all parts an application can have
+  - Defaults can be overriden
 
 ## Nice to have
 

@@ -12,6 +12,7 @@ import deriveStageNameFromCmd from './util/deriveStage';
 import publishPackage from './scripts/publish';
 import createNewAppOrPackage from './scripts/new';
 import { writeJson } from './util/fs';
+import initializeNewProject from './scripts/init';
 const packageJSON = require('../package.json');
 
 const cantaraRootDir = path.join(__dirname, '..');
@@ -62,8 +63,6 @@ const {
   unknownParams: additionalCliOptions,
 } = prepareCmdForCommander(cmdArr);
 
-setupCliContext();
-
 interface PrepareCantaraOptions {
   appname: string;
   cmdName: string;
@@ -86,6 +85,7 @@ async function prepareCantara({
   additionalCliOptions,
 }: PrepareCantaraOptions) {
   wasCantaraCommandExecuted = true;
+  setupCliContext();
   const saveConfToFile = false;
   const conf = configureCantara({
     additionalCliOptions,
@@ -187,6 +187,23 @@ program
       projectDir: cantaraPath,
       staticFolderPath: path.join(cantaraRootDir, 'static'),
       tempFolderPath: path.join(cantaraRootDir, 'static/.temp'),
+    });
+  });
+
+program
+  .command('init [path] [template]')
+  .description(
+    `Initialize a new project from a template.
+    If no path is specified, the current working directory is used (if empty).
+    If no template is specified, cantara-simple-starter is used.`,
+  )
+  .action(async (userPath, template) => {
+    wasCantaraCommandExecuted = true;
+    const templateToUse = template ? template : 'cantara-simple-starter';
+    const pathToUse = userPath ? path.resolve(userPath) : process.cwd();
+    await initializeNewProject({
+      projectDir: pathToUse,
+      templateName: templateToUse,
     });
   });
 
