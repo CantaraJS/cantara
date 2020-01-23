@@ -47,6 +47,10 @@ function getAllWebpackExternals(_a) {
     var allPackageJsonPaths = allApps.map(function (app) {
         return path_1.default.join(app.paths.root, 'package.json');
     });
-    return getAllExternals({ packageJsonPaths: allPackageJsonPaths, peerOnly: peerOnly });
+    var allWebpackExternals = getAllExternals({
+        packageJsonPaths: allPackageJsonPaths,
+        peerOnly: peerOnly,
+    });
+    return allWebpackExternals;
 }
 exports.default = getAllWebpackExternals;

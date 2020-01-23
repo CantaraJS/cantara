@@ -1,0 +1,15 @@
+service: hello-world
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-central-1
+  environment:
+    STAGE: '${opt:stage}'
+functions:
+  handler:
+    handler: handler.handler
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true

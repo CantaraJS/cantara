@@ -90,7 +90,7 @@ function prepareCmdForCommander(cmd) {
     });
     return { cmd: cmdWithoutUnknownParams, unknownParams: unknownParams };
 }
-var TEST_CMD = 'dev places';
+var TEST_CMD = 'dev places-api';
 var cantaraPath = process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
     : process.cwd();

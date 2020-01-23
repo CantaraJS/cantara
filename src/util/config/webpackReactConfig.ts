@@ -85,7 +85,7 @@ export default function createReactWebpackConfig({
       alias,
     },
     mode,
-    externals,
+    externals: app.type === 'react' ? [] : externals,
     devtool: isDevelopment ? 'eval-source-map' : undefined,
     output: {
       // publicPath: '/',
