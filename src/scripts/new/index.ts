@@ -1,7 +1,15 @@
 import path from 'path';
 import ncpCb from 'ncp';
+import del from 'del';
 import { promisify } from 'util';
-import { existsSync } from 'fs';
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  rmdirSync,
+} from 'fs';
+import { camalize } from '../../util/string-manipulation';
 
 const ncp = promisify(ncpCb);
 
@@ -17,12 +25,14 @@ interface CreateNewAppOrPackageOptions {
   /** Root of user's project */
   projectDir: string;
   staticFolderPath: string;
+  tempFolderPath: string;
 }
 
 export default async function createNewAppOrPackage({
   type,
   name,
   staticFolderPath,
+  tempFolderPath,
   projectDir,
 }: CreateNewAppOrPackageOptions) {
   let templateFolderPath = '';
@@ -33,10 +43,29 @@ export default async function createNewAppOrPackage({
   }
   if (type === 'react-cmp' || type === 'react-component') {
     destinationPath = path.join(projectDir, 'packages', name);
-    templateFolderPath = path.join(
+    // Replace "Index" with actual component name
+    const origTemplateFolderPath = path.join(
       staticFolderPath,
       'app-templates/react-component',
     );
+    templateFolderPath = path.join(
+      tempFolderPath,
+      'react-component-app-template',
+    );
+    if (existsSync(templateFolderPath)) {
+      await del(templateFolderPath);
+    }
+    mkdirSync(templateFolderPath);
+    await ncp(origTemplateFolderPath, templateFolderPath);
+    const reactIndexFilePath = path.join(templateFolderPath, 'src/index.tsx');
+    const origReactIndexFileContent = readFileSync(
+      reactIndexFilePath,
+    ).toString();
+    const newReactIndexFileContent = origReactIndexFileContent.replace(
+      new RegExp('Index', 'g'),
+      camalize(name),
+    );
+    writeFileSync(reactIndexFilePath, newReactIndexFileContent);
   }
   if (type === 'node-app') {
     destinationPath = path.join(projectDir, 'node-apps', name);
