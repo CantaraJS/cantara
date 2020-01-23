@@ -3,6 +3,7 @@ import { CreateWebpackConfigParams } from './types';
 import { Configuration } from 'webpack';
 import getBabelConfig from './babelReactConfig';
 import getAllWebpackExternals from '../externals';
+import { camalize } from '../string-manipulation';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -11,12 +12,6 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const path = require('path');
-
-function camalize(str: string) {
-  return str
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase());
-}
 
 /**
  * Build React, isomorphic, node or browser libraries

@@ -46,7 +46,7 @@ function prepareCmdForCommander(cmd: string[]) {
   return { cmd: cmdWithoutUnknownParams, unknownParams };
 }
 
-const TEST_CMD = 'dev places-api';
+const TEST_CMD = 'new react-component another-cool-component';
 const cantaraPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\cantare-example'
@@ -186,6 +186,7 @@ program
       name,
       projectDir: cantaraPath,
       staticFolderPath: path.join(cantaraRootDir, 'static'),
+      tempFolderPath: path.join(cantaraRootDir, 'static/.temp'),
     });
   });
 
