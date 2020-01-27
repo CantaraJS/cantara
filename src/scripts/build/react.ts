@@ -6,8 +6,10 @@ import webpack from 'webpack';
 export default function buildReactApp(app: CantaraApplication) {
   const {
     allPackages: { include },
-    aliases: { packageAliases },
-    runtime: { projectDir },
+    runtime: {
+      projectDir,
+      aliases: { packageAliases },
+    },
   } = getGlobalConfig();
 
   const webpackConfig = createReactWebpackConfig({

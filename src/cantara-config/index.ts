@@ -16,7 +16,7 @@ interface CantaraInitialConfig {
   projectDir?: string;
   currentCommand: {
     name: string;
-    appname: string;
+    appname?: string;
   };
   stage: string;
   /** Unknown options for 3rd party CLI programs, e.g. Jest.
@@ -33,10 +33,6 @@ interface CantaraGlobalConfig {
   allPackages: {
     /** Include all those paths into webpack configs */
     include: string[];
-  };
-  aliases: {
-    packageAliases: { [key: string]: string };
-    appDependencyAliases: { [key: string]: string };
   };
   dependencies: {
     /** Current React and React DOM version */
@@ -60,13 +56,20 @@ interface CantaraGlobalConfig {
   };
   /** Current runtime configuration (e.g. the command the user executed, the location of it etc.) */
   runtime: {
+    /** Aliases which need to be set by
+     * tools like webpack
+     */
+    aliases: {
+      packageAliases: { [key: string]: string };
+      appDependencyAliases: { [key: string]: string };
+    };
     /** Working directory where user executed Cantara */
     projectDir: string;
     /** Information about current command */
     currentCommand: {
       name: string;
       additionalCliOptions: string;
-      app: CantaraApplication;
+      app?: CantaraApplication;
     };
     /** Secrets from user's .secrets.json file */
     secrets: {
@@ -84,20 +87,50 @@ export default function getGlobalConfig() {
   return globalConfig;
 }
 
+/** Returns currently active application
+ * or throws an error if there
+ * is no active application.
+ * Can be used by all scripts which
+ * require an active application.
+ */
+export function getActiveApp(): CantaraApplication {
+  const {
+    runtime: {
+      currentCommand: { app: activeApp },
+    },
+  } = getGlobalConfig();
+  if (!activeApp) {
+    throw new Error('No active application in current Cantara runtime!');
+  }
+  return activeApp;
+}
+
 /** Config can only be set once */
 export function configureCantara(config: CantaraInitialConfig) {
   const staticFilesPath = path.join(config.packageRootDir, 'static');
   const tempFolder = path.join(staticFilesPath, '.temp');
   const projectDir = config.projectDir || process.cwd();
   const allApps = getAllApps({ rootDir: projectDir, stage: config.stage });
-  const currentActiveApp = allApps.find(
-    app => app.name === config.currentCommand.appname,
-  );
-  if (!currentActiveApp) {
+  const currentActiveApp = config.currentCommand.appname
+    ? allApps.find(app => app.name === config.currentCommand.appname)
+    : undefined;
+
+  if (config.currentCommand.appname && !currentActiveApp) {
     throw new Error(
-      `The app "${config.currentCommand.appname}" does not exist.`,
+      `Application "${config.currentCommand.appname}" does not exist.`,
     );
   }
+
+  const packageAliases = currentActiveApp
+    ? getAllPackageAliases({
+        allApps,
+        activeApp: currentActiveApp,
+      })
+    : {};
+  const appDependencyAliases = currentActiveApp
+    ? getDependencyAliases(currentActiveApp)
+    : {};
+
   const configToUse: CantaraGlobalConfig = {
     allApps,
     allPackages: {
@@ -106,13 +139,6 @@ export function configureCantara(config: CantaraInitialConfig) {
           app => app.type === 'js-package' || app.type === 'react-component',
         )
         .map(app => app.paths.src),
-    },
-    aliases: {
-      packageAliases: getAllPackageAliases({
-        allApps,
-        activeApp: currentActiveApp,
-      }),
-      appDependencyAliases: getDependencyAliases(currentActiveApp),
     },
     dependencies: {
       react: reactDependencies,
@@ -133,8 +159,12 @@ export function configureCantara(config: CantaraInitialConfig) {
         additionalCliOptions: config.additionalCliOptions || '',
       },
       secrets: loadSecrets(projectDir),
+      aliases: {
+        packageAliases,
+        appDependencyAliases,
+      },
     },
   };
-  globalConfig = Object.freeze(configToUse);
+  globalConfig = configToUse;
   return globalConfig;
 }

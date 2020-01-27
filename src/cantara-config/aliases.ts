@@ -21,7 +21,7 @@ export function getDependencyAliases(app: CantaraApplication) {
   const packageJsonPath = path.join(app.paths.root, 'package.json');
   if (existsSync(packageJsonPath)) {
     const packageJson = readFileAsJSON(packageJsonPath);
-    dependencies = packageJson.dependencies;
+    dependencies = packageJson.dependencies || {};
   }
   const appNodeModules = slash(path.join(app.paths.root, 'node_modules'));
   const dependencyAliases = Object.keys(dependencies).reduce(

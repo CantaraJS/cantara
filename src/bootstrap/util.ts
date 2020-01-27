@@ -1,7 +1,7 @@
 import path from 'path';
 import { existsSync, readFileSync, writeFileSync, copyFileSync } from 'fs';
 import execCmd from '../util/exec';
-import getGlobalConfig from '../cantara-config';
+import getGlobalConfig, { getActiveApp } from '../cantara-config';
 import slash from 'slash';
 import renderTemplate from '../util/configTemplates';
 import { CantaraApplication } from '../util/types';
@@ -147,11 +147,11 @@ export async function createOrUpdatePackageJSON({
  */
 function getJestAliases() {
   const {
-    aliases: { packageAliases },
     runtime: {
-      currentCommand: { app: activeApp },
+      aliases: { packageAliases },
     },
   } = getGlobalConfig();
+  const activeApp = getActiveApp();
   const jestAliases = Object.keys(packageAliases).reduce(
     (aliasObj, packageName) => {
       const packageAbsolutePath = packageAliases[packageName];
@@ -251,13 +251,9 @@ export function createReactJestConfig(app: CantaraApplication) {
  */
 export function createTempEnvJsonFile() {
   const {
-    runtime: {
-      currentCommand: {
-        app: { env },
-      },
-    },
     internalPaths: { temp },
   } = getGlobalConfig();
+  const { env } = getActiveApp();
   const jsonFilePath = path.join(temp, '.env.json');
   writeJson(jsonFilePath, env || {});
 }

@@ -19,7 +19,7 @@ interface SpawnOptions extends CommonOptions {
 export function spawnCmd(
   cmd: string,
   { workingDirectory, redirectIo, env = {} }: SpawnOptions = {},
-) {
+): Promise<string | number> {
   return new Promise(resolve => {
     const options = {
       cwd: workingDirectory,
@@ -31,14 +31,28 @@ export function spawnCmd(
 
     const [programCmd, ...params] = cmd.split(' ');
 
+    let retData = '';
     const newProcess = spawn(programCmd, params, {
       ...options,
       shell: true,
-      stdio: redirectIo ? 'inherit' : 'ignore',
+      stdio: redirectIo ? 'inherit' : undefined,
     });
-    newProcess.on('close', resolve);
-    newProcess.on('exit', resolve);
-    newProcess.on('disconnect', resolve);
+
+    function onExit() {
+      resolve(retData);
+    }
+
+    newProcess.stdio.forEach(
+      io =>
+        io &&
+        io.on('data', data => {
+          retData += `\n${data.toString()}`;
+        }),
+    );
+
+    newProcess.on('close', onExit);
+    newProcess.on('exit', onExit);
+    newProcess.on('disconnect', onExit);
   });
 }
 

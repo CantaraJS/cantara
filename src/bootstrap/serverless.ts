@@ -26,8 +26,8 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   ).toString();
 
   const allAliases = {
-    ...globalCantaraConfig.aliases.appDependencyAliases,
-    ...globalCantaraConfig.aliases.packageAliases,
+    ...globalCantaraConfig.runtime.aliases.appDependencyAliases,
+    ...globalCantaraConfig.runtime.aliases.packageAliases,
   };
   const externals = getAllWebpackExternals();
 

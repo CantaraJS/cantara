@@ -48,7 +48,9 @@ async function prepareCantaraProject() {
     ).toString(),
   );
   const {
-    aliases: { packageAliases },
+    runtime: {
+      aliases: { packageAliases },
+    },
   } = globalCantaraConfig;
   const newTsConfig = {
     ...tsConfig,
@@ -80,9 +82,12 @@ async function prepareCantaraProject() {
 
 /**
  * Prepares the application folders if not done already.
+ * Gets only executed if there's an active application
  */
 export default async function onPreBootstrap() {
   const globalCantaraConfig = getGlobalConfig();
+  const isAnAppActive = !!globalCantaraConfig.runtime.currentCommand.app;
+  if (!isAnAppActive) return;
 
   await prepareCantaraProject();
 

@@ -4,15 +4,12 @@ import del from 'del';
 import { promisify } from 'util';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { camalize } from '../../util/string-manipulation';
+import getGlobalConfig from '../../cantara-config';
 
 const ncp = promisify(ncpCb);
 
 interface CreateNewOptions {
   name: string;
-  /** Root of user's project */
-  projectDir: string;
-  staticFolderPath: string;
-  tempFolderPath: string;
 }
 
 interface CreateNewAppOrPackageOptions extends CreateNewOptions {
@@ -25,12 +22,12 @@ interface CreateNewAppOrPackageOptions extends CreateNewOptions {
     | 'react-cmp';
 }
 
-async function createReactComponent({
-  name,
-  staticFolderPath,
-  tempFolderPath,
-  projectDir,
-}: CreateNewOptions) {
+async function createReactComponent({ name }: CreateNewOptions) {
+  const {
+    runtime: { projectDir },
+    internalPaths: { static: staticFolderPath, temp: tempFolderPath },
+  } = getGlobalConfig();
+
   const destinationPath = path.join(projectDir, 'packages', name);
   // Replace "Index" with actual component name
   const origTemplateFolderPath = path.join(
@@ -59,10 +56,12 @@ async function createReactComponent({
 export default async function createNewAppOrPackage({
   type,
   name,
-  staticFolderPath,
-  tempFolderPath,
-  projectDir,
 }: CreateNewAppOrPackageOptions) {
+  const {
+    runtime: { projectDir },
+    internalPaths: { static: staticFolderPath },
+  } = getGlobalConfig();
+
   let templateFolderPath = '';
   let destinationPath = '';
   if (type === 'react-app') {
@@ -72,9 +71,6 @@ export default async function createNewAppOrPackage({
   if (type === 'react-cmp' || type === 'react-component') {
     const resObj = await createReactComponent({
       name,
-      staticFolderPath,
-      tempFolderPath,
-      projectDir,
     });
     templateFolderPath = resObj.templateFolderPath;
     destinationPath = resObj.destinationPath;

@@ -1,12 +1,14 @@
-import getGlobalConfig from '../../cantara-config';
+import getGlobalConfig, { getActiveApp } from '../../cantara-config';
 import execCmd from '../../util/exec';
 
 export default function executeTests() {
   const {
     runtime: {
-      currentCommand: { app: activeApp, additionalCliOptions },
+      currentCommand: { additionalCliOptions },
     },
   } = getGlobalConfig();
+
+  const activeApp = getActiveApp();
 
   const cmdToExecute = `jest ${additionalCliOptions}`;
 

@@ -6,12 +6,11 @@ import getGlobalConfig from '../../cantara-config';
 import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { readFileAsJSON, writeJson } from '../../util/fs';
 import execCmd from '../../util/exec';
-import { unlinkSync } from 'fs';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
   return new Promise((resolve, reject) => {
-    compiler.run((err, stats) => {
+    compiler.run(err => {
       if (err) {
         reject(new Error('Error while compiling.'));
         return;
@@ -25,8 +24,10 @@ function compile(config: webpack.Configuration) {
 export default async function buildPackage(app: CantaraApplication) {
   const {
     allPackages: { include },
-    aliases: { appDependencyAliases, packageAliases },
-    runtime: { projectDir },
+    runtime: {
+      projectDir,
+      aliases: { appDependencyAliases, packageAliases },
+    },
   } = getGlobalConfig();
   const allAliases = { ...appDependencyAliases, ...packageAliases };
   const commonOptions = {

@@ -2,19 +2,20 @@ import webpack from 'webpack';
 
 import WebpackDevServer from 'webpack-dev-server';
 
-import getGlobalConfig from '../../cantara-config';
+import getGlobalConfig, { getActiveApp } from '../../cantara-config';
 import createReactWebpackConfig from '../../util/config/webpackReactConfig';
 import clearConsole from '../../util/clearConsole';
 
 export function startReactAppDevelopmentServer() {
   const {
     allPackages: { include },
-    aliases: { packageAliases },
     runtime: {
-      currentCommand: { app: activeApp },
+      aliases: { packageAliases },
+
       projectDir,
     },
   } = getGlobalConfig();
+  const activeApp = getActiveApp();
   const webpackConfig = createReactWebpackConfig({
     alias: packageAliases,
     app: activeApp,

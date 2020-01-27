@@ -1,12 +1,8 @@
 import execCmd from '../../util/exec';
-import getGlobalConfig from '../../cantara-config';
+import { getActiveApp } from '../../cantara-config';
 
 export default async function publishPackage() {
-  const {
-    runtime: {
-      currentCommand: { app: packageToPublish },
-    },
-  } = getGlobalConfig();
+  const packageToPublish = getActiveApp();
 
   if (
     packageToPublish.type !== 'js-package' &&

@@ -6,8 +6,10 @@ import createNodeWebpackConfig from '../../util/config/webpackNodeConfig';
 export default function buildNodeApp(app: CantaraApplication) {
   const {
     allPackages: { include },
-    aliases: { packageAliases },
-    runtime: { projectDir },
+    runtime: {
+      projectDir,
+      aliases: { packageAliases },
+    },
   } = getGlobalConfig();
 
   const webpackConfig = createNodeWebpackConfig({
@@ -20,7 +22,7 @@ export default function buildNodeApp(app: CantaraApplication) {
   });
 
   const compiler = webpack(webpackConfig);
-  compiler.run((err, stats) => {
+  compiler.run(err => {
     if (err) {
       throw new Error('Error while compiling.');
     }

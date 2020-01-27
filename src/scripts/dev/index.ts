@@ -1,14 +1,10 @@
-import getGlobalConfig from '../../cantara-config';
+import { getActiveApp } from '../../cantara-config';
 import { startReactAppDevelopmentServer } from './react';
 import { startNodeAppDevelopmentServer } from './node';
 import startServerlessEndpointDevelopmentServer from './serverless';
 
 export default function startDevelopmentServer() {
-  const {
-    runtime: {
-      currentCommand: { app: activeApp },
-    },
-  } = getGlobalConfig();
+  const activeApp = getActiveApp();
   switch (activeApp.type) {
     case 'react':
       startReactAppDevelopmentServer();
