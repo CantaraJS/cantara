@@ -28,5 +28,6 @@ export function prepareCmdForCommander(cmd: string[], program: Command) {
     unknown = unknown.filter(uCmd => uCmd !== cmd);
     return shouldKeep;
   });
+  console.log({ unknownParams });
   return { cmd: cmdWithoutUnknownParams, unknownParams };
 }

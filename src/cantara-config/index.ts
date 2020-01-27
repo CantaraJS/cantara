@@ -76,6 +76,7 @@ interface CantaraGlobalConfig {
       AWS_ACCESS_KEY_ID?: string;
       AWS_SECRET_ACCESS_KEY?: string;
     };
+    stage: string;
   };
 }
 
@@ -153,6 +154,7 @@ export function configureCantara(config: CantaraInitialConfig) {
     },
     runtime: {
       projectDir,
+      stage: config.stage,
       currentCommand: {
         name: config.currentCommand.name,
         app: currentActiveApp,

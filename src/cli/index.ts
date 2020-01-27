@@ -14,7 +14,7 @@ import initalizeCantara from '../bootstrap/init';
 import { prepareCmdForCommander, setupCliContext } from './util';
 const packageJSON = require('../../package.json');
 
-const TEST_CMD = 'deploy greeting-api';
+const TEST_CMD = 'deploy greeting-api --stage staging';
 const userProjectPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\new-cantara'
@@ -72,7 +72,7 @@ program.version(packageJSON.version);
  * - test: test
  */
 program.option(
-  '-s, --stage <development|production|custom>',
+  '-s, --stage <stageName>',
   'This parameter affects which environment variables are used.',
   'not_set',
 );

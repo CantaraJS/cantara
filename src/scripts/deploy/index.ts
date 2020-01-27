@@ -5,7 +5,7 @@ import execCmd from '../../util/exec';
  */
 export default function deployActiveApp() {
   const {
-    runtime: { secrets },
+    runtime: { secrets, stage },
   } = getGlobalConfig();
 
   const activeApp = getActiveApp();
@@ -22,7 +22,7 @@ export default function deployActiveApp() {
     );
   }
 
-  const serverlessCmd = 'serverless deploy --stage prod';
+  const serverlessCmd = `serverless deploy --stage ${stage}`;
   execCmd(serverlessCmd, {
     workingDirectory: activeApp.paths.root,
     redirectIo: true,
