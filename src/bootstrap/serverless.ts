@@ -5,7 +5,7 @@ import slash from 'slash';
 import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
-import { createNodeJestConfig } from './util';
+import { createNodeJestConfig, createOrUpdatePackageJSON } from './util';
 import getAllWebpackExternals from '../util/externals';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
@@ -126,4 +126,7 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
 
   // Create jest config
   createNodeJestConfig(app);
+
+  // Create package.json
+  createOrUpdatePackageJSON({ rootDir: app.paths.root });
 }

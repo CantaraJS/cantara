@@ -14,7 +14,7 @@ import initalizeCantara from '../bootstrap/init';
 import { prepareCmdForCommander, setupCliContext } from './util';
 const packageJSON = require('../../package.json');
 
-const TEST_CMD = 'build-changed';
+const TEST_CMD = 'deploy greeting-api';
 const userProjectPath =
   process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\new-cantara'
