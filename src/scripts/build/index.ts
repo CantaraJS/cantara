@@ -10,13 +10,14 @@ export default function buildActiveApp() {
 
   if (activeApp.type === 'react') {
     buildReactApp(activeApp);
-  }
-
-  if (activeApp.type === 'node') {
+  } else if (activeApp.type === 'node') {
     buildNodeApp(activeApp);
-  }
-
-  if (activeApp.type === 'js-package' || activeApp.type === 'react-component') {
+  } else if (
+    activeApp.type === 'js-package' ||
+    activeApp.type === 'react-component'
+  ) {
     buildPackage(activeApp);
+  } else {
+    console.log(`Apps of type ${activeApp.type} can't be built.`);
   }
 }

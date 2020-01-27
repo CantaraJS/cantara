@@ -131,7 +131,9 @@ commander_1.default
             case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'build', additionalCliOptions: additionalCliOptions })];
             case 1:
                 _a.sent();
-                build_1.default();
+                return [4 /*yield*/, build_1.default()];
+            case 2:
+                _a.sent();
                 return [2 /*return*/];
         }
     });

@@ -14,11 +14,15 @@ function buildActiveApp() {
     if (activeApp.type === 'react') {
         react_1.default(activeApp);
     }
-    if (activeApp.type === 'node') {
+    else if (activeApp.type === 'node') {
         node_1.default(activeApp);
     }
-    if (activeApp.type === 'js-package' || activeApp.type === 'react-component') {
+    else if (activeApp.type === 'js-package' ||
+        activeApp.type === 'react-component') {
         packages_1.default(activeApp);
+    }
+    else {
+        console.log("Apps of type " + activeApp.type + " can't be built.");
     }
 }
 exports.default = buildActiveApp;

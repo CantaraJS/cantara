@@ -90,7 +90,7 @@ program
   .description('Create a production build for the specified app or package.')
   .action(async appname => {
     await prepareCantara({ appname, cmdName: 'build', additionalCliOptions });
-    buildActiveApp();
+    await buildActiveApp();
   });
 
 program
