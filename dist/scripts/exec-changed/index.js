@@ -39,28 +39,60 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var path_1 = __importDefault(require("path"));
 var exec_1 = __importDefault(require("../../util/exec"));
-var cantara_config_1 = require("../../cantara-config");
-function publishPackage() {
+var parseDiffSummary_1 = __importDefault(require("./parseDiffSummary"));
+var cantara_config_1 = __importDefault(require("../../cantara-config"));
+/** Executes a function for all
+ * applications/packages whose code
+ * has changed since the last commit.
+ * Accepts a function as a parameter
+ * which gets executed with the name
+ * of the app that changed as it's first
+ * parameter
+ */
+function executeForChangedApps(cb) {
     return __awaiter(this, void 0, void 0, function () {
-        var packageToPublish;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var _a, projectDir, allApps, res, diffSum, changedAppNames, _i, changedAppNames_1, changedAppName;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    packageToPublish = cantara_config_1.getActiveApp();
-                    if (packageToPublish.type !== 'js-package' &&
-                        packageToPublish.type !== 'react-component') {
-                        throw new Error('Only packages can be published!');
-                    }
-                    return [4 /*yield*/, exec_1.default('np --no-tests', {
-                            redirectIo: true,
-                            workingDirectory: packageToPublish.paths.root,
+                    _a = cantara_config_1.default(), projectDir = _a.runtime.projectDir, allApps = _a.allApps;
+                    return [4 /*yield*/, exec_1.default('git diff --stat', {
+                            workingDirectory: projectDir,
                         })];
                 case 1:
-                    _a.sent();
-                    return [2 /*return*/];
+                    res = _b.sent();
+                    diffSum = parseDiffSummary_1.default(res.toString(), projectDir);
+                    changedAppNames = diffSum
+                        .map(function (changeObj) {
+                        if (!changeObj)
+                            return false;
+                        var srcIndex = changeObj.file.indexOf('src');
+                        var rootPath = changeObj.file.slice(0, srcIndex);
+                        var name = path_1.default.basename(rootPath);
+                        // Only include apps that exist
+                        var foundApp = allApps.find(function (app) { return app.name === name; });
+                        if (!foundApp)
+                            return false;
+                        return name;
+                    })
+                        .filter(Boolean);
+                    _i = 0, changedAppNames_1 = changedAppNames;
+                    _b.label = 2;
+                case 2:
+                    if (!(_i < changedAppNames_1.length)) return [3 /*break*/, 5];
+                    changedAppName = changedAppNames_1[_i];
+                    return [4 /*yield*/, cb(changedAppName)];
+                case 3:
+                    _b.sent();
+                    _b.label = 4;
+                case 4:
+                    _i++;
+                    return [3 /*break*/, 2];
+                case 5: return [2 /*return*/];
             }
         });
     });
 }
-exports.default = publishPackage;
+exports.default = executeForChangedApps;

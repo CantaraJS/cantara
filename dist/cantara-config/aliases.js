@@ -35,7 +35,7 @@ function getDependencyAliases(app) {
     var packageJsonPath = path_1.default.join(app.paths.root, 'package.json');
     if (fs_2.existsSync(packageJsonPath)) {
         var packageJson = fs_1.readFileAsJSON(packageJsonPath);
-        dependencies = packageJson.dependencies;
+        dependencies = packageJson.dependencies || {};
     }
     var appNodeModules = slash_1.default(path_1.default.join(app.paths.root, 'node_modules'));
     var dependencyAliases = Object.keys(dependencies).reduce(function (depObj, depName) {

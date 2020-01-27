@@ -24,29 +24,47 @@ function getGlobalConfig() {
     return globalConfig;
 }
 exports.default = getGlobalConfig;
+/** Returns currently active application
+ * or throws an error if there
+ * is no active application.
+ * Can be used by all scripts which
+ * require an active application.
+ */
+function getActiveApp() {
+    var activeApp = getGlobalConfig().runtime.currentCommand.app;
+    if (!activeApp) {
+        throw new Error('No active application in current Cantara runtime!');
+    }
+    return activeApp;
+}
+exports.getActiveApp = getActiveApp;
 /** Config can only be set once */
 function configureCantara(config) {
     var staticFilesPath = path_1.default.join(config.packageRootDir, 'static');
     var tempFolder = path_1.default.join(staticFilesPath, '.temp');
     var projectDir = config.projectDir || process.cwd();
     var allApps = util_1.default({ rootDir: projectDir, stage: config.stage });
-    var currentActiveApp = allApps.find(function (app) { return app.name === config.currentCommand.appname; });
-    if (!currentActiveApp) {
-        throw new Error("The app \"" + config.currentCommand.appname + "\" does not exist.");
+    var currentActiveApp = config.currentCommand.appname
+        ? allApps.find(function (app) { return app.name === config.currentCommand.appname; })
+        : undefined;
+    if (config.currentCommand.appname && !currentActiveApp) {
+        throw new Error("Application \"" + config.currentCommand.appname + "\" does not exist.");
     }
+    var packageAliases = currentActiveApp
+        ? aliases_1.default({
+            allApps: allApps,
+            activeApp: currentActiveApp,
+        })
+        : {};
+    var appDependencyAliases = currentActiveApp
+        ? aliases_1.getDependencyAliases(currentActiveApp)
+        : {};
     var configToUse = {
         allApps: allApps,
         allPackages: {
             include: allApps
                 .filter(function (app) { return app.type === 'js-package' || app.type === 'react-component'; })
                 .map(function (app) { return app.paths.src; }),
-        },
-        aliases: {
-            packageAliases: aliases_1.default({
-                allApps: allApps,
-                activeApp: currentActiveApp,
-            }),
-            appDependencyAliases: aliases_1.getDependencyAliases(currentActiveApp),
         },
         dependencies: {
             react: react_1.reactDependencies,
@@ -67,9 +85,13 @@ function configureCantara(config) {
                 additionalCliOptions: config.additionalCliOptions || '',
             },
             secrets: util_1.loadSecrets(projectDir),
+            aliases: {
+                packageAliases: packageAliases,
+                appDependencyAliases: appDependencyAliases,
+            },
         },
     };
-    globalConfig = Object.freeze(configToUse);
+    globalConfig = configToUse;
     return globalConfig;
 }
 exports.configureCantara = configureCantara;

@@ -62,7 +62,7 @@ function createWebpackAndBabelConfigFromTemplate(app) {
     var globalCantaraConfig = cantara_config_1.default();
     var babelConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverlessBabelConfig.template.js')).toString();
     var webpackConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverlessWebpackConfig.template.js')).toString();
-    var allAliases = __assign(__assign({}, globalCantaraConfig.aliases.appDependencyAliases), globalCantaraConfig.aliases.packageAliases);
+    var allAliases = __assign(__assign({}, globalCantaraConfig.runtime.aliases.appDependencyAliases), globalCantaraConfig.runtime.aliases.packageAliases);
     var externals = externals_1.default();
     var templateVariables = {
         MODULES_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +

@@ -7,7 +7,7 @@ var webpack_1 = __importDefault(require("webpack"));
 var cantara_config_1 = __importDefault(require("../../cantara-config"));
 var webpackNodeConfig_1 = __importDefault(require("../../util/config/webpackNodeConfig"));
 function buildNodeApp(app) {
-    var _a = cantara_config_1.default(), include = _a.allPackages.include, packageAliases = _a.aliases.packageAliases, projectDir = _a.runtime.projectDir;
+    var _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, projectDir = _b.projectDir, packageAliases = _b.aliases.packageAliases;
     var webpackConfig = webpackNodeConfig_1.default({
         alias: packageAliases,
         app: app,
@@ -17,7 +17,7 @@ function buildNodeApp(app) {
         include: include,
     });
     var compiler = webpack_1.default(webpackConfig);
-    compiler.run(function (err, stats) {
+    compiler.run(function (err) {
         if (err) {
             throw new Error('Error while compiling.');
         }

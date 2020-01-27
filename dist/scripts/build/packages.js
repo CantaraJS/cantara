@@ -59,7 +59,7 @@ var exec_1 = __importDefault(require("../../util/exec"));
 function compile(config) {
     var compiler = webpack_1.default(config);
     return new Promise(function (resolve, reject) {
-        compiler.run(function (err, stats) {
+        compiler.run(function (err) {
             if (err) {
                 reject(new Error('Error while compiling.'));
                 return;
@@ -71,11 +71,11 @@ function compile(config) {
 }
 function buildPackage(app) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, include, _b, appDependencyAliases, packageAliases, projectDir, allAliases, commonOptions, webpackCommonJsConfig, webpackUmdConfig, _c, libraryTargets, packageJsonPath, packageJson, newPackageJson;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var _a, include, _b, projectDir, _c, appDependencyAliases, packageAliases, allAliases, commonOptions, webpackCommonJsConfig, webpackUmdConfig, _d, libraryTargets, packageJsonPath, packageJson, newPackageJson;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
-                    _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.aliases, appDependencyAliases = _b.appDependencyAliases, packageAliases = _b.packageAliases, projectDir = _a.runtime.projectDir;
+                    _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, projectDir = _b.projectDir, _c = _b.aliases, appDependencyAliases = _c.appDependencyAliases, packageAliases = _c.packageAliases;
                     allAliases = __assign(__assign({}, appDependencyAliases), packageAliases);
                     commonOptions = {
                         alias: allAliases,
@@ -85,18 +85,18 @@ function buildPackage(app) {
                     };
                     webpackCommonJsConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'commonjs2', noChecks: true }));
                     webpackUmdConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'umd' }));
-                    _c = app.meta.libraryTargets, libraryTargets = _c === void 0 ? ['umd', 'commonjs'] : _c;
+                    _d = app.meta.libraryTargets, libraryTargets = _d === void 0 ? ['umd', 'commonjs'] : _d;
                     if (!libraryTargets.includes('commonjs')) return [3 /*break*/, 2];
                     return [4 /*yield*/, compile(webpackCommonJsConfig)];
                 case 1:
-                    _d.sent();
-                    _d.label = 2;
+                    _e.sent();
+                    _e.label = 2;
                 case 2:
                     if (!libraryTargets.includes('umd')) return [3 /*break*/, 4];
                     return [4 /*yield*/, compile(webpackUmdConfig)];
                 case 3:
-                    _d.sent();
-                    _d.label = 4;
+                    _e.sent();
+                    _e.label = 4;
                 case 4: 
                 // Generate types
                 return [4 /*yield*/, exec_1.default('tsc --project ./tsconfig.build.json', {
@@ -105,7 +105,7 @@ function buildPackage(app) {
                     })];
                 case 5:
                     // Generate types
-                    _d.sent();
+                    _e.sent();
                     packageJsonPath = path_1.default.join(app.paths.root, 'package.json');
                     packageJson = fs_1.readFileAsJSON(packageJsonPath);
                     newPackageJson = __assign(__assign({}, packageJson), { main: "./" + path_1.default.relative(app.paths.root, app.paths.build) + "/index.js" });

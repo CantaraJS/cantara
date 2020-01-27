@@ -97,7 +97,7 @@ function prepareCantaraProject() {
                     return [3 /*break*/, 1];
                 case 4:
                     tsConfig = JSON.parse(fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'tsconfig.json')).toString());
-                    packageAliases = globalCantaraConfig.aliases.packageAliases;
+                    packageAliases = globalCantaraConfig.runtime.aliases.packageAliases;
                     newTsConfig = __assign(__assign({}, tsConfig), { compilerOptions: __assign(__assign({}, tsConfig.compilerOptions), { paths: aliasesAbsoluteToRelative(packageAliases) }) });
                     fs_2.writeJson(path_1.default.join(rootDir, 'tsconfig.json'), newTsConfig);
                     // Install React + Typescript dependencies globally for project
@@ -121,14 +121,18 @@ function prepareCantaraProject() {
 }
 /**
  * Prepares the application folders if not done already.
+ * Gets only executed if there's an active application
  */
 function onPreBootstrap() {
     return __awaiter(this, void 0, void 0, function () {
-        var globalCantaraConfig, _i, _a, app;
+        var globalCantaraConfig, isAnAppActive, _i, _a, app;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     globalCantaraConfig = cantara_config_1.default();
+                    isAnAppActive = !!globalCantaraConfig.runtime.currentCommand.app;
+                    if (!isAnAppActive)
+                        return [2 /*return*/];
                     return [4 /*yield*/, prepareCantaraProject()];
                 case 1:
                     _b.sent();

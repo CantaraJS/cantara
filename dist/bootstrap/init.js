@@ -39,28 +39,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var exec_1 = __importDefault(require("../../util/exec"));
-var cantara_config_1 = require("../../cantara-config");
-function publishPackage() {
+var path_1 = __importDefault(require("path"));
+var deriveStage_1 = __importDefault(require("../util/deriveStage"));
+var cantara_config_1 = require("../cantara-config");
+var _1 = __importDefault(require("."));
+/**
+ * Sets up the Cantara configuration
+ * and executes the the "onPreBootstrap"
+ * function which sets up the project
+ * folder structure etc
+ */
+function initalizeCantara(_a) {
+    var userProjectPath = _a.userProjectPath, stageParam = _a.stage, cmdName = _a.cmdName, additionalCliOptions = _a.additionalCliOptions, appname = _a.appname;
     return __awaiter(this, void 0, void 0, function () {
-        var packageToPublish;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var stage, cantaraRootDir;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    packageToPublish = cantara_config_1.getActiveApp();
-                    if (packageToPublish.type !== 'js-package' &&
-                        packageToPublish.type !== 'react-component') {
-                        throw new Error('Only packages can be published!');
-                    }
-                    return [4 /*yield*/, exec_1.default('np --no-tests', {
-                            redirectIo: true,
-                            workingDirectory: packageToPublish.paths.root,
-                        })];
+                    stage = !stageParam || stageParam === 'not_set'
+                        ? deriveStage_1.default(cmdName)
+                        : stageParam;
+                    cantaraRootDir = path_1.default.join(__dirname, '..', '..');
+                    cantara_config_1.configureCantara({
+                        additionalCliOptions: additionalCliOptions,
+                        projectDir: userProjectPath,
+                        packageRootDir: cantaraRootDir,
+                        currentCommand: {
+                            appname: appname,
+                            name: cmdName,
+                        },
+                        stage: stage,
+                    });
+                    return [4 /*yield*/, _1.default()];
                 case 1:
-                    _a.sent();
+                    _b.sent();
                     return [2 /*return*/];
             }
         });
     });
 }
-exports.default = publishPackage;
+exports.default = initalizeCantara;

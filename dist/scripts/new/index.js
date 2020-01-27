@@ -45,27 +45,29 @@ var del_1 = __importDefault(require("del"));
 var util_1 = require("util");
 var fs_1 = require("fs");
 var string_manipulation_1 = require("../../util/string-manipulation");
+var cantara_config_1 = __importDefault(require("../../cantara-config"));
 var ncp = util_1.promisify(ncp_1.default);
 function createReactComponent(_a) {
-    var name = _a.name, staticFolderPath = _a.staticFolderPath, tempFolderPath = _a.tempFolderPath, projectDir = _a.projectDir;
+    var name = _a.name;
     return __awaiter(this, void 0, void 0, function () {
-        var destinationPath, origTemplateFolderPath, templateFolderPath, reactIndexFilePath, origReactIndexFileContent, newReactIndexFileContent;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _b, projectDir, _c, staticFolderPath, tempFolderPath, destinationPath, origTemplateFolderPath, templateFolderPath, reactIndexFilePath, origReactIndexFileContent, newReactIndexFileContent;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
+                    _b = cantara_config_1.default(), projectDir = _b.runtime.projectDir, _c = _b.internalPaths, staticFolderPath = _c.static, tempFolderPath = _c.temp;
                     destinationPath = path_1.default.join(projectDir, 'packages', name);
                     origTemplateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/react-component');
                     templateFolderPath = path_1.default.join(tempFolderPath, 'react-component-app-template');
                     if (!fs_1.existsSync(templateFolderPath)) return [3 /*break*/, 2];
                     return [4 /*yield*/, del_1.default(templateFolderPath)];
                 case 1:
-                    _b.sent();
-                    _b.label = 2;
+                    _d.sent();
+                    _d.label = 2;
                 case 2:
                     fs_1.mkdirSync(templateFolderPath);
                     return [4 /*yield*/, ncp(origTemplateFolderPath, templateFolderPath)];
                 case 3:
-                    _b.sent();
+                    _d.sent();
                     reactIndexFilePath = path_1.default.join(templateFolderPath, 'src/index.tsx');
                     origReactIndexFileContent = fs_1.readFileSync(reactIndexFilePath).toString();
                     newReactIndexFileContent = origReactIndexFileContent.replace(new RegExp('Index', 'g'), string_manipulation_1.camalize(name));
@@ -76,12 +78,13 @@ function createReactComponent(_a) {
     });
 }
 function createNewAppOrPackage(_a) {
-    var type = _a.type, name = _a.name, staticFolderPath = _a.staticFolderPath, tempFolderPath = _a.tempFolderPath, projectDir = _a.projectDir;
+    var type = _a.type, name = _a.name;
     return __awaiter(this, void 0, void 0, function () {
-        var templateFolderPath, destinationPath, resObj;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _b, projectDir, staticFolderPath, templateFolderPath, destinationPath, resObj;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
+                    _b = cantara_config_1.default(), projectDir = _b.runtime.projectDir, staticFolderPath = _b.internalPaths.static;
                     templateFolderPath = '';
                     destinationPath = '';
                     if (type === 'react-app') {
@@ -91,15 +94,12 @@ function createNewAppOrPackage(_a) {
                     if (!(type === 'react-cmp' || type === 'react-component')) return [3 /*break*/, 2];
                     return [4 /*yield*/, createReactComponent({
                             name: name,
-                            staticFolderPath: staticFolderPath,
-                            tempFolderPath: tempFolderPath,
-                            projectDir: projectDir,
                         })];
                 case 1:
-                    resObj = _b.sent();
+                    resObj = _c.sent();
                     templateFolderPath = resObj.templateFolderPath;
                     destinationPath = resObj.destinationPath;
-                    _b.label = 2;
+                    _c.label = 2;
                 case 2:
                     if (type === 'node-app') {
                         destinationPath = path_1.default.join(projectDir, 'node-apps', name);
@@ -118,7 +118,7 @@ function createNewAppOrPackage(_a) {
                     }
                     return [4 /*yield*/, ncp(templateFolderPath, destinationPath)];
                 case 3:
-                    _b.sent();
+                    _c.sent();
                     console.log("Created new " + type + " at " + destinationPath + "!");
                     return [2 /*return*/];
             }

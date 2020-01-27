@@ -7,7 +7,7 @@ var cantara_config_1 = __importDefault(require("../../cantara-config"));
 var webpackReactConfig_1 = __importDefault(require("../../util/config/webpackReactConfig"));
 var webpack_1 = __importDefault(require("webpack"));
 function buildReactApp(app) {
-    var _a = cantara_config_1.default(), include = _a.allPackages.include, packageAliases = _a.aliases.packageAliases, projectDir = _a.runtime.projectDir;
+    var _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, projectDir = _b.projectDir, packageAliases = _b.aliases.packageAliases;
     var webpackConfig = webpackReactConfig_1.default({
         alias: packageAliases,
         app: app,

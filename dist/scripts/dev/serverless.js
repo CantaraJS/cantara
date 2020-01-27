@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var cantara_config_1 = __importDefault(require("../../cantara-config"));
+var cantara_config_1 = require("../../cantara-config");
 var exec_1 = __importDefault(require("../../util/exec"));
 function startServerlessEndpointDevelopmentServer() {
-    var activeApp = cantara_config_1.default().runtime.currentCommand.app;
+    var activeApp = cantara_config_1.getActiveApp();
     var skipCacheInvalidation = activeApp.meta.skipCacheInvalidation;
     var serverlessParametersToAdd = skipCacheInvalidation
         ? '--webpack-no-watch --skipCacheInvalidation'

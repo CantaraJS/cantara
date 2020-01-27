@@ -61,10 +61,20 @@ function spawnCmd(cmd, _a) {
             env: __assign(__assign({}, process.env), env),
         };
         var _a = cmd.split(' '), programCmd = _a[0], params = _a.slice(1);
-        var newProcess = child_process_1.spawn(programCmd, params, __assign(__assign({}, options), { shell: true, stdio: redirectIo ? 'inherit' : 'ignore' }));
-        newProcess.on('close', resolve);
-        newProcess.on('exit', resolve);
-        newProcess.on('disconnect', resolve);
+        var retData = '';
+        var newProcess = child_process_1.spawn(programCmd, params, __assign(__assign({}, options), { shell: true, stdio: redirectIo ? 'inherit' : undefined }));
+        function onExit() {
+            resolve(retData);
+        }
+        newProcess.stdio.forEach(function (io) {
+            return io &&
+                io.on('data', function (data) {
+                    retData += "\n" + data.toString();
+                });
+        });
+        newProcess.on('close', onExit);
+        newProcess.on('exit', onExit);
+        newProcess.on('disconnect', onExit);
     });
 }
 exports.spawnCmd = spawnCmd;

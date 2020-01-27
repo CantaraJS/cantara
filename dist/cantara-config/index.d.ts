@@ -6,7 +6,7 @@ interface CantaraInitialConfig {
     projectDir?: string;
     currentCommand: {
         name: string;
-        appname: string;
+        appname?: string;
     };
     stage: string;
     /** Unknown options for 3rd party CLI programs, e.g. Jest.
@@ -23,14 +23,6 @@ interface CantaraGlobalConfig {
     allPackages: {
         /** Include all those paths into webpack configs */
         include: string[];
-    };
-    aliases: {
-        packageAliases: {
-            [key: string]: string;
-        };
-        appDependencyAliases: {
-            [key: string]: string;
-        };
     };
     dependencies: {
         /** Current React and React DOM version */
@@ -54,13 +46,24 @@ interface CantaraGlobalConfig {
     };
     /** Current runtime configuration (e.g. the command the user executed, the location of it etc.) */
     runtime: {
+        /** Aliases which need to be set by
+         * tools like webpack
+         */
+        aliases: {
+            packageAliases: {
+                [key: string]: string;
+            };
+            appDependencyAliases: {
+                [key: string]: string;
+            };
+        };
         /** Working directory where user executed Cantara */
         projectDir: string;
         /** Information about current command */
         currentCommand: {
             name: string;
             additionalCliOptions: string;
-            app: CantaraApplication;
+            app?: CantaraApplication;
         };
         /** Secrets from user's .secrets.json file */
         secrets: {
@@ -70,6 +73,13 @@ interface CantaraGlobalConfig {
     };
 }
 export default function getGlobalConfig(): CantaraGlobalConfig;
+/** Returns currently active application
+ * or throws an error if there
+ * is no active application.
+ * Can be used by all scripts which
+ * require an active application.
+ */
+export declare function getActiveApp(): CantaraApplication;
 /** Config can only be set once */
 export declare function configureCantara(config: CantaraInitialConfig): CantaraGlobalConfig;
 export {};

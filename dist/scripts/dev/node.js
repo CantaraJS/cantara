@@ -2,12 +2,20 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var webpack_1 = __importDefault(require("webpack"));
-var cantara_config_1 = __importDefault(require("../../cantara-config"));
+var cantara_config_1 = __importStar(require("../../cantara-config"));
 var webpackNodeConfig_1 = __importDefault(require("../../util/config/webpackNodeConfig"));
 function startNodeAppDevelopmentServer() {
-    var _a = cantara_config_1.default(), _b = _a.runtime, activeApp = _b.currentCommand.app, projectDir = _b.projectDir, packageAliases = _a.aliases.packageAliases;
+    var _a = cantara_config_1.default().runtime, projectDir = _a.projectDir, packageAliases = _a.aliases.packageAliases;
+    var activeApp = cantara_config_1.getActiveApp();
     var webpackConfig = webpackNodeConfig_1.default({
         app: activeApp,
         alias: packageAliases,

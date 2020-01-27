@@ -49,11 +49,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var fs_1 = require("fs");
 var exec_1 = __importDefault(require("../util/exec"));
-var cantara_config_1 = __importDefault(require("../cantara-config"));
+var cantara_config_1 = __importStar(require("../cantara-config"));
 var slash_1 = __importDefault(require("slash"));
 var configTemplates_1 = __importDefault(require("../util/configTemplates"));
 var fs_2 = require("../util/fs");
@@ -181,7 +188,8 @@ exports.createOrUpdatePackageJSON = createOrUpdatePackageJSON;
  * into Jest's `moduleNameMapper` aliases
  */
 function getJestAliases() {
-    var _a = cantara_config_1.default(), packageAliases = _a.aliases.packageAliases, activeApp = _a.runtime.currentCommand.app;
+    var packageAliases = cantara_config_1.default().runtime.aliases.packageAliases;
+    var activeApp = cantara_config_1.getActiveApp();
     var jestAliases = Object.keys(packageAliases).reduce(function (aliasObj, packageName) {
         var _a;
         var packageAbsolutePath = packageAliases[packageName];
@@ -248,7 +256,8 @@ exports.createReactJestConfig = createReactJestConfig;
  * in the user's project
  */
 function createTempEnvJsonFile() {
-    var _a = cantara_config_1.default(), env = _a.runtime.currentCommand.app.env, temp = _a.internalPaths.temp;
+    var temp = cantara_config_1.default().internalPaths.temp;
+    var env = cantara_config_1.getActiveApp().env;
     var jsonFilePath = path_1.default.join(temp, '.env.json');
     fs_2.writeJson(jsonFilePath, env || {});
 }
