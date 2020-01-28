@@ -1,1 +1,1 @@
-export default function deriveStageNameFromCmd(cmdName: string): "development" | "production" | "test";
+export default function deriveStageNameFromCmd(cmdName: string): "production" | "test" | "development";

@@ -1,9 +1,10 @@
-#!/usr/bin/env node
 "use strict";
-function parseCliCommand(command) { }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var cli_1 = __importDefault(require("./cli"));
 function main() {
-    var TEST_CMD = 'deploy greeting-api --stage staging'.split(' ');
-    var cmdToUse = process.env.NODE_ENV === 'development' ? TEST_CMD : process.argv.slice(2);
-    console.log('argv', process.argv);
+    cli_1.default();
 }
 main();

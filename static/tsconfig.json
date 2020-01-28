@@ -1,5 +1,6 @@
 {
   "target": "esnext",
+  "exclude": ["**/build/**/*"],
   "compilerOptions": {
     "target": "esnext",
     "moduleResolution": "node",

@@ -35,247 +35,122 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var commander_1 = __importDefault(require("commander"));
 var path_1 = __importDefault(require("path"));
-var dev_1 = __importDefault(require("../scripts/dev"));
-var build_1 = __importDefault(require("../scripts/build"));
-var deploy_1 = __importDefault(require("../scripts/deploy"));
+var cli_tools_1 = require("./cli-tools");
 var arbitrary_1 = __importDefault(require("../scripts/arbitrary"));
+var dev_1 = __importDefault(require("../scripts/dev"));
+var deploy_1 = __importDefault(require("../scripts/deploy"));
+var build_1 = __importDefault(require("../scripts/build"));
 var test_1 = __importDefault(require("../scripts/test"));
 var publish_1 = __importDefault(require("../scripts/publish"));
 var new_1 = __importDefault(require("../scripts/new"));
 var init_1 = __importDefault(require("../scripts/init"));
 var exec_changed_1 = __importDefault(require("../scripts/exec-changed"));
-var init_2 = __importDefault(require("../bootstrap/init"));
-var util_1 = require("./util");
-var packageJSON = require('../../package.json');
-var TEST_CMD = 'deploy greeting-api --stage staging';
-var userProjectPath = process.env.NODE_ENV === 'development'
-    ? 'C:\\Users\\maxim\\DEV\\new-cantara'
-    : process.cwd();
-var cmdArr = process.env.NODE_ENV === 'development'
-    ? __spreadArrays(['', ''], TEST_CMD.split(' ')) : process.argv;
-var _a = util_1.prepareCmdForCommander(cmdArr, commander_1.default), cmdToParse = _a.cmd, additionalCliOptions = _a.unknownParams;
-/** Is set to true if any Cantara command was executed.
- * If no cantara command was matched,
- * the tool tries to execute the npm command
- * for the specified app/package. If no NPM command with this name
- * exists, it tries to execute it as an arbitrary
- * command with the specified app/package as the CWD.
- */
-var wasCantaraCommandExecuted = false;
-/** Execute this function before each command */
-function prepareCantara(_a) {
-    var appname = _a.appname, cmdName = _a.cmdName, additionalCliOptions = _a.additionalCliOptions;
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    wasCantaraCommandExecuted = true;
-                    util_1.setupCliContext();
-                    return [4 /*yield*/, init_2.default({
-                            additionalCliOptions: additionalCliOptions,
-                            appname: appname,
-                            cmdName: cmdName,
-                            stage: commander_1.default.stage,
-                            userProjectPath: userProjectPath,
-                        })];
-                case 1:
-                    _b.sent();
-                    return [2 /*return*/];
-            }
-        });
+var allCantaraCommands = [
+    {
+        actionName: 'dev',
+        parameters: [{ name: 'appname', required: true }],
+        exec: function () {
+            return dev_1.default();
+        },
+    },
+    {
+        actionName: 'deploy',
+        parameters: [{ name: 'appname', required: true }],
+        exec: function () {
+            return deploy_1.default();
+        },
+    },
+    {
+        actionName: 'build',
+        parameters: [{ name: 'appname', required: true }],
+        exec: function () {
+            return build_1.default();
+        },
+    },
+    {
+        actionName: 'test',
+        parameters: [{ name: 'appname', required: true }],
+        exec: function () {
+            return test_1.default();
+        },
+    },
+    {
+        actionName: 'publish',
+        parameters: [{ name: 'appname', required: true }],
+        exec: function () {
+            return publish_1.default();
+        },
+    },
+    {
+        actionName: 'run',
+        parameters: [{ name: 'appname', required: true }],
+        exec: function (_a) {
+            var originalCommand = _a.originalCommand;
+            return arbitrary_1.default(originalCommand);
+        },
+    },
+    {
+        actionName: 'new',
+        parameters: [
+            { name: 'type', required: true },
+            { name: 'name', required: true },
+        ],
+        exec: function (_a) {
+            var _b = _a.parameters, name = _b[0], type = _b[1];
+            return new_1.default({ type: type, name: name });
+        },
+    },
+    {
+        actionName: 'init',
+        parameters: [{ name: 'path' }, { name: 'template' }],
+        exec: function (_a) {
+            var _b = _a.parameters, userPath = _b[0], template = _b[1];
+            var templateToUse = template ? template : 'cantara-simple-starter';
+            var pathToUse = userPath ? path_1.default.resolve(userPath) : process.cwd();
+            return init_1.default({
+                projectDir: pathToUse,
+                templateName: templateToUse,
+            });
+        },
+    },
+    {
+        actionName: 'build-changed',
+        exec: function (_a) {
+            var stage = _a.stage;
+            return exec_changed_1.default(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, cli_tools_1.prepareCantara({
+                                cmdName: 'build',
+                                additionalCliOptions: '',
+                                appname: appname,
+                                stage: stage,
+                            })];
+                        case 1:
+                            _a.sent();
+                            return [4 /*yield*/, build_1.default()];
+                        case 2:
+                            _a.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+        },
+    },
+];
+function setupCliInterface() {
+    var TEST_CMD = 'deploy greeting-api --stage staging'.split(' ');
+    var cmdToUse = process.env.NODE_ENV === 'development' ? TEST_CMD : process.argv.slice(2);
+    var parsedCommand = cli_tools_1.parseCliCommand(cmdToUse);
+    cli_tools_1.execCantaraCommand({
+        allCantaraCommands: allCantaraCommands,
+        parsedCommand: parsedCommand,
+        originalCommand: cmdToUse,
     });
 }
-exports.prepareCantara = prepareCantara;
-commander_1.default.version(packageJSON.version);
-/** Stage can be configured externally via --stage
- * parameter. If not defined, the current stage is
- * derived from the current command as follows:
- * - dev: development
- * - build: production
- * - test: test
- */
-commander_1.default.option('-s, --stage <stageName>', 'This parameter affects which environment variables are used.', 'not_set');
-commander_1.default
-    .command('dev <appname>')
-    .description('Start the specified app in development mode.')
-    .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'dev', additionalCliOptions: additionalCliOptions })];
-            case 1:
-                _a.sent();
-                dev_1.default();
-                return [2 /*return*/];
-        }
-    });
-}); });
-commander_1.default
-    .command('build <appname>')
-    .description('Create a production build for the specified app or package.')
-    .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'build', additionalCliOptions: additionalCliOptions })];
-            case 1:
-                _a.sent();
-                return [4 /*yield*/, build_1.default()];
-            case 2:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); });
-commander_1.default
-    .command('deploy <appname>')
-    .description('Deploy an application.')
-    .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'deploy', additionalCliOptions: additionalCliOptions })];
-            case 1:
-                _a.sent();
-                deploy_1.default();
-                return [2 /*return*/];
-        }
-    });
-}); });
-commander_1.default
-    .command('test <appname>')
-    .description('Execute Jest tests for the specified application. Jest parameters can be appended at the end of the command.')
-    .action(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ appname: appname, cmdName: 'test', additionalCliOptions: additionalCliOptions })];
-            case 1:
-                _a.sent();
-                test_1.default();
-                return [2 /*return*/];
-        }
-    });
-}); });
-commander_1.default
-    .command('publish <package-name>')
-    .description('Publish a package to npm. Make sure to execute tests yourself before publishing.')
-    .action(function (packageName) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({
-                    appname: packageName,
-                    cmdName: 'publish',
-                    additionalCliOptions: additionalCliOptions,
-                })];
-            case 1:
-                _a.sent();
-                publish_1.default();
-                return [2 /*return*/];
-        }
-    });
-}); });
-commander_1.default
-    .command('new <react-app|node-app|serverless|package|react-component|react-cmp> <name>')
-    .action(function (type, name) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({
-                    cmdName: 'new',
-                    additionalCliOptions: additionalCliOptions,
-                })];
-            case 1:
-                _a.sent();
-                return [4 /*yield*/, new_1.default({
-                        type: type,
-                        name: name,
-                    })];
-            case 2:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); });
-commander_1.default
-    .command('init [path] [template]')
-    .description("Initialize a new project from a template.\n    If no path is specified, the current working directory is used (if empty).\n    If no template is specified, cantara-simple-starter is used.")
-    .action(function (userPath, template) { return __awaiter(void 0, void 0, void 0, function () {
-    var templateToUse, pathToUse;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                wasCantaraCommandExecuted = true;
-                templateToUse = template ? template : 'cantara-simple-starter';
-                pathToUse = userPath ? path_1.default.resolve(userPath) : process.cwd();
-                return [4 /*yield*/, init_1.default({
-                        projectDir: pathToUse,
-                        templateName: templateToUse,
-                    })];
-            case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); });
-commander_1.default
-    .command('build-changed')
-    .description('Creates a production build of all apps/packages that changed since the last commit.')
-    .action(function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prepareCantara({ cmdName: 'build-changed', additionalCliOptions: additionalCliOptions })];
-            case 1:
-                _a.sent();
-                return [4 /*yield*/, exec_changed_1.default(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, prepareCantara({ cmdName: 'build', additionalCliOptions: additionalCliOptions, appname: appname })];
-                                case 1:
-                                    _a.sent();
-                                    return [4 /*yield*/, build_1.default()];
-                                case 2:
-                                    _a.sent();
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); })];
-            case 2:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); });
-/** Execute npm commands in the scope of a package/app */
-commander_1.default
-    .command('<appname> <command> [parameters...]')
-    .description('Execute npm commands for the specified app or package. If you want to e.g. install a package from npm for your React Component named "button", you can execute: "cantara button install @emotion/core".')
-    .action(function (appname, command) {
-    var parameters = [];
-    for (var _i = 2; _i < arguments.length; _i++) {
-        parameters[_i - 2] = arguments[_i];
-    }
-    // console.log({ appname, command, parameters });
-});
-commander_1.default.parse(cmdToParse);
-if (!wasCantaraCommandExecuted) {
-    if (commander_1.default.args.length <= 1) {
-        commander_1.default.help();
-    }
-    prepareCantara({
-        appname: commander_1.default.args[0],
-        cmdName: commander_1.default.args[1],
-        additionalCliOptions: additionalCliOptions,
-    }).then(function () {
-        var allCmds = cmdToParse.slice(2);
-        arbitrary_1.default(allCmds);
-    });
-}
+exports.default = setupCliInterface;
