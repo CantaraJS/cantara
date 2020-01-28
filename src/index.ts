@@ -1,2 +1,7 @@
-#!/usr/bin/env node
-import './cli';
+import setupCliInterface from './cli';
+
+function main() {
+  setupCliInterface();
+}
+
+main();

@@ -15,7 +15,7 @@ var exec_1 = __importDefault(require("../../util/exec"));
 /** Deploys the currently selected application.
  */
 function deployActiveApp() {
-    var secrets = cantara_config_1.default().runtime.secrets;
+    var _a = cantara_config_1.default().runtime, secrets = _a.secrets, stage = _a.stage;
     var activeApp = cantara_config_1.getActiveApp();
     if (activeApp.type !== 'serverless') {
         throw new Error('Currently, only the deployment of serverless endpoints is provided by Cantara.');
@@ -23,7 +23,7 @@ function deployActiveApp() {
     if (!secrets.AWS_ACCESS_KEY_ID || !secrets.AWS_SECRET_ACCESS_KEY) {
         throw new Error('Please define "AWS_ACCESS_KEY_ID" and "AWS_SECRET_ACCESS_KEY" in the .secrets.json file on the root of your project!');
     }
-    var serverlessCmd = 'serverless deploy --stage prod';
+    var serverlessCmd = "serverless deploy --stage " + stage;
     exec_1.default(serverlessCmd, {
         workingDirectory: activeApp.paths.root,
         redirectIo: true,

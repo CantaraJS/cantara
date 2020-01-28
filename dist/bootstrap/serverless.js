@@ -115,6 +115,8 @@ function prepareServerlessApp(app) {
             createServerlessYml(app);
             // Create jest config
             util_1.createNodeJestConfig(app);
+            // Create package.json
+            util_1.createOrUpdatePackageJSON({ rootDir: app.paths.root });
             return [2 /*return*/];
         });
     });

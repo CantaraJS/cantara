@@ -31,6 +31,7 @@ function prepareCmdForCommander(cmd, program) {
         unknown = unknown.filter(function (uCmd) { return uCmd !== cmd; });
         return shouldKeep;
     });
+    console.log({ unknownParams: unknownParams });
     return { cmd: cmdWithoutUnknownParams, unknownParams: unknownParams };
 }
 exports.prepareCmdForCommander = prepareCmdForCommander;

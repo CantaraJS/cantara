@@ -39,10 +39,8 @@ ctr init [template-name]
 
 ## Required
 
-- Serverless and different stages
-- "CI" command
-  - Only rebuilds and deploys the parts of the application that changed
 - Write docs
+  - As Readme + as web version
 - Port a project to Cantara (DA)
 - Custom e2e testing command can be provided. Cantara takes care of starting all the neccessary servers.
 - Scripts for DB migrations
@@ -50,8 +48,8 @@ ctr init [template-name]
 - Webpack, Babel, TSconfig ecc. can be modified externally
 - Write integration tests for CLI
 - Create a few useful starter templates
-- Perfect UX for all cantara commands
-  - Everything is a "wizard"
+- Good UI/UX with ink and enquirer
+  - --help and --version
 - Deployment should work out of the box for all parts an application can have
   - Defaults can be overriden
 

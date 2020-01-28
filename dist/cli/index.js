@@ -60,7 +60,7 @@ var exec_changed_1 = __importDefault(require("../scripts/exec-changed"));
 var init_2 = __importDefault(require("../bootstrap/init"));
 var util_1 = require("./util");
 var packageJSON = require('../../package.json');
-var TEST_CMD = 'build-changed';
+var TEST_CMD = 'deploy greeting-api --stage staging';
 var userProjectPath = process.env.NODE_ENV === 'development'
     ? 'C:\\Users\\maxim\\DEV\\new-cantara'
     : process.cwd();
@@ -107,7 +107,7 @@ commander_1.default.version(packageJSON.version);
  * - build: production
  * - test: test
  */
-commander_1.default.option('-s, --stage <development|production|custom>', 'This parameter affects which environment variables are used.', 'not_set');
+commander_1.default.option('-s, --stage <stageName>', 'This parameter affects which environment variables are used.', 'not_set');
 commander_1.default
     .command('dev <appname>')
     .description('Start the specified app in development mode.')

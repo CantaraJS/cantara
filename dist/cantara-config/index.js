@@ -79,6 +79,7 @@ function configureCantara(config) {
         },
         runtime: {
             projectDir: projectDir,
+            stage: config.stage,
             currentCommand: {
                 name: config.currentCommand.name,
                 app: currentActiveApp,
