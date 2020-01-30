@@ -2,19 +2,17 @@
 
 ## Required
 
-- Write docs
-  - As Readme + as web version
-- Port a project to Cantara (DA)
-- Custom e2e testing command can be provided. Cantara takes care of starting all the neccessary servers.
-- Scripts for DB migrations
-- Make type checking optional via flag
-- Webpack, Babel, TSconfig ecc. can be modified externally
+- Make testing work (including cypress, implement Cantara command to start all needed servers)
+- Make building/deploying/publishing work
+  - Implement command "exec-changed <appname> [cmd...]" which executes a command only if the specified app changed
+  - Make sure react-component production build works as expected
+- Write somewhat complete docs
+  - Good getting started guide. Simple -> Advanced
+  - Documentation of all commands
+  - Documentation of crana.config.js
+  - Documentation on "how to do X"
+    - ...
 - Write integration tests for CLI
-- Create a few useful starter templates
-- Good UI/UX with ink and enquirer
-  - --help and --version
-- Deployment should work out of the box for all parts an application can have
-  - Defaults can be overriden
 
 ## Nice to have
 

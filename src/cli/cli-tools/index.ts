@@ -128,7 +128,9 @@ export function parseCliCommand(command: string[]) {
     (acc, str, i) => {
       const wasStringPartAlreadyHandled =
         acc.commands.includes(str) ||
-        !!acc.flags.find(flag => str.startsWith(`--${flag.name}`));
+        !!acc.flags.find(
+          flag => str.startsWith(`--${flag.name}`) || str === flag.value,
+        );
       if (wasStringPartAlreadyHandled) {
         return acc;
       }

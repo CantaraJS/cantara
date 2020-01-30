@@ -106,7 +106,6 @@ export function getActiveApp(): CantaraApplication {
   return activeApp;
 }
 
-/** Config can only be set once */
 export function configureCantara(config: CantaraInitialConfig) {
   const staticFilesPath = path.join(config.packageRootDir, 'static');
   const tempFolder = path.join(staticFilesPath, '.temp');
