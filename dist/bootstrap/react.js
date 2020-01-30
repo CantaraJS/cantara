@@ -72,6 +72,9 @@ function prepareReactApps(app) {
                     _a.sent();
                     // Create react Jest config file and copy to current project
                     util_1.createReactJestConfig(app);
+                    // Create local tsconfig which extends from global one.
+                    // Needed to correctly generate types
+                    util_1.createLocalAppTsConfig({ app: app, indexFileName: 'index.tsx' });
                     return [2 /*return*/];
             }
         });

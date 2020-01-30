@@ -110,7 +110,7 @@ function createReactWebpackConfig(_a) {
         },
         plugins: [
             new ForkTsCheckerWebpackPlugin({
-                tsconfig: path.join(projectDir, 'tsconfig.json'),
+                tsconfig: path.join(app.paths.root, 'tsconfig.local.json'),
                 watch: app.paths.src,
             }),
             new CaseSensitivePathsPlugin(),
@@ -193,24 +193,6 @@ function createReactWebpackConfig(_a) {
                     include: __spreadArrays([app.paths.src], include),
                 },
                 {
-                    test: /\.(jpg|png|svg|gif)$/,
-                    use: {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 15000,
-                        },
-                    },
-                },
-                {
-                    test: /\.(ttf|eot|woff|woff2)$/,
-                    use: {
-                        loader: 'file-loader',
-                        options: {
-                            name: 'fonts/[name].[hash:4].[ext]',
-                        },
-                    },
-                },
-                {
                     test: /\.css$/,
                     include: /\.module\.css$/,
                     use: cssLoaders(true),
@@ -219,6 +201,14 @@ function createReactWebpackConfig(_a) {
                     test: /\.css$/,
                     exclude: /\.module\.css$/,
                     use: cssLoaders(false),
+                },
+                {
+                    test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
+                    loader: 'url-loader',
+                    options: {
+                        limit: 15000,
+                        name: 'static/media/[name].[hash:8].[ext]',
+                    },
                 },
             ],
         },

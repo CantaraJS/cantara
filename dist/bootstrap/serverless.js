@@ -67,7 +67,7 @@ function createWebpackAndBabelConfigFromTemplate(app) {
     var templateVariables = {
         MODULES_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
             '/',
-        TSCONFIG_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.runtime.projectDir, 'tsconfig.json')),
+        TSCONFIG_PATH: slash_1.default(path_1.default.join(app.paths.root, 'tsconfig.local.json')),
         ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
         ALIASES: JSON.stringify(allAliases),
         ENV_VARS: JSON.stringify(app.env || {}),
@@ -117,6 +117,9 @@ function prepareServerlessApp(app) {
             util_1.createNodeJestConfig(app);
             // Create package.json
             util_1.createOrUpdatePackageJSON({ rootDir: app.paths.root });
+            // Create local tsconfig which extends from global one.
+            // Needed to correctly generate types
+            util_1.createLocalAppTsConfig({ app: app, indexFileName: 'index.tsx' });
             return [2 /*return*/];
         });
     });

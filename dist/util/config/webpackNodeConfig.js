@@ -1,4 +1,11 @@
 "use strict";
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13,9 +20,10 @@ var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 function createNodeWebpackConfig(_a) {
-    var app = _a.app, projectDir = _a.projectDir, _b = _a.mode, mode = _b === void 0 ? 'development' : _b, alias = _a.alias, _c = _a.env, env = _c === void 0 ? {} : _c;
+    var app = _a.app, _b = _a.mode, mode = _b === void 0 ? 'development' : _b, alias = _a.alias, _c = _a.env, env = _c === void 0 ? {} : _c, _d = _a.include, include = _d === void 0 ? [] : _d;
     var isDevelopment = mode === 'development';
     var isProduction = mode === 'production';
+    var nodeExternals = require('webpack-node-externals');
     var externals = externals_1.default();
     return {
         entry: app.paths.src,
@@ -41,12 +49,18 @@ function createNodeWebpackConfig(_a) {
             rules: [
                 {
                     test: [/\.js$/, /\.tsx?$/],
-                    include: app.paths.src,
-                    type: 'javascript/esm',
+                    include: __spreadArrays([app.paths.src], include),
                     exclude: [/node_modules/],
                     use: {
                         loader: 'babel-loader',
                         options: babelNodeConfig_1.default,
+                    },
+                },
+                {
+                    loader: 'file-loader',
+                    exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+                    options: {
+                        name: 'static/media/[name].[hash:8].[ext]',
                     },
                 },
             ],
@@ -55,7 +69,7 @@ function createNodeWebpackConfig(_a) {
             new CaseSensitivePathsPlugin(),
             new webpack_1.default.EnvironmentPlugin(env),
             new ForkTsCheckerWebpackPlugin({
-                tsconfig: path_1.default.join(projectDir, 'tsconfig.json'),
+                tsconfig: path_1.default.join(app.paths.root, 'tsconfig.local.json'),
                 watch: app.paths.src,
             }),
             new FriendlyErrorsWebpackPlugin(),

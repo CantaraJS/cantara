@@ -1,4 +1,5 @@
 "use strict";
+// Inspired by https://github.com/liady/webpack-node-externals/blob/master/index.js
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -11,20 +12,82 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
-var fs_1 = require("./fs");
+var fs_1 = __importDefault(require("fs"));
+var fs_2 = require("./fs");
 var cantara_config_1 = __importDefault(require("../cantara-config"));
-function getLibraryExternals(_a) {
-    var packageJsonPath = _a.packageJsonPath, peerOnly = _a.peerOnly;
-    try {
-        var _b = fs_1.readFileAsJSON(packageJsonPath), _c = _b.dependencies, dependencies = _c === void 0 ? {} : _c, _d = _b.peerDependencies, peerDependencies = _d === void 0 ? {} : _d;
-        if (peerOnly)
-            return Object.keys(peerDependencies);
-        return __spreadArrays(Object.keys(dependencies), Object.keys(peerDependencies));
-    }
-    catch (_e) {
-        // package.json does not exist
+var fs_3 = require("fs");
+function getAllModulesFromFolder(dirName) {
+    var atPrefix = new RegExp('^@', 'g');
+    if (!fs_1.default.existsSync(dirName)) {
         return [];
     }
+    try {
+        return fs_1.default
+            .readdirSync(dirName)
+            .map(function (moduleName) {
+            if (atPrefix.test(moduleName)) {
+                // reset regexp
+                atPrefix.lastIndex = 0;
+                try {
+                    return fs_1.default
+                        .readdirSync(path_1.default.join(dirName, moduleName))
+                        .map(function (scopedMod) {
+                        return moduleName + '/' + scopedMod;
+                    });
+                }
+                catch (e) {
+                    return [moduleName];
+                }
+            }
+            return moduleName;
+        })
+            .reduce(function (prev, next) {
+            return prev.concat(next);
+        }, []);
+    }
+    catch (e) {
+        return [];
+    }
+}
+function getAllInstalledModules(allApps) {
+    var allExistingNodeModuleFolders = allApps
+        .map(function (app) { return path_1.default.join(app.paths.root, 'node_modules'); })
+        .filter(function (folderPath) { return fs_3.existsSync(folderPath); });
+    var allModules = allExistingNodeModuleFolders
+        .map(getAllModulesFromFolder)
+        .reduce(function (arr, arrToMerge) { return __spreadArrays(arr, arrToMerge); }, []);
+    return allModules;
+}
+function getAllPeerDependencies(allApps) {
+    var allPackageJsonPaths = allApps.map(function (app) {
+        return path_1.default.join(app.paths.root, 'package.json');
+    });
+    var allPeerDeps = allPackageJsonPaths
+        .map(function (filePath) {
+        try {
+            var peerDependencies = fs_2.readFileAsJSON(filePath).peerDependencies;
+            return peerDependencies;
+        }
+        catch (_a) {
+            return {};
+        }
+    })
+        .reduce(function (resArr, peerDepsObj) {
+        return __spreadArrays(resArr, Object.keys(peerDepsObj));
+    }, []);
+    return allPeerDeps;
+}
+function getModuleName(request) {
+    var scopedModuleRegex = new RegExp('@[a-zA-Z0-9][\\w-.]+/[a-zA-Z0-9][\\w-.]+([a-zA-Z0-9./]+)?', 'g');
+    var req = request;
+    var delimiter = '/';
+    // check if scoped module
+    if (scopedModuleRegex.test(req)) {
+        // reset regexp
+        scopedModuleRegex.lastIndex = 0;
+        return req.split(delimiter, 2).join(delimiter);
+    }
+    return req.split(delimiter)[0];
 }
 /** Makes sure that all package dependencies
  * are externalized (not included in bundle).
@@ -34,23 +97,38 @@ function getLibraryExternals(_a) {
  * dependecies are excluded. Useful for
  * CDN bundles.
  */
-function getAllExternals(_a) {
-    var packageJsonPaths = _a.packageJsonPaths, peerOnly = _a.peerOnly;
-    var allDeps = packageJsonPaths
-        .map(function (packageJsonPath) { return getLibraryExternals({ packageJsonPath: packageJsonPath, peerOnly: peerOnly }); })
-        .reduce(function (resArr, currArr) { return resArr.concat(currArr); }, []);
-    return allDeps;
-}
 function getAllWebpackExternals(_a) {
     var peerOnly = (_a === void 0 ? {} : _a).peerOnly;
     var allApps = cantara_config_1.default().allApps;
-    var allPackageJsonPaths = allApps.map(function (app) {
-        return path_1.default.join(app.paths.root, 'package.json');
-    });
-    var allWebpackExternals = getAllExternals({
-        packageJsonPaths: allPackageJsonPaths,
-        peerOnly: peerOnly,
-    });
-    return allWebpackExternals;
+    var externals = [];
+    if (peerOnly) {
+        // Read peer deps from package.json
+        externals = getAllPeerDependencies(allApps);
+    }
+    else {
+        // Read all node_modules folders to know which packages to externalize,
+        // same as the popular nodeExternals() does
+        externals = getAllInstalledModules(allApps);
+    }
+    // const externalsObj = externals.reduce((retObj, externalName) => {
+    //   return {
+    //     ...retObj,
+    //     [externalName]: {
+    //       commonjs: externalName,
+    //     },
+    //   };
+    // }, {});
+    // For some reason, only works with this function,
+    // but not when defining excplictly through object
+    // (which should be the same)
+    return function (_, request, callback) {
+        var moduleName = getModuleName(request);
+        if (externals.includes(moduleName)) {
+            // mark this module as external
+            // https://webpack.js.org/configuration/externals/
+            return callback(null, 'commonjs ' + request);
+        }
+        callback();
+    };
 }
 exports.default = getAllWebpackExternals;

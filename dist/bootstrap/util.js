@@ -199,7 +199,7 @@ function getJestAliases() {
     return jestAliases;
 }
 function createJestConfig(_a) {
-    var app = _a.app, configTemplateFileName = _a.configTemplateFileName, _b = _a.setupScriptImports, setupScriptImports = _b === void 0 ? [] : _b;
+    var dir = _a.dir, configTemplateFileName = _a.configTemplateFileName, _b = _a.setupScriptImports, setupScriptImports = _b === void 0 ? [] : _b;
     var globalCantaraConfig = cantara_config_1.default();
     var jestAliases = getJestAliases();
     // Copy setup file to project root
@@ -213,7 +213,7 @@ function createJestConfig(_a) {
             }, ''),
         },
     });
-    var setupFileDestination = path_1.default.join(app.paths.root, 'jest.setup.ts');
+    var setupFileDestination = path_1.default.join(dir, 'jest.setup.ts');
     fs_1.writeFileSync(setupFileDestination, renderedSetupFile);
     // create jest.config.js
     var jestConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, configTemplateFileName)).toString();
@@ -225,20 +225,20 @@ function createJestConfig(_a) {
         template: jestConfigTemplate,
         variables: templateVariables,
     });
-    var newJestConfigPath = path_1.default.join(app.paths.root, 'jest.config.js');
+    var newJestConfigPath = path_1.default.join(dir, 'jest.config.js');
     fs_1.writeFileSync(newJestConfigPath, newJestConfig);
 }
 exports.createJestConfig = createJestConfig;
 function createNodeJestConfig(app) {
     createJestConfig({
-        app: app,
+        dir: app.paths.root,
         configTemplateFileName: 'jestNodeConfig.template.js',
     });
 }
 exports.createNodeJestConfig = createNodeJestConfig;
 function createReactJestConfig(app) {
     createJestConfig({
-        app: app,
+        dir: app.paths.root,
         configTemplateFileName: 'jestReactConfig.template.js',
         setupScriptImports: [
             '@testing-library/jest-dom',
@@ -262,3 +262,21 @@ function createTempEnvJsonFile() {
     fs_2.writeJson(jsonFilePath, env || {});
 }
 exports.createTempEnvJsonFile = createTempEnvJsonFile;
+/**
+ * Create local tsconfig which extends from global one.
+ * Needed to correctly generate types
+ */
+function createLocalAppTsConfig(_a) {
+    var indexFileName = _a.indexFileName, app = _a.app;
+    var globalCantaraConfig = cantara_config_1.default();
+    var appLocalTsConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'appLocalTsConfigTemplate.json')).toString();
+    var renderedTsConfig = configTemplates_1.default({
+        template: appLocalTsConfigTemplate,
+        variables: {
+            INDEX_FILE_NAME: indexFileName,
+        },
+    });
+    var appLocalTsConfigPath = path_1.default.join(app.paths.root, 'tsconfig.local.json');
+    fs_2.writeJson(appLocalTsConfigPath, JSON.parse(renderedTsConfig));
+}
+exports.createLocalAppTsConfig = createLocalAppTsConfig;

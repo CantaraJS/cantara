@@ -91,15 +91,7 @@ interface GetAllWebpackExternalsOptions {
   peerOnly?: boolean;
 }
 
-/** Makes sure that all package dependencies
- * are externalized (not included in bundle).
- * Reads every packageJson provided and adds
- * each dependency to the list.
- * If `peerOnly` is set to `true`, only peer
- * dependecies are excluded. Useful for
- * CDN bundles.
- */
-export default function getAllWebpackExternals({
+export function webpackExternalsAsStringArray({
   peerOnly,
 }: GetAllWebpackExternalsOptions = {}) {
   const { allApps } = getGlobalConfig();
@@ -113,6 +105,21 @@ export default function getAllWebpackExternals({
     // same as the popular nodeExternals() does
     externals = getAllInstalledModules(allApps);
   }
+  return externals;
+}
+
+/** Makes sure that all package dependencies
+ * are externalized (not included in bundle).
+ * Reads every packageJson provided and adds
+ * each dependency to the list.
+ * If `peerOnly` is set to `true`, only peer
+ * dependecies are excluded. Useful for
+ * CDN bundles.
+ */
+export default function getAllWebpackExternals({
+  peerOnly,
+}: GetAllWebpackExternalsOptions = {}) {
+  const externals = webpackExternalsAsStringArray({ peerOnly });
 
   // const externalsObj = externals.reduce((retObj, externalName) => {
   //   return {

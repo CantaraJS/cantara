@@ -13,6 +13,33 @@ const webpack = require("webpack")
 
 const babelConfig = require('./serverlessBabelConfig');
 
+function getModuleName(request) {
+  var scopedModuleRegex = new RegExp(
+    '@[a-zA-Z0-9][\\w-.]+/[a-zA-Z0-9][\\w-.]+([a-zA-Z0-9./]+)?',
+    'g',
+  );
+  var req = request;
+  var delimiter = '/';
+
+  // check if scoped module
+  if (scopedModuleRegex.test(req)) {
+    // reset regexp
+    scopedModuleRegex.lastIndex = 0;
+    return req.split(delimiter, 2).join(delimiter);
+  }
+  return req.split(delimiter)[0];
+}
+
+function shouldExternalize(_, request, callback) {
+  const moduleName = getModuleName(request);
+    if (<--EXTERNALS_ARRAY-->.includes(moduleName)) {
+      // mark this module as external
+      // https://webpack.js.org/configuration/externals/
+      return callback(null, 'commonjs ' + request);
+    }
+    callback();
+}
+
 module.exports = {
   entry: slsw.lib.entries,
   target: 'node',
@@ -30,7 +57,7 @@ module.exports = {
     ],
     alias: <--ALIASES-->,
   },
-  externals: <--EXTERNALS_ARRAY-->,
+  externals: shouldExternalize,
   module: {
     rules: [
       {

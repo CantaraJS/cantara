@@ -80,7 +80,12 @@ function prepareCantaraProject() {
                 case 0:
                     globalCantaraConfig = cantara_config_1.default();
                     rootDir = globalCantaraConfig.runtime.projectDir;
-                    STATIC_PATHS_TO_COPY = ['.vscode', '.gitignore', '.prettierrc'];
+                    STATIC_PATHS_TO_COPY = [
+                        '.vscode',
+                        '.gitignore',
+                        '.prettierrc',
+                        'global.d.ts',
+                    ];
                     _i = 0, STATIC_PATHS_TO_COPY_1 = STATIC_PATHS_TO_COPY;
                     _a.label = 1;
                 case 1:
@@ -114,6 +119,11 @@ function prepareCantaraProject() {
                         fs_1.mkdirSync(globalCantaraConfig.internalPaths.temp);
                     }
                     util_2.createTempEnvJsonFile();
+                    // Copy global jest.config.js (needed so that correct typings are used when e.g. also cypress is installed)
+                    util_2.createJestConfig({
+                        dir: rootDir,
+                        configTemplateFileName: 'jestGlobalConfig.template.js',
+                    });
                     return [2 /*return*/];
             }
         });

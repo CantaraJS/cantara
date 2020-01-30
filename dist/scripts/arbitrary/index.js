@@ -23,7 +23,6 @@ function executeArbitraryCmdWithinApp(originalCommand) {
     else {
         cmdToExecute = cmd + " " + params.join(' ');
     }
-    console.log({ cmdToExecute: cmdToExecute, cwd: activeApp.paths.root });
     exec_1.default(cmdToExecute, {
         workingDirectory: activeApp.paths.root,
         withSecrets: true,

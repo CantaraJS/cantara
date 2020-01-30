@@ -144,7 +144,7 @@ var allCantaraCommands = [
     },
 ];
 function setupCliInterface() {
-    var TEST_CMD = 'run demo install -S react-icons'.split(' ');
+    var TEST_CMD = (process.env.DEV_CANTARA_COMMAND || '').split(' ');
     var cmdToUse = process.env.NODE_ENV === 'development' ? TEST_CMD : process.argv.slice(2);
     var parsedCommand = cli_tools_1.parseCliCommand(cmdToUse);
     cli_tools_1.execCantaraCommand({

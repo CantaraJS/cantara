@@ -10,7 +10,7 @@ import {
   createOrUpdatePackageJSON,
   createLocalAppTsConfig,
 } from './util';
-import getAllWebpackExternals from '../util/externals';
+import { webpackExternalsAsStringArray } from '../util/externals';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 
@@ -33,7 +33,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ...globalCantaraConfig.runtime.aliases.appDependencyAliases,
     ...globalCantaraConfig.runtime.aliases.packageAliases,
   };
-  const externals = getAllWebpackExternals();
+  const externals = webpackExternalsAsStringArray();
 
   const templateVariables = {
     MODULES_PATH:

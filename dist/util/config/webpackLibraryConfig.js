@@ -63,7 +63,7 @@ function createLibraryWebpackConfig(_a) {
             noChecks
                 ? undefined
                 : new ForkTsCheckerWebpackPlugin({
-                    tsconfig: path.join(projectDir, 'tsconfig.json'),
+                    tsconfig: path.join(app.paths.root, 'tsconfig.build.json'),
                     watch: app.paths.src,
                 }),
             noChecks
@@ -90,21 +90,18 @@ function createLibraryWebpackConfig(_a) {
                     exclude: [/node_modules/],
                 },
                 {
-                    test: /\.(jpg|png|svg|gif)$/,
-                    use: {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 15000,
-                        },
+                    test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
+                    loader: 'url-loader',
+                    options: {
+                        limit: 15000,
+                        name: 'static/media/[name].[hash:8].[ext]',
                     },
                 },
                 {
-                    test: /\.(ttf|eot|woff|woff2)$/,
-                    use: {
-                        loader: 'file-loader',
-                        options: {
-                            name: 'fonts/[name].[hash:4].[ext]',
-                        },
+                    loader: 'file-loader',
+                    exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+                    options: {
+                        name: 'static/media/[name].[hash:8].[ext]',
                     },
                 },
             ],

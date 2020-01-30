@@ -13,11 +13,12 @@ interface CreateOrUpdatePackageJSONParams {
  */
 export declare function createOrUpdatePackageJSON({ rootDir, expectedDependencies, expectedDevDependencies, }: CreateOrUpdatePackageJSONParams): Promise<void>;
 interface CreateJestConfigOptions {
-    app: CantaraApplication;
+    /** Path where to save jest.config.js */
+    dir: string;
     configTemplateFileName: string;
     setupScriptImports?: string[];
 }
-export declare function createJestConfig({ app, configTemplateFileName, setupScriptImports, }: CreateJestConfigOptions): void;
+export declare function createJestConfig({ dir, configTemplateFileName, setupScriptImports, }: CreateJestConfigOptions): void;
 export declare function createNodeJestConfig(app: CantaraApplication): void;
 export declare function createReactJestConfig(app: CantaraApplication): void;
 /** Takes all env vars defined
@@ -29,4 +30,13 @@ export declare function createReactJestConfig(app: CantaraApplication): void;
  * in the user's project
  */
 export declare function createTempEnvJsonFile(): void;
+interface CreateLocalAppTsConfigOptions {
+    indexFileName: string;
+    app: CantaraApplication;
+}
+/**
+ * Create local tsconfig which extends from global one.
+ * Needed to correctly generate types
+ */
+export declare function createLocalAppTsConfig({ indexFileName, app, }: CreateLocalAppTsConfigOptions): void;
 export {};

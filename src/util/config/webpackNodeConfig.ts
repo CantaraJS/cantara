@@ -20,7 +20,6 @@ export default function createNodeWebpackConfig({
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
 
-  const nodeExternals = require('webpack-node-externals');
   const externals = getAllWebpackExternals();
 
   return {

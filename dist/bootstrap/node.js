@@ -40,7 +40,11 @@ var util_1 = require("./util");
 function prepareNodeApp(app) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
+            util_1.createOrUpdatePackageJSON({ rootDir: app.paths.root });
             util_1.createNodeJestConfig(app);
+            // Create local tsconfig which extends from global one.
+            // Needed to correctly generate types
+            util_1.createLocalAppTsConfig({ app: app, indexFileName: 'index.tsx' });
             return [2 /*return*/];
         });
     });
