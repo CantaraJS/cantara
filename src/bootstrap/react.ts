@@ -1,9 +1,13 @@
 import path from 'path';
-import { copyFileSync, existsSync, readFileSync, mkdirSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync } from 'fs';
 
 import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
-import { createOrUpdatePackageJSON, createReactJestConfig } from './util';
+import {
+  createOrUpdatePackageJSON,
+  createReactJestConfig,
+  createLocalAppTsConfig,
+} from './util';
 
 /** Prepares React App Folder */
 export default async function prepareReactApps(app: CantaraApplication) {
@@ -31,4 +35,8 @@ export default async function prepareReactApps(app: CantaraApplication) {
 
   // Create react Jest config file and copy to current project
   createReactJestConfig(app);
+
+  // Create local tsconfig which extends from global one.
+  // Needed to correctly generate types
+  createLocalAppTsConfig({ app, indexFileName: 'index.tsx' });
 }

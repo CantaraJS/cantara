@@ -16,6 +16,7 @@ export default function createNodeWebpackConfig({
   mode = 'development',
   alias,
   env = {},
+  include = [],
 }: CreateWebpackConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -46,12 +47,27 @@ export default function createNodeWebpackConfig({
       rules: [
         {
           test: [/\.js$/, /\.tsx?$/],
-          include: app.paths.src,
+          include: [app.paths.src, ...include],
           type: 'javascript/esm',
           exclude: [/node_modules/],
           use: {
             loader: 'babel-loader',
             options: babelConfig,
+          },
+        },
+        {
+          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+          loader: 'url-loader',
+          options: {
+            limit: 15000,
+            name: 'static/media/[name].[hash:8].[ext]',
+          },
+        },
+        {
+          loader: 'file-loader',
+          exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+          options: {
+            name: 'static/media/[name].[hash:8].[ext]',
           },
         },
       ],
@@ -60,7 +76,7 @@ export default function createNodeWebpackConfig({
       new CaseSensitivePathsPlugin(),
       new webpack.EnvironmentPlugin(env),
       new ForkTsCheckerWebpackPlugin({
-        tsconfig: path.join(projectDir, 'tsconfig.json'),
+        tsconfig: path.join(app.paths.root, 'tsconfig.local.json'),
         watch: app.paths.src,
       }),
       new FriendlyErrorsWebpackPlugin(),

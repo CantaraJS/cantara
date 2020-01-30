@@ -2,6 +2,7 @@
   "target": "esnext",
   "exclude": ["**/build/**/*"],
   "compilerOptions": {
+    "skipLibCheck": true,
     "target": "esnext",
     "moduleResolution": "node",
     "module": "esnext",

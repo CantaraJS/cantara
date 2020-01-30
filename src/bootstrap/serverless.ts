@@ -5,7 +5,11 @@ import slash from 'slash';
 import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
-import { createNodeJestConfig, createOrUpdatePackageJSON } from './util';
+import {
+  createNodeJestConfig,
+  createOrUpdatePackageJSON,
+  createLocalAppTsConfig,
+} from './util';
 import getAllWebpackExternals from '../util/externals';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
@@ -35,9 +39,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     MODULES_PATH:
       slash(path.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
       '/',
-    TSCONFIG_PATH: slash(
-      path.join(globalCantaraConfig.runtime.projectDir, 'tsconfig.json'),
-    ),
+    TSCONFIG_PATH: slash(path.join(app.paths.root, 'tsconfig.local.json')),
     ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
     ALIASES: JSON.stringify(allAliases),
     ENV_VARS: JSON.stringify(app.env || {}),
@@ -129,4 +131,8 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
 
   // Create package.json
   createOrUpdatePackageJSON({ rootDir: app.paths.root });
+
+  // Create local tsconfig which extends from global one.
+  // Needed to correctly generate types
+  createLocalAppTsConfig({ app, indexFileName: 'index.tsx' });
 }

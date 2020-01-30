@@ -106,7 +106,7 @@ export default function createReactWebpackConfig({
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin({
-        tsconfig: path.join(projectDir, 'tsconfig.json'),
+        tsconfig: path.join(app.paths.root, 'tsconfig.local.json'),
         watch: app.paths.src,
       }),
       new CaseSensitivePathsPlugin(),
@@ -223,6 +223,21 @@ export default function createReactWebpackConfig({
           test: /\.css$/,
           exclude: /\.module\.css$/,
           use: cssLoaders(false),
+        },
+        {
+          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+          loader: 'url-loader',
+          options: {
+            limit: 15000,
+            name: 'static/media/[name].[hash:8].[ext]',
+          },
+        },
+        {
+          loader: 'file-loader',
+          exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+          options: {
+            name: 'static/media/[name].[hash:8].[ext]',
+          },
         },
       ],
     },

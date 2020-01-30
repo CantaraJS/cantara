@@ -98,7 +98,7 @@ const allCantaraCommands: CantaraCommand[] = [
 ];
 
 export default function setupCliInterface() {
-  const TEST_CMD = 'deploy greeting-api --stage staging'.split(' ');
+  const TEST_CMD = (process.env.DEV_CANTARA_COMMAND || '').split(' ');
   const cmdToUse =
     process.env.NODE_ENV === 'development' ? TEST_CMD : process.argv.slice(2);
   const parsedCommand = parseCliCommand(cmdToUse);
