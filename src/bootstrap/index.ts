@@ -1,6 +1,6 @@
 import path from 'path';
 import ncpCb from 'ncp';
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { existsSync, readFileSync, mkdirSync } from 'fs';
 import { promisify } from 'util';
 
 import getGlobalConfig from '../cantara-config';
@@ -34,7 +34,14 @@ async function prepareCantaraProject() {
   const globalCantaraConfig = getGlobalConfig();
   const rootDir = globalCantaraConfig.runtime.projectDir;
   // Static files/folders to copy to the project's root
-  const STATIC_PATHS_TO_COPY = ['.vscode', '.gitignore', '.prettierrc'];
+  // Copy global.d.ts file to project's root:
+  // This way, static assets like images and CSS files can be imported using "import" syntax
+  const STATIC_PATHS_TO_COPY = [
+    '.vscode',
+    '.gitignore',
+    '.prettierrc',
+    'global.d.ts',
+  ];
   for (const pathToCopy of STATIC_PATHS_TO_COPY) {
     const fullPath = path.join(rootDir, pathToCopy);
     if (!existsSync(fullPath)) {

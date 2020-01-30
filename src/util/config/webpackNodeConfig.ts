@@ -56,14 +56,6 @@ export default function createNodeWebpackConfig({
           },
         },
         {
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-          loader: 'url-loader',
-          options: {
-            limit: 15000,
-            name: 'static/media/[name].[hash:8].[ext]',
-          },
-        },
-        {
           loader: 'file-loader',
           exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
           options: {

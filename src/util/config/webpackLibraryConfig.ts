@@ -94,7 +94,7 @@ export default function createLibraryWebpackConfig({
           exclude: [/node_modules/],
         },
         {
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
           loader: 'url-loader',
           options: {
             limit: 15000,
