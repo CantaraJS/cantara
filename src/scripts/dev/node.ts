@@ -5,6 +5,7 @@ import createNodeWebpackConfig from '../../util/config/webpackNodeConfig';
 
 export function startNodeAppDevelopmentServer() {
   const {
+    allPackages: { include },
     runtime: {
       projectDir,
       aliases: { packageAliases },
@@ -18,6 +19,7 @@ export function startNodeAppDevelopmentServer() {
     alias: packageAliases,
     projectDir,
     env: activeApp.env,
+    include,
   });
 
   const compiler = webpack(webpackConfig);

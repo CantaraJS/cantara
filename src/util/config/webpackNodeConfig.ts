@@ -12,7 +12,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 export default function createNodeWebpackConfig({
   app,
-  projectDir,
   mode = 'development',
   alias,
   env = {},
@@ -21,6 +20,7 @@ export default function createNodeWebpackConfig({
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
 
+  const nodeExternals = require('webpack-node-externals');
   const externals = getAllWebpackExternals();
 
   return {
@@ -48,7 +48,6 @@ export default function createNodeWebpackConfig({
         {
           test: [/\.js$/, /\.tsx?$/],
           include: [app.paths.src, ...include],
-          type: 'javascript/esm',
           exclude: [/node_modules/],
           use: {
             loader: 'babel-loader',

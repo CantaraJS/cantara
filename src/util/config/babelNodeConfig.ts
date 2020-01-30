@@ -1,6 +1,6 @@
 export default {
   presets: [
-    '@babel/preset-typescript',
+    '@babel/typescript',
     ['@babel/env', { targets: { node: '12.0.0' } }],
   ],
   plugins: [
