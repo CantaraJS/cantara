@@ -50,6 +50,7 @@ var publish_1 = __importDefault(require("../scripts/publish"));
 var new_1 = __importDefault(require("../scripts/new"));
 var init_1 = __importDefault(require("../scripts/init"));
 var exec_changed_1 = __importDefault(require("../scripts/exec-changed"));
+var e2e_1 = __importDefault(require("../scripts/e2e"));
 var allCantaraCommands = [
     {
         actionName: 'dev',
@@ -140,6 +141,12 @@ var allCantaraCommands = [
                     }
                 });
             }); });
+        },
+    },
+    {
+        actionName: 'e2e',
+        exec: function () {
+            return e2e_1.default();
         },
     },
 ];

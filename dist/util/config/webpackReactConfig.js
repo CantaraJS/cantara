@@ -24,7 +24,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var webpack_1 = __importDefault(require("webpack"));
 var fs_1 = require("fs");
 var babelReactConfig_1 = __importDefault(require("./babelReactConfig"));
-var externals_1 = __importDefault(require("../externals"));
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var WebpackPwaManifest = require('webpack-pwa-manifest');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
@@ -48,7 +47,6 @@ function createReactWebpackConfig(_a) {
     var appIconPathPng = path.join(app.paths.assets, 'app_icon.png');
     var appIconPathSvg = path.join(app.paths.assets, 'app_icon.svg');
     var doesServiceWorkerExist = fs_1.existsSync(path.join(app.paths.root, 'sw.js'));
-    var externals = externals_1.default();
     if (fs_1.existsSync(appIconPathPng)) {
         iconPathToUse = appIconPathPng;
     }
@@ -100,7 +98,6 @@ function createReactWebpackConfig(_a) {
             alias: __assign(__assign({}, alias), reactDependencyAliases),
         },
         mode: mode,
-        externals: app.type === 'react' ? [] : externals,
         devtool: isDevelopment ? 'eval-source-map' : undefined,
         output: {
             // publicPath: '/',

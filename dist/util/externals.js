@@ -89,15 +89,7 @@ function getModuleName(request) {
     }
     return req.split(delimiter)[0];
 }
-/** Makes sure that all package dependencies
- * are externalized (not included in bundle).
- * Reads every packageJson provided and adds
- * each dependency to the list.
- * If `peerOnly` is set to `true`, only peer
- * dependecies are excluded. Useful for
- * CDN bundles.
- */
-function getAllWebpackExternals(_a) {
+function webpackExternalsAsStringArray(_a) {
     var peerOnly = (_a === void 0 ? {} : _a).peerOnly;
     var allApps = cantara_config_1.default().allApps;
     var externals = [];
@@ -110,6 +102,20 @@ function getAllWebpackExternals(_a) {
         // same as the popular nodeExternals() does
         externals = getAllInstalledModules(allApps);
     }
+    return externals;
+}
+exports.webpackExternalsAsStringArray = webpackExternalsAsStringArray;
+/** Makes sure that all package dependencies
+ * are externalized (not included in bundle).
+ * Reads every packageJson provided and adds
+ * each dependency to the list.
+ * If `peerOnly` is set to `true`, only peer
+ * dependecies are excluded. Useful for
+ * CDN bundles.
+ */
+function getAllWebpackExternals(_a) {
+    var peerOnly = (_a === void 0 ? {} : _a).peerOnly;
+    var externals = webpackExternalsAsStringArray({ peerOnly: peerOnly });
     // const externalsObj = externals.reduce((retObj, externalName) => {
     //   return {
     //     ...retObj,

@@ -26,8 +26,19 @@ export function spawnCmd(
       env: {
         ...process.env,
         ...env,
+        NODE_ENV: 'production',
       },
     };
+
+    if (
+      process.env.NODE_ENV === 'development' &&
+      (cmd.startsWith('cantara') || cmd.startsWith('ctra'))
+    ) {
+      // If Cantara calls itself in development mode
+      // it always uses the the TEST_CMD. Therefore,
+      // explicitly delete it
+      delete options.env.NODE_ENV;
+    }
 
     const [programCmd, ...params] = cmd.split(' ');
 
@@ -38,7 +49,7 @@ export function spawnCmd(
       stdio: redirectIo ? 'inherit' : undefined,
     });
 
-    function onExit() {
+    function onExit(exData: any) {
       resolve(retData);
     }
 
@@ -60,6 +71,44 @@ interface ExecOptions extends CommonOptions {
   withSecrets?: boolean;
 }
 
+/**
+ * Retrieved paths of folder which should
+ * be added to PATH during this session.
+ * Like this, commands can be executed
+ * directly from the node_modules folder.
+ * Same technique as npm run-scripts uses.
+ * Add the following node_modules/.bin
+ * folders to PATH:
+ * - Cantara's node_modules
+ * - The user's project node_modules
+ */
+function getCurrentPATH() {
+  const globalCantaraConfig = getGlobalConfig();
+
+  const getNodeModulesBinPath = (folderWithNodeModules: string) => {
+    return (
+      folderWithNodeModules + path.sep + 'node_modules' + path.sep + '.bin'
+    );
+  };
+
+  const localNodeModulesBinPath = getNodeModulesBinPath(
+    globalCantaraConfig.internalPaths.root,
+  );
+  const userProjectNodeModulesBinPath = getNodeModulesBinPath(
+    globalCantaraConfig.runtime.projectDir,
+  );
+
+  let newPathEnv = process.env.PATH || '';
+
+  const pathsToAdd = [localNodeModulesBinPath, userProjectNodeModulesBinPath];
+  for (const pathToAdd of pathsToAdd) {
+    if (!newPathEnv.includes(pathToAdd)) {
+      newPathEnv += path.delimiter + pathToAdd;
+    }
+  }
+  return newPathEnv;
+}
+
 /** Execute commands in different contexts and
  * with different folders in PATH.
  */
@@ -72,18 +121,7 @@ export default async function execCmd(
   }: ExecOptions = {},
 ) {
   const globalCantaraConfig = getGlobalConfig();
-  const localNodeModulesBinPath =
-    globalCantaraConfig.internalPaths.root +
-    path.sep +
-    'node_modules' +
-    path.sep +
-    '.bin';
-  const localNodeModulesAlreadyInPath = (process.env.PATH || '').includes(
-    localNodeModulesBinPath,
-  );
-  const NEW_PATH_ENV = localNodeModulesAlreadyInPath
-    ? process.env.PATH
-    : process.env.PATH + path.delimiter + localNodeModulesBinPath;
+  const NEW_PATH_ENV = getCurrentPATH();
 
   const secretsEnvVars = withSecrets ? globalCantaraConfig.runtime.secrets : {};
 

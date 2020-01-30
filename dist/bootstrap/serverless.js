@@ -56,14 +56,14 @@ var slash_1 = __importDefault(require("slash"));
 var cantara_config_1 = __importDefault(require("../cantara-config"));
 var configTemplates_1 = __importDefault(require("../util/configTemplates"));
 var util_1 = require("./util");
-var externals_1 = __importDefault(require("../util/externals"));
+var externals_1 = require("../util/externals");
 var mergeYaml = require('@alexlafroscia/yaml-merge');
 function createWebpackAndBabelConfigFromTemplate(app) {
     var globalCantaraConfig = cantara_config_1.default();
     var babelConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverlessBabelConfig.template.js')).toString();
     var webpackConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverlessWebpackConfig.template.js')).toString();
     var allAliases = __assign(__assign({}, globalCantaraConfig.runtime.aliases.appDependencyAliases), globalCantaraConfig.runtime.aliases.packageAliases);
-    var externals = externals_1.default();
+    var externals = externals_1.webpackExternalsAsStringArray();
     var templateVariables = {
         MODULES_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
             '/',

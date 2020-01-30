@@ -1,6 +1,7 @@
 interface GetAllWebpackExternalsOptions {
     peerOnly?: boolean;
 }
+export declare function webpackExternalsAsStringArray({ peerOnly, }?: GetAllWebpackExternalsOptions): string[];
 /** Makes sure that all package dependencies
  * are externalized (not included in bundle).
  * Reads every packageJson provided and adds

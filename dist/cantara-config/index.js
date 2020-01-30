@@ -17,6 +17,7 @@ var react_1 = require("./dependencies/react");
 var types_1 = require("./dependencies/types");
 var testing_1 = require("./dependencies/testing");
 var common_1 = require("./dependencies/common");
+var fs_1 = require("fs");
 var globalConfig = undefined;
 function getGlobalConfig() {
     if (!globalConfig)
@@ -38,7 +39,6 @@ function getActiveApp() {
     return activeApp;
 }
 exports.getActiveApp = getActiveApp;
-/** Config can only be set once */
 function configureCantara(config) {
     var staticFilesPath = path_1.default.join(config.packageRootDir, 'static');
     var tempFolder = path_1.default.join(staticFilesPath, '.temp');
@@ -59,6 +59,23 @@ function configureCantara(config) {
     var appDependencyAliases = currentActiveApp
         ? aliases_1.getDependencyAliases(currentActiveApp)
         : {};
+    var globalCantaraSettingsFilePath = path_1.default.join(projectDir, 'cantara.config.js');
+    var globalCantaraUserSettings = fs_1.existsSync(globalCantaraSettingsFilePath)
+        ? require(globalCantaraSettingsFilePath)
+        : {};
+    var globalCantaraSettings = {
+        e2e: {
+            executeBefore: globalCantaraUserSettings.e2e
+                ? globalCantaraUserSettings.e2e.executeBefore || []
+                : [],
+            portsToWaitFor: globalCantaraUserSettings.e2e
+                ? globalCantaraUserSettings.e2e.portsToWaitFor || []
+                : [],
+            testCommand: globalCantaraUserSettings.e2e
+                ? globalCantaraUserSettings.e2e.testCommand || ''
+                : '',
+        },
+    };
     var configToUse = {
         allApps: allApps,
         allPackages: {
@@ -79,6 +96,7 @@ function configureCantara(config) {
         },
         runtime: {
             projectDir: projectDir,
+            globalCantaraSettings: globalCantaraSettings,
             stage: config.stage,
             currentCommand: {
                 name: config.currentCommand.name,

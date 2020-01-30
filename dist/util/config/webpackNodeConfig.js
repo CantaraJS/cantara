@@ -23,7 +23,6 @@ function createNodeWebpackConfig(_a) {
     var app = _a.app, _b = _a.mode, mode = _b === void 0 ? 'development' : _b, alias = _a.alias, _c = _a.env, env = _c === void 0 ? {} : _c, _d = _a.include, include = _d === void 0 ? [] : _d;
     var isDevelopment = mode === 'development';
     var isProduction = mode === 'production';
-    var nodeExternals = require('webpack-node-externals');
     var externals = externals_1.default();
     return {
         entry: app.paths.src,

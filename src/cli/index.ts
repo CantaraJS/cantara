@@ -15,6 +15,7 @@ import publishPackage from '../scripts/publish';
 import createNewAppOrPackage from '../scripts/new';
 import initializeNewProject from '../scripts/init';
 import executeForChangedApps from '../scripts/exec-changed';
+import startEndToEndTests from '../scripts/e2e';
 
 const allCantaraCommands: CantaraCommand[] = [
   {
@@ -93,6 +94,12 @@ const allCantaraCommands: CantaraCommand[] = [
         });
         await buildActiveApp();
       });
+    },
+  },
+  {
+    actionName: 'e2e',
+    exec: () => {
+      return startEndToEndTests();
     },
   },
 ];

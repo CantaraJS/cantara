@@ -58,12 +58,19 @@ function spawnCmd(cmd, _a) {
     return new Promise(function (resolve) {
         var options = {
             cwd: workingDirectory,
-            env: __assign(__assign({}, process.env), env),
+            env: __assign(__assign(__assign({}, process.env), env), { NODE_ENV: 'production' }),
         };
+        if (process.env.NODE_ENV === 'development' &&
+            (cmd.startsWith('cantara') || cmd.startsWith('ctra'))) {
+            // If Cantara calls itself in development mode
+            // it always uses the the TEST_CMD. Therefore,
+            // explicitly delete it
+            delete options.env.NODE_ENV;
+        }
         var _a = cmd.split(' '), programCmd = _a[0], params = _a.slice(1);
         var retData = '';
         var newProcess = child_process_1.spawn(programCmd, params, __assign(__assign({}, options), { shell: true, stdio: redirectIo ? 'inherit' : undefined }));
-        function onExit() {
+        function onExit(exData) {
             resolve(retData);
         }
         newProcess.stdio.forEach(function (io) {

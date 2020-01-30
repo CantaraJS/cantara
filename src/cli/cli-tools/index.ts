@@ -68,10 +68,8 @@ export async function execCantaraCommand({
   parsedCommand,
   originalCommand,
 }: ExecCantaraCommandParams) {
-  if (parsedCommand.commands.length <= 1) {
-    throw new Error(
-      `You must specify an action and an appname, e.g.: cantara dev <appname>`,
-    );
+  if (parsedCommand.commands.length === 0) {
+    throw new Error(`You must specify an action, e.g.: cantara e2e`);
   }
   const userDefinedStage = parsedCommand.flags.find(
     flag => flag.name === 'stage',

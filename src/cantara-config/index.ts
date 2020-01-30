@@ -8,6 +8,15 @@ import { reactDependencies } from './dependencies/react';
 import { typescriptDependencies } from './dependencies/types';
 import { testingDependencies } from './dependencies/testing';
 import { commonDependencies } from './dependencies/common';
+import { existsSync } from 'fs';
+
+interface GlobalCantaraSettings {
+  e2e: {
+    executeBefore: string[];
+    portsToWaitFor: number[];
+    testCommand: string;
+  };
+}
 
 interface CantaraInitialConfig {
   /** Where the cantara package itself lives */
@@ -77,6 +86,9 @@ interface CantaraGlobalConfig {
       AWS_SECRET_ACCESS_KEY?: string;
     };
     stage: string;
+    /** Settings from cantara.config.js
+     * at the project's root */
+    globalCantaraSettings: GlobalCantaraSettings;
   };
 }
 
@@ -131,6 +143,29 @@ export function configureCantara(config: CantaraInitialConfig) {
     ? getDependencyAliases(currentActiveApp)
     : {};
 
+  const globalCantaraSettingsFilePath = path.join(
+    projectDir,
+    'cantara.config.js',
+  );
+  const globalCantaraUserSettings: Partial<GlobalCantaraSettings> = existsSync(
+    globalCantaraSettingsFilePath,
+  )
+    ? require(globalCantaraSettingsFilePath)
+    : {};
+  const globalCantaraSettings: GlobalCantaraSettings = {
+    e2e: {
+      executeBefore: globalCantaraUserSettings.e2e
+        ? globalCantaraUserSettings.e2e.executeBefore || []
+        : [],
+      portsToWaitFor: globalCantaraUserSettings.e2e
+        ? globalCantaraUserSettings.e2e.portsToWaitFor || []
+        : [],
+      testCommand: globalCantaraUserSettings.e2e
+        ? globalCantaraUserSettings.e2e.testCommand || ''
+        : '',
+    },
+  };
+
   const configToUse: CantaraGlobalConfig = {
     allApps,
     allPackages: {
@@ -153,6 +188,7 @@ export function configureCantara(config: CantaraInitialConfig) {
     },
     runtime: {
       projectDir,
+      globalCantaraSettings,
       stage: config.stage,
       currentCommand: {
         name: config.currentCommand.name,

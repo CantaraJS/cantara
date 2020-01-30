@@ -1,4 +1,11 @@
 import { CantaraApplication } from '../util/types';
+interface GlobalCantaraSettings {
+    e2e: {
+        executeBefore: string[];
+        portsToWaitFor: number[];
+        testCommand: string;
+    };
+}
 interface CantaraInitialConfig {
     /** Where the cantara package itself lives */
     packageRootDir: string;
@@ -71,6 +78,9 @@ interface CantaraGlobalConfig {
             AWS_SECRET_ACCESS_KEY?: string;
         };
         stage: string;
+        /** Settings from cantara.config.js
+         * at the project's root */
+        globalCantaraSettings: GlobalCantaraSettings;
     };
 }
 export default function getGlobalConfig(): CantaraGlobalConfig;
@@ -81,6 +91,5 @@ export default function getGlobalConfig(): CantaraGlobalConfig;
  * require an active application.
  */
 export declare function getActiveApp(): CantaraApplication;
-/** Config can only be set once */
 export declare function configureCantara(config: CantaraInitialConfig): CantaraGlobalConfig;
 export {};

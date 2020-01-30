@@ -99,8 +99,8 @@ function execCantaraCommand(_a) {
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
-                    if (parsedCommand.commands.length <= 1) {
-                        throw new Error("You must specify an action and an appname, e.g.: cantara dev <appname>");
+                    if (parsedCommand.commands.length === 0) {
+                        throw new Error("You must specify an action, e.g.: cantara e2e");
                     }
                     userDefinedStage = parsedCommand.flags.find(function (flag) { return flag.name === 'stage'; });
                     stage = userDefinedStage ? userDefinedStage.value : 'not_set';
@@ -143,7 +143,7 @@ exports.execCantaraCommand = execCantaraCommand;
 function parseCliCommand(command) {
     var parsed = command.reduce(function (acc, str, i) {
         var wasStringPartAlreadyHandled = acc.commands.includes(str) ||
-            !!acc.flags.find(function (flag) { return str.startsWith("--" + flag.name); });
+            !!acc.flags.find(function (flag) { return str.startsWith("--" + flag.name) || str === flag.value; });
         if (wasStringPartAlreadyHandled) {
             return acc;
         }
