@@ -5,7 +5,11 @@ import { promisify } from 'util';
 
 import getGlobalConfig from '../cantara-config';
 import prepareReactApps from './react';
-import { createOrUpdatePackageJSON, createTempEnvJsonFile } from './util';
+import {
+  createOrUpdatePackageJSON,
+  createTempEnvJsonFile,
+  createJestConfig,
+} from './util';
 import prepareServerlessApp from './serverless';
 import prepareJsPackage from './packages';
 import { writeJson } from '../util/fs';
@@ -78,6 +82,12 @@ async function prepareCantaraProject() {
   }
 
   createTempEnvJsonFile();
+
+  // Copy global jest.config.js (needed so that correct typings are used when e.g. also cypress is installed)
+  createJestConfig({
+    dir: rootDir,
+    configTemplateFileName: 'jestGlobalConfig.template.js',
+  });
 }
 
 /**

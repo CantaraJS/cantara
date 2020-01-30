@@ -170,13 +170,14 @@ function getJestAliases() {
 }
 
 interface CreateJestConfigOptions {
-  app: CantaraApplication;
+  /** Path where to save jest.config.js */
+  dir: string;
   configTemplateFileName: string;
   setupScriptImports?: string[];
 }
 
 export function createJestConfig({
-  app,
+  dir,
   configTemplateFileName,
   setupScriptImports = [],
 }: CreateJestConfigOptions) {
@@ -199,7 +200,7 @@ export function createJestConfig({
       }, ''),
     },
   });
-  const setupFileDestination = path.join(app.paths.root, 'jest.setup.ts');
+  const setupFileDestination = path.join(dir, 'jest.setup.ts');
   writeFileSync(setupFileDestination, renderedSetupFile);
 
   // create jest.config.js
@@ -218,21 +219,21 @@ export function createJestConfig({
     template: jestConfigTemplate,
     variables: templateVariables,
   });
-  const newJestConfigPath = path.join(app.paths.root, 'jest.config.js');
+  const newJestConfigPath = path.join(dir, 'jest.config.js');
 
   writeFileSync(newJestConfigPath, newJestConfig);
 }
 
 export function createNodeJestConfig(app: CantaraApplication) {
   createJestConfig({
-    app,
+    dir: app.paths.root,
     configTemplateFileName: 'jestNodeConfig.template.js',
   });
 }
 
 export function createReactJestConfig(app: CantaraApplication) {
   createJestConfig({
-    app,
+    dir: app.paths.root,
     configTemplateFileName: 'jestReactConfig.template.js',
     setupScriptImports: [
       '@testing-library/jest-dom',

@@ -1,3 +1,5 @@
+require('<--MODULES_PATH-->/ts-jest');
+
 module.exports = {
   transform: {
     '^.+\\.tsx?$': '<--MODULES_PATH-->/ts-jest',
