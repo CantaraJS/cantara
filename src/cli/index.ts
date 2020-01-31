@@ -16,6 +16,10 @@ import initializeNewProject from '../scripts/init';
 import startEndToEndTests from '../scripts/e2e';
 import testChanged from '../scripts/test-changed';
 import buildChanged from '../scripts/build-changed';
+import executeForChangedApps, {
+  execUserCmdForChangedApp,
+} from '../scripts/exec-changed';
+import execCmd from '../util/exec';
 
 const allCantaraCommands: CantaraCommand[] = [
   {
@@ -105,6 +109,14 @@ const allCantaraCommands: CantaraCommand[] = [
     exec: async ({ stage }) => {
       await testChanged({ stage });
       await buildChanged({ stage });
+    },
+  },
+  {
+    actionName: 'exec-changed',
+    parameters: [{ name: 'appname', required: true }],
+    exec: ({ parameters: [appname], originalCommand }) => {
+      const [, , ...userCmd] = originalCommand;
+      return execUserCmdForChangedApp({ appname, userCmd: userCmd.join(' ') });
     },
   },
 ];

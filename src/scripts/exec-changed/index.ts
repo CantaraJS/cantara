@@ -41,3 +41,31 @@ export default async function executeForChangedApps(cb: ExecChangeCallback) {
     await cb(changedAppName);
   }
 }
+
+interface ExecUserCmdForChangedAppParams {
+  appname: string;
+  userCmd: string;
+}
+
+/**
+ * Executes an arbitrary command if the specified
+ * application changed
+ */
+export function execUserCmdForChangedApp({
+  appname,
+  userCmd,
+}: ExecUserCmdForChangedAppParams) {
+  const {
+    runtime: { projectDir },
+  } = getGlobalConfig();
+  return executeForChangedApps(async changedAppName => {
+    if (appname === changedAppName) {
+      // Exec cmd
+      console.log(`"${appname}" changed.\nExecuting "${userCmd}"`);
+      await execCmd(userCmd, {
+        workingDirectory: projectDir,
+        redirectIo: true,
+      });
+    }
+  });
+}
