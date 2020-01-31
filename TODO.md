@@ -2,16 +2,31 @@
 
 ## Required
 
-- Make testing work (including cypress, implement Cantara command to start all needed servers)
 - Make building/deploying/publishing work
-  - Implement command "exec-changed <appname> [cmd...]" which executes a command only if the specified app changed
-  - Make sure react-component production build works as expected
+  - Implement "test-changed" command
+  - Implement "ci" command
+    - Executes "test-changed" and then "build-changed"
+  - Implement "exec-changed <appname> [cmd...]" command
+    - Executes an arbitrary command if the specified app changed
+  - Packages
+    - Make sure building, publishing and consuming react-components/browser-packages/node-packages works
 - Write somewhat complete docs
   - Good getting started guide. Simple -> Advanced
   - Documentation of all commands
   - Documentation of crana.config.js
-  - Documentation on "how to do X"
+  - Guides on "how to do X" / Explainations of more complex topics
+    - Testing
+      - Unit
+      - Integration / e2e
+    - Deployment/CI using exec-changed
+      - Maybe implement an explicit "ci" command which re-builds and runs tests for changed code only
     - ...
+- Talk to CD try to integrate Cantara into their current workflow
+  - Find out if tool is good enough for deployment needs
+  - Customization needs? e.g. extending wepback/babel/TS config etc
+- Implement Novitas Auth with Cantara and use it in Photogram
+  - Write good docs for other developers
+- Port Photogram Codebase to Cantara
 - Write integration tests for CLI
 
 ## Nice to have

@@ -97,6 +97,20 @@ const allCantaraCommands: CantaraCommand[] = [
     },
   },
   {
+    actionName: 'test-changed',
+    exec: ({ stage }) => {
+      return executeForChangedApps(async appname => {
+        await prepareCantara({
+          cmdName: 'test',
+          additionalCliOptions: '',
+          appname,
+          stage,
+        });
+        await executeTests();
+      });
+    },
+  },
+  {
     actionName: 'e2e',
     exec: () => {
       return startEndToEndTests();
