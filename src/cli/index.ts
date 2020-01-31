@@ -100,6 +100,13 @@ const allCantaraCommands: CantaraCommand[] = [
       return startEndToEndTests();
     },
   },
+  {
+    actionName: 'ci',
+    exec: async ({ stage }) => {
+      await testChanged({ stage });
+      await buildChanged({ stage });
+    },
+  },
 ];
 
 export default function setupCliInterface() {
