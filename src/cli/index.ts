@@ -4,7 +4,6 @@ import {
   CantaraCommand,
   parseCliCommand,
   execCantaraCommand,
-  prepareCantara,
 } from './cli-tools';
 import executeArbitraryCmdWithinApp from '../scripts/arbitrary';
 import startDevelopmentServer from '../scripts/dev';
@@ -14,8 +13,9 @@ import executeTests from '../scripts/test';
 import publishPackage from '../scripts/publish';
 import createNewAppOrPackage from '../scripts/new';
 import initializeNewProject from '../scripts/init';
-import executeForChangedApps from '../scripts/exec-changed';
 import startEndToEndTests from '../scripts/e2e';
+import testChanged from '../scripts/test-changed';
+import buildChanged from '../scripts/build-changed';
 
 const allCantaraCommands: CantaraCommand[] = [
   {
@@ -85,29 +85,13 @@ const allCantaraCommands: CantaraCommand[] = [
   {
     actionName: 'build-changed',
     exec: ({ stage }) => {
-      return executeForChangedApps(async appname => {
-        await prepareCantara({
-          cmdName: 'build',
-          additionalCliOptions: '',
-          appname,
-          stage,
-        });
-        await buildActiveApp();
-      });
+      return buildChanged({ stage });
     },
   },
   {
     actionName: 'test-changed',
     exec: ({ stage }) => {
-      return executeForChangedApps(async appname => {
-        await prepareCantara({
-          cmdName: 'test',
-          additionalCliOptions: '',
-          appname,
-          stage,
-        });
-        await executeTests();
-      });
+      return testChanged({ stage });
     },
   },
   {
