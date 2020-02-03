@@ -1,17 +1,18 @@
-import { CreateWebpackConfigParams } from './types';
-
 import { Configuration } from 'webpack';
+import path from 'path';
+
 import getBabelConfig from './babelReactConfig';
 import getAllWebpackExternals from '../externals';
 import { camalize } from '../string-manipulation';
+import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
+import { CreateWebpackConfigParams } from './types';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-
-const path = require('path');
+const webpackMerge = require('webpack-merge');
 
 /**
  * Build React, isomorphic, node or browser libraries
@@ -23,18 +24,20 @@ export default function createLibraryWebpackConfig({
   alias = {},
   libraryTarget,
   noChecks,
+  env,
 }: CreateWebpackConfigParams): Configuration {
-  const entryPath =
-    app.type === 'react-component'
-      ? path.join(app.paths.src, 'index.tsx')
-      : path.join(app.paths.src, 'index.ts');
+  const isReactComponent = app.type === 'react-component';
+
+  const entryPath = isReactComponent
+    ? path.join(app.paths.src, 'index.tsx')
+    : path.join(app.paths.src, 'index.ts');
 
   // For UMD builds (CDN ready) only exclude peer deps
   const externals = getAllWebpackExternals({
     peerOnly: libraryTarget === 'umd',
   });
 
-  return {
+  const commonLibraryConfig = {
     entry: entryPath,
     resolve: {
       extensions: [
@@ -55,7 +58,10 @@ export default function createLibraryWebpackConfig({
       // publicPath: '/',
       filename:
         libraryTarget === 'commonjs2' ? 'index.js' : `${app.name}.umd.min.js`,
-      path: app.paths.build,
+      path:
+        libraryTarget === 'commonjs2'
+          ? path.join(app.paths.build, app.name, 'src')
+          : app.paths.build,
       library: camalize(app.name),
       /** For bundlers and NodeJS, CommonJS is used.
        * As soon webpack supports ESM as a libraryTarget,
@@ -81,6 +87,17 @@ export default function createLibraryWebpackConfig({
       new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
     ].filter(Boolean),
+    performance: {
+      hints: false,
+    },
+    optimization: {
+      // Only minify for UMD
+      minimize: libraryTarget === 'umd',
+    },
+  };
+
+  // Webpack config for non-React JS packages
+  const jsPackageConfig: Configuration = {
     module: {
       rules: [
         {
@@ -93,36 +110,21 @@ export default function createLibraryWebpackConfig({
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],
         },
-        {
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
-          loader: 'url-loader',
-          options: {
-            limit: 15000,
-            name: 'static/media/[name].[hash:8].[ext]',
-          },
-        },
-        {
-          loader: 'file-loader',
-          exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-          options: {
-            name: 'static/media/[name].[hash:8].[ext]',
-          },
-        },
       ],
     },
-    performance: {
-      hints: false,
-    },
-    optimization: {
-      // Only minify for UMD
-      minimize: libraryTarget === 'umd',
-    },
-    // node: {
-    //   fs: 'empty',
-    //   dns: 'empty',
-    //   net: 'empty',
-    //   tls: 'empty',
-    //   module: 'empty',
-    // },
   };
+
+  let configToMerge: Configuration = jsPackageConfig;
+
+  if (isReactComponent) {
+    configToMerge = createCommonReactWebpackConfig({
+      mode: 'production',
+      app,
+      env,
+      include,
+      projectDir,
+    });
+  }
+
+  return webpackMerge(commonLibraryConfig, configToMerge);
 }

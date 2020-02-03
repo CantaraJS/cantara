@@ -6,6 +6,7 @@ import getGlobalConfig from '../../cantara-config';
 import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { readFileAsJSON, writeJson } from '../../util/fs';
 import execCmd from '../../util/exec';
+import slash from 'slash';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
@@ -67,7 +68,14 @@ export default async function buildPackage(app: CantaraApplication) {
   const packageJson = readFileAsJSON(packageJsonPath);
   const newPackageJson = {
     ...packageJson,
-    main: `./${path.relative(app.paths.root, app.paths.build)}/index.js`,
+    main: `./${slash(
+      path.join(
+        path.relative(app.paths.root, app.paths.build),
+        app.name,
+        'src',
+        'index.js',
+      ),
+    )}`,
   };
   writeJson(packageJsonPath, newPackageJson);
 }

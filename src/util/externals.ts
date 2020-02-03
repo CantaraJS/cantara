@@ -58,7 +58,7 @@ function getAllPeerDependencies(allApps: CantaraApplication[]) {
   const allPeerDeps = allPackageJsonPaths
     .map(filePath => {
       try {
-        const { peerDependencies } = readFileAsJSON(filePath);
+        const { peerDependencies = {} } = readFileAsJSON(filePath);
         return peerDependencies;
       } catch {
         return {};

@@ -62,10 +62,6 @@ export default function createCommonReactWebpackConfig({
     },
     mode,
     plugins: [
-      new ForkTsCheckerWebpackPlugin({
-        tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
-        watch: app.paths.src,
-      }),
       new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
       new webpack.EnvironmentPlugin(env),

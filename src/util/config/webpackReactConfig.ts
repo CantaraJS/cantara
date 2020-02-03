@@ -8,6 +8,7 @@ import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
@@ -59,6 +60,10 @@ export default function createReactWebpackConfig({
       chunkFilename: '[name].[chunkhash:4].js',
     },
     plugins: [
+      new ForkTsCheckerWebpackPlugin({
+        tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
+        watch: app.paths.src,
+      }),
       isDevelopment ? new webpack.HotModuleReplacementPlugin() : undefined,
       new WebpackNotifierPlugin({
         excludeWarnings: true,
