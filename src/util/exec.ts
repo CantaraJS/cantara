@@ -20,13 +20,12 @@ export function spawnCmd(
   cmd: string,
   { workingDirectory, redirectIo, env = {} }: SpawnOptions = {},
 ): Promise<string | number> {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const options = {
       cwd: workingDirectory,
       env: {
         ...process.env,
         ...env,
-        NODE_ENV: 'production',
       },
     };
 
@@ -61,9 +60,13 @@ export function spawnCmd(
         }),
     );
 
-    newProcess.on('close', onExit);
+    // newProcess.on('close', onExit);
     newProcess.on('exit', onExit);
-    newProcess.on('disconnect', onExit);
+    newProcess.on('error', e => {
+      console.log('ERRRRRRORRROROROR', e);
+      reject(e);
+    });
+    // newProcess.on('disconnect', onExit);
   });
 }
 

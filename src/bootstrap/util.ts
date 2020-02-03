@@ -111,34 +111,12 @@ export async function createOrUpdatePackageJSON({
     }
   } else {
     // Create new packageJSON and install dependencies
-    createPackageJson({ folderPath: rootDir });
-    if (expectedDependencies) {
-      const dependenciesToInstall = Object.keys(expectedDependencies)
-        .reduce((depsStr, depName) => {
-          return `${depName}@${expectedDependencies[depName]} ${depsStr}`;
-        }, '')
-        .trim();
-      if (dependenciesToInstall) {
-        await execCmd(`npm install -S ${dependenciesToInstall}`, {
-          workingDirectory: rootDir,
-          redirectIo: true,
-        });
-      }
-    }
-
-    if (expectedDevDependencies) {
-      const devDependenciesToInstall = Object.keys(expectedDevDependencies)
-        .reduce((depsStr, depName) => {
-          return `${depName}@${expectedDevDependencies[depName]} ${depsStr}`;
-        }, '')
-        .trim();
-      if (devDependenciesToInstall) {
-        await execCmd(`npm install -D ${devDependenciesToInstall}`, {
-          workingDirectory: rootDir,
-          redirectIo: true,
-        });
-      }
-    }
+    await createPackageJson({ folderPath: rootDir });
+    await createOrUpdatePackageJSON({
+      rootDir,
+      expectedDependencies,
+      expectedDevDependencies,
+    });
   }
 }
 
