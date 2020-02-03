@@ -2,10 +2,9 @@
 
 ## Required
 
-- Re-do 5h of work which was accidently deleted :angry:
-  - Building React Components / JS Packages
-    - Common React config
-    - index.js -> src
+- Test if built React Components can be installed
+- Extend simple starter to something that makes sense
+  - Image Of the day App, yea!
 - Write somewhat complete docs
 - Talk to CD try to integrate Cantara into their current workflow
   - Find out if tool is good enough for deployment needs

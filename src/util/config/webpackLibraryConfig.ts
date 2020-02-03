@@ -13,6 +13,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpackMerge = require('webpack-merge');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 /**
  * Build React, isomorphic, node or browser libraries
@@ -86,6 +87,9 @@ export default function createLibraryWebpackConfig({
       noChecks ? undefined : new WebpackNotifierPlugin(),
       new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
+      libraryTarget === 'commonjs2'
+        ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
+        : undefined,
     ].filter(Boolean),
     performance: {
       hints: false,
