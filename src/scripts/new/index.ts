@@ -86,21 +86,25 @@ export default async function createNewAppOrPackage({
       'app-templates/serverless',
     );
   }
-  // if (type === 'package') {
-  //   destinationPath = path.join(projectDir, 'packages', name);
-  //   templateFolderPath = path.join(
-  //     staticFolderPath,
-  //     'app-templates/js-package',
-  //   );
-  // }
+  if (type === 'package') {
+    destinationPath = path.join(projectDir, 'packages', name);
+    templateFolderPath = path.join(
+      staticFolderPath,
+      'app-templates/js-package',
+    );
+  }
 
-  // if (existsSync(destinationPath)) {
-  //   throw new Error(
-  //     `${destinationPath} already exists! Delete the folder if you want to override it.`,
-  //   );
-  // }
+  if (!existsSync(templateFolderPath)) {
+    throw new Error(`${templateFolderPath} does not exist.`);
+  }
 
-  // await ncp(templateFolderPath, destinationPath);
+  if (existsSync(destinationPath)) {
+    throw new Error(
+      `${destinationPath} already exists! Delete the folder if you want to override it.`,
+    );
+  }
+
+  await ncp(templateFolderPath, destinationPath);
 
   console.log(`Created new ${type} at ${destinationPath}!`);
 }
