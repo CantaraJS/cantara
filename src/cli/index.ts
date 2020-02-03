@@ -70,14 +70,14 @@ const allCantaraCommands: CantaraCommand[] = [
       { name: 'type', required: true },
       { name: 'name', required: true },
     ],
-    exec: ({ parameters: [name, type] }) => {
+    exec: ({ parameters: { name, type } }) => {
       return createNewAppOrPackage({ type: type as any, name });
     },
   },
   {
     actionName: 'init',
     parameters: [{ name: 'path' }, { name: 'template' }],
-    exec: ({ parameters: [userPath, template] }) => {
+    exec: ({ parameters: { path: userPath, template } }) => {
       const templateToUse = template ? template : 'cantara-simple-starter';
       const pathToUse = userPath ? path.resolve(userPath) : process.cwd();
       return initializeNewProject({
@@ -114,7 +114,7 @@ const allCantaraCommands: CantaraCommand[] = [
   {
     actionName: 'exec-changed',
     parameters: [{ name: 'appname', required: true }],
-    exec: ({ parameters: [appname], originalCommand }) => {
+    exec: ({ parameters: { appname }, originalCommand }) => {
       const [, , ...userCmd] = originalCommand;
       return execUserCmdForChangedApp({ appname, userCmd: userCmd.join(' ') });
     },

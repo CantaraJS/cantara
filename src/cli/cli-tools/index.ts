@@ -27,7 +27,7 @@ export interface CantaraCommand {
     required?: boolean;
   }[];
   exec: (parameters: {
-    parameters: string[];
+    parameters: { [key: string]: string };
     originalCommand: string[];
     stage: string;
   }) => any;
@@ -109,7 +109,11 @@ export async function execCantaraCommand({
     additionalCliOptions,
   });
   await Promise.resolve(
-    foundAction.exec({ parameters, originalCommand, stage: stage.toString() }),
+    foundAction.exec({
+      parameters: actionParameters,
+      originalCommand,
+      stage: stage.toString(),
+    }),
   );
 }
 
