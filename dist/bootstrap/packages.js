@@ -100,7 +100,7 @@ function prepareJsPackage(app) {
                             JEST_SETUP_FILE: './jest.setup.ts',
                         },
                     });
-                    packageTsConfigPath = path_1.default.join(app.paths.root, 'tsconfig.build.json');
+                    packageTsConfigPath = path_1.default.join(app.paths.root, '.tsconfig.local.json');
                     fs_1.writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
                     npmignorePath = path_1.default.join(staticFilesFolder, '.npmignore');
                     npmignoreDestPath = path_1.default.join(app.paths.root, '.npmignore');

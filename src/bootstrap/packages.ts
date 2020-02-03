@@ -63,7 +63,7 @@ export default async function prepareJsPackage(app: CantaraApplication) {
       JEST_SETUP_FILE: './jest.setup.ts',
     },
   });
-  const packageTsConfigPath = path.join(app.paths.root, 'tsconfig.build.json');
+  const packageTsConfigPath = path.join(app.paths.root, '.tsconfig.local.json');
   writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
 
   // Copy .npmignore ignore file

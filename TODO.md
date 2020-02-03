@@ -2,25 +2,11 @@
 
 ## Required
 
-- Make building/deploying/publishing work
-  - Implement "test-changed" command
-  - Implement "ci" command
-    - Executes "test-changed" and then "build-changed"
-  - Implement "exec-changed <appname> [cmd...]" command
-    - Executes an arbitrary command if the specified app changed
-  - Packages
-    - Make sure building, publishing and consuming react-components/browser-packages/node-packages works
+- Re-do 5h of work which was accidently deleted :angry:
+  - Building React Components / JS Packages
+    - Common React config
+    - index.js -> src
 - Write somewhat complete docs
-  - Good getting started guide. Simple -> Advanced
-  - Documentation of all commands
-  - Documentation of crana.config.js
-  - Guides on "how to do X" / Explainations of more complex topics
-    - Testing
-      - Unit
-      - Integration / e2e
-    - Deployment/CI using exec-changed
-      - Maybe implement an explicit "ci" command which re-builds and runs tests for changed code only
-    - ...
 - Talk to CD try to integrate Cantara into their current workflow
   - Find out if tool is good enough for deployment needs
   - Customization needs? e.g. extending wepback/babel/TS config etc

@@ -99,7 +99,7 @@ function buildPackage(app) {
                     _e.label = 4;
                 case 4: 
                 // Generate types
-                return [4 /*yield*/, exec_1.default('tsc --project ./tsconfig.build.json', {
+                return [4 /*yield*/, exec_1.default('tsc --project ./.tsconfig.local.json', {
                         workingDirectory: app.paths.root,
                         redirectIo: true,
                     })];

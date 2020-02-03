@@ -66,7 +66,7 @@ export default function createNodeWebpackConfig({
       new CaseSensitivePathsPlugin(),
       new webpack.EnvironmentPlugin(env),
       new ForkTsCheckerWebpackPlugin({
-        tsconfig: path.join(app.paths.root, 'tsconfig.local.json'),
+        tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
         watch: app.paths.src,
       }),
       new FriendlyErrorsWebpackPlugin(),

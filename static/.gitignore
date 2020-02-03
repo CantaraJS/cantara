@@ -121,4 +121,4 @@ gen
 .secrets.json
 
 jest.setup.ts
-.tsconfig.build.json
+.tsconfig.local.json

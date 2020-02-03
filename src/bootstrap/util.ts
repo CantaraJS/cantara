@@ -284,6 +284,9 @@ export function createLocalAppTsConfig({
       INDEX_FILE_NAME: indexFileName,
     },
   });
-  const appLocalTsConfigPath = path.join(app.paths.root, 'tsconfig.local.json');
+  const appLocalTsConfigPath = path.join(
+    app.paths.root,
+    '.tsconfig.local.json',
+  );
   writeJson(appLocalTsConfigPath, JSON.parse(renderedTsConfig));
 }

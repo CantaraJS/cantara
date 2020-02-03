@@ -39,7 +39,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     MODULES_PATH:
       slash(path.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
       '/',
-    TSCONFIG_PATH: slash(path.join(app.paths.root, 'tsconfig.local.json')),
+    TSCONFIG_PATH: slash(path.join(app.paths.root, '.tsconfig.local.json')),
     ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
     ALIASES: JSON.stringify(allAliases),
     ENV_VARS: JSON.stringify(app.env || {}),

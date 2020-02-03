@@ -57,7 +57,7 @@ export default async function buildPackage(app: CantaraApplication) {
   }
 
   // Generate types
-  await execCmd('tsc --project ./tsconfig.build.json', {
+  await execCmd('tsc --project ./.tsconfig.local.json', {
     workingDirectory: app.paths.root,
     redirectIo: true,
   });

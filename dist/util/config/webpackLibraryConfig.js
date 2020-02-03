@@ -63,7 +63,7 @@ function createLibraryWebpackConfig(_a) {
             noChecks
                 ? undefined
                 : new ForkTsCheckerWebpackPlugin({
-                    tsconfig: path.join(app.paths.root, 'tsconfig.build.json'),
+                    tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
                     watch: app.paths.src,
                 }),
             noChecks
