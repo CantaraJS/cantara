@@ -102,11 +102,11 @@ async function prepareCantaraProject() {
  * Gets only executed if there's an active application
  */
 export default async function onPreBootstrap() {
+  await prepareCantaraProject();
+
   const globalCantaraConfig = getGlobalConfig();
   const isAnAppActive = !!globalCantaraConfig.runtime.currentCommand.app;
   if (!isAnAppActive) return;
-
-  await prepareCantaraProject();
 
   for (const app of globalCantaraConfig.allApps) {
     // Each app type is bootstrapped slightly different

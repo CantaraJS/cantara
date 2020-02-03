@@ -8,4 +8,13 @@ declare type ExecChangeCallback = (changedAppName: string) => Promise<void>;
  * parameter
  */
 export default function executeForChangedApps(cb: ExecChangeCallback): Promise<void>;
+interface ExecUserCmdForChangedAppParams {
+    appname: string;
+    userCmd: string;
+}
+/**
+ * Executes an arbitrary command if the specified
+ * application changed
+ */
+export declare function execUserCmdForChangedApp({ appname, userCmd, }: ExecUserCmdForChangedAppParams): Promise<void>;
 export {};

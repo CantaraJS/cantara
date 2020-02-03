@@ -151,22 +151,27 @@ function getJestAliases() {
       aliases: { packageAliases },
     },
   } = getGlobalConfig();
-  const activeApp = getActiveApp();
-  const jestAliases = Object.keys(packageAliases).reduce(
-    (aliasObj, packageName) => {
-      const packageAbsolutePath = packageAliases[packageName];
-      const relativePathToPackage = path.relative(
-        activeApp.paths.root,
-        packageAbsolutePath,
-      );
-      return {
-        ...aliasObj,
-        [`^${packageName}$`]: `<rootDir>/${slash(relativePathToPackage)}`,
-      };
-    },
-    {},
-  );
-  return jestAliases;
+  try {
+    const activeApp = getActiveApp();
+    const jestAliases = Object.keys(packageAliases).reduce(
+      (aliasObj, packageName) => {
+        const packageAbsolutePath = packageAliases[packageName];
+        const relativePathToPackage = path.relative(
+          activeApp.paths.root,
+          packageAbsolutePath,
+        );
+        return {
+          ...aliasObj,
+          [`^${packageName}$`]: `<rootDir>/${slash(relativePathToPackage)}`,
+        };
+      },
+      {},
+    );
+    return jestAliases;
+  } catch {
+    // No active app, skipping...
+    return {};
+  }
 }
 
 interface CreateJestConfigOptions {
@@ -254,9 +259,13 @@ export function createTempEnvJsonFile() {
   const {
     internalPaths: { temp },
   } = getGlobalConfig();
-  const { env } = getActiveApp();
-  const jsonFilePath = path.join(temp, '.env.json');
-  writeJson(jsonFilePath, env || {});
+  try {
+    const { env } = getActiveApp();
+    const jsonFilePath = path.join(temp, '.env.json');
+    writeJson(jsonFilePath, env || {});
+  } catch {
+    // No app active, skipping this step...
+  }
 }
 
 interface CreateLocalAppTsConfigOptions {

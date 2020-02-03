@@ -65,10 +65,10 @@ function getAllPeerDependencies(allApps) {
     var allPeerDeps = allPackageJsonPaths
         .map(function (filePath) {
         try {
-            var peerDependencies = fs_2.readFileAsJSON(filePath).peerDependencies;
+            var _a = fs_2.readFileAsJSON(filePath).peerDependencies, peerDependencies = _a === void 0 ? {} : _a;
             return peerDependencies;
         }
-        catch (_a) {
+        catch (_b) {
             return {};
         }
     })

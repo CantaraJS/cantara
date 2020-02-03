@@ -68,7 +68,7 @@ function createNodeWebpackConfig(_a) {
             new CaseSensitivePathsPlugin(),
             new webpack_1.default.EnvironmentPlugin(env),
             new ForkTsCheckerWebpackPlugin({
-                tsconfig: path_1.default.join(app.paths.root, 'tsconfig.local.json'),
+                tsconfig: path_1.default.join(app.paths.root, '.tsconfig.local.json'),
                 watch: app.paths.src,
             }),
             new FriendlyErrorsWebpackPlugin(),

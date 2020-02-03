@@ -96,3 +96,31 @@ function executeForChangedApps(cb) {
     });
 }
 exports.default = executeForChangedApps;
+/**
+ * Executes an arbitrary command if the specified
+ * application changed
+ */
+function execUserCmdForChangedApp(_a) {
+    var _this = this;
+    var appname = _a.appname, userCmd = _a.userCmd;
+    var projectDir = cantara_config_1.default().runtime.projectDir;
+    return executeForChangedApps(function (changedAppName) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(appname === changedAppName)) return [3 /*break*/, 2];
+                    // Exec cmd
+                    console.log("\"" + appname + "\" changed.\nExecuting \"" + userCmd + "\"");
+                    return [4 /*yield*/, exec_1.default(userCmd, {
+                            workingDirectory: projectDir,
+                            redirectIo: true,
+                        })];
+                case 1:
+                    _a.sent();
+                    _a.label = 2;
+                case 2: return [2 /*return*/];
+            }
+        });
+    }); });
+}
+exports.execUserCmdForChangedApp = execUserCmdForChangedApp;

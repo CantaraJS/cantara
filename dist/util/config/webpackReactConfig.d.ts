@@ -1,3 +1,3 @@
 import { Configuration } from 'webpack';
 import { CreateWebpackConfigParams } from './types';
-export default function createReactWebpackConfig({ app, projectDir, alias, include, mode, env, }: CreateWebpackConfigParams): Configuration;
+export default function createReactWebpackConfig({ app, alias, mode, env, include, projectDir, }: CreateWebpackConfigParams): Configuration;

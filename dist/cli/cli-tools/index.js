@@ -131,7 +131,11 @@ function execCantaraCommand(_a) {
                         })];
                 case 1:
                     _c.sent();
-                    return [4 /*yield*/, Promise.resolve(foundAction.exec({ parameters: parameters, originalCommand: originalCommand, stage: stage.toString() }))];
+                    return [4 /*yield*/, Promise.resolve(foundAction.exec({
+                            parameters: actionParameters,
+                            originalCommand: originalCommand,
+                            stage: stage.toString(),
+                        }))];
                 case 2:
                     _c.sent();
                     return [2 /*return*/];

@@ -49,8 +49,10 @@ var test_1 = __importDefault(require("../scripts/test"));
 var publish_1 = __importDefault(require("../scripts/publish"));
 var new_1 = __importDefault(require("../scripts/new"));
 var init_1 = __importDefault(require("../scripts/init"));
-var exec_changed_1 = __importDefault(require("../scripts/exec-changed"));
 var e2e_1 = __importDefault(require("../scripts/e2e"));
+var test_changed_1 = __importDefault(require("../scripts/test-changed"));
+var build_changed_1 = __importDefault(require("../scripts/build-changed"));
+var exec_changed_1 = require("../scripts/exec-changed");
 var allCantaraCommands = [
     {
         actionName: 'dev',
@@ -102,7 +104,7 @@ var allCantaraCommands = [
             { name: 'name', required: true },
         ],
         exec: function (_a) {
-            var _b = _a.parameters, name = _b[0], type = _b[1];
+            var _b = _a.parameters, name = _b.name, type = _b.type;
             return new_1.default({ type: type, name: name });
         },
     },
@@ -110,7 +112,7 @@ var allCantaraCommands = [
         actionName: 'init',
         parameters: [{ name: 'path' }, { name: 'template' }],
         exec: function (_a) {
-            var _b = _a.parameters, userPath = _b[0], template = _b[1];
+            var _b = _a.parameters, userPath = _b.path, template = _b.template;
             var templateToUse = template ? template : 'cantara-simple-starter';
             var pathToUse = userPath ? path_1.default.resolve(userPath) : process.cwd();
             return init_1.default({
@@ -123,30 +125,48 @@ var allCantaraCommands = [
         actionName: 'build-changed',
         exec: function (_a) {
             var stage = _a.stage;
-            return exec_changed_1.default(function (appname) { return __awaiter(void 0, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, cli_tools_1.prepareCantara({
-                                cmdName: 'build',
-                                additionalCliOptions: '',
-                                appname: appname,
-                                stage: stage,
-                            })];
-                        case 1:
-                            _a.sent();
-                            return [4 /*yield*/, build_1.default()];
-                        case 2:
-                            _a.sent();
-                            return [2 /*return*/];
-                    }
-                });
-            }); });
+            return build_changed_1.default({ stage: stage });
+        },
+    },
+    {
+        actionName: 'test-changed',
+        exec: function (_a) {
+            var stage = _a.stage;
+            return test_changed_1.default({ stage: stage });
         },
     },
     {
         actionName: 'e2e',
         exec: function () {
             return e2e_1.default();
+        },
+    },
+    {
+        actionName: 'ci',
+        exec: function (_a) {
+            var stage = _a.stage;
+            return __awaiter(void 0, void 0, void 0, function () {
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0: return [4 /*yield*/, test_changed_1.default({ stage: stage })];
+                        case 1:
+                            _b.sent();
+                            return [4 /*yield*/, build_changed_1.default({ stage: stage })];
+                        case 2:
+                            _b.sent();
+                            return [2 /*return*/];
+                    }
+                });
+            });
+        },
+    },
+    {
+        actionName: 'exec-changed',
+        parameters: [{ name: 'appname', required: true }],
+        exec: function (_a) {
+            var appname = _a.parameters.appname, originalCommand = _a.originalCommand;
+            var userCmd = originalCommand.slice(2);
+            return exec_changed_1.execUserCmdForChangedApp({ appname: appname, userCmd: userCmd.join(' ') });
         },
     },
 ];

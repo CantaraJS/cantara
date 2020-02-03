@@ -113,6 +113,9 @@ function createNewAppOrPackage(_a) {
                         destinationPath = path_1.default.join(projectDir, 'packages', name);
                         templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/js-package');
                     }
+                    if (!fs_1.existsSync(templateFolderPath)) {
+                        throw new Error(templateFolderPath + " does not exist.");
+                    }
                     if (fs_1.existsSync(destinationPath)) {
                         throw new Error(destinationPath + " already exists! Delete the folder if you want to override it.");
                     }

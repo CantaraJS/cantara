@@ -85,24 +85,44 @@ function spawnCmd(cmd, _a) {
     });
 }
 exports.spawnCmd = spawnCmd;
+/**
+ * Retrieved paths of folder which should
+ * be added to PATH during this session.
+ * Like this, commands can be executed
+ * directly from the node_modules folder.
+ * Same technique as npm run-scripts uses.
+ * Add the following node_modules/.bin
+ * folders to PATH:
+ * - Cantara's node_modules
+ * - The user's project node_modules
+ */
+function getCurrentPATH() {
+    var globalCantaraConfig = cantara_config_1.default();
+    var getNodeModulesBinPath = function (folderWithNodeModules) {
+        return (folderWithNodeModules + path_1.default.sep + 'node_modules' + path_1.default.sep + '.bin');
+    };
+    var localNodeModulesBinPath = getNodeModulesBinPath(globalCantaraConfig.internalPaths.root);
+    var userProjectNodeModulesBinPath = getNodeModulesBinPath(globalCantaraConfig.runtime.projectDir);
+    var newPathEnv = process.env.PATH || '';
+    var pathsToAdd = [localNodeModulesBinPath, userProjectNodeModulesBinPath];
+    for (var _i = 0, pathsToAdd_1 = pathsToAdd; _i < pathsToAdd_1.length; _i++) {
+        var pathToAdd = pathsToAdd_1[_i];
+        if (!newPathEnv.includes(pathToAdd)) {
+            newPathEnv += path_1.default.delimiter + pathToAdd;
+        }
+    }
+    return newPathEnv;
+}
 /** Execute commands in different contexts and
  * with different folders in PATH.
  */
 function execCmd(cmd, _a) {
     var _b = _a === void 0 ? {} : _a, _c = _b.workingDirectory, workingDirectory = _c === void 0 ? process.cwd() : _c, redirectIo = _b.redirectIo, withSecrets = _b.withSecrets;
     return __awaiter(this, void 0, void 0, function () {
-        var globalCantaraConfig, localNodeModulesBinPath, localNodeModulesAlreadyInPath, NEW_PATH_ENV, secretsEnvVars, options;
+        var globalCantaraConfig, NEW_PATH_ENV, secretsEnvVars, options;
         return __generator(this, function (_d) {
             globalCantaraConfig = cantara_config_1.default();
-            localNodeModulesBinPath = globalCantaraConfig.internalPaths.root +
-                path_1.default.sep +
-                'node_modules' +
-                path_1.default.sep +
-                '.bin';
-            localNodeModulesAlreadyInPath = (process.env.PATH || '').includes(localNodeModulesBinPath);
-            NEW_PATH_ENV = localNodeModulesAlreadyInPath
-                ? process.env.PATH
-                : process.env.PATH + path_1.default.delimiter + localNodeModulesBinPath;
+            NEW_PATH_ENV = getCurrentPATH();
             secretsEnvVars = withSecrets ? globalCantaraConfig.runtime.secrets : {};
             options = {
                 workingDirectory: workingDirectory,

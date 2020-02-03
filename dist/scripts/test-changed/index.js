@@ -39,48 +39,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var cantara_config_1 = __importDefault(require("../../cantara-config"));
-var wait_port_1 = __importDefault(require("wait-port"));
-var exec_1 = __importDefault(require("../../util/exec"));
-function startEndToEndTests() {
-    return __awaiter(this, void 0, void 0, function () {
-        var _a, e2e, projectDir, _i, _b, command, _c, _d, portToWaitFor, isAvailable;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
-                case 0:
-                    _a = cantara_config_1.default().runtime, e2e = _a.globalCantaraSettings.e2e, projectDir = _a.projectDir;
-                    // Execute commands like starting servers etc.
-                    for (_i = 0, _b = e2e.executeBefore; _i < _b.length; _i++) {
-                        command = _b[_i];
-                        exec_1.default(command, { workingDirectory: projectDir });
-                    }
-                    _c = 0, _d = e2e.portsToWaitFor;
-                    _e.label = 1;
-                case 1:
-                    if (!(_c < _d.length)) return [3 /*break*/, 4];
-                    portToWaitFor = _d[_c];
-                    return [4 /*yield*/, wait_port_1.default({ port: portToWaitFor })];
-                case 2:
-                    isAvailable = _e.sent();
-                    if (!isAvailable) {
-                        throw new Error("No server available at port " + portToWaitFor);
-                    }
-                    _e.label = 3;
-                case 3:
-                    _c++;
-                    return [3 /*break*/, 1];
-                case 4: 
-                // Execute test command
-                return [4 /*yield*/, exec_1.default(e2e.testCommand, {
-                        redirectIo: true,
-                        workingDirectory: projectDir,
+var exec_changed_1 = __importDefault(require("../exec-changed"));
+var cli_tools_1 = require("../../cli/cli-tools");
+var test_1 = __importDefault(require("../test"));
+function testChanged(_a) {
+    var _this = this;
+    var stage = _a.stage;
+    return exec_changed_1.default(function (appname) { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, cli_tools_1.prepareCantara({
+                        cmdName: 'test',
+                        additionalCliOptions: '',
+                        appname: appname,
+                        stage: stage,
                     })];
-                case 5:
-                    // Execute test command
-                    _e.sent();
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, test_1.default()];
+                case 2:
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
-    });
+    }); });
 }
-exports.default = startEndToEndTests;
+exports.default = testChanged;

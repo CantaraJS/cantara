@@ -3,9 +3,18 @@
 ## Required
 
 - Test if built React Components can be installed
-- Extend simple starter to something that makes sense
-  - Image Of the day App, yea!
+- Simple Starter: Image of the day app
+  - Same API: Serverless and normal Node + Express
+    - Powered by the same NodeJS "core-api" library
+  - React App that features image of the day
+    - Uses re-usable React Component (widget)
+  - Deployment
+    - Github Actions
+    - AWS Lambda
+    - Zeit/Surge/...
+  - Write tests
 - Write somewhat complete docs
+- Implement "help" and "version" command
 - Talk to CD try to integrate Cantara into their current workflow
   - Find out if tool is good enough for deployment needs
   - Customization needs? e.g. extending wepback/babel/TS config etc

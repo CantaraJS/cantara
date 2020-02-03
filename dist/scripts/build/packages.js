@@ -56,6 +56,7 @@ var cantara_config_1 = __importDefault(require("../../cantara-config"));
 var webpackLibraryConfig_1 = __importDefault(require("../../util/config/webpackLibraryConfig"));
 var fs_1 = require("../../util/fs");
 var exec_1 = __importDefault(require("../../util/exec"));
+var slash_1 = __importDefault(require("slash"));
 function compile(config) {
     var compiler = webpack_1.default(config);
     return new Promise(function (resolve, reject) {
@@ -108,7 +109,7 @@ function buildPackage(app) {
                     _e.sent();
                     packageJsonPath = path_1.default.join(app.paths.root, 'package.json');
                     packageJson = fs_1.readFileAsJSON(packageJsonPath);
-                    newPackageJson = __assign(__assign({}, packageJson), { main: "./" + path_1.default.relative(app.paths.root, app.paths.build) + "/index.js" });
+                    newPackageJson = __assign(__assign({}, packageJson), { main: "./" + slash_1.default(path_1.default.join(path_1.default.relative(app.paths.root, app.paths.build), app.name, 'src', 'index.js')) });
                     fs_1.writeJson(packageJsonPath, newPackageJson);
                     return [2 /*return*/];
             }

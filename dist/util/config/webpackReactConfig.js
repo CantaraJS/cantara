@@ -10,91 +10,45 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var webpack_1 = __importDefault(require("webpack"));
 var fs_1 = require("fs");
-var babelReactConfig_1 = __importDefault(require("./babelReactConfig"));
+var path_1 = __importDefault(require("path"));
+var webpackCommonReactConfig_1 = __importDefault(require("./common/webpackCommonReactConfig"));
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var WebpackPwaManifest = require('webpack-pwa-manifest');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
-var WebpackNotifierPlugin = require('webpack-notifier');
-var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-var ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-var InjectManifest = require('workbox-webpack-plugin').InjectManifest;
 var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+var WebpackNotifierPlugin = require('webpack-notifier');
+var ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+var InjectManifest = require('workbox-webpack-plugin').InjectManifest;
 var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
-var OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-var cssnano = require('cssnano');
-var postcssPresetEnv = require('postcss-preset-env');
-var MiniCssExtractPlugin = require('mini-css-extract-plugin');
-var path = require('path');
+var webpackMerge = require('webpack-merge');
 function createReactWebpackConfig(_a) {
-    var app = _a.app, projectDir = _a.projectDir, _b = _a.alias, alias = _b === void 0 ? {} : _b, _c = _a.include, include = _c === void 0 ? [] : _c, _d = _a.mode, mode = _d === void 0 ? 'development' : _d, _e = _a.env, env = _e === void 0 ? {} : _e;
+    var app = _a.app, _b = _a.alias, alias = _b === void 0 ? {} : _b, _c = _a.mode, mode = _c === void 0 ? 'development' : _c, env = _a.env, include = _a.include, projectDir = _a.projectDir;
     var isDevelopment = mode === 'development';
     var isProduction = mode === 'production';
     var iconPathToUse = undefined;
-    var appIconPathPng = path.join(app.paths.assets, 'app_icon.png');
-    var appIconPathSvg = path.join(app.paths.assets, 'app_icon.svg');
-    var doesServiceWorkerExist = fs_1.existsSync(path.join(app.paths.root, 'sw.js'));
+    var appIconPathPng = path_1.default.join(app.paths.assets, 'app_icon.png');
+    var appIconPathSvg = path_1.default.join(app.paths.assets, 'app_icon.svg');
+    var doesServiceWorkerExist = fs_1.existsSync(path_1.default.join(app.paths.root, 'sw.js'));
     if (fs_1.existsSync(appIconPathPng)) {
         iconPathToUse = appIconPathPng;
     }
     else if (fs_1.existsSync(appIconPathSvg)) {
         iconPathToUse = appIconPathSvg;
     }
-    var cssLoaders = function (modules) { return __spreadArrays((isDevelopment ? ['style-loader'] : [MiniCssExtractPlugin.loader]), [
-        {
-            loader: 'css-loader',
-            options: modules
-                ? {
-                    modules: isDevelopment
-                        ? {
-                            localIdentName: '[path][name]__[local]--[hash:base64:5]',
-                        }
-                        : true,
-                    localsConvention: 'camelCase',
-                    importLoaders: 1,
-                }
-                : {},
-        },
-        {
-            loader: 'postcss-loader',
-            options: {
-                ident: 'postcss',
-                plugins: function () { return [postcssPresetEnv()]; },
-            },
-        },
-    ]); };
     var reactDependencyAliases = app.type === 'react'
         ? {
-            react: path.join(app.paths.root, 'node_modules', 'react'),
-            'react-dom': path.join(app.paths.root, 'node_modules', 'react-dom'),
+            react: path_1.default.join(app.paths.root, 'node_modules', 'react'),
+            'react-dom': path_1.default.join(app.paths.root, 'node_modules', 'react-dom'),
         }
         : {};
-    return {
-        entry: path.join(app.paths.src, 'index.tsx'),
+    var webpackReactAppConfig = {
         resolve: {
-            extensions: [
-                '.web.js',
-                '.mjs',
-                '.js',
-                '.json',
-                '.web.jsx',
-                '.jsx',
-                '.ts',
-                '.tsx',
-            ],
             alias: __assign(__assign({}, alias), reactDependencyAliases),
         },
         mode: mode,
@@ -107,19 +61,17 @@ function createReactWebpackConfig(_a) {
         },
         plugins: [
             new ForkTsCheckerWebpackPlugin({
-                tsconfig: path.join(app.paths.root, 'tsconfig.local.json'),
+                tsconfig: path_1.default.join(app.paths.root, '.tsconfig.local.json'),
                 watch: app.paths.src,
             }),
-            new CaseSensitivePathsPlugin(),
             isDevelopment ? new webpack_1.default.HotModuleReplacementPlugin() : undefined,
             new WebpackNotifierPlugin({
                 excludeWarnings: true,
                 title: app.meta.displayName,
             }),
-            new FriendlyErrorsWebpackPlugin(),
             new HtmlWebpackPlugin({
                 title: app.meta.displayName,
-                template: path.join(app.paths.assets, 'index.html'),
+                template: path_1.default.join(app.paths.assets, 'index.html'),
                 favicon: '',
             }),
             iconPathToUse
@@ -144,10 +96,9 @@ function createReactWebpackConfig(_a) {
                         },
                     ] }, app.meta.pwaManifest))
                 : undefined,
-            new webpack_1.default.EnvironmentPlugin(env),
             doesServiceWorkerExist && isProduction
                 ? new InjectManifest({
-                    swSrc: path.join(app.paths.src, 'sw.js'),
+                    swSrc: path_1.default.join(app.paths.src, 'sw.js'),
                 })
                 : undefined,
             isProduction
@@ -157,58 +108,7 @@ function createReactWebpackConfig(_a) {
                     dry: false,
                 })
                 : undefined,
-            isProduction
-                ? new OptimizeCSSAssetsPlugin({
-                    cssProcessor: cssnano,
-                    cssProcessorOptions: {
-                        discardComments: {
-                            removeAll: true,
-                        },
-                        // Run cssnano in safe mode to avoid
-                        // potentially unsafe transformations.
-                        safe: true,
-                    },
-                    canPrint: false,
-                })
-                : undefined,
-            isProduction
-                ? new webpack_1.default.BannerPlugin({
-                    banner: 'filename:[name]',
-                })
-                : false,
         ].filter(Boolean),
-        module: {
-            rules: [
-                {
-                    test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
-                    /** For some reason, using 'javascript/esm' causes ReactRefresh to fail */
-                    // type: 'javascript/esm',
-                    use: {
-                        loader: 'babel-loader',
-                        options: babelReactConfig_1.default(mode),
-                    },
-                    include: __spreadArrays([app.paths.src], include),
-                },
-                {
-                    test: /\.css$/,
-                    include: /\.module\.css$/,
-                    use: cssLoaders(true),
-                },
-                {
-                    test: /\.css$/,
-                    exclude: /\.module\.css$/,
-                    use: cssLoaders(false),
-                },
-                {
-                    test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
-                    loader: 'url-loader',
-                    options: {
-                        limit: 15000,
-                        name: 'static/media/[name].[hash:8].[ext]',
-                    },
-                },
-            ],
-        },
         performance: {
             hints: false,
         },
@@ -222,13 +122,16 @@ function createReactWebpackConfig(_a) {
                 },
             }
             : undefined,
-        node: {
-            fs: 'empty',
-            dns: 'empty',
-            net: 'empty',
-            tls: 'empty',
-            module: 'empty',
-        },
     };
+    var commonConfig = webpackCommonReactConfig_1.default({
+        mode: mode,
+        app: app,
+        alias: alias,
+        env: env,
+        include: include,
+        projectDir: projectDir,
+    });
+    var mergedConfig = webpackMerge(commonConfig, webpackReactAppConfig);
+    return mergedConfig;
 }
 exports.default = createReactWebpackConfig;

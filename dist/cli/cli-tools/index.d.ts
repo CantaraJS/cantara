@@ -7,7 +7,9 @@ export interface CantaraCommand {
         required?: boolean;
     }[];
     exec: (parameters: {
-        parameters: string[];
+        parameters: {
+            [key: string]: string;
+        };
         originalCommand: string[];
         stage: string;
     }) => any;
