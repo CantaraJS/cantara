@@ -111,7 +111,7 @@ function getDependenciesInstallationString(_a) {
 function createOrUpdatePackageJSON(_a) {
     var rootDir = _a.rootDir, expectedDependencies = _a.expectedDependencies, expectedDevDependencies = _a.expectedDevDependencies;
     return __awaiter(this, void 0, void 0, function () {
-        var localPackageJsonPath, _b, _c, dependencies, _d, devDependencies, dependenciesToInstall, devDependenciesToInstall, dependenciesToInstall, devDependenciesToInstall;
+        var localPackageJsonPath, _b, _c, dependencies, _d, devDependencies, dependenciesToInstall, devDependenciesToInstall;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
@@ -145,40 +145,22 @@ function createOrUpdatePackageJSON(_a) {
                 case 3:
                     _e.sent();
                     _e.label = 4;
-                case 4: return [3 /*break*/, 9];
-                case 5:
-                    // Create new packageJSON and install dependencies
-                    createPackageJson({ folderPath: rootDir });
-                    if (!expectedDependencies) return [3 /*break*/, 7];
-                    dependenciesToInstall = Object.keys(expectedDependencies)
-                        .reduce(function (depsStr, depName) {
-                        return depName + "@" + expectedDependencies[depName] + " " + depsStr;
-                    }, '')
-                        .trim();
-                    if (!dependenciesToInstall) return [3 /*break*/, 7];
-                    return [4 /*yield*/, exec_1.default("npm install -S " + dependenciesToInstall, {
-                            workingDirectory: rootDir,
-                            redirectIo: true,
-                        })];
+                case 4: return [3 /*break*/, 8];
+                case 5: 
+                // Create new packageJSON and install dependencies
+                return [4 /*yield*/, createPackageJson({ folderPath: rootDir })];
                 case 6:
+                    // Create new packageJSON and install dependencies
                     _e.sent();
-                    _e.label = 7;
-                case 7:
-                    if (!expectedDevDependencies) return [3 /*break*/, 9];
-                    devDependenciesToInstall = Object.keys(expectedDevDependencies)
-                        .reduce(function (depsStr, depName) {
-                        return depName + "@" + expectedDevDependencies[depName] + " " + depsStr;
-                    }, '')
-                        .trim();
-                    if (!devDependenciesToInstall) return [3 /*break*/, 9];
-                    return [4 /*yield*/, exec_1.default("npm install -D " + devDependenciesToInstall, {
-                            workingDirectory: rootDir,
-                            redirectIo: true,
+                    return [4 /*yield*/, createOrUpdatePackageJSON({
+                            rootDir: rootDir,
+                            expectedDependencies: expectedDependencies,
+                            expectedDevDependencies: expectedDevDependencies,
                         })];
-                case 8:
+                case 7:
                     _e.sent();
-                    _e.label = 9;
-                case 9: return [2 /*return*/];
+                    _e.label = 8;
+                case 8: return [2 /*return*/];
             }
         });
     });
@@ -189,14 +171,20 @@ exports.createOrUpdatePackageJSON = createOrUpdatePackageJSON;
  */
 function getJestAliases() {
     var packageAliases = cantara_config_1.default().runtime.aliases.packageAliases;
-    var activeApp = cantara_config_1.getActiveApp();
-    var jestAliases = Object.keys(packageAliases).reduce(function (aliasObj, packageName) {
-        var _a;
-        var packageAbsolutePath = packageAliases[packageName];
-        var relativePathToPackage = path_1.default.relative(activeApp.paths.root, packageAbsolutePath);
-        return __assign(__assign({}, aliasObj), (_a = {}, _a["^" + packageName + "$"] = "<rootDir>/" + slash_1.default(relativePathToPackage), _a));
-    }, {});
-    return jestAliases;
+    try {
+        var activeApp_1 = cantara_config_1.getActiveApp();
+        var jestAliases = Object.keys(packageAliases).reduce(function (aliasObj, packageName) {
+            var _a;
+            var packageAbsolutePath = packageAliases[packageName];
+            var relativePathToPackage = path_1.default.relative(activeApp_1.paths.root, packageAbsolutePath);
+            return __assign(__assign({}, aliasObj), (_a = {}, _a["^" + packageName + "$"] = "<rootDir>/" + slash_1.default(relativePathToPackage), _a));
+        }, {});
+        return jestAliases;
+    }
+    catch (_a) {
+        // No active app, skipping...
+        return {};
+    }
 }
 function createJestConfig(_a) {
     var dir = _a.dir, configTemplateFileName = _a.configTemplateFileName, _b = _a.setupScriptImports, setupScriptImports = _b === void 0 ? [] : _b;
@@ -257,9 +245,14 @@ exports.createReactJestConfig = createReactJestConfig;
  */
 function createTempEnvJsonFile() {
     var temp = cantara_config_1.default().internalPaths.temp;
-    var env = cantara_config_1.getActiveApp().env;
-    var jsonFilePath = path_1.default.join(temp, '.env.json');
-    fs_2.writeJson(jsonFilePath, env || {});
+    try {
+        var env = cantara_config_1.getActiveApp().env;
+        var jsonFilePath = path_1.default.join(temp, '.env.json');
+        fs_2.writeJson(jsonFilePath, env || {});
+    }
+    catch (_a) {
+        // No app active, skipping this step...
+    }
 }
 exports.createTempEnvJsonFile = createTempEnvJsonFile;
 /**

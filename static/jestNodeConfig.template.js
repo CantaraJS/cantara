@@ -7,5 +7,6 @@ module.exports = {
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(js|ts)$',
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: <--PACKAGE_ALIASES-->
 };

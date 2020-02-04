@@ -138,14 +138,13 @@ function onPreBootstrap() {
         var globalCantaraConfig, isAnAppActive, _i, _a, app;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0:
+                case 0: return [4 /*yield*/, prepareCantaraProject()];
+                case 1:
+                    _b.sent();
                     globalCantaraConfig = cantara_config_1.default();
                     isAnAppActive = !!globalCantaraConfig.runtime.currentCommand.app;
                     if (!isAnAppActive)
                         return [2 /*return*/];
-                    return [4 /*yield*/, prepareCantaraProject()];
-                case 1:
-                    _b.sent();
                     _i = 0, _a = globalCantaraConfig.allApps;
                     _b.label = 2;
                 case 2:

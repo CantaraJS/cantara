@@ -22,6 +22,8 @@
   - Write good docs for other developers
 - Port Photogram Codebase to Cantara
 - Write integration tests for CLI
+- After first release: Use commitizen
+  - https://github.com/commitizen/cz-cli
 
 ## Nice to have
 

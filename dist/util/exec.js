@@ -55,10 +55,10 @@ var path_1 = __importDefault(require("path"));
 var cantara_config_1 = __importDefault(require("../cantara-config"));
 function spawnCmd(cmd, _a) {
     var _b = _a === void 0 ? {} : _a, workingDirectory = _b.workingDirectory, redirectIo = _b.redirectIo, _c = _b.env, env = _c === void 0 ? {} : _c;
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
         var options = {
             cwd: workingDirectory,
-            env: __assign(__assign(__assign({}, process.env), env), { NODE_ENV: 'production' }),
+            env: __assign(__assign({}, process.env), env),
         };
         if (process.env.NODE_ENV === 'development' &&
             (cmd.startsWith('cantara') || cmd.startsWith('ctra'))) {
@@ -79,9 +79,13 @@ function spawnCmd(cmd, _a) {
                     retData += "\n" + data.toString();
                 });
         });
-        newProcess.on('close', onExit);
+        // newProcess.on('close', onExit);
         newProcess.on('exit', onExit);
-        newProcess.on('disconnect', onExit);
+        newProcess.on('error', function (e) {
+            console.log('ERRRRRRORRROROROR', e);
+            reject(e);
+        });
+        // newProcess.on('disconnect', onExit);
     });
 }
 exports.spawnCmd = spawnCmd;
