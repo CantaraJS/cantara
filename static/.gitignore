@@ -122,3 +122,5 @@ gen
 
 jest.setup.ts
 .tsconfig.local.json
+
+jest.config.js
