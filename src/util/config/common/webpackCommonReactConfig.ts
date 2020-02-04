@@ -6,7 +6,6 @@ import getBabelConfig from '../babelReactConfig';
 
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const cssnano = require('cssnano');
 const postcssPresetEnv = require('postcss-preset-env');
@@ -84,6 +83,7 @@ export default function createCommonReactWebpackConfig({
             banner: 'filename:[name]',
           })
         : false,
+      isProduction ? new MiniCssExtractPlugin() : undefined,
     ].filter(Boolean),
     module: {
       rules: [

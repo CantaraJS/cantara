@@ -205,9 +205,13 @@ function createJestConfig(_a) {
     fs_1.writeFileSync(setupFileDestination, renderedSetupFile);
     // create jest.config.js
     var jestConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, configTemplateFileName)).toString();
+    // Map all package aliases and mock all possible import file types
+    var styleMockFilePath = path_1.default.join(globalCantaraConfig.internalPaths.static, 'jestStyleMock.js');
+    var fileMockFilePath = path_1.default.join(globalCantaraConfig.internalPaths.static, 'jestFileMock.js');
+    var moduleNameMapper = __assign(__assign({}, jestAliases), { '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': fileMockFilePath, '\\.(css|less)$': styleMockFilePath });
     var templateVariables = {
         MODULES_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.root, 'node_modules')),
-        PACKAGE_ALIASES: JSON.stringify(jestAliases, null, 2),
+        MODULE_NAME_MAPPER: JSON.stringify(moduleNameMapper, null, 2),
     };
     var newJestConfig = configTemplates_1.default({
         template: jestConfigTemplate,

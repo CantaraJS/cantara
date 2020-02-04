@@ -3,7 +3,7 @@ import { CantaraApplication } from '../../util/types';
 import getGlobalConfig from '../../cantara-config';
 import createNodeWebpackConfig from '../../util/config/webpackNodeConfig';
 
-export default function buildNodeApp(app: CantaraApplication) {
+export default async function buildNodeApp(app: CantaraApplication) {
   const {
     allPackages: { include },
     runtime: {
