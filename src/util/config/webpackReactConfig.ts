@@ -4,6 +4,7 @@ import path from 'path';
 
 import { CreateWebpackConfigParams } from './types';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
+import getCssLoaders from './common/cssLoaders';
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
@@ -44,7 +45,7 @@ export default function createReactWebpackConfig({
         }
       : {};
 
-  const webpackReactAppConfig = {
+  const webpackReactAppConfig: Configuration = {
     resolve: {
       alias: {
         ...alias,
@@ -116,6 +117,9 @@ export default function createReactWebpackConfig({
           })
         : undefined,
     ].filter(Boolean),
+    module: {
+      rules: [...getCssLoaders({ useExtractLoader: isProduction })],
+    },
     performance: {
       hints: false,
     },

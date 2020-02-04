@@ -6,6 +6,7 @@ import getAllWebpackExternals from '../externals';
 import { camalize } from '../string-manipulation';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import { CreateWebpackConfigParams } from './types';
+import getCssLoaders from './common/cssLoaders';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -38,7 +39,7 @@ export default function createLibraryWebpackConfig({
     peerOnly: libraryTarget === 'umd',
   });
 
-  const commonLibraryConfig = {
+  const commonLibraryConfig: Configuration = {
     entry: entryPath,
     resolve: {
       extensions: [
@@ -91,6 +92,9 @@ export default function createLibraryWebpackConfig({
         ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
         : undefined,
     ].filter(Boolean),
+    module: {
+      rules: [...getCssLoaders({ useExtractLoader: false })],
+    },
     performance: {
       hints: false,
     },
