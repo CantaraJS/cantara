@@ -53,6 +53,11 @@ interface LoadAppEnvVarsOptions {
    * in the fallbackStage
    */
   fallbackStage?: string;
+  /** Set this to true if an error should
+   * be thrown if a variable defined
+   * in expectedEnvVars is no presetn
+   */
+  required?: boolean;
 }
 
 /**
@@ -86,6 +91,7 @@ export default function loadAppEnvVars({
   currentStage,
   expectedEnvVars,
   fallbackStage,
+  required,
 }: LoadAppEnvVarsOptions) {
   let envVarsToReturn: { [key: string]: string } = { STAGE: currentStage };
   if (expectedEnvVars.length === 0) return envVarsToReturn;
@@ -109,11 +115,13 @@ export default function loadAppEnvVars({
       });
     }
     if (envVarValue === undefined || envVarValue === null) {
-      throw new Error(
-        `File ${envFileName} contains no variable named "${envVarName}" and process.env.${currentStage.toUpperCase()}_${envVarName} is not defined in the current environment. It is marked as required in cantara.config.js`,
-      );
+      const errMsg = `File ${envFileName} contains no variable named "${envVarName}" and process.env.${currentStage.toUpperCase()}_${envVarName} is not defined in the current environment. It is marked as required in cantara.config.js`;
+      if (required) {
+        throw new Error(errMsg);
+      }
+    } else {
+      envVarsToReturn[envVarName] = envVarValue;
     }
-    envVarsToReturn[envVarName] = envVarValue;
   }
 
   // Warnings for ignored env vars in .env file

@@ -64,7 +64,7 @@ module.exports = {
         test: [/\.js$/, /\.tsx?$/],
         // include: app.paths.src,
         exclude: [/node_modules/],
-        include: '<--ROOT_PATH-->',
+        include: <--INCLUDES-->,
         use: {
           loader: '<--MODULES_PATH-->babel-loader',
           options: babelConfig,
@@ -73,7 +73,7 @@ module.exports = {
       {
         test: /\.graphql?$/,
         loader: '<--MODULES_PATH-->webpack-graphql-loader',
-        include: '<--ROOT_PATH-->',
+        include: <--INCLUDES-->,
       },
     ],
   },

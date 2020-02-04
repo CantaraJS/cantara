@@ -8,6 +8,11 @@ interface LoadAppEnvVarsOptions {
      * in the fallbackStage
      */
     fallbackStage?: string;
+    /** Set this to true if an error should
+     * be thrown if a variable defined
+     * in expectedEnvVars is no presetn
+     */
+    required?: boolean;
 }
 /**
  * Loads env vars from either the current
@@ -35,7 +40,7 @@ interface LoadAppEnvVarsOptions {
  * Prefixing the envvars prevents you from accidently
  * using the wrong envvars.
  */
-export default function loadAppEnvVars({ appRootDir, currentStage, expectedEnvVars, fallbackStage, }: LoadAppEnvVarsOptions): {
+export default function loadAppEnvVars({ appRootDir, currentStage, expectedEnvVars, fallbackStage, required, }: LoadAppEnvVarsOptions): {
     [key: string]: string;
 };
 export {};

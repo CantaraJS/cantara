@@ -35,12 +35,17 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   };
   const externals = webpackExternalsAsStringArray();
 
+  const allIncludes = [
+    app.paths.src,
+    ...globalCantaraConfig.allPackages.include,
+  ];
+
   const templateVariables = {
     MODULES_PATH:
       slash(path.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
       '/',
     TSCONFIG_PATH: slash(path.join(app.paths.root, '.tsconfig.local.json')),
-    ROOT_PATH: app.paths.src.replace(new RegExp('\\\\', 'g'), '\\\\'),
+    INCLUDES: JSON.stringify(allIncludes),
     ALIASES: JSON.stringify(allAliases),
     ENV_VARS: JSON.stringify(app.env || {}),
     EXTERNALS_ARRAY: JSON.stringify(externals),

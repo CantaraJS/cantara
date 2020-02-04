@@ -42,7 +42,7 @@ function requireAtLeastOneFolder(paths) {
 }
 /** Returns list of all React Apps, Packages and Node Apps */
 function getAllApps(_a) {
-    var rootDir = _a.rootDir, stage = _a.stage;
+    var rootDir = _a.rootDir, stage = _a.stage, activeAppName = _a.activeAppName;
     var FOLDER_NAMES = {
         REACT_APPS: 'react-apps',
         NODE_APPS: 'node-apps',
@@ -64,6 +64,7 @@ function getAllApps(_a) {
         var dir = _a.dir, type = _a.type;
         var typeToUse = type;
         var displayName = path.basename(dir);
+        var appName = displayName;
         var userAddedMetadata = undefined;
         if (type === 'package') {
             var packageSrc = path.join(dir, 'src');
@@ -90,9 +91,15 @@ function getAllApps(_a) {
             currentStage: stage,
             expectedEnvVars: userAddedMetadata ? userAddedMetadata.env || [] : [],
             fallbackStage: 'development',
+            /** If this is the currently active app,
+             * the env vars defined in cantara.config.js
+             * are required and an error is thrown
+             * if some are missing
+             */
+            required: appName === activeAppName,
         });
         return {
-            name: path.basename(dir),
+            name: appName,
             type: typeToUse,
             env: envVars,
             paths: {

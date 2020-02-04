@@ -62,7 +62,7 @@ function parseEnvFile(filePath) {
  * using the wrong envvars.
  */
 function loadAppEnvVars(_a) {
-    var appRootDir = _a.appRootDir, currentStage = _a.currentStage, expectedEnvVars = _a.expectedEnvVars, fallbackStage = _a.fallbackStage;
+    var appRootDir = _a.appRootDir, currentStage = _a.currentStage, expectedEnvVars = _a.expectedEnvVars, fallbackStage = _a.fallbackStage, required = _a.required;
     var envVarsToReturn = { STAGE: currentStage };
     if (expectedEnvVars.length === 0)
         return envVarsToReturn;
@@ -87,9 +87,14 @@ function loadAppEnvVars(_a) {
             });
         }
         if (envVarValue === undefined || envVarValue === null) {
-            throw new Error("File " + envFileName + " contains no variable named \"" + envVarName + "\" and process.env." + currentStage.toUpperCase() + "_" + envVarName + " is not defined in the current environment. It is marked as required in cantara.config.js");
+            var errMsg = "File " + envFileName + " contains no variable named \"" + envVarName + "\" and process.env." + currentStage.toUpperCase() + "_" + envVarName + " is not defined in the current environment. It is marked as required in cantara.config.js";
+            if (required) {
+                throw new Error(errMsg);
+            }
         }
-        envVarsToReturn[envVarName] = envVarValue;
+        else {
+            envVarsToReturn[envVarName] = envVarValue;
+        }
     }
     // Warnings for ignored env vars in .env file
     var allEnvVarsInEnvFile = Object.keys(envFileContent);
