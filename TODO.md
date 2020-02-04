@@ -12,7 +12,10 @@
     - Github Actions
     - AWS Lambda
     - Zeit/Surge/...
-  - Write tests
+  - Write tests4
+- Create an organization on GitHub
+  - Transfer all repositories to it
+  - When searching for starter templates, update URL accordingly
 - Write somewhat complete docs
 - Implement "help" and "version" command
 - Talk to CD try to integrate Cantara into their current workflow

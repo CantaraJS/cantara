@@ -8,5 +8,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   testEnvironment: 'node',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  moduleNameMapper: <--PACKAGE_ALIASES-->
+  moduleNameMapper: <--MODULE_NAME_MAPPER-->
 };
