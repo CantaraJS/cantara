@@ -8,6 +8,7 @@
     "declaration": true,
     "noEmit": false,
     "outDir": "./build",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "rootDir": ".."
   }
 }

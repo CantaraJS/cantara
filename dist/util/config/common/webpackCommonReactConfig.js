@@ -15,7 +15,6 @@ var path_1 = __importDefault(require("path"));
 var babelReactConfig_1 = __importDefault(require("../babelReactConfig"));
 var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 var OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 var cssnano = require('cssnano');
 var postcssPresetEnv = require('postcss-preset-env');
@@ -85,6 +84,7 @@ function createCommonReactWebpackConfig(_a) {
                     banner: 'filename:[name]',
                 })
                 : false,
+            isProduction ? new MiniCssExtractPlugin() : undefined,
         ].filter(Boolean),
         module: {
             rules: [
