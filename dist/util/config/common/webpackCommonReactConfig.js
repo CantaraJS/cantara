@@ -17,35 +17,9 @@ var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 var cssnano = require('cssnano');
-var postcssPresetEnv = require('postcss-preset-env');
-var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 function createCommonReactWebpackConfig(_a) {
     var _b = _a.mode, mode = _b === void 0 ? 'development' : _b, app = _a.app, _c = _a.env, env = _c === void 0 ? {} : _c, _d = _a.include, include = _d === void 0 ? [] : _d;
-    var isDevelopment = mode === 'development';
     var isProduction = mode === 'production';
-    var cssLoaders = function (modules) { return __spreadArrays((isDevelopment ? ['style-loader'] : [MiniCssExtractPlugin.loader]), [
-        {
-            loader: 'css-loader',
-            options: modules
-                ? {
-                    modules: isDevelopment
-                        ? {
-                            localIdentName: '[path][name]__[local]--[hash:base64:5]',
-                        }
-                        : true,
-                    localsConvention: 'camelCase',
-                    importLoaders: 1,
-                }
-                : {},
-        },
-        {
-            loader: 'postcss-loader',
-            options: {
-                ident: 'postcss',
-                plugins: function () { return [postcssPresetEnv()]; },
-            },
-        },
-    ]); };
     return {
         entry: path_1.default.join(app.paths.src, 'index.tsx'),
         resolve: {
@@ -84,7 +58,6 @@ function createCommonReactWebpackConfig(_a) {
                     banner: 'filename:[name]',
                 })
                 : false,
-            isProduction ? new MiniCssExtractPlugin() : undefined,
         ].filter(Boolean),
         module: {
             rules: [
@@ -97,16 +70,6 @@ function createCommonReactWebpackConfig(_a) {
                         options: babelReactConfig_1.default(mode),
                     },
                     include: __spreadArrays([app.paths.src], include),
-                },
-                {
-                    test: /\.css$/,
-                    include: /\.module\.css$/,
-                    use: cssLoaders(true),
-                },
-                {
-                    test: /\.css$/,
-                    exclude: /\.module\.css$/,
-                    use: cssLoaders(false),
                 },
                 {
                     test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],

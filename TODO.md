@@ -12,7 +12,7 @@
     - Github Actions
     - AWS Lambda
     - Zeit/Surge/...
-  - Write tests4
+  - Write tests
 - Create an organization on GitHub
   - Transfer all repositories to it
   - When searching for starter templates, update URL accordingly

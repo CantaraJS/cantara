@@ -10,6 +10,8 @@ import { testingDependencies } from './dependencies/testing';
 import { commonDependencies } from './dependencies/common';
 import { existsSync } from 'fs';
 
+const EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
+
 interface GlobalCantaraSettings {
   e2e: {
     executeBefore: string[];
@@ -195,7 +197,7 @@ export function configureCantara(config: CantaraInitialConfig) {
         app: currentActiveApp,
         additionalCliOptions: config.additionalCliOptions || '',
       },
-      secrets: loadSecrets(projectDir),
+      secrets: loadSecrets({ projectDir, secrets: EXPECTED_CANTARA_SECRETS }),
       aliases: {
         packageAliases,
         appDependencyAliases,

@@ -15,6 +15,7 @@ var babelReactConfig_1 = __importDefault(require("./babelReactConfig"));
 var externals_1 = __importDefault(require("../externals"));
 var string_manipulation_1 = require("../string-manipulation");
 var webpackCommonReactConfig_1 = __importDefault(require("./common/webpackCommonReactConfig"));
+var cssLoaders_1 = __importDefault(require("./common/cssLoaders"));
 var WebpackNotifierPlugin = require('webpack-notifier');
 var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -86,6 +87,9 @@ function createLibraryWebpackConfig(_a) {
                 ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
                 : undefined,
         ].filter(Boolean),
+        module: {
+            rules: __spreadArrays(cssLoaders_1.default({ useExtractLoader: false })),
+        },
         performance: {
             hints: false,
         },

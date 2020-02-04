@@ -10,6 +10,13 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -18,6 +25,7 @@ var webpack_1 = __importDefault(require("webpack"));
 var fs_1 = require("fs");
 var path_1 = __importDefault(require("path"));
 var webpackCommonReactConfig_1 = __importDefault(require("./common/webpackCommonReactConfig"));
+var cssLoaders_1 = __importDefault(require("./common/cssLoaders"));
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var WebpackPwaManifest = require('webpack-pwa-manifest');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
@@ -109,6 +117,9 @@ function createReactWebpackConfig(_a) {
                 })
                 : undefined,
         ].filter(Boolean),
+        module: {
+            rules: __spreadArrays(cssLoaders_1.default({ useExtractLoader: isProduction })),
+        },
         performance: {
             hints: false,
         },

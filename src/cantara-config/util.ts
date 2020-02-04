@@ -144,15 +144,31 @@ export default function getAllApps({
   return allApps;
 }
 
+interface LoadSecretsParams {
+  projectDir: string;
+  /** Array of secret identifiers, e.g. ['AWS_ACCESS_KEY_ID'] */
+  secrets: string[];
+}
+
 /** Loads and parses the content from the user's .secrets.json file
  * in the project root. Here, Cantara specific secrets can be stored.
- * E.g. AWS keys
+ * E.g. AWS keys. Can also be passed in as environment variables.
  */
-export function loadSecrets(projectDir: string) {
+export function loadSecrets({
+  projectDir,
+  secrets: identifiers,
+}: LoadSecretsParams) {
   const secretsFilePath = path.join(projectDir, '.secrets.json');
-  let secrets = {};
+  let secrets: { [key: string]: string | undefined } = {};
   if (existsSync(secretsFilePath)) {
     secrets = readFileAsJSON(secretsFilePath);
   }
+
+  for (const secretId of identifiers) {
+    if (!secrets[secretId]) {
+      secrets[secretId] = process.env[secretId];
+    }
+  }
+
   return secrets;
 }
