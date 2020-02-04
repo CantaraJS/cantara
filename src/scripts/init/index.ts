@@ -12,7 +12,7 @@ interface InitializeNewProjectOptions {
   /** Root of user's project */
   projectDir: string;
   /** Name of template. If no github username is specified,
-   * it will be resolved to "scriptify/<template-name>".
+   * it will be resolved to "CantaraJS/<template-name>".
    * A link can also be passed.
    */
   templateName: string;
@@ -31,7 +31,7 @@ export default async function initializeNewProject({
   let finalGitLink = templateName;
   if (!templateName.includes('/')) {
     // It's not a link and not a username/repo pair
-    finalGitLink = `https://github.com/scriptify/${templateName}.git`;
+    finalGitLink = `https://github.com/CantaraJS/${templateName}.git`;
   }
 
   if (!templateName.includes('.git') && templateName.includes('/')) {

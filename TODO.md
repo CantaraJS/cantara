@@ -2,21 +2,12 @@
 
 ## Required
 
-- Test if built React Components can be installed
-- Simple Starter: Image of the day app
-  - Same API: Serverless and normal Node + Express
-    - Powered by the same NodeJS "core-api" library
-  - React App that features image of the day
-    - Uses re-usable React Component (widget)
-  - Deployment
-    - Github Actions
-    - AWS Lambda
-    - Zeit/Surge/...
-  - Write tests
 - Create an organization on GitHub
   - Transfer all repositories to it
   - When searching for starter templates, update URL accordingly
 - Write somewhat complete docs
+- Write README for simple starter
+  - Make simple starter responsive
 - Implement "help" and "version" command
 - Talk to CD try to integrate Cantara into their current workflow
   - Find out if tool is good enough for deployment needs
@@ -25,6 +16,7 @@
   - Write good docs for other developers
 - Port Photogram Codebase to Cantara
 - Write integration tests for CLI
+- First public release
 - After first release: Use commitizen
   - https://github.com/commitizen/cz-cli
 
