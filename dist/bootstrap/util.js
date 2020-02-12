@@ -64,6 +64,42 @@ var cantara_config_1 = __importStar(require("../cantara-config"));
 var slash_1 = __importDefault(require("slash"));
 var configTemplates_1 = __importDefault(require("../util/configTemplates"));
 var fs_2 = require("../util/fs");
+/**
+ * Returns installed dependencies
+ * in the specified directory.
+ * It first looks up the dependencies
+ * which *should* be installed
+ * in the package.json and then
+ * looks if they are *actually*
+ * installed by looking them up
+ * in node_modules
+ */
+function getInstalledDependencies(_a) {
+    var rootDir = _a.rootDir;
+    var localPackageJsonPath = path_1.default.join(rootDir, 'package.json');
+    var getActuallyInstalledDeps = function (dependencies) {
+        var actualDependencies = Object.keys(dependencies).reduce(function (obj, depName) {
+            var _a;
+            var version = dependencies[depName];
+            // If found in node_modules folder, keep it
+            var depPath = path_1.default.join(rootDir, 'node_modules', depName);
+            if (fs_1.existsSync(depPath)) {
+                return __assign(__assign({}, obj), (_a = {}, _a[depName] = version, _a));
+            }
+            // If not, exclude it. Needs to be installed.
+            return obj;
+        }, {});
+        return actualDependencies;
+    };
+    if (fs_1.existsSync(localPackageJsonPath)) {
+        var _b = JSON.parse(fs_1.readFileSync(localPackageJsonPath).toString()), _c = _b.dependencies, dependencies = _c === void 0 ? {} : _c, _d = _b.devDependencies, devDependencies = _d === void 0 ? {} : _d;
+        return {
+            dependencies: getActuallyInstalledDeps(dependencies),
+            devDependencies: getActuallyInstalledDeps(devDependencies),
+        };
+    }
+    return { dependencies: {}, devDependencies: {} };
+}
 /** Create new package.json
  * where none exists.
  */
@@ -116,15 +152,9 @@ function createOrUpdatePackageJSON(_a) {
             switch (_e.label) {
                 case 0:
                     localPackageJsonPath = path_1.default.join(rootDir, 'package.json');
-                    if (!fs_1.existsSync(localPackageJsonPath)) return [3 /*break*/, 5];
-                    _b = JSON.parse(fs_1.readFileSync(localPackageJsonPath).toString()), _c = _b.dependencies, dependencies = _c === void 0 ? {} : _c, _d = _b.devDependencies, devDependencies = _d === void 0 ? {} : _d;
-                    if (!expectedDependencies) return [3 /*break*/, 2];
-                    dependenciesToInstall = getDependenciesInstallationString({
-                        expectedDependencies: expectedDependencies,
-                        actualDependencies: dependencies,
-                    });
-                    if (!dependenciesToInstall) return [3 /*break*/, 2];
-                    return [4 /*yield*/, exec_1.default("npm install -S " + dependenciesToInstall, {
+                    if (!fs_1.existsSync(localPackageJsonPath)) return [3 /*break*/, 7];
+                    if (!!fs_1.existsSync(path_1.default.join(rootDir, 'node_modules'))) return [3 /*break*/, 2];
+                    return [4 /*yield*/, exec_1.default("npm i", {
                             workingDirectory: rootDir,
                             redirectIo: true,
                         })];
@@ -132,24 +162,39 @@ function createOrUpdatePackageJSON(_a) {
                     _e.sent();
                     _e.label = 2;
                 case 2:
-                    if (!expectedDevDependencies) return [3 /*break*/, 4];
-                    devDependenciesToInstall = getDependenciesInstallationString({
-                        expectedDependencies: expectedDevDependencies,
-                        actualDependencies: devDependencies,
+                    _b = getInstalledDependencies({ rootDir: rootDir }), _c = _b.dependencies, dependencies = _c === void 0 ? {} : _c, _d = _b.devDependencies, devDependencies = _d === void 0 ? {} : _d;
+                    if (!expectedDependencies) return [3 /*break*/, 4];
+                    dependenciesToInstall = getDependenciesInstallationString({
+                        expectedDependencies: expectedDependencies,
+                        actualDependencies: dependencies,
                     });
-                    if (!devDependenciesToInstall) return [3 /*break*/, 4];
-                    return [4 /*yield*/, exec_1.default("npm install -D " + devDependenciesToInstall, {
+                    if (!dependenciesToInstall) return [3 /*break*/, 4];
+                    return [4 /*yield*/, exec_1.default("npm install -S " + dependenciesToInstall, {
                             workingDirectory: rootDir,
                             redirectIo: true,
                         })];
                 case 3:
                     _e.sent();
                     _e.label = 4;
-                case 4: return [3 /*break*/, 8];
-                case 5: 
+                case 4:
+                    if (!expectedDevDependencies) return [3 /*break*/, 6];
+                    devDependenciesToInstall = getDependenciesInstallationString({
+                        expectedDependencies: expectedDevDependencies,
+                        actualDependencies: devDependencies,
+                    });
+                    if (!devDependenciesToInstall) return [3 /*break*/, 6];
+                    return [4 /*yield*/, exec_1.default("npm install -D " + devDependenciesToInstall, {
+                            workingDirectory: rootDir,
+                            redirectIo: true,
+                        })];
+                case 5:
+                    _e.sent();
+                    _e.label = 6;
+                case 6: return [3 /*break*/, 10];
+                case 7: 
                 // Create new packageJSON and install dependencies
                 return [4 /*yield*/, createPackageJson({ folderPath: rootDir })];
-                case 6:
+                case 8:
                     // Create new packageJSON and install dependencies
                     _e.sent();
                     return [4 /*yield*/, createOrUpdatePackageJSON({
@@ -157,10 +202,10 @@ function createOrUpdatePackageJSON(_a) {
                             expectedDependencies: expectedDependencies,
                             expectedDevDependencies: expectedDevDependencies,
                         })];
-                case 7:
+                case 9:
                     _e.sent();
-                    _e.label = 8;
-                case 8: return [2 /*return*/];
+                    _e.label = 10;
+                case 10: return [2 /*return*/];
             }
         });
     });

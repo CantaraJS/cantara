@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 
 import { readFileAsJSON } from './fs';
-import getGlobalConfig from '../cantara-config';
+import getGlobalConfig, { getActiveApp } from '../cantara-config';
 import { CantaraApplication } from './types';
 import { existsSync } from 'fs';
 
@@ -94,16 +94,16 @@ interface GetAllWebpackExternalsOptions {
 export function webpackExternalsAsStringArray({
   peerOnly,
 }: GetAllWebpackExternalsOptions = {}) {
-  const { allApps } = getGlobalConfig();
+  const activeApp = getActiveApp();
   let externals: string[] = [];
 
   if (peerOnly) {
     // Read peer deps from package.json
-    externals = getAllPeerDependencies(allApps);
+    externals = getAllPeerDependencies([activeApp]);
   } else {
     // Read all node_modules folders to know which packages to externalize,
     // same as the popular nodeExternals() does
-    externals = getAllInstalledModules(allApps);
+    externals = getAllInstalledModules([activeApp]);
   }
   return externals;
 }

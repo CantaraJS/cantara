@@ -1,5 +1,11 @@
 import path from 'path';
-import { existsSync, readFileSync, writeFileSync, copyFileSync } from 'fs';
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  copyFileSync,
+  mkdirSync,
+} from 'fs';
 import execCmd from '../util/exec';
 import getGlobalConfig, { getActiveApp } from '../cantara-config';
 import slash from 'slash';
@@ -134,8 +140,26 @@ export async function createOrUpdatePackageJSON({
   expectedDevDependencies,
 }: CreateOrUpdatePackageJSONParams) {
   // Install/update dependencies
+  // Add dependencies
   const localPackageJsonPath = path.join(rootDir, 'package.json');
+  const nodeModulesPath = path.join(rootDir, 'node_modules');
   if (existsSync(localPackageJsonPath)) {
+    // If no node_modules folder exists, run "npm install"
+    if (!existsSync(nodeModulesPath)) {
+      await execCmd(`npm i`, {
+        workingDirectory: rootDir,
+        redirectIo: true,
+      });
+      // If it still doesn't exist,
+      // dependencies/devDependencies is empty
+      // in package.json
+      // Therefore create node_modules folder ourselves
+      // so that "npm i" isn't called every time
+      // this function is executed
+      if (!existsSync(nodeModulesPath)) {
+        mkdirSync(nodeModulesPath);
+      }
+    }
     // Look if dependencies need to be updated
     const {
       dependencies = {},
