@@ -7,7 +7,9 @@
 
 module.exports = {
   someSidebar: {
-    Docusaurus: ['getting_started'],
-    Features: ['mdx'],
+    Introduction: ['introduction', 'quick_start'],
+    ['In-depth tutorials']: [],
+    ['All commands']: [],
+    ['Configuration files (cantara.config.js)']: [],
   },
 };

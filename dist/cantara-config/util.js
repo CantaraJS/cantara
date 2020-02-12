@@ -125,13 +125,20 @@ function getAllApps(_a) {
 exports.default = getAllApps;
 /** Loads and parses the content from the user's .secrets.json file
  * in the project root. Here, Cantara specific secrets can be stored.
- * E.g. AWS keys
+ * E.g. AWS keys. Can also be passed in as environment variables.
  */
-function loadSecrets(projectDir) {
+function loadSecrets(_a) {
+    var projectDir = _a.projectDir, identifiers = _a.secrets;
     var secretsFilePath = path.join(projectDir, '.secrets.json');
     var secrets = {};
     if (fs_1.existsSync(secretsFilePath)) {
         secrets = fs_2.readFileAsJSON(secretsFilePath);
+    }
+    for (var _i = 0, identifiers_1 = identifiers; _i < identifiers_1.length; _i++) {
+        var secretId = identifiers_1[_i];
+        if (!secrets[secretId]) {
+            secrets[secretId] = process.env[secretId];
+        }
     }
     return secrets;
 }

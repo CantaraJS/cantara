@@ -14,7 +14,9 @@ module.exports = {
         alt: 'Cantara',
         src: 'img/logo.svg',
       },
-      links: [{ to: 'docs/getting_started', label: 'Docs', position: 'left' }],
+      links: [
+        { to: 'docs/introduction', label: 'Getting started', position: 'left' },
+      ],
     },
     footer: {
       style: 'dark',
@@ -24,7 +26,7 @@ module.exports = {
           items: [
             {
               label: 'Quick Start',
-              to: 'docs/getting_started',
+              to: 'docs/introduction',
             },
           ],
         },

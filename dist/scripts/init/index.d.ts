@@ -7,7 +7,7 @@ interface InitializeNewProjectOptions {
     /** Root of user's project */
     projectDir: string;
     /** Name of template. If no github username is specified,
-     * it will be resolved to "scriptify/<template-name>".
+     * it will be resolved to "CantaraJS/<template-name>".
      * A link can also be passed.
      */
     templateName: string;

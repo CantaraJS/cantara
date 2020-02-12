@@ -18,6 +18,7 @@ var types_1 = require("./dependencies/types");
 var testing_1 = require("./dependencies/testing");
 var common_1 = require("./dependencies/common");
 var fs_1 = require("fs");
+var EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
 var globalConfig = undefined;
 function getGlobalConfig() {
     if (!globalConfig)
@@ -103,7 +104,7 @@ function configureCantara(config) {
                 app: currentActiveApp,
                 additionalCliOptions: config.additionalCliOptions || '',
             },
-            secrets: util_1.loadSecrets(projectDir),
+            secrets: util_1.loadSecrets({ projectDir: projectDir, secrets: EXPECTED_CANTARA_SECRETS }),
             aliases: {
                 packageAliases: packageAliases,
                 appDependencyAliases: appDependencyAliases,

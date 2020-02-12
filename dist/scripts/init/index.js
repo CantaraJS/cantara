@@ -57,7 +57,7 @@ function initializeNewProject(_a) {
                     finalGitLink = templateName;
                     if (!templateName.includes('/')) {
                         // It's not a link and not a username/repo pair
-                        finalGitLink = "https://github.com/scriptify/" + templateName + ".git";
+                        finalGitLink = "https://github.com/CantaraJS/" + templateName + ".git";
                     }
                     if (!templateName.includes('.git') && templateName.includes('/')) {
                         finalGitLink = "https://github.com/" + templateName + ".git";
