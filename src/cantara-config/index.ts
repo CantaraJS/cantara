@@ -124,7 +124,11 @@ export function configureCantara(config: CantaraInitialConfig) {
   const staticFilesPath = path.join(config.packageRootDir, 'static');
   const tempFolder = path.join(staticFilesPath, '.temp');
   const projectDir = config.projectDir || process.cwd();
-  const allApps = getAllApps({ rootDir: projectDir, stage: config.stage });
+  // Some commands don't require an active app, e.g. 'init' or 'new'
+  const isActiveAppRequired = !!config.currentCommand.appname;
+  const allApps = isActiveAppRequired
+    ? getAllApps({ rootDir: projectDir, stage: config.stage })
+    : [];
   const currentActiveApp = config.currentCommand.appname
     ? allApps.find(app => app.name === config.currentCommand.appname)
     : undefined;

@@ -79,9 +79,8 @@ const allCantaraCommands: CantaraCommand[] = [
     parameters: [{ name: 'path' }, { name: 'template' }],
     exec: ({ parameters: { path: userPath, template } }) => {
       const templateToUse = template ? template : 'cantara-simple-starter';
-      const pathToUse = userPath ? path.resolve(userPath) : process.cwd();
       return initializeNewProject({
-        projectDir: pathToUse,
+        newFolderPath: userPath,
         templateName: templateToUse,
       });
     },
@@ -126,7 +125,7 @@ export default function setupCliInterface() {
   const cmdToUse =
     process.env.NODE_ENV === 'development' ? TEST_CMD : process.argv.slice(2);
   const parsedCommand = parseCliCommand(cmdToUse);
-  execCantaraCommand({
+  return execCantaraCommand({
     allCantaraCommands,
     parsedCommand,
     originalCommand: cmdToUse,

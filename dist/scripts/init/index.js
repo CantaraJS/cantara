@@ -43,13 +43,24 @@ var path_1 = __importDefault(require("path"));
 var del_1 = __importDefault(require("del"));
 var exec_1 = require("../../util/exec");
 var fs_1 = require("fs");
+var cantara_config_1 = __importDefault(require("../../cantara-config"));
 function initializeNewProject(_a) {
-    var projectDir = _a.projectDir, templateName = _a.templateName;
+    var newFolderPath = _a.newFolderPath, templateName = _a.templateName;
     return __awaiter(this, void 0, void 0, function () {
-        var isDirEmpty, finalGitLink, gitFolderToDelete;
+        var execDir, projectDir, isDirEmpty, finalGitLink, gitFolderToDelete;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
+                    execDir = cantara_config_1.default().runtime.projectDir;
+                    projectDir = path_1.default.join(execDir, templateName);
+                    if (newFolderPath) {
+                        if (path_1.default.isAbsolute(newFolderPath)) {
+                            projectDir = newFolderPath;
+                        }
+                        else {
+                            projectDir = path_1.default.join(execDir, newFolderPath);
+                        }
+                    }
                     isDirEmpty = !fs_1.existsSync(projectDir) || fs_1.readdirSync(projectDir).length === 0;
                     if (!isDirEmpty) {
                         throw new Error(projectDir + " is not empty. Aborting...");
@@ -68,8 +79,10 @@ function initializeNewProject(_a) {
                 case 1:
                     _b.sent();
                     gitFolderToDelete = path_1.default.join(projectDir, '.git');
-                    return [4 /*yield*/, del_1.default(gitFolderToDelete)];
+                    // Set force to true because gitFolderToDelete is outside CWD
+                    return [4 /*yield*/, del_1.default(gitFolderToDelete, { force: true })];
                 case 2:
+                    // Set force to true because gitFolderToDelete is outside CWD
                     _b.sent();
                     return [4 /*yield*/, exec_1.spawnCmd("git init " + projectDir)];
                 case 3:

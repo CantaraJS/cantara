@@ -1,1 +1,1 @@
-export default function setupCliInterface(): void;
+export default function setupCliInterface(): Promise<void>;

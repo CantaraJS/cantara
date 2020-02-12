@@ -39,7 +39,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __importDefault(require("path"));
 var cli_tools_1 = require("./cli-tools");
 var arbitrary_1 = __importDefault(require("../scripts/arbitrary"));
 var dev_1 = __importDefault(require("../scripts/dev"));
@@ -114,9 +113,8 @@ var allCantaraCommands = [
         exec: function (_a) {
             var _b = _a.parameters, userPath = _b.path, template = _b.template;
             var templateToUse = template ? template : 'cantara-simple-starter';
-            var pathToUse = userPath ? path_1.default.resolve(userPath) : process.cwd();
             return init_1.default({
-                projectDir: pathToUse,
+                newFolderPath: userPath,
                 templateName: templateToUse,
             });
         },
@@ -174,7 +172,7 @@ function setupCliInterface() {
     var TEST_CMD = (process.env.DEV_CANTARA_COMMAND || '').split(' ');
     var cmdToUse = process.env.NODE_ENV === 'development' ? TEST_CMD : process.argv.slice(2);
     var parsedCommand = cli_tools_1.parseCliCommand(cmdToUse);
-    cli_tools_1.execCantaraCommand({
+    return cli_tools_1.execCantaraCommand({
         allCantaraCommands: allCantaraCommands,
         parsedCommand: parsedCommand,
         originalCommand: cmdToUse,

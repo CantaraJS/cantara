@@ -2,15 +2,11 @@ import path from 'path';
 import del from 'del';
 import { spawnCmd } from '../../util/exec';
 import { readdirSync, existsSync } from 'fs';
+import getGlobalConfig from '../../cantara-config';
 
 interface InitializeNewProjectOptions {
-  /** name of new project.
-   * Will be derived from folder
-   * name if not specified.
-   */
-  projectName?: string;
-  /** Root of user's project */
-  projectDir: string;
+  /** Optional absolute path/name of new folder */
+  newFolderPath?: string;
   /** Name of template. If no github username is specified,
    * it will be resolved to "CantaraJS/<template-name>".
    * A link can also be passed.
@@ -19,9 +15,20 @@ interface InitializeNewProjectOptions {
 }
 
 export default async function initializeNewProject({
-  projectDir,
+  newFolderPath,
   templateName,
 }: InitializeNewProjectOptions) {
+  const {
+    runtime: { projectDir: execDir },
+  } = getGlobalConfig();
+  let projectDir = path.join(execDir, templateName);
+  if (newFolderPath) {
+    if (path.isAbsolute(newFolderPath)) {
+      projectDir = newFolderPath;
+    } else {
+      projectDir = path.join(execDir, newFolderPath);
+    }
+  }
   const isDirEmpty =
     !existsSync(projectDir) || readdirSync(projectDir).length === 0;
   if (!isDirEmpty) {
@@ -42,7 +49,8 @@ export default async function initializeNewProject({
     redirectIo: true,
   });
   const gitFolderToDelete = path.join(projectDir, '.git');
-  await del(gitFolderToDelete);
+  // Set force to true because gitFolderToDelete is outside CWD
+  await del(gitFolderToDelete, { force: true });
   await spawnCmd(`git init ${projectDir}`);
   console.log(
     'Initialized new Cantara project. Type cantara --help to see what you can do next.',
