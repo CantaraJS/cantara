@@ -49,9 +49,15 @@
   - Customization needs? e.g. extending wepback/babel/TS config etc
 - Implement Novitas Auth with Cantara and use it in Photogram
   - Write good docs for other developers
-- Port Photogram Codebase to Cantara
+- Improve UI/UX of CLI
 - Write integration tests for CLI
+- Port Photogram Codebase to Cantara
 - First public release
+  - Issue template
+  - Code of Conduct
+  - Contribution guidelines
+  - Write articles about Cantara, cross post on dev.to
+  - But use Docusaurus for original blog posts
 - After first release: Use commitizen
   - https://github.com/commitizen/cz-cli
 

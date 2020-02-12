@@ -124,4 +124,6 @@ You can now edit any files, and thanks to automatic hot-reloading for every part
 
 # Adding new apps/packages
 
+# Environment Variables
+
 # Further reading

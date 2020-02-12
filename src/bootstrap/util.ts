@@ -7,6 +7,66 @@ import renderTemplate from '../util/configTemplates';
 import { CantaraApplication } from '../util/types';
 import { writeJson, readFileAsJSON } from '../util/fs';
 
+type KeyValueStore = { [key: string]: string };
+
+interface ActualInstalledDependencies {
+  devDependencies: KeyValueStore;
+  dependencies: KeyValueStore;
+}
+
+/**
+ * Returns installed dependencies
+ * in the specified directory.
+ * It first looks up the dependencies
+ * which *should* be installed
+ * in the package.json and then
+ * looks if they are *actually*
+ * installed by looking them up
+ * in node_modules
+ */
+function getInstalledDependencies({
+  rootDir,
+}: {
+  rootDir: string;
+}): ActualInstalledDependencies {
+  const localPackageJsonPath = path.join(rootDir, 'package.json');
+
+  const getActuallyInstalledDeps = (dependencies: KeyValueStore) => {
+    const actualDependencies = Object.keys(dependencies).reduce(
+      (obj, depName) => {
+        const version = dependencies[depName];
+        // If found in node_modules folder, keep it
+        const depPath = path.join(rootDir, 'node_modules', depName);
+        if (existsSync(depPath)) {
+          return {
+            ...obj,
+            [depName]: version,
+          };
+        }
+        // If not, exclude it. Needs to be installed.
+        return obj;
+      },
+      {},
+    );
+    return actualDependencies;
+  };
+
+  if (existsSync(localPackageJsonPath)) {
+    const {
+      dependencies = {},
+      devDependencies = {},
+    }: {
+      dependencies?: KeyValueStore;
+      devDependencies?: KeyValueStore;
+    } = JSON.parse(readFileSync(localPackageJsonPath).toString());
+    return {
+      dependencies: getActuallyInstalledDeps(dependencies),
+      devDependencies: getActuallyInstalledDeps(devDependencies),
+    };
+  }
+  return { dependencies: {}, devDependencies: {} };
+}
+
 interface CreatePackageJsonOptions {
   folderPath: string;
 }
@@ -77,14 +137,10 @@ export async function createOrUpdatePackageJSON({
   const localPackageJsonPath = path.join(rootDir, 'package.json');
   if (existsSync(localPackageJsonPath)) {
     // Look if dependencies need to be updated
-    type KeyValueStore = { [key: string]: string };
     const {
       dependencies = {},
       devDependencies = {},
-    }: {
-      dependencies?: KeyValueStore;
-      devDependencies?: KeyValueStore;
-    } = JSON.parse(readFileSync(localPackageJsonPath).toString());
+    } = getInstalledDependencies({ rootDir });
     if (expectedDependencies) {
       const dependenciesToInstall = getDependenciesInstallationString({
         expectedDependencies,
