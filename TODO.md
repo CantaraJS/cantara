@@ -6,10 +6,8 @@
 
   - Introduction
   - Quick Start
-  - In-depth Tutorial
-    - Introduction
-    - Glossary
-    - Folder structure
+  - In-depth tutorial
+
     - Creating a new project
     - Creating a new app/package
     - Development
@@ -23,26 +21,14 @@
       - Testing with Jest
       - Integration/E2E testing with Cypress
     - Executing commands for apps/packages (e.g. installing packages)
-  - All Commands
 
-    - init
-    - dev
-    - build
-    - deploy
-    - test
-    - e2e
-    - new
-    - publish
-    - run
-    - exec-changed
-    - test-changed
-    - build-changed
-
-  - Configuration files (cantara.config.js)
   - Official starter templates
+  - Configuration files (cantara.config.js)
 
+- Add all possible values of cantara.config.js to simple starter
+  - Look at D-Auth
+- Make nice landing page
 - Write README for simple starter
-  - Make simple starter responsive
 - Implement "help" and "version" command
 - Talk to CD try to integrate Cantara into their current workflow
   - Find out if tool is good enough for deployment needs

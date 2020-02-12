@@ -147,19 +147,29 @@ function getDependenciesInstallationString(_a) {
 function createOrUpdatePackageJSON(_a) {
     var rootDir = _a.rootDir, expectedDependencies = _a.expectedDependencies, expectedDevDependencies = _a.expectedDevDependencies;
     return __awaiter(this, void 0, void 0, function () {
-        var localPackageJsonPath, _b, _c, dependencies, _d, devDependencies, dependenciesToInstall, devDependenciesToInstall;
+        var localPackageJsonPath, nodeModulesPath, _b, _c, dependencies, _d, devDependencies, dependenciesToInstall, devDependenciesToInstall;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
                     localPackageJsonPath = path_1.default.join(rootDir, 'package.json');
+                    nodeModulesPath = path_1.default.join(rootDir, 'node_modules');
                     if (!fs_1.existsSync(localPackageJsonPath)) return [3 /*break*/, 7];
-                    if (!!fs_1.existsSync(path_1.default.join(rootDir, 'node_modules'))) return [3 /*break*/, 2];
+                    if (!!fs_1.existsSync(nodeModulesPath)) return [3 /*break*/, 2];
                     return [4 /*yield*/, exec_1.default("npm i", {
                             workingDirectory: rootDir,
                             redirectIo: true,
                         })];
                 case 1:
                     _e.sent();
+                    // If it still doesn't exist,
+                    // dependencies/devDependencies is empty
+                    // in package.json
+                    // Therefore create node_modules folder ourselves
+                    // so that "npm i" isn't called every time
+                    // this function is executed
+                    if (!fs_1.existsSync(nodeModulesPath)) {
+                        fs_1.mkdirSync(nodeModulesPath);
+                    }
                     _e.label = 2;
                 case 2:
                     _b = getInstalledDependencies({ rootDir: rootDir }), _c = _b.dependencies, dependencies = _c === void 0 ? {} : _c, _d = _b.devDependencies, devDependencies = _d === void 0 ? {} : _d;

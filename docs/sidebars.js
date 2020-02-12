@@ -8,8 +8,7 @@
 module.exports = {
   someSidebar: {
     Introduction: ['introduction', 'quick_start'],
-    ['In-depth tutorials']: [],
-    ['All commands']: [],
+    ['In-depth tutorial']: ['in_depth_tutorial_intro'],
     ['Configuration files (cantara.config.js)']: [],
   },
 };

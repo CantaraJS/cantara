@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
 var fs_2 = require("./fs");
-var cantara_config_1 = __importDefault(require("../cantara-config"));
+var cantara_config_1 = require("../cantara-config");
 var fs_3 = require("fs");
 function getAllModulesFromFolder(dirName) {
     var atPrefix = new RegExp('^@', 'g');
@@ -91,16 +91,16 @@ function getModuleName(request) {
 }
 function webpackExternalsAsStringArray(_a) {
     var peerOnly = (_a === void 0 ? {} : _a).peerOnly;
-    var allApps = cantara_config_1.default().allApps;
+    var activeApp = cantara_config_1.getActiveApp();
     var externals = [];
     if (peerOnly) {
         // Read peer deps from package.json
-        externals = getAllPeerDependencies(allApps);
+        externals = getAllPeerDependencies([activeApp]);
     }
     else {
         // Read all node_modules folders to know which packages to externalize,
         // same as the popular nodeExternals() does
-        externals = getAllInstalledModules(allApps);
+        externals = getAllInstalledModules([activeApp]);
     }
     return externals;
 }

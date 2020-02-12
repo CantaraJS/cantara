@@ -14,7 +14,7 @@ It also makes it easy to share code between layers or to external consumers as p
 
 **So essentially a tool to make Fullstack TypeScript app development a joy. Stop configuring, start coding.**
 
-# With Cantara you can:
+## With Cantara you can:
 
 - Develop client side React Apps (like you can do with Create React App)
 - Develop and deploy serverless APIs
@@ -30,9 +30,9 @@ Despite it's **zero-config** nature, Cantara aims to be highly customizable, it 
 
 So, if you are developing Micro Frontends, a React-based dashboard, an UI library for your company, a scalable serverless API for your SaaS or all of that combined, Cantara _may_ be right for you.
 
-# Next steps
+## Next steps
 
 Enough talking, let's get started:
 
 - [Go to the Quick Start guide to see how can get up and running with a Fullstack TypeScript project within 5 minutes](quick_start).
-- [You can also directly dive deeper and go throught the Tutorials](tutorials/prerequisites)
+- [You can also directly dive deeper and go through the in-depth tutorial](tutorials/prerequisites)
