@@ -3,6 +3,16 @@
 ## Required
 
 - Make nice landing page
+  - Possible slogans
+    - Fullstack React app with TypeScript in minutes
+    - Like Create React App, but Fullstack!
+  - Subtitle: Stop configuring, start coding.
+  - Tech Stack: TypeScript, NodeJS, Serverless, React
+  - Features
+    - Develop modern React webapps with TypeScript
+    - Develop NodeJS APIs using TypeScript
+    - Develop and deploy servereess endpoints using TypeScript
+    - Publish packages to NPM with auto-generated TypeScript typing with one command
 - Write README for simple starter
 - Write README for Cantara itself
 - Implement "help" and "version" command
