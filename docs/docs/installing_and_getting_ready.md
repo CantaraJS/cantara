@@ -3,7 +3,7 @@ id: installing_and_getting_ready
 title: Installing and getting ready
 ---
 
-Install Cantara globally using your favorite package manager.
+Install cantara globally using your favorite package manager.
 
 ```bash
 npm i -g cantara

@@ -4,7 +4,7 @@ title: Dive deeper
 sidebar_label: Intro
 ---
 
-Those guides try to dive deeper into the different aspects of Cantara and are sorted in a way that they can be used as an **in-depth** Tutorial. Just skip the parts which are not if interest for your project.
+Those guides try to dive deeper into the different aspects of Cantara and are sorted in a way that they can be used as an **in-depth** Tutorial. Just skip the parts which are not of interest for your project.
 
 ## Glossary
 
