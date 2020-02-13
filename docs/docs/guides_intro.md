@@ -13,4 +13,4 @@ Just so that we are all on the same page, let's clarify what some words mean in 
 - **App** or **Application**: When refering to an app, either a NodeJS application or a serverless endpoint under `/node-apps` or a React app under `/react-app` can be meant.
 - **Package** always refers to packages under the `/packages` folder
 
-Ready? Ok, so let's dive more deeply into Cantara!
+Ready? Ok, so let's dive deeper into Cantara! :dolphin:

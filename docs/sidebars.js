@@ -23,6 +23,7 @@ module.exports = {
       'execute_arbitrary_cmds',
       'e2e_testing',
     ],
-    ['Configuration files (cantara.config.js)']: [],
+    ['Advanced']: ['cantara_config_js'],
+    ['Other']: ['starter_templates'],
   },
 };

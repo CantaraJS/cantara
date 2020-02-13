@@ -2,34 +2,6 @@
 
 ## Required
 
-- Write somewhat complete docs
-
-  - Introduction
-  - Quick Start
-  - In-depth tutorial
-
-    - Creating a new project
-    - Creating a new app/package
-    - Development
-    - Building, deploying and publishing
-      - Build and deploy React Apps
-      - Build and deploy NodeJS apps
-      - Deploy serverless endpoints
-      - Build and publish NPM packages
-    - Environment Variables
-    - Testing
-      - Testing with Jest
-      - Integration/E2E testing with Cypress
-    - Executing commands for apps/packages (e.g. installing packages)
-
-  - Official starter templates
-  - Advanced
-    - Configuration files (cantara.config.js)
-    - Serverless and MongoDB
-
-- "Real" Quick Start
-- Add all possible values of cantara.config.js to simple starter
-  - Look at D-Auth
 - Make nice landing page
 - Write README for simple starter
 - Write README for Cantara itself
