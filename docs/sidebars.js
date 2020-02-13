@@ -6,9 +6,23 @@
  */
 
 module.exports = {
-  someSidebar: {
+  main: {
     Introduction: ['introduction', 'quick_start'],
-    ['In-depth tutorial']: ['in_depth_tutorial_intro'],
+    ['Guides']: [
+      'guides_intro',
+      'installing_and_getting_ready',
+      'initializing_a_new_project',
+      'developing',
+      'adding_new_packages',
+      'testing_with_jest',
+      'environment_variables',
+      'building_packages_apps',
+      'deploying_serverless',
+      'publish_to_npm',
+      'continous_integration',
+      'execute_arbitrary_cmds',
+      'e2e_testing',
+    ],
     ['Configuration files (cantara.config.js)']: [],
   },
 };

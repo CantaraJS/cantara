@@ -23,13 +23,18 @@
     - Executing commands for apps/packages (e.g. installing packages)
 
   - Official starter templates
-  - Configuration files (cantara.config.js)
+  - Advanced
+    - Configuration files (cantara.config.js)
+    - Serverless and MongoDB
 
+- "Real" Quick Start
 - Add all possible values of cantara.config.js to simple starter
   - Look at D-Auth
 - Make nice landing page
 - Write README for simple starter
+- Write README for Cantara itself
 - Implement "help" and "version" command
+- Publish docs site
 - Talk to CD try to integrate Cantara into their current workflow
   - Find out if tool is good enough for deployment needs
   - Customization needs? e.g. extending wepback/babel/TS config etc
@@ -37,13 +42,13 @@
   - Write good docs for other developers
 - Improve UI/UX of CLI
 - Write integration tests for CLI
-- Port Photogram Codebase to Cantara
 - First public release
   - Issue template
   - Code of Conduct
   - Contribution guidelines
   - Write articles about Cantara, cross post on dev.to
   - But use Docusaurus for original blog posts
+- Port Photogram Codebase to Cantara
 - After first release: Use commitizen
   - https://github.com/commitizen/cz-cli
 
