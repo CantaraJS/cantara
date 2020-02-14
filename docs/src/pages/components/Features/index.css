@@ -1,0 +1,16 @@
+.cantara__features {
+  max-width: 800px;
+  padding: 1em;
+  margin: 0 auto;
+}
+
+.cantara__card {
+  margin-bottom: 2em;
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+.cantara__features__title {
+  color: #fff;
+  font-size: 3em;
+  font-style: italic;
+}

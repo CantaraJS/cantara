@@ -5,33 +5,42 @@ module.exports = {
   url: 'https://cantara.js.org',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
-  organizationName: 'cantara', // Usually your GitHub org/user name.
+  organizationName: 'CantaraJS', // Usually your GitHub org/user name.
   projectName: 'cantara', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'Cantara',
+      title: '',
       logo: {
         alt: 'Cantara',
-        src: 'img/logo.svg',
+        src: 'img/cantara.svg',
       },
       links: [
         { to: 'docs/introduction', label: 'Getting started', position: 'left' },
+        { to: 'docs/guides_intro', label: 'Guides', position: 'left' },
+        {
+          to: 'https://github.com/CantaraJS/cantara',
+          label: 'Github',
+          position: 'right',
+        },
       ],
     },
     footer: {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Links',
           items: [
             {
-              label: 'Quick Start',
+              label: 'Getting started',
               to: 'docs/introduction',
+            },
+            {
+              label: 'In-depth guides',
+              to: 'docs/guides_intro',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Cantara. MIT.`,
     },
   },
   presets: [
@@ -40,8 +49,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/',
+          editUrl: 'https://github.com/CantaraJS/cantara/edit/master/docs/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

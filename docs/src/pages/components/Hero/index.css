@@ -1,0 +1,60 @@
+.cantara__hero {
+  background: #305bff;
+}
+
+.cantara__hero__container {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  height: 60vh;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2em;
+}
+
+.cantara__hero__logo {
+  width: 100%;
+}
+
+.cantara__hero__logo > img {
+  width: 100%;
+}
+
+.cantara__slogan {
+  font-weight: 100;
+  margin-top: 4vh;
+  text-align: center;
+  font-size: 1.8em;
+}
+
+.cantara__subtitle {
+  font-style: italic;
+}
+
+.cantara__wave-container {
+  width: 100%;
+}
+
+@keyframes animateWave {
+  0% {
+    transform: scale(1, 0);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+.cantara__wave-container > svg {
+  display: block;
+  transform-origin: top;
+  animation: animateWave 1500ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.cantara__hero__buttons {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 5vh;
+}

@@ -1,0 +1,12 @@
+.cantara__techstack {
+  display: flex;
+  justify-content: space-around;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2em;
+}
+
+.cantara__techstack > img {
+  height: 7.5vh;
+  filter: grayscale(1);
+}
