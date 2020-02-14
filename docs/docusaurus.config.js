@@ -7,7 +7,6 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'cantarajs', // Usually your GitHub org/user name.
   projectName: 'cantara', // Usually your repo name.
-  url: 'https://cantarajs.github.io', // Replace USERNAME with your GitHub username.
   baseUrl: '/cantara/', // The name of your GitHub project.
   projectName: 'cantara', // The name of your GitHub project. Same as above.
   themeConfig: {
