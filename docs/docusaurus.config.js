@@ -41,6 +41,10 @@ module.exports = {
               label: 'In-depth guides',
               to: 'docs/guides_intro',
             },
+            {
+              label: 'Github',
+              to: 'https://github.com/CantaraJS/cantara',
+            },
           ],
         },
       ],

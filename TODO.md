@@ -14,9 +14,8 @@
     - Develop and deploy servereess endpoints using TypeScript
     - Publish packages to NPM with auto-generated TypeScript typing with one command
   - Make clear it's alpha version
-- Write README for simple starter
-- Write README for Cantara itself
 - Publish docs site
+- Write README for Cantara itself
 - Implement "help" and "version" command
 - Talk to CD try to integrate Cantara into their current workflow
   - Find out if tool is good enough for deployment needs
