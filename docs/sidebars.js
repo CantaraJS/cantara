@@ -25,5 +25,6 @@ module.exports = {
     ],
     ['Advanced']: ['css', 'cantara_config_js'],
     ['Other']: ['starter_templates'],
+    ['For maintainer']: ['maintainers_intro'],
   },
 };

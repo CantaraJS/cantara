@@ -2,19 +2,6 @@
 
 ## Required
 
-- Make nice landing page
-  - Possible slogans
-    - A CLI tool to create FullStack React apps in minutes
-    - Like Create React App, but Fullstack!
-  - Subtitle: Stop configuring, start coding.
-  - Tech Stack: TypeScript, NodeJS, Serverless, React
-  - Features
-    - Develop modern React webapps with TypeScript
-    - Develop NodeJS APIs using TypeScript
-    - Develop and deploy servereess endpoints using TypeScript
-    - Publish packages to NPM with auto-generated TypeScript typing with one command
-  - Make clear it's alpha version
-- Publish docs site
 - Write README for Cantara itself
 - Implement "help" and "version" command
 - Talk to CD try to integrate Cantara into their current workflow
