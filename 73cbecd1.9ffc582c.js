@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[21],{116:function(a){a.exports=JSON.parse('{"allTagsPath":"/cantara/blog/tags","slug":"hello","name":"hello","count":2,"permalink":"/cantara/blog/tags/hello"}')}}]);
