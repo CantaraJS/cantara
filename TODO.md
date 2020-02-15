@@ -22,6 +22,9 @@
 
 ## Nice to have
 
+- Faster installing
+  - One possible idea: Dependency Lazy installing
+    - Only install a dependecy when it is first used
 - "Mission Control": Intuitive Web Interface
   - Interface to manage all available Cantara Commands
 - Optional Chaining

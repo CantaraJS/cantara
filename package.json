@@ -1,6 +1,6 @@
 {
   "name": "cantara",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "main": "dist/index.js",
   "bin": {
@@ -71,7 +71,7 @@
     "webpack-dev-server": "^3.10.2",
     "webpack-merge": "^4.2.2",
     "webpack-notifier": "^1.8.0",
-    "webpack-pwa-manifest": "^4.1.1",
+    "webpack-pwa-manifest": "^4.2.0",
     "workbox-webpack-plugin": "^4.3.1"
   }
 }
