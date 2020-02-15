@@ -10,11 +10,18 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
 var fs_2 = require("./fs");
-var cantara_config_1 = require("../cantara-config");
+var cantara_config_1 = __importStar(require("../cantara-config"));
 var fs_3 = require("fs");
 function getAllModulesFromFolder(dirName) {
     var atPrefix = new RegExp('^@', 'g');
@@ -92,15 +99,16 @@ function getModuleName(request) {
 function webpackExternalsAsStringArray(_a) {
     var peerOnly = (_a === void 0 ? {} : _a).peerOnly;
     var activeApp = cantara_config_1.getActiveApp();
+    var allApps = cantara_config_1.default().allApps;
     var externals = [];
     if (peerOnly) {
         // Read peer deps from package.json
-        externals = getAllPeerDependencies([activeApp]);
+        externals = getAllPeerDependencies(allApps);
     }
     else {
         // Read all node_modules folders to know which packages to externalize,
         // same as the popular nodeExternals() does
-        externals = getAllInstalledModules([activeApp]);
+        externals = getAllInstalledModules(allApps);
     }
     return externals;
 }
