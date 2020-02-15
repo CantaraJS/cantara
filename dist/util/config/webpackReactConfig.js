@@ -28,7 +28,7 @@ var webpackCommonReactConfig_1 = __importDefault(require("./common/webpackCommon
 var cssLoaders_1 = __importDefault(require("./common/cssLoaders"));
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var WebpackPwaManifest = require('webpack-pwa-manifest');
-var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+// const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 var WebpackNotifierPlugin = require('webpack-notifier');
 var ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
@@ -82,12 +82,12 @@ function createReactWebpackConfig(_a) {
                 template: path_1.default.join(app.paths.assets, 'index.html'),
                 favicon: '',
             }),
-            iconPathToUse
-                ? new FaviconsWebpackPlugin({
-                    logo: iconPathToUse,
-                    inject: true,
-                })
-                : undefined,
+            // iconPathToUse
+            //   ? new FaviconsWebpackPlugin({
+            //       logo: iconPathToUse,
+            //       inject: true,
+            //     })
+            //   : undefined,
             // disableRefreshCheck: true needs to be set because of https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/15
             isDevelopment
                 ? new ReactRefreshWebpackPlugin({
