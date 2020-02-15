@@ -47,7 +47,11 @@ function configureCantara(config) {
     // Some commands don't require an active app, e.g. 'init' or 'new'
     var isActiveAppRequired = !!config.currentCommand.appname;
     var allApps = isActiveAppRequired
-        ? util_1.default({ rootDir: projectDir, stage: config.stage })
+        ? util_1.default({
+            rootDir: projectDir,
+            stage: config.stage,
+            activeAppName: config.currentCommand.appname,
+        })
         : [];
     var currentActiveApp = config.currentCommand.appname
         ? allApps.find(function (app) { return app.name === config.currentCommand.appname; })
