@@ -8,4 +8,4 @@ It is a **zero-config** tool for developing React Applications with a Serverless
 
 Visit the website or jump straight to the docs to get started now!
 
-[Website](https://cantara.js.org) | [Docs](https://cantara.js.org/cantara/docs/introduction) | [For maintainers](https://cantara.js.org/docs/maintainers_intro)
+[Website](https://cantara.js.org) | [Docs](https://cantara.js.org/docs/introduction) | [For maintainers](https://cantara.js.org/docs/maintainers_intro)
