@@ -2,14 +2,13 @@
 
 ## Required
 
-- Write README for Cantara itself
-- Implement "help" and "version" command
-- Talk to CD try to integrate Cantara into their current workflow
+- Ask for feedback / Talk to CD try to integrate Cantara into their current workflow
   - Find out if tool is good enough for deployment needs
   - Customization needs? e.g. extending wepback/babel/TS config etc
 - Implement Novitas Auth with Cantara and use it in Photogram
   - Write good docs for other developers
 - Improve UI/UX of CLI
+  - Implement "help" and "version" command
 - Write integration tests for CLI
 - First public release
   - Issue template
