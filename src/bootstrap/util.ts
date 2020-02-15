@@ -1,11 +1,5 @@
 import path from 'path';
-import {
-  existsSync,
-  readFileSync,
-  writeFileSync,
-  copyFileSync,
-  mkdirSync,
-} from 'fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import execCmd from '../util/exec';
 import getGlobalConfig, { getActiveApp } from '../cantara-config';
 import slash from 'slash';
