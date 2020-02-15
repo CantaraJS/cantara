@@ -95,15 +95,16 @@ export function webpackExternalsAsStringArray({
   peerOnly,
 }: GetAllWebpackExternalsOptions = {}) {
   const activeApp = getActiveApp();
+  const { allApps } = getGlobalConfig();
   let externals: string[] = [];
 
   if (peerOnly) {
     // Read peer deps from package.json
-    externals = getAllPeerDependencies([activeApp]);
+    externals = getAllPeerDependencies(allApps);
   } else {
     // Read all node_modules folders to know which packages to externalize,
     // same as the popular nodeExternals() does
-    externals = getAllInstalledModules([activeApp]);
+    externals = getAllInstalledModules(allApps);
   }
   return externals;
 }

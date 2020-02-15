@@ -6,7 +6,7 @@ import {
 } from './util';
 
 export default async function prepareNodeApp(app: CantaraApplication) {
-  createOrUpdatePackageJSON({ rootDir: app.paths.root });
+  await createOrUpdatePackageJSON({ rootDir: app.paths.root });
   createNodeJestConfig(app);
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
