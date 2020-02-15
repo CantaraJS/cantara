@@ -38,7 +38,10 @@ export default function Hero() {
             >
               Get Started
             </Link>
-            <Link className="button button--secondary button--lg">
+            <Link
+              className="button button--secondary button--lg"
+              href="#features"
+            >
               Features
             </Link>
           </div>

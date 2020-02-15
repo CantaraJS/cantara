@@ -16,7 +16,9 @@ export default function Features() {
   return (
     <div style={{ backgroundColor: '#305bff' }}>
       <div className="cantara__features">
-        <h2 className="cantara__features__title">Features</h2>
+        <h2 className="cantara__features__title" id="features">
+          Features
+        </h2>
         <div className="cantara__features__container">
           <Feature
             title="React webapps"
