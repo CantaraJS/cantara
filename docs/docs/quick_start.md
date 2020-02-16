@@ -36,6 +36,10 @@ ctra
 Let's get you a new folder on your computer!
 To kickstart a new Cantara project, use the [`init`](commands/init) command.
 
+```bash
+ctra init my-awesome-project
+```
+
 This will create a new folder `my-awesome-project`.
 
 Now, let's go to that folder.

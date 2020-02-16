@@ -8,7 +8,9 @@
 - Implement Novitas Auth with Cantara and use it in Photogram
   - Write good docs for other developers
 - Improve UI/UX of CLI
-  - Implement "help" and "version" command
+  - Switch back to commander
+  - Use enquirer for autocompletion
+  - Better error messages
 - Write integration tests for CLI
 - First public release
   - Issue template
