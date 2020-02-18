@@ -9,6 +9,7 @@ const path = require('path');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const slsw = require('serverless-webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 const webpack = require("webpack")
 
 const babelConfig = require('./serverlessBabelConfig');
@@ -90,5 +91,6 @@ module.exports = {
     <--ENABLE_TYPECHECKING--> ? new ForkTsCheckerWebpackPlugin({
       tsconfig: '<--TSCONFIG_PATH-->',
     }) : undefined,
+    new CopyPlugin([`<--APP_STATIC_PATH-->/**`])
   ].filter(Boolean),
 };

@@ -3,12 +3,14 @@ import { CreateWebpackConfigParams } from './types';
 import path from 'path';
 import babelConfig from './babelNodeConfig';
 import getAllWebpackExternals from '../externals';
+import slash from 'slash';
 
 const NodemonPlugin = require('nodemon-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 export default function createNodeWebpackConfig({
   app,
@@ -84,6 +86,7 @@ export default function createNodeWebpackConfig({
             dry: false,
           })
         : undefined,
+      new CopyPlugin([slash(app.paths.static || '') + '/**']),
     ].filter(Boolean),
   };
 }

@@ -34,6 +34,7 @@ export interface CantaraApplication {
     src: string;
     build: string;
     root: string;
+    static?: string;
     assets?: string;
   };
   /** Environment variables loaded from

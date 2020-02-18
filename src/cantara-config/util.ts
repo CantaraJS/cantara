@@ -118,6 +118,7 @@ export default function getAllApps({
           src: path.join(dir, 'src'),
           build: path.join(dir, 'build'),
           assets: path.join(dir, 'assets'),
+          static: path.join(dir, 'static'),
         },
         meta: {
           displayName,

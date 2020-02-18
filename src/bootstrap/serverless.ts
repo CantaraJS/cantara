@@ -54,6 +54,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ENV_VARS: JSON.stringify(app.env || {}),
     EXTERNALS_ARRAY: JSON.stringify(externals),
     ENABLE_TYPECHECKING: JSON.stringify(!skipCacheInvalidation),
+    APP_STATIC_PATH: slash(app.paths.static || '') + '/**',
   };
 
   const newBabelConfig = renderTemplate({
