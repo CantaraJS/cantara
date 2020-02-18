@@ -15,6 +15,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
     "baseUrl": "./",
     "jsx": "react"
   }

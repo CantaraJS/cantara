@@ -74,9 +74,9 @@ function createNodeWebpackConfig(_a) {
             new FriendlyErrorsWebpackPlugin(),
             isDevelopment
                 ? new NodemonPlugin({
-                    ext: 'js,graphql,ts,ps1,yaml,json',
+                    ext: 'js,graphql,ts,ps1,json,yaml',
                     nodeArgs: ['--inspect'],
-                    watch: app.paths.root,
+                    watch: app.paths.build,
                 })
                 : undefined,
             isProduction
