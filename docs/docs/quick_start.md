@@ -50,7 +50,7 @@ cd my-awesome-project
 
 As you will see, **3** new folders and several new files were copied into the directory. Also, a new git repository was initialized.
 
-The [`init`](commands/init), if executed with no other parameters, clones the [cantara-simple-starter](https://github.com/CantaraJS/cantara-simple-starter) project, which is a simple example project, consisting of an ExpressJS REST API, a serverless API and a React App. The functionality of this app is simple: Displaying a random image from Unsplash to the user.
+The [`init`](commands/init) command, if executed with no other parameters, clones the [cantara-simple-starter](https://github.com/CantaraJS/cantara-simple-starter) project, which is a simple example project, consisting of an ExpressJS REST API, a serverless API and a React App. The functionality of this app is simple: Displaying a random image from Unsplash to the user.
 
 Look at the code to get a better understanding of how the different parts work together.
 

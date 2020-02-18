@@ -80,8 +80,8 @@ module.exports = {
   plugins: [
     new webpack.EnvironmentPlugin(<--ENV_VARS-->),
     new CaseSensitivePathsPlugin(),
-    new ForkTsCheckerWebpackPlugin({
+    <--ENABLE_TYPECHECKING--> ? new ForkTsCheckerWebpackPlugin({
       tsconfig: '<--TSCONFIG_PATH-->',
-    }),
-  ],
+    }) : undefined,
+  ].filter(Boolean),
 };

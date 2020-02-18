@@ -7,6 +7,7 @@
   - Customization needs? e.g. extending wepback/babel/TS config etc
 - Implement Novitas Auth with Cantara and use it in Photogram
   - Write good docs for other developers
+- Implement version pinning like cra did with "react-scripts"
 - Improve UI/UX of CLI
   - Switch back to commander
   - Use enquirer for autocompletion

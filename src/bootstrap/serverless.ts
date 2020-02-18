@@ -15,6 +15,10 @@ import { webpackExternalsAsStringArray } from '../util/externals';
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 
 function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
+  // if skipCacheInvalidation is set to true, exclude typechecking plugin
+  // as it would restart with every code change and make the
+  // whole process even slower
+  const { skipCacheInvalidation } = app.meta;
   const globalCantaraConfig = getGlobalConfig();
   const babelConfigTemplate = readFileSync(
     path.join(
@@ -49,6 +53,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ALIASES: JSON.stringify(allAliases),
     ENV_VARS: JSON.stringify(app.env || {}),
     EXTERNALS_ARRAY: JSON.stringify(externals),
+    ENABLE_TYPECHECKING: JSON.stringify(!skipCacheInvalidation),
   };
 
   const newBabelConfig = renderTemplate({

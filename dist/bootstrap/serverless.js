@@ -66,6 +66,10 @@ var util_1 = require("./util");
 var externals_1 = require("../util/externals");
 var mergeYaml = require('@alexlafroscia/yaml-merge');
 function createWebpackAndBabelConfigFromTemplate(app) {
+    // if skipCacheInvalidation is set to true, exclude typechecking plugin
+    // as it would restart with every code change and make the
+    // whole process even slower
+    var skipCacheInvalidation = app.meta.skipCacheInvalidation;
     var globalCantaraConfig = cantara_config_1.default();
     var babelConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverlessBabelConfig.template.js')).toString();
     var webpackConfigTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverlessWebpackConfig.template.js')).toString();
@@ -82,6 +86,7 @@ function createWebpackAndBabelConfigFromTemplate(app) {
         ALIASES: JSON.stringify(allAliases),
         ENV_VARS: JSON.stringify(app.env || {}),
         EXTERNALS_ARRAY: JSON.stringify(externals),
+        ENABLE_TYPECHECKING: JSON.stringify(!skipCacheInvalidation),
     };
     var newBabelConfig = configTemplates_1.default({
         template: babelConfigTemplate,
