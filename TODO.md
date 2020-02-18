@@ -2,6 +2,7 @@
 
 ## Required
 
+- support org packages
 - Ask for feedback / Talk to CD try to integrate Cantara into their current workflow
   - Find out if tool is good enough for deployment needs
   - Customization needs? e.g. extending wepback/babel/TS config etc

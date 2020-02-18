@@ -75,6 +75,13 @@ module.exports = {
         loader: '<--MODULES_PATH-->webpack-graphql-loader',
         include: <--INCLUDES-->,
       },
+      {
+        loader: '<--MODULES_PATH-->file-loader',
+        exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+        options: {
+          name: 'static/media/[name].[hash:8].[ext]',
+        },
+      }
     ],
   },
   plugins: [
