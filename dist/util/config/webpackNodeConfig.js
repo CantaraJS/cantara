@@ -14,11 +14,13 @@ var webpack_1 = __importDefault(require("webpack"));
 var path_1 = __importDefault(require("path"));
 var babelNodeConfig_1 = __importDefault(require("./babelNodeConfig"));
 var externals_1 = __importDefault(require("../externals"));
+var slash_1 = __importDefault(require("slash"));
 var NodemonPlugin = require('nodemon-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
+var CopyPlugin = require('copy-webpack-plugin');
 function createNodeWebpackConfig(_a) {
     var app = _a.app, _b = _a.mode, mode = _b === void 0 ? 'development' : _b, alias = _a.alias, _c = _a.env, env = _c === void 0 ? {} : _c, _d = _a.include, include = _d === void 0 ? [] : _d;
     var isDevelopment = mode === 'development';
@@ -86,6 +88,7 @@ function createNodeWebpackConfig(_a) {
                     dry: false,
                 })
                 : undefined,
+            new CopyPlugin([slash_1.default(app.paths.static || '') + '/**']),
         ].filter(Boolean),
     };
 }

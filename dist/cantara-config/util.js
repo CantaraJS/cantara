@@ -107,6 +107,7 @@ function getAllApps(_a) {
                 src: path.join(dir, 'src'),
                 build: path.join(dir, 'build'),
                 assets: path.join(dir, 'assets'),
+                static: path.join(dir, 'static'),
             },
             meta: __assign({ displayName: displayName }, userAddedMetadata),
         };
