@@ -58,7 +58,7 @@ var configTemplates_1 = __importDefault(require("../util/configTemplates"));
 var fs_2 = require("fs");
 function addPeerDeps(packageJsonPath, deps) {
     var packageJson = fs_1.readFileAsJSON(packageJsonPath);
-    var newPackageJson = __assign(__assign({}, packageJson), { peerDependencies: deps });
+    var newPackageJson = __assign(__assign({}, packageJson), { peerDependencies: __assign(__assign({}, (packageJson.peerDependencies || {})), deps) });
     fs_1.writeJson(packageJsonPath, newPackageJson);
 }
 /** Prepares a JavaScript package or React Component */

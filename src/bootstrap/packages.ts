@@ -15,7 +15,10 @@ function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
   const packageJson = readFileAsJSON(packageJsonPath);
   const newPackageJson = {
     ...packageJson,
-    peerDependencies: deps,
+    peerDependencies: {
+      ...(packageJson.peerDependencies || {}),
+      ...deps,
+    },
   };
   writeJson(packageJsonPath, newPackageJson);
 }
