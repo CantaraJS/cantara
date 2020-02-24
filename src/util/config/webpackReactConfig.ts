@@ -20,7 +20,7 @@ export default function createReactWebpackConfig({
   app,
   alias = {},
   mode = 'development',
-  env,
+  env = {},
   include,
   projectDir,
 }: CreateWebpackConfigParams): Configuration {
@@ -29,7 +29,8 @@ export default function createReactWebpackConfig({
   let iconPathToUse = undefined;
   const appIconPathPng = path.join(app.paths.assets!, 'app_icon.png');
   const appIconPathSvg = path.join(app.paths.assets!, 'app_icon.svg');
-  const doesServiceWorkerExist = existsSync(path.join(app.paths.root, 'sw.js'));
+  const serviceWorkerPath = path.join(app.paths.src, 'sw.js');
+  const doesServiceWorkerExist = existsSync(serviceWorkerPath);
 
   if (existsSync(appIconPathPng)) {
     iconPathToUse = appIconPathPng;
@@ -55,7 +56,7 @@ export default function createReactWebpackConfig({
     mode,
     devtool: isDevelopment ? 'eval-source-map' : undefined,
     output: {
-      // publicPath: '/',
+      publicPath: '/',
       filename: '[name].[hash:4].js',
       path: app.paths.build,
       chunkFilename: '[name].[chunkhash:4].js',
@@ -87,7 +88,7 @@ export default function createReactWebpackConfig({
             disableRefreshCheck: true,
           })
         : undefined,
-      iconPathToUse
+      doesServiceWorkerExist
         ? new WebpackPwaManifest({
             // gcm_sender_id,
             theme_color: app.meta.themeColor,
@@ -95,18 +96,20 @@ export default function createReactWebpackConfig({
             name: app.meta.displayName,
             short_name: app.meta.displayName,
             ios: true,
-            icons: [
-              {
-                src: iconPathToUse,
-                sizes: [192, 512],
-              },
-            ],
+            icons: iconPathToUse
+              ? [
+                  {
+                    src: iconPathToUse,
+                    sizes: [192, 512],
+                  },
+                ]
+              : [],
             ...app.meta.pwaManifest,
           })
         : undefined,
-      doesServiceWorkerExist && isProduction
+      doesServiceWorkerExist
         ? new InjectManifest({
-            swSrc: path.join(app.paths.src, 'sw.js'),
+            swSrc: serviceWorkerPath,
           })
         : undefined,
       isProduction

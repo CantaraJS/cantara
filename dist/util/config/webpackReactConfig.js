@@ -36,13 +36,14 @@ var InjectManifest = require('workbox-webpack-plugin').InjectManifest;
 var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 var webpackMerge = require('webpack-merge');
 function createReactWebpackConfig(_a) {
-    var app = _a.app, _b = _a.alias, alias = _b === void 0 ? {} : _b, _c = _a.mode, mode = _c === void 0 ? 'development' : _c, env = _a.env, include = _a.include, projectDir = _a.projectDir;
+    var app = _a.app, _b = _a.alias, alias = _b === void 0 ? {} : _b, _c = _a.mode, mode = _c === void 0 ? 'development' : _c, _d = _a.env, env = _d === void 0 ? {} : _d, include = _a.include, projectDir = _a.projectDir;
     var isDevelopment = mode === 'development';
     var isProduction = mode === 'production';
     var iconPathToUse = undefined;
     var appIconPathPng = path_1.default.join(app.paths.assets, 'app_icon.png');
     var appIconPathSvg = path_1.default.join(app.paths.assets, 'app_icon.svg');
-    var doesServiceWorkerExist = fs_1.existsSync(path_1.default.join(app.paths.root, 'sw.js'));
+    var serviceWorkerPath = path_1.default.join(app.paths.src, 'sw.js');
+    var doesServiceWorkerExist = fs_1.existsSync(serviceWorkerPath);
     if (fs_1.existsSync(appIconPathPng)) {
         iconPathToUse = appIconPathPng;
     }
@@ -62,7 +63,7 @@ function createReactWebpackConfig(_a) {
         mode: mode,
         devtool: isDevelopment ? 'eval-source-map' : undefined,
         output: {
-            // publicPath: '/',
+            publicPath: '/',
             filename: '[name].[hash:4].js',
             path: app.paths.build,
             chunkFilename: '[name].[chunkhash:4].js',
@@ -94,19 +95,21 @@ function createReactWebpackConfig(_a) {
                     disableRefreshCheck: true,
                 })
                 : undefined,
-            iconPathToUse
+            doesServiceWorkerExist
                 ? new WebpackPwaManifest(__assign({ 
                     // gcm_sender_id,
-                    theme_color: app.meta.themeColor, background_color: app.meta.themeColor, name: app.meta.displayName, short_name: app.meta.displayName, ios: true, icons: [
-                        {
-                            src: iconPathToUse,
-                            sizes: [192, 512],
-                        },
-                    ] }, app.meta.pwaManifest))
+                    theme_color: app.meta.themeColor, background_color: app.meta.themeColor, name: app.meta.displayName, short_name: app.meta.displayName, ios: true, icons: iconPathToUse
+                        ? [
+                            {
+                                src: iconPathToUse,
+                                sizes: [192, 512],
+                            },
+                        ]
+                        : [] }, app.meta.pwaManifest))
                 : undefined,
-            doesServiceWorkerExist && isProduction
+            doesServiceWorkerExist
                 ? new InjectManifest({
-                    swSrc: path_1.default.join(app.paths.src, 'sw.js'),
+                    swSrc: serviceWorkerPath,
                 })
                 : undefined,
             isProduction
