@@ -53,6 +53,6 @@ export default async function initializeNewProject({
   await del(gitFolderToDelete, { force: true });
   await spawnCmd(`git init ${projectDir}`);
   console.log(
-    'Initialized new Cantara project. Type cantara --help to see what you can do next.',
+    'Initialized new Cantara project. Type "ctra dev <app-name>" to start the development. Refer to https://cantara.js.org for more information!',
   );
 }

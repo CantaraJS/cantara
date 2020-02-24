@@ -76,6 +76,7 @@ const allCantaraCommands: CantaraCommand[] = [
   },
   {
     actionName: 'init',
+    noSetup: true,
     parameters: [{ name: 'path' }, { name: 'template' }],
     exec: ({ parameters: { path: userPath, template } }) => {
       const templateToUse = template ? template : 'cantara-simple-starter';

@@ -50,7 +50,7 @@ var _1 = __importDefault(require("."));
  * folder structure etc
  */
 function initalizeCantara(_a) {
-    var userProjectPath = _a.userProjectPath, stageParam = _a.stage, cmdName = _a.cmdName, additionalCliOptions = _a.additionalCliOptions, appname = _a.appname;
+    var userProjectPath = _a.userProjectPath, stageParam = _a.stage, cmdName = _a.cmdName, additionalCliOptions = _a.additionalCliOptions, appname = _a.appname, skipBootstrap = _a.skipBootstrap;
     return __awaiter(this, void 0, void 0, function () {
         var stage, cantaraRootDir;
         return __generator(this, function (_b) {
@@ -70,10 +70,12 @@ function initalizeCantara(_a) {
                         },
                         stage: stage,
                     });
+                    if (!!skipBootstrap) return [3 /*break*/, 2];
                     return [4 /*yield*/, _1.default()];
                 case 1:
                     _b.sent();
-                    return [2 /*return*/];
+                    _b.label = 2;
+                case 2: return [2 /*return*/];
             }
         });
     });

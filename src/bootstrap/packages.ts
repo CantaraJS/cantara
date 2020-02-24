@@ -70,7 +70,7 @@ export default async function prepareJsPackage(app: CantaraApplication) {
   writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
 
   // Copy .npmignore ignore file
-  const npmignorePath = path.join(staticFilesFolder, '.npmignore');
+  const npmignorePath = path.join(staticFilesFolder, '.npmignore-template');
   const npmignoreDestPath = path.join(app.paths.root, '.npmignore');
   copyFileSync(npmignorePath, npmignoreDestPath);
 }

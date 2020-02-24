@@ -87,7 +87,7 @@ function initializeNewProject(_a) {
                     return [4 /*yield*/, exec_1.spawnCmd("git init " + projectDir)];
                 case 3:
                     _b.sent();
-                    console.log('Initialized new Cantara project. Type cantara --help to see what you can do next.');
+                    console.log('Initialized new Cantara project. Type "ctra dev <app-name>" to start the development. Refer to https://cantara.js.org for more information!');
                     return [2 /*return*/];
             }
         });

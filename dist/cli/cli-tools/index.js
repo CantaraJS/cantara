@@ -71,7 +71,7 @@ if (!userProjectPath) {
 }
 /** Execute this function before each command */
 function prepareCantara(_a) {
-    var appname = _a.appname, cmdName = _a.cmdName, additionalCliOptions = _a.additionalCliOptions, stage = _a.stage;
+    var appname = _a.appname, cmdName = _a.cmdName, additionalCliOptions = _a.additionalCliOptions, stage = _a.stage, skipBootstrap = _a.skipBootstrap;
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_b) {
             switch (_b.label) {
@@ -83,6 +83,7 @@ function prepareCantara(_a) {
                             cmdName: cmdName,
                             stage: stage,
                             userProjectPath: userProjectPath,
+                            skipBootstrap: skipBootstrap,
                         })];
                 case 1:
                     _b.sent();
@@ -128,6 +129,7 @@ function execCantaraCommand(_a) {
                             cmdName: actionName,
                             stage: stage.toString(),
                             additionalCliOptions: additionalCliOptions,
+                            skipBootstrap: foundAction.noSetup,
                         })];
                 case 1:
                     _c.sent();

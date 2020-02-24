@@ -102,7 +102,7 @@ function prepareJsPackage(app) {
                     });
                     packageTsConfigPath = path_1.default.join(app.paths.root, '.tsconfig.local.json');
                     fs_1.writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
-                    npmignorePath = path_1.default.join(staticFilesFolder, '.npmignore');
+                    npmignorePath = path_1.default.join(staticFilesFolder, '.npmignore-template');
                     npmignoreDestPath = path_1.default.join(app.paths.root, '.npmignore');
                     fs_2.copyFileSync(npmignorePath, npmignoreDestPath);
                     return [2 /*return*/];

@@ -1,4 +1,6 @@
 export interface CantaraCommand {
+    /** If true, skip onPreBootstrap */
+    noSetup?: boolean;
     /** e.g. dev, build, run, ... */
     actionName: string;
     /** Parameters value depends on position in command */
@@ -19,9 +21,10 @@ interface PrepareCantaraOptions {
     cmdName: string;
     additionalCliOptions: string;
     stage: string;
+    skipBootstrap?: boolean;
 }
 /** Execute this function before each command */
-export declare function prepareCantara({ appname, cmdName, additionalCliOptions, stage, }: PrepareCantaraOptions): Promise<void>;
+export declare function prepareCantara({ appname, cmdName, additionalCliOptions, stage, skipBootstrap, }: PrepareCantaraOptions): Promise<void>;
 interface ExecCantaraCommandParams {
     allCantaraCommands: CantaraCommand[];
     parsedCommand: CliCommand;

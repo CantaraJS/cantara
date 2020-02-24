@@ -19,6 +19,8 @@ if (!userProjectPath) {
 }
 
 export interface CantaraCommand {
+  /** If true, skip onPreBootstrap */
+  noSetup?: boolean;
   /** e.g. dev, build, run, ... */
   actionName: string;
   /** Parameters value depends on position in command */
@@ -38,6 +40,7 @@ interface PrepareCantaraOptions {
   cmdName: string;
   additionalCliOptions: string;
   stage: string;
+  skipBootstrap?: boolean;
 }
 
 /** Execute this function before each command */
@@ -46,6 +49,7 @@ export async function prepareCantara({
   cmdName,
   additionalCliOptions,
   stage,
+  skipBootstrap,
 }: PrepareCantaraOptions) {
   setupCliContext();
   await initalizeCantara({
@@ -54,6 +58,7 @@ export async function prepareCantara({
     cmdName,
     stage,
     userProjectPath: userProjectPath!,
+    skipBootstrap,
   });
 }
 
@@ -107,6 +112,7 @@ export async function execCantaraCommand({
     cmdName: actionName,
     stage: stage.toString(),
     additionalCliOptions,
+    skipBootstrap: foundAction.noSetup,
   });
   await Promise.resolve(
     foundAction.exec({

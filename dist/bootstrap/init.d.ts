@@ -4,6 +4,7 @@ interface InitializeCantaraOptions {
     additionalCliOptions: string;
     userProjectPath: string;
     stage?: string;
+    skipBootstrap?: boolean;
 }
 /**
  * Sets up the Cantara configuration
@@ -11,5 +12,5 @@ interface InitializeCantaraOptions {
  * function which sets up the project
  * folder structure etc
  */
-export default function initalizeCantara({ userProjectPath, stage: stageParam, cmdName, additionalCliOptions, appname, }: InitializeCantaraOptions): Promise<void>;
+export default function initalizeCantara({ userProjectPath, stage: stageParam, cmdName, additionalCliOptions, appname, skipBootstrap, }: InitializeCantaraOptions): Promise<void>;
 export {};

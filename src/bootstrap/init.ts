@@ -9,6 +9,7 @@ interface InitializeCantaraOptions {
   additionalCliOptions: string;
   userProjectPath: string;
   stage?: string;
+  skipBootstrap?: boolean;
 }
 
 /**
@@ -23,6 +24,7 @@ export default async function initalizeCantara({
   cmdName,
   additionalCliOptions,
   appname,
+  skipBootstrap,
 }: InitializeCantaraOptions) {
   const stage =
     !stageParam || stageParam === 'not_set'
@@ -39,5 +41,7 @@ export default async function initalizeCantara({
     },
     stage,
   });
-  await onPreBootstrap();
+  if (!skipBootstrap) {
+    await onPreBootstrap();
+  }
 }

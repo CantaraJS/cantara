@@ -109,6 +109,7 @@ var allCantaraCommands = [
     },
     {
         actionName: 'init',
+        noSetup: true,
         parameters: [{ name: 'path' }, { name: 'template' }],
         exec: function (_a) {
             var _b = _a.parameters, userPath = _b.path, template = _b.template;
