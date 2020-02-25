@@ -84,8 +84,8 @@ function buildPackage(app) {
                         projectDir: projectDir,
                         include: include,
                     };
-                    webpackCommonJsConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'commonjs2', noChecks: true }));
-                    webpackUmdConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'umd' }));
+                    webpackCommonJsConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'commonjs2' }));
+                    webpackUmdConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'umd', noChecks: true }));
                     _d = app.meta.libraryTargets, libraryTargets = _d === void 0 ? ['umd', 'commonjs'] : _d;
                     if (!libraryTargets.includes('commonjs')) return [3 /*break*/, 2];
                     return [4 /*yield*/, compile(webpackCommonJsConfig)];

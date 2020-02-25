@@ -9,12 +9,19 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const cssnano = require('cssnano');
 
+interface CreateCommonReactWebpackConfigParams
+  extends CreateWebpackConfigParams {
+  /** Set to true for NPM packages */
+  alwaysInlineImages?: boolean;
+}
+
 export default function createCommonReactWebpackConfig({
   mode = 'development',
   app,
   env = {},
   include = [],
-}: CreateWebpackConfigParams): Configuration {
+  alwaysInlineImages,
+}: CreateCommonReactWebpackConfigParams): Configuration {
   const isProduction = mode === 'production';
 
   return {
@@ -73,7 +80,7 @@ export default function createCommonReactWebpackConfig({
           test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
           loader: 'url-loader',
           options: {
-            limit: 15000,
+            limit: alwaysInlineImages ? Number.MAX_VALUE : 15000,
             name: 'static/media/[name].[hash:8].[ext]',
           },
         },

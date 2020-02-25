@@ -131,6 +131,7 @@ export default function createLibraryWebpackConfig({
       env,
       include,
       projectDir,
+      alwaysInlineImages: true,
     });
   }
 

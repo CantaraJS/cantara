@@ -123,6 +123,7 @@ function createLibraryWebpackConfig(_a) {
             env: env,
             include: include,
             projectDir: projectDir,
+            alwaysInlineImages: true,
         });
     }
     return webpackMerge(commonLibraryConfig, configToMerge);

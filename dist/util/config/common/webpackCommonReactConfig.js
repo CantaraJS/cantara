@@ -18,7 +18,7 @@ var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 var cssnano = require('cssnano');
 function createCommonReactWebpackConfig(_a) {
-    var _b = _a.mode, mode = _b === void 0 ? 'development' : _b, app = _a.app, _c = _a.env, env = _c === void 0 ? {} : _c, _d = _a.include, include = _d === void 0 ? [] : _d;
+    var _b = _a.mode, mode = _b === void 0 ? 'development' : _b, app = _a.app, _c = _a.env, env = _c === void 0 ? {} : _c, _d = _a.include, include = _d === void 0 ? [] : _d, alwaysInlineImages = _a.alwaysInlineImages;
     var isProduction = mode === 'production';
     return {
         entry: path_1.default.join(app.paths.src, 'index.tsx'),
@@ -75,7 +75,7 @@ function createCommonReactWebpackConfig(_a) {
                     test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
                     loader: 'url-loader',
                     options: {
-                        limit: 15000,
+                        limit: alwaysInlineImages ? Number.MAX_VALUE : 15000,
                         name: 'static/media/[name].[hash:8].[ext]',
                     },
                 },
