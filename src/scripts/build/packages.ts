@@ -40,12 +40,12 @@ export default async function buildPackage(app: CantaraApplication) {
   const webpackCommonJsConfig = createLibraryWebpackConfig({
     ...commonOptions,
     libraryTarget: 'commonjs2',
-    noChecks: true,
   });
 
   const webpackUmdConfig = createLibraryWebpackConfig({
     ...commonOptions,
     libraryTarget: 'umd',
+    noChecks: true,
   });
 
   const { libraryTargets = ['umd', 'commonjs'] } = app.meta;
