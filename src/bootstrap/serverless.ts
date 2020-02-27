@@ -141,7 +141,7 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
   createNodeJestConfig(app);
 
   // Create package.json
-  createOrUpdatePackageJSON({ rootDir: app.paths.root });
+  await createOrUpdatePackageJSON({ rootDir: app.paths.root });
 
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types

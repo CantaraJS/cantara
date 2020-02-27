@@ -131,7 +131,7 @@ export default function loadAppEnvVars({
   );
   if (ignoredEnvVars.length > 0) {
     console.warn(
-      `The following environment variables are ignored, because they are not present in the crana.config.js file:\n\t${ignoredEnvVars.join(
+      `The following environment variables are ignored, because they are not present in the cantara.config.js file:\n\t${ignoredEnvVars.join(
         '\n\t',
       )}`,
     );

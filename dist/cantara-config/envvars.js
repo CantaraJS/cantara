@@ -100,7 +100,7 @@ function loadAppEnvVars(_a) {
     var allEnvVarsInEnvFile = Object.keys(envFileContent);
     var ignoredEnvVars = allEnvVarsInEnvFile.filter(function (envName) { return !expectedEnvVars.includes(envName); });
     if (ignoredEnvVars.length > 0) {
-        console.warn("The following environment variables are ignored, because they are not present in the crana.config.js file:\n\t" + ignoredEnvVars.join('\n\t'));
+        console.warn("The following environment variables are ignored, because they are not present in the cantara.config.js file:\n\t" + ignoredEnvVars.join('\n\t'));
     }
     return envVarsToReturn;
 }

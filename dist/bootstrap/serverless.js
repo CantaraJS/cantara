@@ -124,19 +124,25 @@ function createServerlessYml(app) {
 function prepareServerlessApp(app) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            // First, create the webpack and the babel config with the correct paths
-            createWebpackAndBabelConfigFromTemplate(app);
-            // Now, create the custom serverless.yml file with the correct paths
-            // The main serverless.yml file needs to inherit from it!
-            createServerlessYml(app);
-            // Create jest config
-            util_1.createNodeJestConfig(app);
-            // Create package.json
-            util_1.createOrUpdatePackageJSON({ rootDir: app.paths.root });
-            // Create local tsconfig which extends from global one.
-            // Needed to correctly generate types
-            util_1.createLocalAppTsConfig({ app: app, indexFileName: 'index.tsx' });
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    // First, create the webpack and the babel config with the correct paths
+                    createWebpackAndBabelConfigFromTemplate(app);
+                    // Now, create the custom serverless.yml file with the correct paths
+                    // The main serverless.yml file needs to inherit from it!
+                    createServerlessYml(app);
+                    // Create jest config
+                    util_1.createNodeJestConfig(app);
+                    // Create package.json
+                    return [4 /*yield*/, util_1.createOrUpdatePackageJSON({ rootDir: app.paths.root })];
+                case 1:
+                    // Create package.json
+                    _a.sent();
+                    // Create local tsconfig which extends from global one.
+                    // Needed to correctly generate types
+                    util_1.createLocalAppTsConfig({ app: app, indexFileName: 'index.tsx' });
+                    return [2 /*return*/];
+            }
         });
     });
 }
