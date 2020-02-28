@@ -182,7 +182,6 @@ export function configureCantara(config: CantaraInitialConfig) {
   };
 
   const nodeModulesPath = getCantaraDepenciesInstallationPath();
-  console.log('0.0.13', { nodeModulesPath });
 
   const configToUse: CantaraGlobalConfig = {
     allApps,

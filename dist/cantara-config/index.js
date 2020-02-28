@@ -86,7 +86,6 @@ function configureCantara(config) {
         },
     };
     var nodeModulesPath = util_1.getCantaraDepenciesInstallationPath();
-    console.log('0.0.13', { nodeModulesPath: nodeModulesPath });
     var configToUse = {
         allApps: allApps,
         allPackages: {

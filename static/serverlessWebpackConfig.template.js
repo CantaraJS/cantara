@@ -8,6 +8,7 @@ const path = require('path');
 
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const slsw = require('serverless-webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const webpack = require("webpack")
@@ -93,4 +94,21 @@ module.exports = {
     }) : undefined,
     new CopyPlugin([`<--APP_STATIC_PATH-->/**`])
   ].filter(Boolean),
+  // Use a custom terser setup which keeps classnames.
+  // This way libraries which depend on class names
+  // (e.g. typegoose) don't break in production
+  // which is a nightmare to debug and find out 
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+        cache: true,
+        // sourceMap: true,
+        terserOptions: {
+          keep_classnames: true,
+          keep_fnames: true,
+        },
+      }),
+    ],
+  }
 };
