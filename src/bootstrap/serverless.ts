@@ -44,10 +44,10 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ...globalCantaraConfig.allPackages.include,
   ];
 
+  const MODULES_PATH =
+    slash(globalCantaraConfig.internalPaths.nodeModules) + '/';
   const templateVariables = {
-    MODULES_PATH:
-      slash(path.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
-      '/',
+    MODULES_PATH,
     TSCONFIG_PATH: slash(path.join(app.paths.root, '.tsconfig.local.json')),
     INCLUDES: JSON.stringify(allIncludes),
     ALIASES: JSON.stringify(allAliases),
@@ -94,9 +94,7 @@ function createServerlessYml(app: CantaraApplication) {
   );
 
   const templateVariables = {
-    MODULES_PATH:
-      slash(path.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
-      '/',
+    MODULES_PATH: slash(globalCantaraConfig.internalPaths.nodeModules) + '/',
     WEBPACK_CONFIG_PATH: relativeWebpackConfigPath,
   };
 

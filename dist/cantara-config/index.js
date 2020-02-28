@@ -11,13 +11,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
+var fs_1 = require("fs");
 var util_1 = __importStar(require("./util"));
 var aliases_1 = __importStar(require("./aliases"));
 var react_1 = require("./dependencies/react");
 var types_1 = require("./dependencies/types");
 var testing_1 = require("./dependencies/testing");
 var common_1 = require("./dependencies/common");
-var fs_1 = require("fs");
 var EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
 var globalConfig = undefined;
 function getGlobalConfig() {
@@ -85,6 +85,8 @@ function configureCantara(config) {
                 : '',
         },
     };
+    var nodeModulesPath = util_1.getCantaraDepenciesInstallationPath();
+    console.log('0.0.13', { nodeModulesPath: nodeModulesPath });
     var configToUse = {
         allApps: allApps,
         allPackages: {
@@ -102,6 +104,7 @@ function configureCantara(config) {
             root: config.packageRootDir,
             static: staticFilesPath,
             temp: tempFolder,
+            nodeModules: nodeModulesPath,
         },
         runtime: {
             projectDir: projectDir,

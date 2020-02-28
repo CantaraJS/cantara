@@ -265,7 +265,7 @@ function createJestConfig(_a) {
     var fileMockFilePath = path_1.default.join(globalCantaraConfig.internalPaths.static, 'jestFileMock.js');
     var moduleNameMapper = __assign(__assign({}, jestAliases), { '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': fileMockFilePath, '\\.(css|less)$': styleMockFilePath });
     var templateVariables = {
-        MODULES_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.root, 'node_modules')),
+        MODULES_PATH: slash_1.default(globalCantaraConfig.internalPaths.nodeModules) + '/',
         MODULE_NAME_MAPPER: JSON.stringify(moduleNameMapper, null, 2),
     };
     var newJestConfig = configTemplates_1.default({

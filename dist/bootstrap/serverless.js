@@ -78,9 +78,9 @@ function createWebpackAndBabelConfigFromTemplate(app) {
     var allIncludes = __spreadArrays([
         app.paths.src
     ], globalCantaraConfig.allPackages.include);
+    var MODULES_PATH = slash_1.default(globalCantaraConfig.internalPaths.nodeModules) + '/';
     var templateVariables = {
-        MODULES_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
-            '/',
+        MODULES_PATH: MODULES_PATH,
         TSCONFIG_PATH: slash_1.default(path_1.default.join(app.paths.root, '.tsconfig.local.json')),
         INCLUDES: JSON.stringify(allIncludes),
         ALIASES: JSON.stringify(allAliases),
@@ -104,8 +104,7 @@ function createServerlessYml(app) {
     var globalCantaraConfig = cantara_config_1.default();
     var relativeWebpackConfigPath = slash_1.default(path_1.default.join(path_1.default.relative(app.paths.root, globalCantaraConfig.internalPaths.temp), 'serverlessWebpackConfig.js'));
     var templateVariables = {
-        MODULES_PATH: slash_1.default(path_1.default.join(globalCantaraConfig.internalPaths.root, 'node_modules')) +
-            '/',
+        MODULES_PATH: slash_1.default(globalCantaraConfig.internalPaths.nodeModules) + '/',
         WEBPACK_CONFIG_PATH: relativeWebpackConfigPath,
     };
     var serverlessYmlTemplate = fs_1.readFileSync(path_1.default.join(globalCantaraConfig.internalPaths.static, 'serverlessTemplate.yml')).toString();

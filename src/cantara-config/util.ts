@@ -14,6 +14,26 @@ const getDirectories = (source: string) =>
     .map(name => path.join(source, name))
     .filter(isDirectory);
 
+/**
+ * Returns node_modules path of
+ * Cantara's dependecies,
+ * as this may differ depending
+ * on how it was installed. Do
+ * that by requiring a module
+ * which will never be removed,
+ * @babel/core, and resolve it's
+ * absolute path.
+ */
+export function getCantaraDepenciesInstallationPath() {
+  const absolutePath = require.resolve('@babel/core');
+  const nodeModulesPos = absolutePath.lastIndexOf('node_modules');
+  const nodeModulesPath = absolutePath.slice(
+    0,
+    nodeModulesPos + 'node_modules'.length,
+  );
+  return nodeModulesPath;
+}
+
 /** Requires that at least one of the specified folders exist */
 function requireAtLeastOneFolder(paths: string[]) {
   const doesOneFolderExist = paths

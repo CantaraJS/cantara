@@ -1,4 +1,15 @@
 import { CantaraApplication } from '../util/types';
+/**
+ * Returns node_modules path of
+ * Cantara's dependecies,
+ * as this may differ depending
+ * on how it was installed. Do
+ * that by requiring a module
+ * which will never be removed,
+ * @babel/core, and resolve it's
+ * absolute path.
+ */
+export declare function getCantaraDepenciesInstallationPath(): string;
 interface GetAllAppsOptions {
     rootDir: string;
     stage: string;

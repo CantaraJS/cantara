@@ -1,6 +1,10 @@
 import path from 'path';
+import { existsSync } from 'fs';
 
-import getAllApps, { loadSecrets } from './util';
+import getAllApps, {
+  loadSecrets,
+  getCantaraDepenciesInstallationPath,
+} from './util';
 import { CantaraApplication } from '../util/types';
 
 import getAllPackageAliases, { getDependencyAliases } from './aliases';
@@ -8,7 +12,6 @@ import { reactDependencies } from './dependencies/react';
 import { typescriptDependencies } from './dependencies/types';
 import { testingDependencies } from './dependencies/testing';
 import { commonDependencies } from './dependencies/common';
-import { existsSync } from 'fs';
 
 const EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
 
@@ -64,6 +67,8 @@ interface CantaraGlobalConfig {
     root: string;
     /** Folder for temporary files (excluded from version control) */
     temp: string;
+    /** Install path where cantara's dependencies were installed */
+    nodeModules: string;
   };
   /** Current runtime configuration (e.g. the command the user executed, the location of it etc.) */
   runtime: {
@@ -176,6 +181,9 @@ export function configureCantara(config: CantaraInitialConfig) {
     },
   };
 
+  const nodeModulesPath = getCantaraDepenciesInstallationPath();
+  console.log('0.0.13', { nodeModulesPath });
+
   const configToUse: CantaraGlobalConfig = {
     allApps,
     allPackages: {
@@ -195,6 +203,7 @@ export function configureCantara(config: CantaraInitialConfig) {
       root: config.packageRootDir,
       static: staticFilesPath,
       temp: tempFolder,
+      nodeModules: nodeModulesPath,
     },
     runtime: {
       projectDir,

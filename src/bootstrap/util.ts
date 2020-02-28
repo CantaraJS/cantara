@@ -281,9 +281,7 @@ export function createJestConfig({
   };
 
   const templateVariables = {
-    MODULES_PATH: slash(
-      path.join(globalCantaraConfig.internalPaths.root, 'node_modules'),
-    ),
+    MODULES_PATH: slash(globalCantaraConfig.internalPaths.nodeModules) + '/',
     MODULE_NAME_MAPPER: JSON.stringify(moduleNameMapper, null, 2),
   };
 

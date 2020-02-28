@@ -50,6 +50,8 @@ interface CantaraGlobalConfig {
         root: string;
         /** Folder for temporary files (excluded from version control) */
         temp: string;
+        /** Install path where cantara's dependencies were installed */
+        nodeModules: string;
     };
     /** Current runtime configuration (e.g. the command the user executed, the location of it etc.) */
     runtime: {
