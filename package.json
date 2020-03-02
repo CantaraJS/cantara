@@ -1,6 +1,6 @@
 {
   "name": "cantara",
-  "version": "0.0.14",
+  "version": "0.0.0-development",
   "description": "",
   "main": "dist/index.js",
   "bin": {
@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "nodemon --watch src/**/*.ts --watch .env --exec cross-env NODE_ENV=development ts-node src/index.ts",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "semantic-release": "semantic-release"
   },
   "keywords": [],
   "author": "",
@@ -20,8 +21,10 @@
     "@types/prettier": "^1.19.0",
     "@types/webpack-dev-server": "^3.10.0",
     "cross-env": "^6.0.3",
+    "cz-conventional-changelog": "^3.1.0",
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.2",
+    "semantic-release": "^17.0.4",
     "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   },
@@ -76,5 +79,14 @@
     "webpack-notifier": "^1.8.0",
     "webpack-pwa-manifest": "^4.2.0",
     "workbox-webpack-plugin": "^4.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CantaraJS/cantara.git"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
