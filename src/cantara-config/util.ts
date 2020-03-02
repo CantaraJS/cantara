@@ -13,7 +13,6 @@ const getDirectories = (source: string) =>
   readdirSync(source)
     .map(name => path.join(source, name))
     .filter(isDirectory);
-
 /**
  * Returns node_modules path of
  * Cantara's dependecies,
@@ -86,11 +85,32 @@ export default function getAllApps({
     ({ dir, type }) => {
       let typeToUse: CantaraApplicationType = type as CantaraApplicationType;
       let displayName = path.basename(dir);
-      const appName = displayName;
+      let appName = displayName;
       let userAddedMetadata:
         | CantaraApplicationMetaInformation
         | undefined = undefined;
+
+      const packageJsonPath = path.join(dir, 'package.json');
+      let packageJsonName = '';
+      if (existsSync(packageJsonPath)) {
+        const packageJSON = JSON.parse(
+          readFileSync(packageJsonPath).toString(),
+        );
+        packageJsonName = packageJSON.name;
+      }
+
+      if (packageJsonName) {
+        displayName = packageJsonName;
+      }
+
       if (type === 'package') {
+        // For packages, if a package.json file is already available,
+        // use the name defined at the "name" field instead
+        // of the foldername. This way, org scoped packages
+        // also work with cantara, e.g. @acme/package
+        if (packageJsonName) {
+          appName = packageJsonName;
+        }
         const packageSrc = path.join(dir, 'src');
         typeToUse = existsSync(path.join(packageSrc, 'index.tsx'))
           ? 'react-component'
@@ -101,14 +121,6 @@ export default function getAllApps({
         typeToUse = existsSync(path.join(dir, 'serverless.yml'))
           ? 'serverless'
           : 'node';
-      }
-
-      const packageJsonPath = path.join(dir, 'package.json');
-      if (existsSync(packageJsonPath)) {
-        const packageJSON = JSON.parse(
-          readFileSync(packageJsonPath).toString(),
-        );
-        displayName = packageJSON.name;
       }
 
       const cantaraConfigPath = path.join(dir, 'cantara.config.js');

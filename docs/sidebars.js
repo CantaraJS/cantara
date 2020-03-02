@@ -8,8 +8,8 @@
 module.exports = {
   main: {
     Introduction: ['introduction', 'quick_start'],
-    ['Guides']: [
-      'guides_intro',
+    ['Docs']: [
+      'docs_intro',
       'installing_and_getting_ready',
       'initializing_a_new_project',
       'developing',

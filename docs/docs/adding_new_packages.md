@@ -38,3 +38,7 @@ To add a new package/Node app/React app to your project, simply create a new fol
 Now, that you've create a new package or app, you can start using it straight away.
 For packages, just `import` them into your apps.
 For applications, start the development using the `dev` command.
+
+## Notes on folders and package names
+
+When creating a new package, it must not reside in a subfolder, meaning that the `src` folder must be directly in the `your-package-name` folder. When first starting Cantara and your package has no `package.json` yet, the `name` field in the `package.json` file is derived from the foldername. To rename the package, simply change the `name` field. If you e.g. want to assign it a name so that it's organization scoped, set it to `@my-org/package-name`.

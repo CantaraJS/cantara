@@ -87,4 +87,4 @@ Now, get creative and play a bit around with the different parts of the applicat
 ## Further reading
 
 Now you have the basics to start developing your app.
-For the next steps, e.g. creating a production build of your app, publishung packages to NPM or writing and executing tests, go the [Guides section of the docs](guides_intro). Here, all of the more advanced topics are covered. Have fun!
+For the next steps, e.g. creating a production build of your app, publishung packages to NPM or writing and executing tests, go the [Docs](docs_intro). Here, all of the more advanced topics are covered. Have fun!

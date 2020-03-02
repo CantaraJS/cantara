@@ -1,5 +1,5 @@
 ---
-id: guides_intro
+id: docs_intro
 title: Dive deeper
 sidebar_label: Intro
 ---

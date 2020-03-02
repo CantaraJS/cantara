@@ -35,4 +35,4 @@ So, if you are developing Micro Frontends, a React-based dashboard, an UI librar
 Enough talking, let's get started:
 
 - [Go to the Quick Start guide to see how can get up and running with a Fullstack TypeScript project within 5 minutes](quick_start).
-- [You can also directly dive deeper and head over to the **Guides**, which cover every aspect of Cantara](glossary)
+- [You can also directly dive deeper and head over to the **Docs**, which cover every aspect of Cantara](glossary)
