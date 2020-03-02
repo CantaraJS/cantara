@@ -16,7 +16,7 @@ jobs:
     - name: Deploy docs
       working-directory: docs
       env:
-        GIT_USER: scriptify  
+        GIT_USER: 'scriptify:${{ secrets.GITHUB_TOKEN }}'
       run: |
         npm i
         npm run deploy
