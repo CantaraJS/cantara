@@ -48,8 +48,12 @@ export function spawnCmd(
       stdio: redirectIo ? 'inherit' : undefined,
     });
 
-    function onExit(exData: any) {
-      resolve(retData);
+    function onExit(exitCode: number) {
+      if (exitCode === 0) {
+        resolve(retData);
+      } else {
+        reject(`Command "${cmd}" failed.`);
+      }
     }
 
     newProcess.stdio.forEach(
@@ -63,7 +67,6 @@ export function spawnCmd(
     // newProcess.on('close', onExit);
     newProcess.on('exit', onExit);
     newProcess.on('error', e => {
-      console.log('ERRRRRRORRROROROR', e);
       reject(e);
     });
     // newProcess.on('disconnect', onExit);

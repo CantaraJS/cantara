@@ -16,10 +16,17 @@ import initializeNewProject from '../scripts/init';
 import startEndToEndTests from '../scripts/e2e';
 import testChanged from '../scripts/test-changed';
 import buildChanged from '../scripts/build-changed';
-import executeForChangedApps, {
-  execUserCmdForChangedApp,
-} from '../scripts/exec-changed';
-import execCmd from '../util/exec';
+import { execUserCmdForChangedApp } from '../scripts/exec-changed';
+
+process.on('uncaughtException', err => {
+  console.log(err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', err => {
+  console.log(err);
+  process.exit(1);
+});
 
 const allCantaraCommands: CantaraCommand[] = [
   {
