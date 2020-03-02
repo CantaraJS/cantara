@@ -10,6 +10,7 @@ interface BuildChangedParam {
 
 export default function buildChanged({ stage }: BuildChangedParam) {
   return executeForChangedApps(async appname => {
+    console.log('changed', { appname });
     await prepareCantara({
       cmdName: 'build',
       additionalCliOptions: '',

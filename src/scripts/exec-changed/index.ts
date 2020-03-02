@@ -20,10 +20,12 @@ export default async function executeForChangedApps(cb: ExecChangeCallback) {
     allApps,
   } = getGlobalConfig();
 
-  const res = await execCmd('git diff --stat', {
+  // Identify changes between this and latest commit
+  const res = await execCmd('git diff HEAD HEAD~1 --stat', {
     workingDirectory: projectDir,
   });
   const diffSum = parseDiffSummary(res.toString(), projectDir);
+  console.log({ diffSum });
   const changedAppNames = diffSum
     .map(changeObj => {
       if (!changeObj) return false;
@@ -36,6 +38,7 @@ export default async function executeForChangedApps(cb: ExecChangeCallback) {
       return name;
     })
     .filter(Boolean) as string[];
+  console.log({ changedAppNames });
   // Execute cb for each application
   for (const changedAppName of changedAppNames) {
     await cb(changedAppName);
