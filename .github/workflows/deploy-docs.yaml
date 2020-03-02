@@ -1,6 +1,9 @@
-name: CI
+name: Deploy docs
 
-on: [push]
+on:
+  push:
+    paths:
+    - 'docs/**/*'
 
 jobs:
   build:
@@ -11,8 +14,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
-      with:
-        node-version: '12.x'
+      #with:
+        #node-version: '12.x'
     - name: Deploy docs
       working-directory: docs
       run: |
