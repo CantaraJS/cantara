@@ -18,6 +18,8 @@ jobs:
         #node-version: '12.x'
     - name: Deploy docs
       working-directory: docs
+      env:
+        GIT_USER: scriptify  
       run: |
         npm i
         npm run deploy
