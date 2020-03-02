@@ -1,6 +1,11 @@
 name: Deploy docs
 
-on: [push]
+on:
+  push:
+    paths:
+    - 'docs/**/*'
+    - 'docs/'
+    - 'docs/*'
 
 jobs:
   build:
