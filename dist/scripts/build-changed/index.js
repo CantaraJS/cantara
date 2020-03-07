@@ -48,12 +48,14 @@ function buildChanged(_a) {
     return exec_changed_1.default(function (appname) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, cli_tools_1.prepareCantara({
-                        cmdName: 'build',
-                        additionalCliOptions: '',
-                        appname: appname,
-                        stage: stage,
-                    })];
+                case 0:
+                    console.log('changed', { appname: appname });
+                    return [4 /*yield*/, cli_tools_1.prepareCantara({
+                            cmdName: 'build',
+                            additionalCliOptions: '',
+                            appname: appname,
+                            stage: stage,
+                        })];
                 case 1:
                     _a.sent();
                     return [4 /*yield*/, build_1.default()];

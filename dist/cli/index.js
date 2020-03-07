@@ -52,6 +52,14 @@ var e2e_1 = __importDefault(require("../scripts/e2e"));
 var test_changed_1 = __importDefault(require("../scripts/test-changed"));
 var build_changed_1 = __importDefault(require("../scripts/build-changed"));
 var exec_changed_1 = require("../scripts/exec-changed");
+process.on('uncaughtException', function (err) {
+    console.log(err);
+    process.exit(1);
+});
+process.on('unhandledRejection', function (err) {
+    console.log(err);
+    process.exit(1);
+});
 var allCantaraCommands = [
     {
         actionName: 'dev',

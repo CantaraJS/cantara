@@ -70,8 +70,13 @@ function spawnCmd(cmd, _a) {
         var _a = cmd.split(' '), programCmd = _a[0], params = _a.slice(1);
         var retData = '';
         var newProcess = child_process_1.spawn(programCmd, params, __assign(__assign({}, options), { shell: true, stdio: redirectIo ? 'inherit' : undefined }));
-        function onExit(exData) {
-            resolve(retData);
+        function onExit(exitCode) {
+            if (exitCode === 0) {
+                resolve(retData);
+            }
+            else {
+                reject("Command \"" + cmd + "\" failed.");
+            }
         }
         newProcess.stdio.forEach(function (io) {
             return io &&
@@ -82,7 +87,6 @@ function spawnCmd(cmd, _a) {
         // newProcess.on('close', onExit);
         newProcess.on('exit', onExit);
         newProcess.on('error', function (e) {
-            console.log('ERRRRRRORRROROROR', e);
             reject(e);
         });
         // newProcess.on('disconnect', onExit);

@@ -83,7 +83,23 @@ function getAllApps(_a) {
         var displayName = path.basename(dir);
         var appName = displayName;
         var userAddedMetadata = undefined;
+        var packageJsonPath = path.join(dir, 'package.json');
+        var packageJsonName = '';
+        if (fs_1.existsSync(packageJsonPath)) {
+            var packageJSON = JSON.parse(fs_1.readFileSync(packageJsonPath).toString());
+            packageJsonName = packageJSON.name;
+        }
+        if (packageJsonName) {
+            displayName = packageJsonName;
+        }
         if (type === 'package') {
+            // For packages, if a package.json file is already available,
+            // use the name defined at the "name" field instead
+            // of the foldername. This way, org scoped packages
+            // also work with cantara, e.g. @acme/package
+            if (packageJsonName) {
+                appName = packageJsonName;
+            }
             var packageSrc = path.join(dir, 'src');
             typeToUse = fs_1.existsSync(path.join(packageSrc, 'index.tsx'))
                 ? 'react-component'
@@ -93,11 +109,6 @@ function getAllApps(_a) {
             typeToUse = fs_1.existsSync(path.join(dir, 'serverless.yml'))
                 ? 'serverless'
                 : 'node';
-        }
-        var packageJsonPath = path.join(dir, 'package.json');
-        if (fs_1.existsSync(packageJsonPath)) {
-            var packageJSON = JSON.parse(fs_1.readFileSync(packageJsonPath).toString());
-            displayName = packageJSON.name;
         }
         var cantaraConfigPath = path.join(dir, 'cantara.config.js');
         if (fs_1.existsSync(cantaraConfigPath)) {

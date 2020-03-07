@@ -58,12 +58,13 @@ function executeForChangedApps(cb) {
             switch (_b.label) {
                 case 0:
                     _a = cantara_config_1.default(), projectDir = _a.runtime.projectDir, allApps = _a.allApps;
-                    return [4 /*yield*/, exec_1.default('git diff --stat', {
+                    return [4 /*yield*/, exec_1.default('git diff HEAD HEAD~1 --stat', {
                             workingDirectory: projectDir,
                         })];
                 case 1:
                     res = _b.sent();
                     diffSum = parseDiffSummary_1.default(res.toString(), projectDir);
+                    console.log({ diffSum: diffSum });
                     changedAppNames = diffSum
                         .map(function (changeObj) {
                         if (!changeObj)
@@ -78,6 +79,7 @@ function executeForChangedApps(cb) {
                         return name;
                     })
                         .filter(Boolean);
+                    console.log({ changedAppNames: changedAppNames });
                     _i = 0, changedAppNames_1 = changedAppNames;
                     _b.label = 2;
                 case 2:
