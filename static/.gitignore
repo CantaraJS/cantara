@@ -119,8 +119,3 @@ gen
 .temp
 
 .secrets.json
-
-jest.setup.ts
-.tsconfig.local.json
-
-jest.config.js
