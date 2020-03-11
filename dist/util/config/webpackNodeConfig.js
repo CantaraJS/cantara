@@ -29,7 +29,7 @@ function createNodeWebpackConfig(_a) {
     return {
         entry: app.paths.src,
         output: { path: app.paths.build },
-        node: { __dirname: true },
+        node: { __dirname: false, __filename: false },
         target: 'node',
         mode: mode,
         externals: externals,
