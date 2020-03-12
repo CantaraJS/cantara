@@ -86,7 +86,12 @@ export default function createNodeWebpackConfig({
             dry: false,
           })
         : undefined,
-      new CopyPlugin([slash(app.paths.static || '') + '/**']),
+      new CopyPlugin([
+        {
+          from: slash(app.paths.static || ''),
+          to: slash(app.paths.build),
+        },
+      ]),
     ].filter(Boolean),
   };
 }
