@@ -94,7 +94,6 @@ interface GetAllWebpackExternalsOptions {
 export function webpackExternalsAsStringArray({
   peerOnly,
 }: GetAllWebpackExternalsOptions = {}) {
-  const activeApp = getActiveApp();
   const { allApps } = getGlobalConfig();
   let externals: string[] = [];
 

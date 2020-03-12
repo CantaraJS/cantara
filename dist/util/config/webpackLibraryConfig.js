@@ -19,7 +19,6 @@ var cssLoaders_1 = __importDefault(require("./common/cssLoaders"));
 var WebpackNotifierPlugin = require('webpack-notifier');
 var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 var webpackMerge = require('webpack-merge');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -68,12 +67,6 @@ function createLibraryWebpackConfig(_a) {
         },
         plugins: [
             noChecks
-                ? undefined
-                : new ForkTsCheckerWebpackPlugin({
-                    tsconfig: path_1.default.join(app.paths.root, '.tsconfig.local.json'),
-                    watch: app.paths.src,
-                }),
-            noChecks
                 ? new CleanWebpackPlugin({
                     cleanOnceBeforeBuildPatterns: [app.paths.build],
                     dangerouslyAllowCleanPatternsOutsideProject: true,
@@ -83,9 +76,6 @@ function createLibraryWebpackConfig(_a) {
             noChecks ? undefined : new WebpackNotifierPlugin(),
             new CaseSensitivePathsPlugin(),
             new FriendlyErrorsWebpackPlugin(),
-            libraryTarget === 'commonjs2'
-                ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
-                : undefined,
         ].filter(Boolean),
         module: {
             rules: __spreadArrays(cssLoaders_1.default({ useExtractLoader: false })),
@@ -104,7 +94,7 @@ function createLibraryWebpackConfig(_a) {
             rules: [
                 {
                     test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
-                    type: 'javascript/esm',
+                    // type: 'javascript/esm',
                     use: {
                         loader: 'babel-loader',
                         options: babelReactConfig_1.default('production'),

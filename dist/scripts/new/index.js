@@ -109,7 +109,7 @@ function createNewAppOrPackage(_a) {
                         destinationPath = path_1.default.join(projectDir, 'node-apps', name);
                         templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/serverless');
                     }
-                    if (type === 'package') {
+                    if (type === 'js-package') {
                         destinationPath = path_1.default.join(projectDir, 'packages', name);
                         templateFolderPath = path_1.default.join(staticFolderPath, 'app-templates/js-package');
                     }

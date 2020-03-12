@@ -11,7 +11,6 @@ import getCssLoaders from './common/cssLoaders';
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -73,12 +72,6 @@ export default function createLibraryWebpackConfig({
     },
     plugins: [
       noChecks
-        ? undefined
-        : new ForkTsCheckerWebpackPlugin({
-            tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
-            watch: app.paths.src,
-          }),
-      noChecks
         ? new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: [app.paths.build],
             dangerouslyAllowCleanPatternsOutsideProject: true,
@@ -110,7 +103,7 @@ export default function createLibraryWebpackConfig({
       rules: [
         {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
-          type: 'javascript/esm',
+          // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
             options: getBabelConfig('production'),

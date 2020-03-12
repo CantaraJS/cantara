@@ -26,6 +26,12 @@ export interface CantaraApplicationMetaInformation {
    * in the current environment's env file
    */
   env?: string[];
+  /**
+   * If set to true, no types will
+   * be generated. Only applies to
+   * packages.
+   */
+  skipTypeGeneration?: boolean;
 }
 
 export interface CantaraApplication {

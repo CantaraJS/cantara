@@ -130,11 +130,13 @@ export function configureCantara(config: CantaraInitialConfig) {
   const tempFolder = path.join(staticFilesPath, '.temp');
   const projectDir = config.projectDir || process.cwd();
 
-  const allApps = getAllApps({
-    rootDir: projectDir,
-    stage: config.stage,
-    activeAppName: config.currentCommand.appname,
-  });
+  const allApps = config.currentCommand.appname
+    ? getAllApps({
+        rootDir: projectDir,
+        stage: config.stage,
+        activeAppName: config.currentCommand.appname,
+      })
+    : [];
   const currentActiveApp = config.currentCommand.appname
     ? allApps.find(app => app.name === config.currentCommand.appname)
     : undefined;

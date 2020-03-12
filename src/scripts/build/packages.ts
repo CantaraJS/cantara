@@ -29,23 +29,27 @@ export default async function buildPackage(app: CantaraApplication) {
       projectDir,
       aliases: { appDependencyAliases, packageAliases },
     },
+    internalPaths: { root: cantaraRoot },
   } = getGlobalConfig();
   const allAliases = { ...appDependencyAliases, ...packageAliases };
+
   const commonOptions = {
     alias: allAliases,
     app,
     projectDir,
     include,
   };
+
   const webpackCommonJsConfig = createLibraryWebpackConfig({
     ...commonOptions,
     libraryTarget: 'commonjs2',
+    noChecks: true,
   });
 
   const webpackUmdConfig = createLibraryWebpackConfig({
     ...commonOptions,
     libraryTarget: 'umd',
-    noChecks: true,
+    noChecks: false,
   });
 
   const { libraryTargets = ['umd', 'commonjs'] } = app.meta;
@@ -57,11 +61,18 @@ export default async function buildPackage(app: CantaraApplication) {
     await compile(webpackUmdConfig);
   }
 
-  // Generate types
-  await execCmd('tsc --project ./.tsconfig.local.json', {
-    workingDirectory: app.paths.root,
-    redirectIo: true,
-  });
+  if (!app.meta.skipTypeGeneration) {
+    // Generate types
+    const tsConfigPath = path.join(app.paths.root, '.tsconfig.local.json');
+    // Suppress error TS2742, which often occurrs when
+    // the same typedefinitions are found in packages
+    // which require each other. For Cantara projects, this
+    // is no problem, as long as the definitions are there.
+    await execCmd(`tsc-silent --project ${tsConfigPath} --suppress 2742@`, {
+      workingDirectory: cantaraRoot,
+      redirectIo: true,
+    });
+  }
 
   // Set correct path to index.js in packageJson's "main" field
   const packageJsonPath = path.join(app.paths.root, 'package.json');

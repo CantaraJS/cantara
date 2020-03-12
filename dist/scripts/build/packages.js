@@ -72,11 +72,11 @@ function compile(config) {
 }
 function buildPackage(app) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, include, _b, projectDir, _c, appDependencyAliases, packageAliases, allAliases, commonOptions, webpackCommonJsConfig, webpackUmdConfig, _d, libraryTargets, packageJsonPath, packageJson, newPackageJson;
+        var _a, include, _b, projectDir, _c, appDependencyAliases, packageAliases, cantaraRoot, allAliases, commonOptions, webpackCommonJsConfig, webpackUmdConfig, _d, libraryTargets, tsConfigPath, packageJsonPath, packageJson, newPackageJson;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
-                    _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, projectDir = _b.projectDir, _c = _b.aliases, appDependencyAliases = _c.appDependencyAliases, packageAliases = _c.packageAliases;
+                    _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, projectDir = _b.projectDir, _c = _b.aliases, appDependencyAliases = _c.appDependencyAliases, packageAliases = _c.packageAliases, cantaraRoot = _a.internalPaths.root;
                     allAliases = __assign(__assign({}, appDependencyAliases), packageAliases);
                     commonOptions = {
                         alias: allAliases,
@@ -84,8 +84,9 @@ function buildPackage(app) {
                         projectDir: projectDir,
                         include: include,
                     };
-                    webpackCommonJsConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'commonjs2' }));
-                    webpackUmdConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'umd', noChecks: true }));
+                    console.log('BUNDLEANALYZER!!');
+                    webpackCommonJsConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'commonjs2', noChecks: true }));
+                    webpackUmdConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'umd', noChecks: false }));
                     _d = app.meta.libraryTargets, libraryTargets = _d === void 0 ? ['umd', 'commonjs'] : _d;
                     if (!libraryTargets.includes('commonjs')) return [3 /*break*/, 2];
                     return [4 /*yield*/, compile(webpackCommonJsConfig)];
@@ -98,14 +99,21 @@ function buildPackage(app) {
                 case 3:
                     _e.sent();
                     _e.label = 4;
-                case 4: 
-                // Generate types
-                return [4 /*yield*/, exec_1.default('tsc --project ./.tsconfig.local.json', {
-                        workingDirectory: app.paths.root,
-                        redirectIo: true,
-                    })];
+                case 4:
+                    tsConfigPath = path_1.default.join(app.paths.root, '.tsconfig.local.json');
+                    // Suppress error TS2742, which often occurrs when
+                    // the same typedefinitions are found in packages
+                    // which require each other. For Cantara projects, this
+                    // is no problem, as long as the definitions are there.
+                    return [4 /*yield*/, exec_1.default("tsc-silent --project " + tsConfigPath + " --suppress 2742@", {
+                            workingDirectory: cantaraRoot,
+                            redirectIo: true,
+                        })];
                 case 5:
-                    // Generate types
+                    // Suppress error TS2742, which often occurrs when
+                    // the same typedefinitions are found in packages
+                    // which require each other. For Cantara projects, this
+                    // is no problem, as long as the definitions are there.
                     _e.sent();
                     packageJsonPath = path_1.default.join(app.paths.root, 'package.json');
                     packageJson = fs_1.readFileAsJSON(packageJsonPath);

@@ -17,7 +17,7 @@ interface CreateNewAppOrPackageOptions extends CreateNewOptions {
     | 'react-app'
     | 'node-app'
     | 'serverless'
-    | 'package'
+    | 'js-package'
     | 'react-component'
     | 'react-cmp';
 }
@@ -86,7 +86,7 @@ export default async function createNewAppOrPackage({
       'app-templates/serverless',
     );
   }
-  if (type === 'package') {
+  if (type === 'js-package') {
     destinationPath = path.join(projectDir, 'packages', name);
     templateFolderPath = path.join(
       staticFolderPath,
