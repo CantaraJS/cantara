@@ -76,6 +76,9 @@ function createLibraryWebpackConfig(_a) {
             noChecks ? undefined : new WebpackNotifierPlugin(),
             new CaseSensitivePathsPlugin(),
             new FriendlyErrorsWebpackPlugin(),
+            libraryTarget === 'commonjs2'
+                ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
+                : undefined,
         ].filter(Boolean),
         module: {
             rules: __spreadArrays(cssLoaders_1.default({ useExtractLoader: false })),

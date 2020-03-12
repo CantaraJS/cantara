@@ -72,7 +72,7 @@ function compile(config) {
 }
 function buildPackage(app) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, include, _b, projectDir, _c, appDependencyAliases, packageAliases, cantaraRoot, allAliases, commonOptions, webpackCommonJsConfig, webpackUmdConfig, _d, libraryTargets, tsConfigPath, packageJsonPath, packageJson, newPackageJson;
+        var _a, include, _b, projectDir, _c, appDependencyAliases, packageAliases, cantaraRoot, allAliases, commonOptions, webpackCommonJsConfig, webpackUmdConfig, _d, libraryTargets, tsConfigPath, suppress, tsPath, packageJsonPath, packageJson, newPackageJson;
         return __generator(this, function (_e) {
             switch (_e.label) {
                 case 0:
@@ -84,7 +84,6 @@ function buildPackage(app) {
                         projectDir: projectDir,
                         include: include,
                     };
-                    console.log('BUNDLEANALYZER!!');
                     webpackCommonJsConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'commonjs2', noChecks: true }));
                     webpackUmdConfig = webpackLibraryConfig_1.default(__assign(__assign({}, commonOptions), { libraryTarget: 'umd', noChecks: false }));
                     _d = app.meta.libraryTargets, libraryTargets = _d === void 0 ? ['umd', 'commonjs'] : _d;
@@ -100,21 +99,20 @@ function buildPackage(app) {
                     _e.sent();
                     _e.label = 4;
                 case 4:
+                    if (!!app.meta.skipTypeGeneration) return [3 /*break*/, 6];
                     tsConfigPath = path_1.default.join(app.paths.root, '.tsconfig.local.json');
-                    // Suppress error TS2742, which often occurrs when
-                    // the same typedefinitions are found in packages
-                    // which require each other. For Cantara projects, this
-                    // is no problem, as long as the definitions are there.
-                    return [4 /*yield*/, exec_1.default("tsc-silent --project " + tsConfigPath + " --suppress 2742@", {
-                            workingDirectory: cantaraRoot,
+                    suppress = app.meta.suppressTsErrors
+                        ? " --suppress " + app.meta.suppressTsErrors.join(',') + "@"
+                        : '';
+                    tsPath = path_1.default.join(cantaraRoot, 'node_modules/typescript/lib/typescript.js');
+                    return [4 /*yield*/, exec_1.default("tsc-silent --compiler " + tsPath + " --project " + tsConfigPath + suppress, {
+                            workingDirectory: app.paths.root,
                             redirectIo: true,
                         })];
                 case 5:
-                    // Suppress error TS2742, which often occurrs when
-                    // the same typedefinitions are found in packages
-                    // which require each other. For Cantara projects, this
-                    // is no problem, as long as the definitions are there.
                     _e.sent();
+                    _e.label = 6;
+                case 6:
                     packageJsonPath = path_1.default.join(app.paths.root, 'package.json');
                     packageJson = fs_1.readFileAsJSON(packageJsonPath);
                     newPackageJson = __assign(__assign({}, packageJson), { main: "./" + slash_1.default(path_1.default.join(path_1.default.relative(app.paths.root, app.paths.build), app.name, 'src', 'index.js')) });

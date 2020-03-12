@@ -32,6 +32,11 @@ export interface CantaraApplicationMetaInformation {
    * packages.
    */
   skipTypeGeneration?: boolean;
+  /**
+   * List of TS errors to suppress when
+   * generating types for packages.
+   */
+  suppressTsErrors?: string[];
 }
 
 export interface CantaraApplication {

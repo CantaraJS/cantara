@@ -64,14 +64,20 @@ export default async function buildPackage(app: CantaraApplication) {
   if (!app.meta.skipTypeGeneration) {
     // Generate types
     const tsConfigPath = path.join(app.paths.root, '.tsconfig.local.json');
-    // Suppress error TS2742, which often occurrs when
-    // the same typedefinitions are found in packages
-    // which require each other. For Cantara projects, this
-    // is no problem, as long as the definitions are there.
-    await execCmd(`tsc-silent --project ${tsConfigPath} --suppress 2742@`, {
-      workingDirectory: cantaraRoot,
-      redirectIo: true,
-    });
+    const suppress = app.meta.suppressTsErrors
+      ? ` --suppress ${app.meta.suppressTsErrors.join(',')}@`
+      : '';
+    const tsPath = path.join(
+      cantaraRoot,
+      'node_modules/typescript/lib/typescript.js',
+    );
+    await execCmd(
+      `tsc-silent --compiler ${tsPath} --project ${tsConfigPath}${suppress}`,
+      {
+        workingDirectory: app.paths.root,
+        redirectIo: true,
+      },
+    );
   }
 
   // Set correct path to index.js in packageJson's "main" field
