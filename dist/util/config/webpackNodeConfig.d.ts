@@ -1,3 +1,7 @@
 import { Configuration } from 'webpack';
 import { CreateWebpackConfigParams } from './types';
-export default function createNodeWebpackConfig({ app, mode, alias, env, include, }: CreateWebpackConfigParams): Configuration;
+interface CreateNodeWebpackConfigOptions extends CreateWebpackConfigParams {
+    nodemonOptions?: string;
+}
+export default function createNodeWebpackConfig({ app, mode, alias, env, include, nodemonOptions, }: CreateNodeWebpackConfigOptions): Configuration;
+export {};

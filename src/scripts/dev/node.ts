@@ -9,6 +9,7 @@ export function startNodeAppDevelopmentServer() {
     runtime: {
       projectDir,
       aliases: { packageAliases },
+      currentCommand: { additionalCliOptions },
     },
   } = getGlobalConfig();
 
@@ -20,6 +21,7 @@ export function startNodeAppDevelopmentServer() {
     projectDir,
     env: activeApp.env,
     include,
+    nodemonOptions: additionalCliOptions,
   });
 
   const compiler = webpack(webpackConfig);

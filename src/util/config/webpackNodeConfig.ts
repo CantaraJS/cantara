@@ -1,5 +1,6 @@
 import webpack, { Configuration } from 'webpack';
 import { CreateWebpackConfigParams } from './types';
+import fs from 'fs';
 import path from 'path';
 import babelConfig from './babelNodeConfig';
 import getAllWebpackExternals from '../externals';
@@ -12,23 +13,32 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
+interface CreateNodeWebpackConfigOptions extends CreateWebpackConfigParams {
+  nodemonOptions?: string;
+}
+
 export default function createNodeWebpackConfig({
   app,
   mode = 'development',
   alias,
   env = {},
   include = [],
-}: CreateWebpackConfigParams): Configuration {
+  nodemonOptions = '--inspect',
+}: CreateNodeWebpackConfigOptions): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
 
   const externals = getAllWebpackExternals();
+
+  const doesStaticFolderExist =
+    app.paths.static && fs.existsSync(app.paths.static);
 
   return {
     entry: app.paths.src,
     output: { path: app.paths.build },
     node: { __dirname: false, __filename: false },
     target: 'node',
+    devtool: mode === 'development' ? 'eval-source-map' : undefined,
     mode,
     externals,
     resolve: {
@@ -75,7 +85,7 @@ export default function createNodeWebpackConfig({
       isDevelopment
         ? new NodemonPlugin({
             ext: 'js,graphql,ts,ps1,json,yaml',
-            nodeArgs: ['--inspect'],
+            nodeArgs: [nodemonOptions],
             watch: app.paths.build,
           })
         : undefined,
@@ -86,12 +96,14 @@ export default function createNodeWebpackConfig({
             dry: false,
           })
         : undefined,
-      new CopyPlugin([
-        {
-          from: slash(app.paths.static || ''),
-          to: slash(app.paths.build),
-        },
-      ]),
+      doesStaticFolderExist
+        ? new CopyPlugin([
+            {
+              from: slash(app.paths.static || ''),
+              to: slash(app.paths.build),
+            },
+          ])
+        : undefined,
     ].filter(Boolean),
   };
 }

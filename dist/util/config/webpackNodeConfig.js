@@ -22,7 +22,7 @@ var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 var CopyPlugin = require('copy-webpack-plugin');
 function createNodeWebpackConfig(_a) {
-    var app = _a.app, _b = _a.mode, mode = _b === void 0 ? 'development' : _b, alias = _a.alias, _c = _a.env, env = _c === void 0 ? {} : _c, _d = _a.include, include = _d === void 0 ? [] : _d;
+    var app = _a.app, _b = _a.mode, mode = _b === void 0 ? 'development' : _b, alias = _a.alias, _c = _a.env, env = _c === void 0 ? {} : _c, _d = _a.include, include = _d === void 0 ? [] : _d, _e = _a.nodemonOptions, nodemonOptions = _e === void 0 ? '--inspect' : _e;
     var isDevelopment = mode === 'development';
     var isProduction = mode === 'production';
     var externals = externals_1.default();
@@ -31,6 +31,7 @@ function createNodeWebpackConfig(_a) {
         output: { path: app.paths.build },
         node: { __dirname: false, __filename: false },
         target: 'node',
+        devtool: mode === 'development' ? 'eval-source-map' : undefined,
         mode: mode,
         externals: externals,
         resolve: {
@@ -77,7 +78,7 @@ function createNodeWebpackConfig(_a) {
             isDevelopment
                 ? new NodemonPlugin({
                     ext: 'js,graphql,ts,ps1,json,yaml',
-                    nodeArgs: ['--inspect'],
+                    nodeArgs: [nodemonOptions],
                     watch: app.paths.build,
                 })
                 : undefined,

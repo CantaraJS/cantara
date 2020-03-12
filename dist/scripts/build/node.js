@@ -44,9 +44,9 @@ var cantara_config_1 = __importDefault(require("../../cantara-config"));
 var webpackNodeConfig_1 = __importDefault(require("../../util/config/webpackNodeConfig"));
 function buildNodeApp(app) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, include, _b, projectDir, packageAliases, webpackConfig, compiler;
+        var _a, include, _b, projectDir, packageAliases, additionalCliOptions, webpackConfig, compiler;
         return __generator(this, function (_c) {
-            _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, projectDir = _b.projectDir, packageAliases = _b.aliases.packageAliases;
+            _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, projectDir = _b.projectDir, packageAliases = _b.aliases.packageAliases, additionalCliOptions = _b.currentCommand.additionalCliOptions;
             webpackConfig = webpackNodeConfig_1.default({
                 alias: packageAliases,
                 app: app,
@@ -54,6 +54,7 @@ function buildNodeApp(app) {
                 mode: 'production',
                 projectDir: projectDir,
                 include: include,
+                nodemonOptions: additionalCliOptions,
             });
             compiler = webpack_1.default(webpackConfig);
             compiler.run(function (err) {

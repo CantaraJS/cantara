@@ -9,6 +9,7 @@ export default async function buildNodeApp(app: CantaraApplication) {
     runtime: {
       projectDir,
       aliases: { packageAliases },
+      currentCommand: { additionalCliOptions },
     },
   } = getGlobalConfig();
 
@@ -19,6 +20,7 @@ export default async function buildNodeApp(app: CantaraApplication) {
     mode: 'production',
     projectDir,
     include,
+    nodemonOptions: additionalCliOptions,
   });
 
   const compiler = webpack(webpackConfig);
