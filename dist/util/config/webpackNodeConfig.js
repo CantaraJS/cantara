@@ -11,6 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var webpack_1 = __importDefault(require("webpack"));
+var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 var babelNodeConfig_1 = __importDefault(require("./babelNodeConfig"));
 var externals_1 = __importDefault(require("../externals"));
@@ -26,6 +27,7 @@ function createNodeWebpackConfig(_a) {
     var isDevelopment = mode === 'development';
     var isProduction = mode === 'production';
     var externals = externals_1.default();
+    var doesStaticFolderExist = app.paths.static && fs_1.default.existsSync(app.paths.static);
     return {
         entry: app.paths.src,
         output: { path: app.paths.build },
@@ -89,12 +91,14 @@ function createNodeWebpackConfig(_a) {
                     dry: false,
                 })
                 : undefined,
-            new CopyPlugin([
-                {
-                    from: slash_1.default(app.paths.static || ''),
-                    to: slash_1.default(app.paths.build),
-                },
-            ]),
+            doesStaticFolderExist
+                ? new CopyPlugin([
+                    {
+                        from: slash_1.default(app.paths.static || ''),
+                        to: slash_1.default(app.paths.build),
+                    },
+                ])
+                : undefined,
         ].filter(Boolean),
     };
 }

@@ -26,6 +26,8 @@ var fs_1 = require("fs");
 var path_1 = __importDefault(require("path"));
 var webpackCommonReactConfig_1 = __importDefault(require("./common/webpackCommonReactConfig"));
 var cssLoaders_1 = __importDefault(require("./common/cssLoaders"));
+var slash_1 = __importDefault(require("slash"));
+var CopyPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var WebpackPwaManifest = require('webpack-pwa-manifest');
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
@@ -56,6 +58,7 @@ function createReactWebpackConfig(_a) {
             'react-dom': path_1.default.join(app.paths.root, 'node_modules', 'react-dom'),
         }
         : {};
+    var doesStaticFolderExist = app.paths.static && fs_1.existsSync(app.paths.static);
     var webpackReactAppConfig = {
         resolve: {
             alias: __assign(__assign({}, alias), reactDependencyAliases),
@@ -118,6 +121,14 @@ function createReactWebpackConfig(_a) {
                     dangerouslyAllowCleanPatternsOutsideProject: true,
                     dry: false,
                 })
+                : undefined,
+            doesStaticFolderExist
+                ? new CopyPlugin([
+                    {
+                        from: slash_1.default(app.paths.static || ''),
+                        to: slash_1.default(app.paths.build),
+                    },
+                ])
                 : undefined,
         ].filter(Boolean),
         module: {

@@ -16,7 +16,6 @@ var webpackNodeConfig_1 = __importDefault(require("../../util/config/webpackNode
 function startNodeAppDevelopmentServer() {
     var _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, projectDir = _b.projectDir, packageAliases = _b.aliases.packageAliases, additionalCliOptions = _b.currentCommand.additionalCliOptions;
     var activeApp = cantara_config_1.getActiveApp();
-    console.log({ additionalCliOptions: additionalCliOptions });
     var webpackConfig = webpackNodeConfig_1.default({
         app: activeApp,
         alias: packageAliases,

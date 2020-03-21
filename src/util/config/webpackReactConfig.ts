@@ -5,7 +5,9 @@ import path from 'path';
 import { CreateWebpackConfigParams } from './types';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import getCssLoaders from './common/cssLoaders';
+import slash from 'slash';
 
+const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
@@ -45,6 +47,9 @@ export default function createReactWebpackConfig({
           'react-dom': path.join(app.paths.root, 'node_modules', 'react-dom'),
         }
       : {};
+
+  const doesStaticFolderExist =
+    app.paths.static && existsSync(app.paths.static);
 
   const webpackReactAppConfig: Configuration = {
     resolve: {
@@ -118,6 +123,14 @@ export default function createReactWebpackConfig({
             dangerouslyAllowCleanPatternsOutsideProject: true,
             dry: false,
           })
+        : undefined,
+      doesStaticFolderExist
+        ? new CopyPlugin([
+            {
+              from: slash(app.paths.static || ''),
+              to: slash(app.paths.build),
+            },
+          ])
         : undefined,
     ].filter(Boolean),
     module: {
