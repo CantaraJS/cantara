@@ -88,7 +88,7 @@ export default async function buildPackage(app: CantaraApplication) {
     main: `./${slash(
       path.join(
         path.relative(app.paths.root, app.paths.build),
-        app.name,
+        path.basename(app.name),
         'src',
         'index.js',
       ),

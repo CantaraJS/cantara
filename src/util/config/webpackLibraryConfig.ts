@@ -58,10 +58,12 @@ export default function createLibraryWebpackConfig({
     output: {
       // publicPath: '/',
       filename:
-        libraryTarget === 'commonjs2' ? 'index.js' : `${app.name}.umd.min.js`,
+        libraryTarget === 'commonjs2'
+          ? 'index.js'
+          : `${path.basename(app.name)}.umd.min.js`,
       path:
         libraryTarget === 'commonjs2'
-          ? path.join(app.paths.build, app.name, 'src')
+          ? path.join(app.paths.build, path.basename(app.name), 'src')
           : app.paths.build,
       library: camalize(app.name),
       /** For bundlers and NodeJS, CommonJS is used.
