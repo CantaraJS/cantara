@@ -38,6 +38,7 @@ async function createReactComponent({ name }: CreateNewOptions) {
     tempFolderPath,
     'react-component-app-template',
   );
+
   if (existsSync(templateFolderPath)) {
     await del(templateFolderPath);
   }
@@ -103,6 +104,8 @@ export default async function createNewAppOrPackage({
       `${destinationPath} already exists! Delete the folder if you want to override it.`,
     );
   }
+
+  mkdirSync(destinationPath, { recursive: true });
 
   await ncp(templateFolderPath, destinationPath);
 
