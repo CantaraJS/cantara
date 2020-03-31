@@ -1,25 +1,17 @@
 "use strict";
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var webpack_1 = __importDefault(require("webpack"));
-var path_1 = __importDefault(require("path"));
-var babelReactConfig_1 = __importDefault(require("../babelReactConfig"));
-var FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-var OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-var cssnano = require('cssnano');
-function createCommonReactWebpackConfig(_a) {
-    var _b = _a.mode, mode = _b === void 0 ? 'development' : _b, app = _a.app, _c = _a.env, env = _c === void 0 ? {} : _c, _d = _a.include, include = _d === void 0 ? [] : _d, alwaysInlineImages = _a.alwaysInlineImages;
-    var isProduction = mode === 'production';
+const webpack_1 = __importDefault(require("webpack"));
+const path_1 = __importDefault(require("path"));
+const babelReactConfig_1 = __importDefault(require("../babelReactConfig"));
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const cssnano = require('cssnano');
+function createCommonReactWebpackConfig({ mode = 'development', app, env = {}, include = [], alwaysInlineImages, }) {
+    const isProduction = mode === 'production';
     return {
         entry: path_1.default.join(app.paths.src, 'index.tsx'),
         resolve: {
@@ -34,7 +26,7 @@ function createCommonReactWebpackConfig(_a) {
                 '.tsx',
             ],
         },
-        mode: mode,
+        mode,
         plugins: [
             new CaseSensitivePathsPlugin(),
             new FriendlyErrorsWebpackPlugin(),
@@ -69,7 +61,7 @@ function createCommonReactWebpackConfig(_a) {
                         loader: 'babel-loader',
                         options: babelReactConfig_1.default(mode),
                     },
-                    include: __spreadArrays([app.paths.src], include),
+                    include: [app.paths.src, ...include],
                 },
                 {
                     test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],

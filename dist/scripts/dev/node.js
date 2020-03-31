@@ -10,22 +10,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var webpack_1 = __importDefault(require("webpack"));
-var cantara_config_1 = __importStar(require("../../cantara-config"));
-var webpackNodeConfig_1 = __importDefault(require("../../util/config/webpackNodeConfig"));
+const webpack_1 = __importDefault(require("webpack"));
+const cantara_config_1 = __importStar(require("../../cantara-config"));
+const webpackNodeConfig_1 = __importDefault(require("../../util/config/webpackNodeConfig"));
 function startNodeAppDevelopmentServer() {
-    var _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, projectDir = _b.projectDir, packageAliases = _b.aliases.packageAliases, additionalCliOptions = _b.currentCommand.additionalCliOptions;
-    var activeApp = cantara_config_1.getActiveApp();
-    var webpackConfig = webpackNodeConfig_1.default({
+    const { allPackages: { include }, runtime: { projectDir, aliases: { packageAliases }, currentCommand: { additionalCliOptions }, }, } = cantara_config_1.default();
+    const activeApp = cantara_config_1.getActiveApp();
+    const webpackConfig = webpackNodeConfig_1.default({
         app: activeApp,
         alias: packageAliases,
-        projectDir: projectDir,
+        projectDir,
         env: activeApp.env,
-        include: include,
+        include,
         nodemonOptions: additionalCliOptions,
     });
-    var compiler = webpack_1.default(webpackConfig);
-    compiler.watch({}, function (err, stats) {
+    const compiler = webpack_1.default(webpackConfig);
+    compiler.watch({}, (err, stats) => {
         if (err) {
             throw new Error('Build error.');
         }

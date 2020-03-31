@@ -1,17 +1,10 @@
 "use strict";
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var MiniCssExtractPlugin = require('mini-css-extract-plugin');
-var postcssPresetEnv = require('postcss-preset-env');
-function getCssLoaders(_a) {
-    var useExtractLoader = _a.useExtractLoader;
-    var cssLoaders = function (modules, extractCss) { return __spreadArrays((extractCss ? [MiniCssExtractPlugin.loader] : ['style-loader']), [
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const postcssPresetEnv = require('postcss-preset-env');
+function getCssLoaders({ useExtractLoader, }) {
+    const cssLoaders = (modules, extractCss) => [
+        ...(extractCss ? [MiniCssExtractPlugin.loader] : ['style-loader']),
         {
             loader: 'css-loader',
             options: modules
@@ -28,10 +21,10 @@ function getCssLoaders(_a) {
             loader: 'postcss-loader',
             options: {
                 ident: 'postcss',
-                plugins: function () { return [postcssPresetEnv()]; },
+                plugins: () => [postcssPresetEnv()],
             },
         },
-    ]); };
+    ];
     return [
         {
             test: /\.css$/,

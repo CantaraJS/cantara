@@ -1,36 +1,16 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs_1 = require("fs");
-var path = require("path");
-var fs_2 = require("../util/fs");
-var envvars_1 = __importDefault(require("./envvars"));
-var isDirectory = function (source) { return fs_1.lstatSync(source).isDirectory(); };
-var getDirectories = function (source) {
-    return fs_1.readdirSync(source)
-        .map(function (name) { return path.join(source, name); })
-        .filter(isDirectory);
-};
+const fs_1 = require("fs");
+const path = require("path");
+const fs_2 = require("../util/fs");
+const envvars_1 = __importDefault(require("./envvars"));
+const isDirectory = (source) => fs_1.lstatSync(source).isDirectory();
+const getDirectories = (source) => fs_1.readdirSync(source)
+    .map(name => path.join(source, name))
+    .filter(isDirectory);
 /**
  * Returns node_modules path of
  * Cantara's dependecies,
@@ -42,51 +22,53 @@ var getDirectories = function (source) {
  * absolute path.
  */
 function getCantaraDepenciesInstallationPath() {
-    var absolutePath = require.resolve('@babel/core');
-    var nodeModulesPos = absolutePath.lastIndexOf('node_modules');
-    var nodeModulesPath = absolutePath.slice(0, nodeModulesPos + 'node_modules'.length);
+    const absolutePath = require.resolve('@babel/core');
+    const nodeModulesPos = absolutePath.lastIndexOf('node_modules');
+    const nodeModulesPath = absolutePath.slice(0, nodeModulesPos + 'node_modules'.length);
     return nodeModulesPath;
 }
 exports.getCantaraDepenciesInstallationPath = getCantaraDepenciesInstallationPath;
 /** Requires that at least one of the specified folders exist */
 function requireAtLeastOneFolder(paths) {
-    var doesOneFolderExist = paths
-        .map(function (folderPath) { return fs_1.existsSync(folderPath); })
+    const doesOneFolderExist = paths
+        .map(folderPath => fs_1.existsSync(folderPath))
         .includes(true);
     if (!doesOneFolderExist) {
         throw new Error('No apps or packages folders were detected!');
     }
 }
 /** Returns list of all React Apps, Packages and Node Apps */
-function getAllApps(_a) {
-    var rootDir = _a.rootDir, stage = _a.stage, activeAppName = _a.activeAppName;
-    var FOLDER_NAMES = {
+async function getAllApps({ rootDir, stage, activeAppName, }) {
+    const FOLDER_NAMES = {
         REACT_APPS: 'react-apps',
         NODE_APPS: 'node-apps',
         PACKAGES: 'packages',
     };
-    var reactAppsRootDir = path.join(rootDir, FOLDER_NAMES.REACT_APPS);
-    var packagesAppsRootDir = path.join(rootDir, FOLDER_NAMES.PACKAGES);
-    var nodeAppsRootDir = path.join(rootDir, FOLDER_NAMES.NODE_APPS);
+    const reactAppsRootDir = path.join(rootDir, FOLDER_NAMES.REACT_APPS);
+    const packagesAppsRootDir = path.join(rootDir, FOLDER_NAMES.PACKAGES);
+    const nodeAppsRootDir = path.join(rootDir, FOLDER_NAMES.NODE_APPS);
     requireAtLeastOneFolder([
         reactAppsRootDir,
         packagesAppsRootDir,
         nodeAppsRootDir,
     ]);
-    var allAppsDirectories = __spreadArrays(getDirectories(reactAppsRootDir).map(function (dir) { return ({ dir: dir, type: 'react' }); }), getDirectories(packagesAppsRootDir).map(function (dir) { return ({
-        dir: dir,
-        type: 'package',
-    }); }), getDirectories(nodeAppsRootDir).map(function (dir) { return ({ dir: dir, type: 'node' }); }));
-    var allApps = allAppsDirectories.map(function (_a) {
-        var dir = _a.dir, type = _a.type;
-        var typeToUse = type;
-        var displayName = path.basename(dir);
-        var appName = displayName;
-        var userAddedMetadata = undefined;
-        var packageJsonPath = path.join(dir, 'package.json');
-        var packageJsonName = '';
+    const allAppsDirectories = [
+        ...getDirectories(reactAppsRootDir).map(dir => ({ dir, type: 'react' })),
+        ...getDirectories(packagesAppsRootDir).map(dir => ({
+            dir,
+            type: 'package',
+        })),
+        ...getDirectories(nodeAppsRootDir).map(dir => ({ dir, type: 'node' })),
+    ];
+    const allApps = await Promise.all(allAppsDirectories.map(async ({ dir, type }) => {
+        let typeToUse = type;
+        let displayName = path.basename(dir);
+        let appName = displayName;
+        let userAddedMetadata = undefined;
+        const packageJsonPath = path.join(dir, 'package.json');
+        let packageJsonName = '';
         if (fs_1.existsSync(packageJsonPath)) {
-            var packageJSON = JSON.parse(fs_1.readFileSync(packageJsonPath).toString());
+            const packageJSON = JSON.parse(fs_1.readFileSync(packageJsonPath).toString());
             packageJsonName = packageJSON.name;
         }
         if (packageJsonName) {
@@ -100,7 +82,7 @@ function getAllApps(_a) {
             if (packageJsonName) {
                 appName = packageJsonName;
             }
-            var packageSrc = path.join(dir, 'src');
+            const packageSrc = path.join(dir, 'src');
             typeToUse = fs_1.existsSync(path.join(packageSrc, 'index.tsx'))
                 ? 'react-component'
                 : 'js-package';
@@ -110,11 +92,12 @@ function getAllApps(_a) {
                 ? 'serverless'
                 : 'node';
         }
-        var cantaraConfigPath = path.join(dir, 'cantara.config.js');
+        const cantaraConfigPath = path.join(dir, 'cantara.config.js');
         if (fs_1.existsSync(cantaraConfigPath)) {
             userAddedMetadata = require(cantaraConfigPath);
         }
-        var envVars = envvars_1.default({
+        const envVars = await envvars_1.default({
+            projectRootDir: rootDir,
             appRootDir: dir,
             currentStage: stage,
             expectedEnvVars: userAddedMetadata ? userAddedMetadata.env || [] : [],
@@ -137,16 +120,30 @@ function getAllApps(_a) {
                 assets: path.join(dir, 'assets'),
                 static: path.join(dir, 'static'),
             },
-            meta: __assign({ displayName: displayName }, userAddedMetadata),
+            meta: {
+                displayName,
+                ...userAddedMetadata,
+            },
         };
-    });
+    }));
     // Require index.ts(x) file to exist for every app
-    allApps.forEach(function (app) {
-        var indexTsFileExists = fs_1.existsSync(path.join(app.paths.src, 'index.ts'));
-        var indexTsxFileExists = fs_1.existsSync(path.join(app.paths.src, 'index.tsx'));
-        var doesIndexFileExist = indexTsFileExists || indexTsxFileExists;
+    // and react component
+    allApps.forEach(app => {
+        let doesIndexFileExist = false;
+        if (app.type === 'js-package') {
+            doesIndexFileExist = true;
+        }
+        if (app.type === 'node') {
+            doesIndexFileExist = fs_1.existsSync(path.join(app.paths.src, 'index.ts'));
+        }
+        if (app.type === 'react' || app.type === 'react-component') {
+            doesIndexFileExist = fs_1.existsSync(path.join(app.paths.src, 'index.tsx'));
+        }
+        if (app.type === 'serverless') {
+            doesIndexFileExist = fs_1.existsSync(path.join(app.paths.root, 'handler.js'));
+        }
         if (!doesIndexFileExist) {
-            throw new Error("Index file for \"" + app.name + "\" was not found. Please create it.");
+            throw new Error(`Entry file for "${app.name}" was not found. Please create it.`);
         }
     });
     return allApps;
@@ -156,15 +153,13 @@ exports.default = getAllApps;
  * in the project root. Here, Cantara specific secrets can be stored.
  * E.g. AWS keys. Can also be passed in as environment variables.
  */
-function loadSecrets(_a) {
-    var projectDir = _a.projectDir, identifiers = _a.secrets;
-    var secretsFilePath = path.join(projectDir, '.secrets.json');
-    var secrets = {};
+function loadSecrets({ projectDir, secrets: identifiers, }) {
+    const secretsFilePath = path.join(projectDir, '.secrets.json');
+    let secrets = {};
     if (fs_1.existsSync(secretsFilePath)) {
         secrets = fs_2.readFileAsJSON(secretsFilePath);
     }
-    for (var _i = 0, identifiers_1 = identifiers; _i < identifiers_1.length; _i++) {
-        var secretId = identifiers_1[_i];
+    for (const secretId of identifiers) {
         if (!secrets[secretId]) {
             secrets[secretId] = process.env[secretId];
         }

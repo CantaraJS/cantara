@@ -17,7 +17,7 @@ interface GetAllAppsOptions {
     activeAppName?: string;
 }
 /** Returns list of all React Apps, Packages and Node Apps */
-export default function getAllApps({ rootDir, stage, activeAppName, }: GetAllAppsOptions): CantaraApplication[];
+export default function getAllApps({ rootDir, stage, activeAppName, }: GetAllAppsOptions): Promise<CantaraApplication[]>;
 interface LoadSecretsParams {
     projectDir: string;
     /** Array of secret identifiers, e.g. ['AWS_ACCESS_KEY_ID'] */

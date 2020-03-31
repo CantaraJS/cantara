@@ -31,7 +31,7 @@ export default async function initalizeCantara({
       ? deriveStageNameFromCmd(cmdName)
       : stageParam;
   const cantaraRootDir = path.join(__dirname, '..', '..');
-  configureCantara({
+  await configureCantara({
     additionalCliOptions,
     projectDir: userProjectPath,
     packageRootDir: cantaraRootDir,

@@ -51,11 +51,11 @@ interface GetAllAppsOptions {
 }
 
 /** Returns list of all React Apps, Packages and Node Apps */
-export default function getAllApps({
+export default async function getAllApps({
   rootDir,
   stage,
   activeAppName,
-}: GetAllAppsOptions): CantaraApplication[] {
+}: GetAllAppsOptions): Promise<CantaraApplication[]> {
   const FOLDER_NAMES: { [key: string]: string } = {
     REACT_APPS: 'react-apps',
     NODE_APPS: 'node-apps',
@@ -81,8 +81,8 @@ export default function getAllApps({
     ...getDirectories(nodeAppsRootDir).map(dir => ({ dir, type: 'node' })),
   ];
 
-  const allApps: CantaraApplication[] = allAppsDirectories.map(
-    ({ dir, type }) => {
+  const allApps: CantaraApplication[] = await Promise.all(
+    allAppsDirectories.map(async ({ dir, type }) => {
       let typeToUse: CantaraApplicationType = type as CantaraApplicationType;
       let displayName = path.basename(dir);
       let appName = displayName;
@@ -128,7 +128,8 @@ export default function getAllApps({
         userAddedMetadata = require(cantaraConfigPath);
       }
 
-      const envVars = loadAppEnvVars({
+      const envVars = await loadAppEnvVars({
+        projectRootDir: rootDir,
         appRootDir: dir,
         currentStage: stage,
         expectedEnvVars: userAddedMetadata ? userAddedMetadata.env || [] : [],
@@ -157,19 +158,29 @@ export default function getAllApps({
           ...userAddedMetadata,
         },
       };
-    },
+    }),
   );
 
   // Require index.ts(x) file to exist for every app
+  // and react component
   allApps.forEach(app => {
-    const indexTsFileExists = existsSync(path.join(app.paths.src, 'index.ts'));
-    const indexTsxFileExists = existsSync(
-      path.join(app.paths.src, 'index.tsx'),
-    );
-    const doesIndexFileExist = indexTsFileExists || indexTsxFileExists;
+    let doesIndexFileExist = false;
+    if (app.type === 'js-package') {
+      doesIndexFileExist = true;
+    }
+    if (app.type === 'node') {
+      doesIndexFileExist = existsSync(path.join(app.paths.src, 'index.ts'));
+    }
+    if (app.type === 'react' || app.type === 'react-component') {
+      doesIndexFileExist = existsSync(path.join(app.paths.src, 'index.tsx'));
+    }
+    if (app.type === 'serverless') {
+      doesIndexFileExist = existsSync(path.join(app.paths.root, 'handler.js'));
+    }
+
     if (!doesIndexFileExist) {
       throw new Error(
-        `Index file for "${app.name}" was not found. Please create it.`,
+        `Entry file for "${app.name}" was not found. Please create it.`,
       );
     }
   });

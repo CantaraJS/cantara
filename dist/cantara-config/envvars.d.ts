@@ -1,5 +1,6 @@
 interface LoadAppEnvVarsOptions {
     appRootDir: string;
+    projectRootDir: string;
     /** Can be specified in app's cantara.config.js */
     expectedEnvVars: string[];
     currentStage: string;
@@ -10,7 +11,7 @@ interface LoadAppEnvVarsOptions {
     fallbackStage?: string;
     /** Set this to true if an error should
      * be thrown if a variable defined
-     * in expectedEnvVars is no presetn
+     * in expectedEnvVars is no present
      */
     required?: boolean;
 }
@@ -28,6 +29,11 @@ interface LoadAppEnvVarsOptions {
  * are ignored and a warning is shown.
  * The resulting object can later on
  * be used by the WebpackDefinePlugin.
+ * If an environment variable is needed
+ * in more than one app (e.g. two
+ * serverless endpoints), you can create
+ * a .env.<stage> file in the root
+ * of your project.
  *
  * Example:
  * Assume the envvar DB_CONNECTION_STR is required
@@ -40,7 +46,7 @@ interface LoadAppEnvVarsOptions {
  * Prefixing the envvars prevents you from accidently
  * using the wrong envvars.
  */
-export default function loadAppEnvVars({ appRootDir, currentStage, expectedEnvVars, fallbackStage, required, }: LoadAppEnvVarsOptions): {
+export default function loadAppEnvVars({ appRootDir, currentStage, expectedEnvVars, fallbackStage, required, projectRootDir, }: LoadAppEnvVarsOptions): Promise<{
     [key: string]: string;
-};
+}>;
 export {};

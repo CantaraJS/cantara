@@ -10,16 +10,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __importDefault(require("path"));
-var fs_1 = require("fs");
-var util_1 = __importStar(require("./util"));
-var aliases_1 = __importStar(require("./aliases"));
-var react_1 = require("./dependencies/react");
-var types_1 = require("./dependencies/types");
-var testing_1 = require("./dependencies/testing");
-var common_1 = require("./dependencies/common");
-var EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
-var globalConfig = undefined;
+const path_1 = __importDefault(require("path"));
+const fs_1 = require("fs");
+const util_1 = __importStar(require("./util"));
+const aliases_1 = __importStar(require("./aliases"));
+const react_1 = require("./dependencies/react");
+const types_1 = require("./dependencies/types");
+const testing_1 = require("./dependencies/testing");
+const common_1 = require("./dependencies/common");
+const EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
+let globalConfig = undefined;
 function getGlobalConfig() {
     if (!globalConfig)
         throw new Error("Cantara's global configuration was not set yet!");
@@ -33,44 +33,44 @@ exports.default = getGlobalConfig;
  * require an active application.
  */
 function getActiveApp() {
-    var activeApp = getGlobalConfig().runtime.currentCommand.app;
+    const { runtime: { currentCommand: { app: activeApp }, }, } = getGlobalConfig();
     if (!activeApp) {
         throw new Error('No active application in current Cantara runtime!');
     }
     return activeApp;
 }
 exports.getActiveApp = getActiveApp;
-function configureCantara(config) {
-    var staticFilesPath = path_1.default.join(config.packageRootDir, 'static');
-    var tempFolder = path_1.default.join(staticFilesPath, '.temp');
-    var projectDir = config.projectDir || process.cwd();
-    var allApps = config.currentCommand.appname
-        ? util_1.default({
+async function configureCantara(config) {
+    const staticFilesPath = path_1.default.join(config.packageRootDir, 'static');
+    const tempFolder = path_1.default.join(staticFilesPath, '.temp');
+    const projectDir = config.projectDir || process.cwd();
+    const allApps = config.currentCommand.appname
+        ? await util_1.default({
             rootDir: projectDir,
             stage: config.stage,
             activeAppName: config.currentCommand.appname,
         })
         : [];
-    var currentActiveApp = config.currentCommand.appname
-        ? allApps.find(function (app) { return app.name === config.currentCommand.appname; })
+    const currentActiveApp = config.currentCommand.appname
+        ? allApps.find(app => app.name === config.currentCommand.appname)
         : undefined;
     if (config.currentCommand.appname && !currentActiveApp) {
-        throw new Error("Application \"" + config.currentCommand.appname + "\" does not exist.");
+        throw new Error(`Application "${config.currentCommand.appname}" does not exist.`);
     }
-    var packageAliases = currentActiveApp
+    const packageAliases = currentActiveApp
         ? aliases_1.default({
-            allApps: allApps,
+            allApps,
             activeApp: currentActiveApp,
         })
         : {};
-    var appDependencyAliases = currentActiveApp
+    const appDependencyAliases = currentActiveApp
         ? aliases_1.getDependencyAliases(currentActiveApp)
         : {};
-    var globalCantaraSettingsFilePath = path_1.default.join(projectDir, 'cantara.config.js');
-    var globalCantaraUserSettings = fs_1.existsSync(globalCantaraSettingsFilePath)
+    const globalCantaraSettingsFilePath = path_1.default.join(projectDir, 'cantara.config.js');
+    const globalCantaraUserSettings = fs_1.existsSync(globalCantaraSettingsFilePath)
         ? require(globalCantaraSettingsFilePath)
         : {};
-    var globalCantaraSettings = {
+    const globalCantaraSettings = {
         e2e: {
             executeBefore: globalCantaraUserSettings.e2e
                 ? globalCantaraUserSettings.e2e.executeBefore || []
@@ -83,13 +83,13 @@ function configureCantara(config) {
                 : '',
         },
     };
-    var nodeModulesPath = util_1.getCantaraDepenciesInstallationPath();
-    var configToUse = {
-        allApps: allApps,
+    const nodeModulesPath = util_1.getCantaraDepenciesInstallationPath();
+    const configToUse = {
+        allApps,
         allPackages: {
             include: allApps
-                .filter(function (app) { return app.type === 'js-package' || app.type === 'react-component'; })
-                .map(function (app) { return app.paths.src; }),
+                .filter(app => app.type === 'js-package' || app.type === 'react-component')
+                .map(app => app.paths.src),
         },
         dependencies: {
             react: react_1.reactDependencies,
@@ -104,18 +104,18 @@ function configureCantara(config) {
             nodeModules: nodeModulesPath,
         },
         runtime: {
-            projectDir: projectDir,
-            globalCantaraSettings: globalCantaraSettings,
+            projectDir,
+            globalCantaraSettings,
             stage: config.stage,
             currentCommand: {
                 name: config.currentCommand.name,
                 app: currentActiveApp,
                 additionalCliOptions: config.additionalCliOptions || '',
             },
-            secrets: util_1.loadSecrets({ projectDir: projectDir, secrets: EXPECTED_CANTARA_SECRETS }),
+            secrets: util_1.loadSecrets({ projectDir, secrets: EXPECTED_CANTARA_SECRETS }),
             aliases: {
-                packageAliases: packageAliases,
-                appDependencyAliases: appDependencyAliases,
+                packageAliases,
+                appDependencyAliases,
             },
         },
     };

@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -21,23 +10,23 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var webpack_1 = __importDefault(require("webpack"));
-var webpack_dev_server_1 = __importDefault(require("webpack-dev-server"));
-var cantara_config_1 = __importStar(require("../../cantara-config"));
-var webpackReactConfig_1 = __importDefault(require("../../util/config/webpackReactConfig"));
-var clearConsole_1 = __importDefault(require("../../util/clearConsole"));
+const webpack_1 = __importDefault(require("webpack"));
+const webpack_dev_server_1 = __importDefault(require("webpack-dev-server"));
+const cantara_config_1 = __importStar(require("../../cantara-config"));
+const webpackReactConfig_1 = __importDefault(require("../../util/config/webpackReactConfig"));
+const clearConsole_1 = __importDefault(require("../../util/clearConsole"));
 function startReactAppDevelopmentServer() {
-    var _a = cantara_config_1.default(), include = _a.allPackages.include, _b = _a.runtime, _c = _b.aliases, packageAliases = _c.packageAliases, appDependencyAliases = _c.appDependencyAliases, projectDir = _b.projectDir;
-    var activeApp = cantara_config_1.getActiveApp();
-    var webpackConfig = webpackReactConfig_1.default({
-        alias: __assign(__assign({}, packageAliases), appDependencyAliases),
+    const { allPackages: { include }, runtime: { aliases: { packageAliases, appDependencyAliases }, projectDir, }, } = cantara_config_1.default();
+    const activeApp = cantara_config_1.getActiveApp();
+    const webpackConfig = webpackReactConfig_1.default({
+        alias: { ...packageAliases, ...appDependencyAliases },
         app: activeApp,
-        projectDir: projectDir,
+        projectDir,
         env: activeApp.env,
-        include: include,
+        include,
     });
-    var compiler = webpack_1.default(webpackConfig);
-    var devServer = new webpack_dev_server_1.default(compiler, {
+    const compiler = webpack_1.default(webpackConfig);
+    const devServer = new webpack_dev_server_1.default(compiler, {
         contentBase: activeApp.paths.build,
         historyApiFallback: true,
         quiet: true,
@@ -48,7 +37,7 @@ function startReactAppDevelopmentServer() {
         // It will still show compile warnings and errors with this setting.
         clientLogLevel: 'none',
     });
-    devServer.listen(8080, '::', function (err) {
+    devServer.listen(8080, '::', err => {
         clearConsole_1.default();
         if (err) {
             console.log('Error starting webpack dev server:', err);

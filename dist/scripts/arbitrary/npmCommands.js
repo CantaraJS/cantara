@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // Extracted from https://github.com/npm/cli/blob/latest/lib/config/cmd-list.js
-var allNpmCommands = [
+const allNpmCommands = [
     'un',
     'rb',
     'list',

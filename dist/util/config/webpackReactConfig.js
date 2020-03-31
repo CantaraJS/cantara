@@ -1,69 +1,53 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var webpack_1 = __importDefault(require("webpack"));
-var fs_1 = require("fs");
-var path_1 = __importDefault(require("path"));
-var webpackCommonReactConfig_1 = __importDefault(require("./common/webpackCommonReactConfig"));
-var cssLoaders_1 = __importDefault(require("./common/cssLoaders"));
-var slash_1 = __importDefault(require("slash"));
-var CopyPlugin = require('copy-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var WebpackPwaManifest = require('webpack-pwa-manifest');
+const webpack_1 = __importDefault(require("webpack"));
+const fs_1 = require("fs");
+const path_1 = __importDefault(require("path"));
+const webpackCommonReactConfig_1 = __importDefault(require("./common/webpackCommonReactConfig"));
+const cssLoaders_1 = __importDefault(require("./common/cssLoaders"));
+const slash_1 = __importDefault(require("slash"));
+const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WebpackPwaManifest = require('webpack-pwa-manifest');
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
-var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-var WebpackNotifierPlugin = require('webpack-notifier');
-var ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-var InjectManifest = require('workbox-webpack-plugin').InjectManifest;
-var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
-var webpackMerge = require('webpack-merge');
-function createReactWebpackConfig(_a) {
-    var app = _a.app, _b = _a.alias, alias = _b === void 0 ? {} : _b, _c = _a.mode, mode = _c === void 0 ? 'development' : _c, _d = _a.env, env = _d === void 0 ? {} : _d, include = _a.include, projectDir = _a.projectDir;
-    var isDevelopment = mode === 'development';
-    var isProduction = mode === 'production';
-    var iconPathToUse = undefined;
-    var appIconPathPng = path_1.default.join(app.paths.assets, 'app_icon.png');
-    var appIconPathSvg = path_1.default.join(app.paths.assets, 'app_icon.svg');
-    var serviceWorkerPath = path_1.default.join(app.paths.src, 'sw.js');
-    var doesServiceWorkerExist = fs_1.existsSync(serviceWorkerPath);
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const WebpackNotifierPlugin = require('webpack-notifier');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const { InjectManifest } = require('workbox-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const webpackMerge = require('webpack-merge');
+function createReactWebpackConfig({ app, alias = {}, mode = 'development', env = {}, include, projectDir, }) {
+    const isDevelopment = mode === 'development';
+    const isProduction = mode === 'production';
+    let iconPathToUse = undefined;
+    const appIconPathPng = path_1.default.join(app.paths.assets, 'app_icon.png');
+    const appIconPathSvg = path_1.default.join(app.paths.assets, 'app_icon.svg');
+    const serviceWorkerPath = path_1.default.join(app.paths.src, 'sw.js');
+    const doesServiceWorkerExist = fs_1.existsSync(serviceWorkerPath);
     if (fs_1.existsSync(appIconPathPng)) {
         iconPathToUse = appIconPathPng;
     }
     else if (fs_1.existsSync(appIconPathSvg)) {
         iconPathToUse = appIconPathSvg;
     }
-    var reactDependencyAliases = app.type === 'react'
+    const reactDependencyAliases = app.type === 'react'
         ? {
             react: path_1.default.join(app.paths.root, 'node_modules', 'react'),
             'react-dom': path_1.default.join(app.paths.root, 'node_modules', 'react-dom'),
         }
         : {};
-    var doesStaticFolderExist = app.paths.static && fs_1.existsSync(app.paths.static);
-    var webpackReactAppConfig = {
+    const doesStaticFolderExist = app.paths.static && fs_1.existsSync(app.paths.static);
+    const webpackReactAppConfig = {
         resolve: {
-            alias: __assign(__assign({}, alias), reactDependencyAliases),
+            alias: {
+                ...alias,
+                ...reactDependencyAliases,
+            },
         },
-        mode: mode,
+        mode,
         devtool: isDevelopment ? 'eval-source-map' : undefined,
         output: {
             publicPath: '/',
@@ -99,16 +83,23 @@ function createReactWebpackConfig(_a) {
                 })
                 : undefined,
             doesServiceWorkerExist
-                ? new WebpackPwaManifest(__assign({ 
+                ? new WebpackPwaManifest({
                     // gcm_sender_id,
-                    theme_color: app.meta.themeColor, background_color: app.meta.themeColor, name: app.meta.displayName, short_name: app.meta.displayName, ios: true, icons: iconPathToUse
+                    theme_color: app.meta.themeColor,
+                    background_color: app.meta.themeColor,
+                    name: app.meta.displayName,
+                    short_name: app.meta.displayName,
+                    ios: true,
+                    icons: iconPathToUse
                         ? [
                             {
                                 src: iconPathToUse,
                                 sizes: [192, 512],
                             },
                         ]
-                        : [] }, app.meta.pwaManifest))
+                        : [],
+                    ...app.meta.pwaManifest,
+                })
                 : undefined,
             doesServiceWorkerExist
                 ? new InjectManifest({
@@ -132,7 +123,7 @@ function createReactWebpackConfig(_a) {
                 : undefined,
         ].filter(Boolean),
         module: {
-            rules: __spreadArrays(cssLoaders_1.default({ useExtractLoader: isProduction })),
+            rules: [...cssLoaders_1.default({ useExtractLoader: isProduction })],
         },
         performance: {
             hints: false,
@@ -148,15 +139,15 @@ function createReactWebpackConfig(_a) {
             }
             : undefined,
     };
-    var commonConfig = webpackCommonReactConfig_1.default({
-        mode: mode,
-        app: app,
-        alias: alias,
-        env: env,
-        include: include,
-        projectDir: projectDir,
+    const commonConfig = webpackCommonReactConfig_1.default({
+        mode,
+        app,
+        alias,
+        env,
+        include,
+        projectDir,
     });
-    var mergedConfig = webpackMerge(commonConfig, webpackReactAppConfig);
+    const mergedConfig = webpackMerge(commonConfig, webpackReactAppConfig);
     return mergedConfig;
 }
 exports.default = createReactWebpackConfig;

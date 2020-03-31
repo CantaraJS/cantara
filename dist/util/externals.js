@@ -1,30 +1,23 @@
 "use strict";
 // Inspired by https://github.com/liady/webpack-node-externals/blob/master/index.js
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __importDefault(require("path"));
-var fs_1 = __importDefault(require("fs"));
-var fs_2 = require("./fs");
-var cantara_config_1 = __importDefault(require("../cantara-config"));
-var fs_3 = require("fs");
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
+const fs_2 = require("./fs");
+const cantara_config_1 = __importDefault(require("../cantara-config"));
+const fs_3 = require("fs");
 function getAllModulesFromFolder(dirName) {
-    var atPrefix = new RegExp('^@', 'g');
+    const atPrefix = new RegExp('^@', 'g');
     if (!fs_1.default.existsSync(dirName)) {
         return [];
     }
     try {
         return fs_1.default
             .readdirSync(dirName)
-            .map(function (moduleName) {
+            .map(moduleName => {
             if (atPrefix.test(moduleName)) {
                 // reset regexp
                 atPrefix.lastIndex = 0;
@@ -41,7 +34,7 @@ function getAllModulesFromFolder(dirName) {
             }
             return moduleName;
         })
-            .reduce(function (prev, next) {
+            .reduce((prev, next) => {
             return prev.concat(next);
         }, []);
     }
@@ -50,30 +43,28 @@ function getAllModulesFromFolder(dirName) {
     }
 }
 function getAllInstalledModules(allApps) {
-    var allExistingNodeModuleFolders = allApps
-        .map(function (app) { return path_1.default.join(app.paths.root, 'node_modules'); })
-        .filter(function (folderPath) { return fs_3.existsSync(folderPath); });
-    var allModules = allExistingNodeModuleFolders
+    const allExistingNodeModuleFolders = allApps
+        .map(app => path_1.default.join(app.paths.root, 'node_modules'))
+        .filter(folderPath => fs_3.existsSync(folderPath));
+    const allModules = allExistingNodeModuleFolders
         .map(getAllModulesFromFolder)
-        .reduce(function (arr, arrToMerge) { return __spreadArrays(arr, arrToMerge); }, []);
+        .reduce((arr, arrToMerge) => [...arr, ...arrToMerge], []);
     return allModules;
 }
 function getAllPeerDependencies(allApps) {
-    var allPackageJsonPaths = allApps.map(function (app) {
-        return path_1.default.join(app.paths.root, 'package.json');
-    });
-    var allPeerDeps = allPackageJsonPaths
-        .map(function (filePath) {
+    const allPackageJsonPaths = allApps.map(app => path_1.default.join(app.paths.root, 'package.json'));
+    const allPeerDeps = allPackageJsonPaths
+        .map(filePath => {
         try {
-            var _a = fs_2.readFileAsJSON(filePath).peerDependencies, peerDependencies = _a === void 0 ? {} : _a;
+            const { peerDependencies = {} } = fs_2.readFileAsJSON(filePath);
             return peerDependencies;
         }
-        catch (_b) {
+        catch {
             return {};
         }
     })
-        .reduce(function (resArr, peerDepsObj) {
-        return __spreadArrays(resArr, Object.keys(peerDepsObj));
+        .reduce((resArr, peerDepsObj) => {
+        return [...resArr, ...Object.keys(peerDepsObj)];
     }, []);
     return allPeerDeps;
 }
@@ -89,10 +80,9 @@ function getModuleName(request) {
     }
     return req.split(delimiter)[0];
 }
-function webpackExternalsAsStringArray(_a) {
-    var peerOnly = (_a === void 0 ? {} : _a).peerOnly;
-    var allApps = cantara_config_1.default().allApps;
-    var externals = [];
+function webpackExternalsAsStringArray({ peerOnly, } = {}) {
+    const { allApps } = cantara_config_1.default();
+    let externals = [];
     if (peerOnly) {
         // Read peer deps from package.json
         externals = getAllPeerDependencies(allApps);
@@ -113,9 +103,8 @@ exports.webpackExternalsAsStringArray = webpackExternalsAsStringArray;
  * dependecies are excluded. Useful for
  * CDN bundles.
  */
-function getAllWebpackExternals(_a) {
-    var peerOnly = (_a === void 0 ? {} : _a).peerOnly;
-    var externals = webpackExternalsAsStringArray({ peerOnly: peerOnly });
+function getAllWebpackExternals({ peerOnly, } = {}) {
+    const externals = webpackExternalsAsStringArray({ peerOnly });
     // const externalsObj = externals.reduce((retObj, externalName) => {
     //   return {
     //     ...retObj,
@@ -127,8 +116,8 @@ function getAllWebpackExternals(_a) {
     // For some reason, only works with this function,
     // but not when defining excplictly through object
     // (which should be the same)
-    return function (_, request, callback) {
-        var moduleName = getModuleName(request);
+    return (_, request, callback) => {
+        const moduleName = getModuleName(request);
         if (externals.includes(moduleName)) {
             // mark this module as external
             // https://webpack.js.org/configuration/externals/

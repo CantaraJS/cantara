@@ -93,5 +93,5 @@ export default function getGlobalConfig(): CantaraGlobalConfig;
  * require an active application.
  */
 export declare function getActiveApp(): CantaraApplication;
-export declare function configureCantara(config: CantaraInitialConfig): CantaraGlobalConfig;
+export declare function configureCantara(config: CantaraInitialConfig): Promise<CantaraGlobalConfig>;
 export {};

@@ -3,12 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function camalize(str) {
     if (str.length <= 1)
         return str;
-    var camalized = str
+    const camalized = str
         .toLowerCase()
-        .replace(/[^a-zA-Z0-9]+(.)/g, function (_, chr) { return chr.toUpperCase(); });
-    var camalizedUpperCase = "" + camalized
+        .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase());
+    const camalizedUpperCase = `${camalized
         .charAt(0)
-        .toUpperCase() + camalized.slice(1);
+        .toUpperCase()}${camalized.slice(1)}`;
     return camalizedUpperCase;
 }
 exports.camalize = camalize;

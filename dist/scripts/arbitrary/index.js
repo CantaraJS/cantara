@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var cantara_config_1 = require("../../cantara-config");
-var exec_1 = __importDefault(require("../../util/exec"));
-var npmCommands_1 = __importDefault(require("./npmCommands"));
+const cantara_config_1 = require("../../cantara-config");
+const exec_1 = __importDefault(require("../../util/exec"));
+const npmCommands_1 = __importDefault(require("./npmCommands"));
 /**
  * This function is executed if no cantara command
  * was matched. First, look if it is an NPM command.
@@ -13,15 +13,15 @@ var npmCommands_1 = __importDefault(require("./npmCommands"));
  * with the package's/app's root as the CWD.
  */
 function executeArbitraryCmdWithinApp(originalCommand) {
-    var cmd = originalCommand[2], params = originalCommand.slice(3);
-    var activeApp = cantara_config_1.getActiveApp();
-    var isNpmCommand = npmCommands_1.default.includes(cmd);
-    var cmdToExecute = '';
+    const [, , cmd, ...params] = originalCommand;
+    const activeApp = cantara_config_1.getActiveApp();
+    const isNpmCommand = npmCommands_1.default.includes(cmd);
+    let cmdToExecute = '';
     if (isNpmCommand) {
-        cmdToExecute = "npm " + cmd + " " + params.join(' ');
+        cmdToExecute = `npm ${cmd} ${params.join(' ')}`;
     }
     else {
-        cmdToExecute = cmd + " " + params.join(' ');
+        cmdToExecute = `${cmd} ${params.join(' ')}`;
     }
     exec_1.default(cmdToExecute, {
         workingDirectory: activeApp.paths.root,
