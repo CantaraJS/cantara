@@ -14,12 +14,37 @@ import { webpackExternalsAsStringArray } from '../util/externals';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 
+interface CreateTempPathForAppOptions {
+  app: CantaraApplication;
+  fileName: string;
+}
+
+/**
+ * Creates temporary path for
+ * the specified file
+ * based on the specified app,
+ * this way, each SLS endpoint
+ * gets it's own webpack
+ * config file etc.
+ */
+function createTempFilePath({ fileName, app }: CreateTempPathForAppOptions) {
+  const globalCantaraConfig = getGlobalConfig();
+  return path.join(
+    globalCantaraConfig.internalPaths.temp,
+    `${app.name}_${fileName}`,
+  );
+}
+
 function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   // if skipCacheInvalidation is set to true, exclude typechecking plugin
   // as it would restart with every code change and make the
   // whole process even slower
   const { skipCacheInvalidation } = app.meta;
   const globalCantaraConfig = getGlobalConfig();
+  const babelConfigPath = createTempFilePath({
+    app,
+    fileName: 'serverlessBabelConfig.js',
+  });
   const babelConfigTemplate = readFileSync(
     path.join(
       globalCantaraConfig.internalPaths.static,
@@ -47,6 +72,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   const MODULES_PATH =
     slash(globalCantaraConfig.internalPaths.nodeModules) + '/';
   const templateVariables = {
+    BABEL_CONFIG_PATH: slash(babelConfigPath),
     MODULES_PATH,
     TSCONFIG_PATH: slash(path.join(app.paths.root, '.tsconfig.local.json')),
     INCLUDES: JSON.stringify(allIncludes),
@@ -66,19 +92,13 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     variables: templateVariables,
   });
 
-  writeFileSync(
-    path.join(
-      globalCantaraConfig.internalPaths.temp,
-      'serverlessBabelConfig.js',
-    ),
-    newBabelConfig,
-  );
+  writeFileSync(babelConfigPath, newBabelConfig);
 
   writeFileSync(
-    path.join(
-      globalCantaraConfig.internalPaths.temp,
-      'serverlessWebpackConfig.js',
-    ),
+    createTempFilePath({
+      app,
+      fileName: 'serverlessWebpackConfig.js',
+    }),
     newWebpackConfig,
   );
 }
@@ -88,8 +108,13 @@ function createServerlessYml(app: CantaraApplication) {
 
   const relativeWebpackConfigPath = slash(
     path.join(
-      path.relative(app.paths.root, globalCantaraConfig.internalPaths.temp),
-      'serverlessWebpackConfig.js',
+      path.relative(
+        app.paths.root,
+        createTempFilePath({
+          app,
+          fileName: 'serverlessWebpackConfig.js',
+        }),
+      ),
     ),
   );
 

@@ -13,7 +13,7 @@ const slsw = require('serverless-webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const webpack = require("webpack")
 
-const babelConfig = require('./serverlessBabelConfig');
+const babelConfig = require('<--BABEL_CONFIG_PATH-->');
 
 function getModuleName(request) {
   var scopedModuleRegex = new RegExp(

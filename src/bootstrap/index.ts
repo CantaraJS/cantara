@@ -25,6 +25,7 @@ function aliasesAbsoluteToRelative(aliases: { [key: string]: string }) {
     return {
       ...newObj,
       [currAliasName]: [newPath],
+      [`${currAliasName}/*`]: [`${newPath}/*`],
     };
   }, {});
 }
