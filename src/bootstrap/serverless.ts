@@ -153,6 +153,9 @@ function createServerlessYml(app: CantaraApplication) {
 
 /** Prepares Serverless App Folder */
 export default async function prepareServerlessApp(app: CantaraApplication) {
+  // Create package.json
+  await createOrUpdatePackageJSON({ rootDir: app.paths.root });
+
   // First, create the webpack and the babel config with the correct paths
   createWebpackAndBabelConfigFromTemplate(app);
 
@@ -162,9 +165,6 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
 
   // Create jest config
   createNodeJestConfig(app);
-
-  // Create package.json
-  await createOrUpdatePackageJSON({ rootDir: app.paths.root });
 
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
