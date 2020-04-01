@@ -9,10 +9,15 @@ import { readFileAsJSON } from '../util/fs';
 import loadAppEnvVars from './envvars';
 
 const isDirectory = (source: string) => lstatSync(source).isDirectory();
-const getDirectories = (source: string) =>
-  readdirSync(source)
-    .map(name => path.join(source, name))
-    .filter(isDirectory);
+const getDirectories = (source: string) => {
+  try {
+    return readdirSync(source)
+      .map(name => path.join(source, name))
+      .filter(isDirectory);
+  } catch {
+    return [];
+  }
+};
 /**
  * Returns node_modules path of
  * Cantara's dependecies,
