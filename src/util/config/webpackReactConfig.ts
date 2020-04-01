@@ -14,6 +14,7 @@ const WebpackPwaManifest = require('webpack-pwa-manifest');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpackMerge = require('webpack-merge');
@@ -132,6 +133,7 @@ export default function createReactWebpackConfig({
             },
           ])
         : undefined,
+      isProduction ? new MiniCssExtractPlugin() : undefined,
     ].filter(Boolean),
     module: {
       rules: [...getCssLoaders({ useExtractLoader: isProduction })],
