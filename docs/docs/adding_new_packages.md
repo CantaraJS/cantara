@@ -39,6 +39,10 @@ Now, that you've create a new package or app, you can start using it straight aw
 For packages, just `import` them into your apps.
 For applications, start the development using the `dev` command.
 
+## Serverless/NodeJS package dependencies
+
+Due to internal limitations, when you intend to use a package in a serverless/NodeJS app, make sure that all of the package dependencies are also installed in that application. E.g. if you have a package called `logger` which is used in a NodeJS app called `api` and `logger` has a dependency called `winston`, make sure `winston` is also installed in `api`.
+
 ## Notes on folders and package names
 
 When creating a new package, it must not reside in a subfolder, meaning that the `src` folder must be directly in the `your-package-name` folder. When first starting Cantara and your package has no `package.json` yet, the `name` field in the `package.json` file is derived from the foldername. To rename the package, simply change the `name` field. If you e.g. want to assign it a name so that it's organization scoped, set it to `@my-org/package-name`.
