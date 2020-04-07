@@ -3,11 +3,6 @@ import { promises, existsSync } from 'fs';
 const { readFile } = promises;
 
 import path from 'path';
-
-function isDefined(variable: any) {
-  return variable !== undefined && variable !== null;
-}
-
 /**
  * Parses a .env file and returns and object
  * with it's values.
@@ -82,18 +77,22 @@ function getEnvFilePaths({
   fallbackStage,
   appRootDir,
   projectRootDir,
-}: GetEnvFilePathsOptions): string[] {
+}: GetEnvFilePathsOptions): { path: string; type: string }[] {
   // Unique stages, in case fallbackStage === currentStage
   const stages = Array.from(
     new Set([currentStage, fallbackStage].filter(Boolean) as string[]),
   );
-  const rootDirs = [appRootDir, projectRootDir];
+  const rootDirs = [
+    { path: appRootDir, type: 'global' },
+    { path: projectRootDir, type: 'local' },
+  ];
   return stages
     .map(stage => {
       const envFileName = `.env.${stage.toLowerCase()}`;
-      const envFilePaths = rootDirs.map(rootDir =>
-        path.join(rootDir, envFileName),
-      );
+      const envFilePaths = rootDirs.map(rootDir => ({
+        path: path.join(rootDir.path, envFileName),
+        type: rootDir.type,
+      }));
       return envFilePaths;
     })
     .flat();
@@ -164,7 +163,17 @@ export default async function loadAppEnvVars({
     fallbackStage,
     projectRootDir,
   });
-  const envFilesContent = await loadMultipleEnvFiles(envFilePaths);
+  const globalEnvVars = await loadMultipleEnvFiles(
+    envFilePaths.filter(p => p.type === 'global').map(p => p.path),
+  );
+  const localEnvVars = await loadMultipleEnvFiles(
+    envFilePaths.filter(p => p.type === 'local').map(p => p.path),
+  );
+
+  const envFilesContent = {
+    ...globalEnvVars,
+    ...localEnvVars,
+  };
 
   for (const envVarName of expectedEnvVars) {
     let envVarValue = loadEnvVarFromStage({
@@ -184,8 +193,8 @@ export default async function loadAppEnvVars({
     }
   }
 
-  // Warnings for ignored env vars in .env file
-  const allEnvVarsInEnvFile = Object.keys(envFilesContent);
+  // Warnings for ignored env vars in local .env file
+  const allEnvVarsInEnvFile = Object.keys(localEnvVars);
   const ignoredEnvVars = allEnvVarsInEnvFile.filter(
     envName => !expectedEnvVars.includes(envName),
   );
