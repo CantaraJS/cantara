@@ -1,15 +1,13 @@
 import path from 'path';
 
 import { CantaraApplication } from '../util/types';
-import {
-  createOrUpdatePackageJSON,
-  createReactJestConfig,
-  createNodeJestConfig,
-} from './util';
+
 import getGlobalConfig from '../cantara-config';
 import { readFileAsJSON, writeJson } from '../util/fs';
 import renderTemplate from '../util/configTemplates';
 import { readFileSync, copyFileSync } from 'fs';
+import { createOrUpdatePackageJSON } from './util/npm';
+import { createReactJestConfig, createNodeJestConfig } from './util/jest';
 
 function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
   const packageJson = readFileAsJSON(packageJsonPath);

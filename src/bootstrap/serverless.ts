@@ -5,12 +5,11 @@ import slash from 'slash';
 import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
-import {
-  createNodeJestConfig,
-  createOrUpdatePackageJSON,
-  createLocalAppTsConfig,
-} from './util';
+
 import { webpackExternalsAsStringArray } from '../util/externals';
+import { createOrUpdatePackageJSON } from './util/npm';
+import { createNodeJestConfig } from './util/jest';
+import { createLocalAppTsConfig } from './util/typescript';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 

@@ -3,11 +3,9 @@ import { copyFileSync, existsSync, mkdirSync } from 'fs';
 
 import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
-import {
-  createOrUpdatePackageJSON,
-  createReactJestConfig,
-  createLocalAppTsConfig,
-} from './util';
+import { createOrUpdatePackageJSON } from './util/npm';
+import { createReactJestConfig } from './util/jest';
+import { createLocalAppTsConfig } from './util/typescript';
 
 /** Prepares React App Folder */
 export default async function prepareReactApps(app: CantaraApplication) {

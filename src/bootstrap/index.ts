@@ -5,15 +5,15 @@ import { promisify } from 'util';
 
 import getGlobalConfig from '../cantara-config';
 import prepareReactApps from './react';
-import {
-  createOrUpdatePackageJSON,
-  createTempEnvJsonFile,
-  createJestConfig,
-} from './util';
+
 import prepareServerlessApp from './serverless';
 import prepareJsPackage from './packages';
 import { writeJson } from '../util/fs';
 import prepareNodeApp from './node';
+import { createOrUpdatePackageJSON } from './util/npm';
+import { createTempEnvJsonFile } from './util/env';
+import { createJestConfig } from './util/jest';
+import setupGitHooks from './util/git-hooks';
 
 const ncp = promisify(ncpCb);
 
@@ -64,6 +64,7 @@ async function prepareCantaraProject() {
       aliases: { packageAliases },
     },
   } = globalCantaraConfig;
+
   const newTsConfig = {
     ...tsConfig,
     compilerOptions: {
@@ -84,6 +85,9 @@ async function prepareCantaraProject() {
     },
   });
 
+  // Setup git hooks
+  await setupGitHooks();
+
   // Create .temp folder if it doesn't exist yet
   if (!existsSync(globalCantaraConfig.internalPaths.temp)) {
     mkdirSync(globalCantaraConfig.internalPaths.temp);
@@ -96,6 +100,12 @@ async function prepareCantaraProject() {
     dir: rootDir,
     configTemplateFileName: 'jestGlobalConfig.template.js',
   });
+
+  // Create .cantara folder if it doesn't exist
+  const dotCantaraDir = globalCantaraConfig.runtime.dotCantaraDir;
+  if (!existsSync(dotCantaraDir)) {
+    mkdirSync(dotCantaraDir, { recursive: true });
+  }
 }
 
 /**

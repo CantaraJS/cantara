@@ -2,7 +2,9 @@ import path from 'path';
 import execCmd from '../../util/exec';
 import parseDiffSummary from './parseDiffSummary';
 import getGlobalConfig from '../../cantara-config';
-import { CantaraApplication } from '../../util/types';
+import { existsSync } from 'fs';
+import { readFileAsJSON } from '../../util/fs';
+import { getFilesChangedSinceCommit } from './util';
 
 type ExecChangeCallback = (changedAppName: string) => Promise<void>;
 
@@ -16,21 +18,30 @@ type ExecChangeCallback = (changedAppName: string) => Promise<void>;
  */
 export default async function executeForChangedApps(cb: ExecChangeCallback) {
   const {
-    runtime: { projectDir },
+    runtime: { projectDir, dotCantaraDir },
     allApps,
   } = getGlobalConfig();
 
+  // Get commit from .cantara/ci.json file
+  const cantaraCiFilePath = path.join(dotCantaraDir, 'ci.json');
+  let fromCommit = 'HEAD~1';
+  if (existsSync(cantaraCiFilePath)) {
+    const { fromCommit: fromCommitVal } = readFileAsJSON(cantaraCiFilePath);
+    if (fromCommitVal) {
+      fromCommit = fromCommitVal;
+    }
+  }
+
   // Identify changes between this and latest commit
-  const res = await execCmd('git diff HEAD HEAD~1 --stat', {
-    workingDirectory: projectDir,
+  const changedFiles = await getFilesChangedSinceCommit({
+    fromCommit,
+    repoDir: projectDir,
   });
-  const diffSum = parseDiffSummary(res.toString(), projectDir);
-  console.log({ diffSum });
-  const changedAppNames = diffSum
-    .map(changeObj => {
-      if (!changeObj) return false;
-      const srcIndex = changeObj.file.indexOf('src');
-      const rootPath = changeObj.file.slice(0, srcIndex);
+
+  const changedAppNames = changedFiles
+    .map(changedFile => {
+      const srcIndex = changedFile.indexOf('src');
+      const rootPath = changedFile.slice(0, srcIndex);
       const name = path.basename(rootPath);
       // Only include apps that exist
       const foundApp = allApps.find(app => app.name === name);
@@ -38,7 +49,7 @@ export default async function executeForChangedApps(cb: ExecChangeCallback) {
       return name;
     })
     .filter(Boolean) as string[];
-  console.log({ changedAppNames });
+
   // Execute cb for each application
   for (const changedAppName of changedAppNames) {
     await cb(changedAppName);
@@ -46,7 +57,7 @@ export default async function executeForChangedApps(cb: ExecChangeCallback) {
 }
 
 interface ExecUserCmdForChangedAppParams {
-  appname: string;
+  appnames: string[];
   userCmd: string;
 }
 
@@ -55,16 +66,14 @@ interface ExecUserCmdForChangedAppParams {
  * application changed
  */
 export function execUserCmdForChangedApp({
-  appname,
+  appnames,
   userCmd,
 }: ExecUserCmdForChangedAppParams) {
   const {
     runtime: { projectDir },
   } = getGlobalConfig();
   return executeForChangedApps(async changedAppName => {
-    if (appname === changedAppName) {
-      // Exec cmd
-      console.log(`"${appname}" changed.\nExecuting "${userCmd}"`);
+    if (appnames.includes(changedAppName)) {
       await execCmd(userCmd, {
         workingDirectory: projectDir,
         redirectIo: true,

@@ -52,7 +52,7 @@ export function spawnCmd(
       if (exitCode === 0) {
         resolve(retData);
       } else {
-        reject(`Command "${cmd}" failed.`);
+        reject(`Command "${cmd}" failed: ${retData}`);
       }
     }
 

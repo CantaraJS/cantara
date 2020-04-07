@@ -81,6 +81,8 @@ interface CantaraGlobalConfig {
     };
     /** Working directory where user executed Cantara */
     projectDir: string;
+    /** Path of .cantara folder */
+    dotCantaraDir: string;
     /** Information about current command */
     currentCommand: {
       name: string;
@@ -129,14 +131,13 @@ export async function configureCantara(config: CantaraInitialConfig) {
   const staticFilesPath = path.join(config.packageRootDir, 'static');
   const tempFolder = path.join(staticFilesPath, '.temp');
   const projectDir = config.projectDir || process.cwd();
+  const cantaraProjectMetaFolderPath = path.join(projectDir, '.cantara');
 
-  const allApps = config.currentCommand.appname
-    ? await getAllApps({
-        rootDir: projectDir,
-        stage: config.stage,
-        activeAppName: config.currentCommand.appname,
-      })
-    : [];
+  const allApps = await getAllApps({
+    rootDir: projectDir,
+    stage: config.stage,
+    activeAppName: config.currentCommand.appname,
+  });
   const currentActiveApp = config.currentCommand.appname
     ? allApps.find(app => app.name === config.currentCommand.appname)
     : undefined;
@@ -147,12 +148,9 @@ export async function configureCantara(config: CantaraInitialConfig) {
     );
   }
 
-  const packageAliases = currentActiveApp
-    ? getAllPackageAliases({
-        allApps,
-        activeApp: currentActiveApp,
-      })
-    : {};
+  const packageAliases = getAllPackageAliases({
+    allApps,
+  });
   const appDependencyAliases = currentActiveApp
     ? getDependencyAliases(currentActiveApp)
     : {};
@@ -205,6 +203,7 @@ export async function configureCantara(config: CantaraInitialConfig) {
     },
     runtime: {
       projectDir,
+      dotCantaraDir: cantaraProjectMetaFolderPath,
       globalCantaraSettings,
       stage: config.stage,
       currentCommand: {

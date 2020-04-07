@@ -13,9 +13,8 @@ import executeTests from '../scripts/test';
 import createNewAppOrPackage from '../scripts/new';
 import initializeNewProject from '../scripts/init';
 import startEndToEndTests from '../scripts/e2e';
-import testChanged from '../scripts/test-changed';
-import buildChanged from '../scripts/build-changed';
 import { execUserCmdForChangedApp } from '../scripts/exec-changed';
+import onPrePush from '../scripts/on-pre-push';
 
 process.on('uncaughtException', err => {
   console.log(err);
@@ -86,36 +85,25 @@ const allCantaraCommands: CantaraCommand[] = [
     },
   },
   {
-    actionName: 'build-changed',
-    exec: ({ stage }) => {
-      return buildChanged({ stage });
-    },
-  },
-  {
-    actionName: 'test-changed',
-    exec: ({ stage }) => {
-      return testChanged({ stage });
-    },
-  },
-  {
     actionName: 'e2e',
     exec: () => {
       return startEndToEndTests();
     },
   },
   {
-    actionName: 'ci',
-    exec: async ({ stage }) => {
-      await testChanged({ stage });
-      await buildChanged({ stage });
+    actionName: 'exec-changed',
+    parameters: [{ name: 'appnames', required: true }],
+    exec: ({ parameters: { appnames: appnamesParam }, originalCommand }) => {
+      const [, , ...userCmd] = originalCommand;
+      const appnames = appnamesParam.split(',');
+      return execUserCmdForChangedApp({ appnames, userCmd: userCmd.join(' ') });
     },
   },
   {
-    actionName: 'exec-changed',
-    parameters: [{ name: 'appname', required: true }],
-    exec: ({ parameters: { appname }, originalCommand }) => {
-      const [, , ...userCmd] = originalCommand;
-      return execUserCmdForChangedApp({ appname, userCmd: userCmd.join(' ') });
+    actionName: 'on-pre-push',
+    parameters: [],
+    exec: () => {
+      onPrePush();
     },
   },
 ];

@@ -1,9 +1,7 @@
 import { CantaraApplication } from '../util/types';
-import {
-  createNodeJestConfig,
-  createLocalAppTsConfig,
-  createOrUpdatePackageJSON,
-} from './util';
+import { createOrUpdatePackageJSON } from './util/npm';
+import { createNodeJestConfig } from './util/jest';
+import { createLocalAppTsConfig } from './util/typescript';
 
 export default async function prepareNodeApp(app: CantaraApplication) {
   await createOrUpdatePackageJSON({ rootDir: app.paths.root });
