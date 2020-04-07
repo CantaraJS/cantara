@@ -83,8 +83,8 @@ function getEnvFilePaths({
     new Set([currentStage, fallbackStage].filter(Boolean) as string[]),
   );
   const rootDirs = [
-    { path: appRootDir, type: 'global' },
-    { path: projectRootDir, type: 'local' },
+    { path: appRootDir, type: 'local' },
+    { path: projectRootDir, type: 'global' },
   ];
   return stages
     .map(stage => {
