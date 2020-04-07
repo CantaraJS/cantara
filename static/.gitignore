@@ -122,5 +122,9 @@ gen
 
 build/
 
-jest.config.ts
+jest.config.js
 jest.setup.ts
+
+tsconfig.json
+.tsconfig.local.json
+
