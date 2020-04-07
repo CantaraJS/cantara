@@ -1,22 +1,15 @@
 import path from 'path';
 import execCmd from '../../util/exec';
-import parseDiffSummary from './parseDiffSummary';
 import getGlobalConfig from '../../cantara-config';
 import { existsSync } from 'fs';
 import { readFileAsJSON } from '../../util/fs';
 import { getFilesChangedSinceCommit } from './util';
 
-type ExecChangeCallback = (changedAppName: string) => Promise<void>;
-
-/** Executes a function for all
- * applications/packages whose code
- * has changed since the last commit.
- * Accepts a function as a parameter
- * which gets executed with the name
- * of the app that changed as it's first
- * parameter
+/** Returns a list of applications
+ * which changed since the last commit
+ * found in '.cantara/ci.json'
  */
-export default async function executeForChangedApps(cb: ExecChangeCallback) {
+async function getChangedApps() {
   const {
     runtime: { projectDir, dotCantaraDir },
     allApps,
@@ -50,10 +43,7 @@ export default async function executeForChangedApps(cb: ExecChangeCallback) {
     })
     .filter(Boolean) as string[];
 
-  // Execute cb for each application
-  for (const changedAppName of changedAppNames) {
-    await cb(changedAppName);
-  }
+  return changedAppNames;
 }
 
 interface ExecUserCmdForChangedAppParams {
@@ -62,22 +52,25 @@ interface ExecUserCmdForChangedAppParams {
 }
 
 /**
- * Executes an arbitrary command if the specified
- * application changed
+ * Executes an arbitrary command
+ * if one of the the specified
+ * applications changed
  */
-export function execUserCmdForChangedApp({
+export default async function execCmdIfAppsChanged({
   appnames,
   userCmd,
 }: ExecUserCmdForChangedAppParams) {
   const {
     runtime: { projectDir },
   } = getGlobalConfig();
-  return executeForChangedApps(async changedAppName => {
-    if (appnames.includes(changedAppName)) {
-      await execCmd(userCmd, {
-        workingDirectory: projectDir,
-        redirectIo: true,
-      });
-    }
-  });
+  const changedAppNames = await getChangedApps();
+  const didChange = !!appnames.find(appname =>
+    changedAppNames.includes(appname),
+  );
+  if (didChange) {
+    await execCmd(userCmd, {
+      workingDirectory: projectDir,
+      redirectIo: true,
+    });
+  }
 }

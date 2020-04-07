@@ -13,8 +13,8 @@ import executeTests from '../scripts/test';
 import createNewAppOrPackage from '../scripts/new';
 import initializeNewProject from '../scripts/init';
 import startEndToEndTests from '../scripts/e2e';
-import { execUserCmdForChangedApp } from '../scripts/exec-changed';
 import onPrePush from '../scripts/on-pre-push';
+import execCmdIfAppsChanged from '../scripts/exec-changed';
 
 process.on('uncaughtException', err => {
   console.log(err);
@@ -96,7 +96,7 @@ const allCantaraCommands: CantaraCommand[] = [
     exec: ({ parameters: { appnames: appnamesParam }, originalCommand }) => {
       const [, , ...userCmd] = originalCommand;
       const appnames = appnamesParam.split(',');
-      return execUserCmdForChangedApp({ appnames, userCmd: userCmd.join(' ') });
+      return execCmdIfAppsChanged({ appnames, userCmd: userCmd.join(' ') });
     },
   },
   {
