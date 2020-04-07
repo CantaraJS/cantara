@@ -56,7 +56,10 @@ async function prepareCantaraProject() {
   // Read tsconfig.json and add package aliases
   const tsConfig = JSON.parse(
     readFileSync(
-      path.join(globalCantaraConfig.internalPaths.static, 'tsconfig.json'),
+      path.join(
+        globalCantaraConfig.internalPaths.static,
+        'tsConfigTemplate.json',
+      ),
     ).toString(),
   );
   const {
