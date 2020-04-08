@@ -1,7 +1,12 @@
 import path from 'path';
 
 import getGlobalConfig from '../../cantara-config';
-import { getCurrentBranchName, getUnpushedCommits, amendChanges } from './util';
+import {
+  getCurrentBranchName,
+  getUnpushedCommits,
+  amendChanges,
+  pullChanges,
+} from './util';
 import { writeJson } from '../../util/fs';
 
 /**
@@ -17,6 +22,9 @@ export default async function onPrePush() {
   const {
     runtime: { projectDir: repoDir, dotCantaraDir },
   } = getGlobalConfig();
+  // pull possible differences
+  await pullChanges({ repoDir });
+
   // Get branch name
   const currentBranch = await getCurrentBranchName({ repoDir });
 

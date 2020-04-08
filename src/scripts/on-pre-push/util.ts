@@ -38,8 +38,8 @@ export async function amendChanges({ repoDir }: GitCmdBaseParams) {
   });
 }
 
-export function waitFor(ms: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
+export async function pullChanges({ repoDir }: GitCmdBaseParams) {
+  await execCmd('git pull', {
+    workingDirectory: repoDir,
   });
 }
