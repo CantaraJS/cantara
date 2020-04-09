@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import path from 'path';
-import getGlobalConfig from '../cantara-config';
+import getGlobalConfig from '../cantara-config/global-config';
 
 interface CommonOptions {
   /** Defaults to current process.cwd() */
@@ -101,7 +101,7 @@ function getCurrentPATH() {
     globalCantaraConfig.internalPaths.root,
   );
   const userProjectNodeModulesBinPath = getNodeModulesBinPath(
-    globalCantaraConfig.runtime.projectDir,
+    globalCantaraConfig.projectDir,
   );
 
   let newPathEnv = process.env.PATH || '';
@@ -129,7 +129,7 @@ export default async function execCmd(
   const globalCantaraConfig = getGlobalConfig();
   const NEW_PATH_ENV = getCurrentPATH();
 
-  const secretsEnvVars = withSecrets ? globalCantaraConfig.runtime.secrets : {};
+  const secretsEnvVars = withSecrets ? globalCantaraConfig.secrets : {};
 
   const options: SpawnOptions = {
     workingDirectory,

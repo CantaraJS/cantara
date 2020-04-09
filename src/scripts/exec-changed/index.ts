@@ -1,19 +1,16 @@
 import path from 'path';
 import execCmd from '../../util/exec';
-import getGlobalConfig from '../../cantara-config';
 import { existsSync } from 'fs';
 import { readFileAsJSON } from '../../util/fs';
 import { getFilesChangedSinceCommit } from './util';
+import getGlobalConfig from '../../cantara-config/global-config';
 
 /** Returns a list of applications
  * which changed since the last commit
  * found in '.cantara/ci.json'
  */
 async function getChangedApps() {
-  const {
-    runtime: { projectDir, dotCantaraDir },
-    allApps,
-  } = getGlobalConfig();
+  const { projectDir, dotCantaraDir, allApps } = getGlobalConfig();
 
   // Get commit from .cantara/ci.json file
   const cantaraCiFilePath = path.join(dotCantaraDir, 'ci.json');
@@ -60,9 +57,7 @@ export default async function execCmdIfAppsChanged({
   appnames,
   userCmd,
 }: ExecUserCmdForChangedAppParams) {
-  const {
-    runtime: { projectDir },
-  } = getGlobalConfig();
+  const { projectDir } = getGlobalConfig();
   const changedAppNames = await getChangedApps();
   const didChange = !!appnames.find(appname =>
     changedAppNames.includes(appname),

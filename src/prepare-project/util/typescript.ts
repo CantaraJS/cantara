@@ -1,9 +1,9 @@
 import path from 'path';
 import { readFileSync } from 'fs';
-import getGlobalConfig from '../../cantara-config';
 import renderTemplate from '../../util/configTemplates';
 import { CantaraApplication } from '../../util/types';
 import { writeJson } from '../../util/fs';
+import getGlobalConfig from '../../cantara-config/global-config';
 
 interface CreateLocalAppTsConfigOptions {
   indexFileName: string;

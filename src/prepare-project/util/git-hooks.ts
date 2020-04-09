@@ -1,6 +1,6 @@
 import path from 'path';
-import getGlobalConfig from '../../cantara-config';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
+import getGlobalConfig from '../../cantara-config/global-config';
 
 /**
  * Creates a "pre-push" file
@@ -13,9 +13,7 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
  * overwrite existing scripts
  */
 export default async function setupGitHooks() {
-  const {
-    runtime: { projectDir },
-  } = getGlobalConfig();
+  const { projectDir } = getGlobalConfig();
 
   const prePushScriptPath = path.join(projectDir, '.git/hooks/pre-push');
   let fileContent = '';

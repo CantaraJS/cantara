@@ -2,7 +2,6 @@ import path from 'path';
 import { readFileSync, writeFileSync } from 'fs';
 import slash from 'slash';
 
-import getGlobalConfig from '../cantara-config';
 import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
 
@@ -10,6 +9,8 @@ import { webpackExternalsAsStringArray } from '../util/externals';
 import { createOrUpdatePackageJSON } from './util/npm';
 import { createNodeJestConfig } from './util/jest';
 import { createLocalAppTsConfig } from './util/typescript';
+import getGlobalConfig from '../cantara-config/global-config';
+import getRuntimeConfig from '../cantara-config/runtime-config';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 
@@ -40,6 +41,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   // whole process even slower
   const { skipCacheInvalidation } = app.meta;
   const globalCantaraConfig = getGlobalConfig();
+  const runtimeConfig = getRuntimeConfig();
   const babelConfigPath = createTempFilePath({
     app,
     fileName: 'serverlessBabelConfig.js',
@@ -58,8 +60,8 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   ).toString();
 
   const allAliases = {
-    ...globalCantaraConfig.runtime.aliases.appDependencyAliases,
-    ...globalCantaraConfig.runtime.aliases.packageAliases,
+    ...runtimeConfig.aliases.appDependencyAliases,
+    ...globalCantaraConfig.aliases.packageAliases,
   };
   const externals = webpackExternalsAsStringArray();
 
@@ -76,7 +78,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     TSCONFIG_PATH: slash(path.join(app.paths.root, '.tsconfig.local.json')),
     INCLUDES: JSON.stringify(allIncludes),
     ALIASES: JSON.stringify(allAliases),
-    ENV_VARS: JSON.stringify(app.env || {}),
+    ENV_VARS: JSON.stringify(runtimeConfig.env || {}),
     EXTERNALS_ARRAY: JSON.stringify(externals),
     ENABLE_TYPECHECKING: JSON.stringify(!skipCacheInvalidation),
     APP_STATIC_PATH: slash(app.paths.static || '') + '/**',

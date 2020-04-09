@@ -1,13 +1,11 @@
-import getGlobalConfig from '../../cantara-config';
 import waitPort from 'wait-port';
 import execCmd from '../../util/exec';
+import getGlobalConfig from '../../cantara-config/global-config';
 
 export default async function startEndToEndTests() {
   const {
-    runtime: {
-      globalCantaraSettings: { e2e },
-      projectDir,
-    },
+    globalCantaraSettings: { e2e },
+    projectDir,
   } = getGlobalConfig();
 
   // Execute commands like starting servers etc.

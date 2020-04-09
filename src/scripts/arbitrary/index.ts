@@ -1,6 +1,6 @@
-import getGlobalConfig, { getActiveApp } from '../../cantara-config';
 import execCmd from '../../util/exec';
 import allNpmCommands from './npmCommands';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 /**
  * This function is executed if no cantara command
@@ -12,7 +12,9 @@ export default function executeArbitraryCmdWithinApp(
   originalCommand: string[],
 ) {
   const [, , cmd, ...params] = originalCommand;
-  const activeApp = getActiveApp();
+  const {
+    currentCommand: { app: activeApp },
+  } = getRuntimeConfig();
 
   const isNpmCommand = allNpmCommands.includes(cmd);
   let cmdToExecute = '';

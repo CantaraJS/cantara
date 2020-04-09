@@ -1,21 +1,22 @@
 import { CantaraApplication } from '../../util/types';
-import getGlobalConfig from '../../cantara-config';
 import createReactWebpackConfig from '../../util/config/webpackReactConfig';
 import webpack from 'webpack';
+import getGlobalConfig from '../../cantara-config/global-config';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export default async function buildReactApp(app: CantaraApplication) {
   const {
     allPackages: { include },
-    runtime: {
-      projectDir,
-      aliases: { packageAliases },
-    },
+    projectDir,
+    aliases: { packageAliases },
   } = getGlobalConfig();
+
+  const { env } = getRuntimeConfig();
 
   const webpackConfig = createReactWebpackConfig({
     alias: packageAliases,
     app,
-    env: app.env,
+    env: env,
     mode: 'production',
     projectDir,
     include,

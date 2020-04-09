@@ -1,22 +1,24 @@
 import webpack from 'webpack';
 import { CantaraApplication } from '../../util/types';
-import getGlobalConfig from '../../cantara-config';
 import createNodeWebpackConfig from '../../util/config/webpackNodeConfig';
+import getGlobalConfig from '../../cantara-config/global-config';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export default async function buildNodeApp(app: CantaraApplication) {
   const {
     allPackages: { include },
-    runtime: {
-      projectDir,
-      aliases: { packageAliases },
-      currentCommand: { additionalCliOptions },
-    },
+    projectDir,
+    aliases: { packageAliases },
   } = getGlobalConfig();
+  const {
+    currentCommand: { additionalCliOptions },
+    env,
+  } = getRuntimeConfig();
 
   const webpackConfig = createNodeWebpackConfig({
     alias: packageAliases,
     app,
-    env: app.env,
+    env,
     mode: 'production',
     projectDir,
     include,

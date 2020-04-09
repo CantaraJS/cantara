@@ -1,9 +1,10 @@
 import path from 'path';
 import { readFileSync, writeFileSync } from 'fs';
-import getGlobalConfig, { getActiveApp } from '../../cantara-config';
 import slash from 'slash';
 import renderTemplate from '../../util/configTemplates';
 import { CantaraApplication } from '../../util/types';
+import getGlobalConfig from '../../cantara-config/global-config';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 interface CreateJestConfigOptions {
   /** Path where to save jest.config.js */
@@ -96,17 +97,17 @@ export function createReactJestConfig(app: CantaraApplication) {
  */
 function getJestAliases() {
   const {
-    runtime: {
-      aliases: { packageAliases },
-    },
+    aliases: { packageAliases },
   } = getGlobalConfig();
   try {
-    const activeApp = getActiveApp();
+    const {
+      currentCommand: { app },
+    } = getRuntimeConfig();
     const jestAliases = Object.keys(packageAliases).reduce(
       (aliasObj, packageName) => {
         const packageAbsolutePath = packageAliases[packageName];
         const relativePathToPackage = path.relative(
-          activeApp.paths.root,
+          app.paths.root,
           packageAbsolutePath,
         );
         return {

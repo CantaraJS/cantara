@@ -4,7 +4,7 @@ import del from 'del';
 import { promisify } from 'util';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { camalize } from '../../util/string-manipulation';
-import getGlobalConfig from '../../cantara-config';
+import getGlobalConfig from '../../cantara-config/global-config';
 
 const ncp = promisify(ncpCb);
 
@@ -24,7 +24,7 @@ interface CreateNewAppOrPackageOptions extends CreateNewOptions {
 
 async function createReactComponent({ name }: CreateNewOptions) {
   const {
-    runtime: { projectDir },
+    projectDir,
     internalPaths: { static: staticFolderPath, temp: tempFolderPath },
   } = getGlobalConfig();
 
@@ -59,7 +59,7 @@ export default async function createNewAppOrPackage({
   name,
 }: CreateNewAppOrPackageOptions) {
   const {
-    runtime: { projectDir },
+    projectDir,
     internalPaths: { static: staticFolderPath },
   } = getGlobalConfig();
 

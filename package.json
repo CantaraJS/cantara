@@ -20,6 +20,7 @@
     "@types/node": "^13.7.0",
     "@types/prettier": "^1.19.0",
     "@types/webpack-dev-server": "^3.10.0",
+    "@types/yargs": "^15.0.4",
     "cross-env": "^6.0.3",
     "cz-conventional-changelog": "^3.1.0",
     "dotenv": "^8.2.0",
@@ -79,7 +80,8 @@
     "webpack-merge": "^4.2.2",
     "webpack-notifier": "^1.8.0",
     "webpack-pwa-manifest": "^4.2.0",
-    "workbox-webpack-plugin": "^4.3.1"
+    "workbox-webpack-plugin": "^4.3.1",
+    "yargs": "^15.3.1"
   },
   "repository": {
     "type": "git",

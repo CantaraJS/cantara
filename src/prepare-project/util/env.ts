@@ -1,6 +1,7 @@
 import path from 'path';
-import getGlobalConfig, { getActiveApp } from '../../cantara-config';
 import { writeJson } from '../../util/fs';
+import getGlobalConfig from '../../cantara-config/global-config';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 /** Takes all env vars defined
  * for the current stage and writes them
@@ -15,7 +16,7 @@ export function createTempEnvJsonFile() {
     internalPaths: { temp },
   } = getGlobalConfig();
   try {
-    const { env } = getActiveApp();
+    const { env } = getRuntimeConfig();
     const jsonFilePath = path.join(temp, '.env.json');
     writeJson(jsonFilePath, env || {});
   } catch {

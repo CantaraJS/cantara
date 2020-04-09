@@ -3,7 +3,6 @@ import ncpCb from 'ncp';
 import { existsSync, readFileSync, mkdirSync } from 'fs';
 import { promisify } from 'util';
 
-import getGlobalConfig from '../cantara-config';
 import prepareReactApps from './react';
 
 import prepareServerlessApp from './serverless';
@@ -14,6 +13,7 @@ import { createOrUpdatePackageJSON } from './util/npm';
 import { createTempEnvJsonFile } from './util/env';
 import { createJestConfig } from './util/jest';
 import setupGitHooks from './util/git-hooks';
+import getGlobalConfig from '../cantara-config/global-config';
 
 const ncp = promisify(ncpCb);
 
@@ -31,9 +31,9 @@ function aliasesAbsoluteToRelative(aliases: { [key: string]: string }) {
 }
 
 /** Prepares user's project */
-async function prepareCantaraProject() {
+async function prepareUserProject() {
   const globalCantaraConfig = getGlobalConfig();
-  const rootDir = globalCantaraConfig.runtime.projectDir;
+  const rootDir = globalCantaraConfig.projectDir;
   // Static files/folders to copy to the project's root
   // Copy global.d.ts file to project's root:
   // This way, static assets like images and CSS files can be imported using "import" syntax
@@ -63,9 +63,7 @@ async function prepareCantaraProject() {
     ).toString(),
   );
   const {
-    runtime: {
-      aliases: { packageAliases },
-    },
+    aliases: { packageAliases },
   } = globalCantaraConfig;
 
   const newTsConfig = {
@@ -105,22 +103,22 @@ async function prepareCantaraProject() {
   });
 
   // Create .cantara folder if it doesn't exist
-  const dotCantaraDir = globalCantaraConfig.runtime.dotCantaraDir;
+  const dotCantaraDir = globalCantaraConfig.dotCantaraDir;
   if (!existsSync(dotCantaraDir)) {
     mkdirSync(dotCantaraDir, { recursive: true });
   }
 }
 
 /**
- * Prepares the application folders if not done already.
- * Gets only executed if there's an active application
+ * Prepares the application folders and the
+ * project folder. Must be called after
+ * the global and the runtime config
+ * have been loaded!
  */
-export default async function onPreBootstrap() {
-  await prepareCantaraProject();
+export default async function prepareCantaraProject() {
+  await prepareUserProject();
 
   const globalCantaraConfig = getGlobalConfig();
-  const isAnAppActive = !!globalCantaraConfig.runtime.currentCommand.app;
-  if (!isAnAppActive) return;
 
   for (const app of globalCantaraConfig.allApps) {
     // Each app type is bootstrapped slightly different

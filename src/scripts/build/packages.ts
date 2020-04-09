@@ -2,11 +2,12 @@ import webpack from 'webpack';
 import path from 'path';
 
 import { CantaraApplication } from '../../util/types';
-import getGlobalConfig from '../../cantara-config';
 import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { readFileAsJSON, writeJson } from '../../util/fs';
 import execCmd from '../../util/exec';
 import slash from 'slash';
+import getGlobalConfig from '../../cantara-config/global-config';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
@@ -25,12 +26,14 @@ function compile(config: webpack.Configuration) {
 export default async function buildPackage(app: CantaraApplication) {
   const {
     allPackages: { include },
-    runtime: {
-      projectDir,
-      aliases: { appDependencyAliases, packageAliases },
-    },
+    projectDir,
+    aliases: { packageAliases },
     internalPaths: { root: cantaraRoot },
   } = getGlobalConfig();
+
+  const {
+    aliases: { appDependencyAliases },
+  } = getRuntimeConfig();
   const allAliases = { ...appDependencyAliases, ...packageAliases };
 
   const commonOptions = {

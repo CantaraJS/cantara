@@ -1,14 +1,16 @@
-import getGlobalConfig, { getActiveApp } from '../../cantara-config';
 import execCmd from '../../util/exec';
+import getGlobalConfig from '../../cantara-config/global-config';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 /** Deploys the currently selected application.
  */
 export default function deployActiveApp() {
-  const {
-    runtime: { secrets, stage },
-  } = getGlobalConfig();
+  const { secrets } = getGlobalConfig();
 
-  const activeApp = getActiveApp();
+  const {
+    stage,
+    currentCommand: { app: activeApp },
+  } = getRuntimeConfig();
 
   if (activeApp.type !== 'serverless') {
     throw new Error(

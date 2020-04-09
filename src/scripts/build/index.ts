@@ -1,12 +1,14 @@
 import buildNodeApp from './node';
 import buildReactApp from './react';
 import buildPackage from './packages';
-import { getActiveApp } from '../../cantara-config';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 /** Creates a production build
  * of the currently active app/package */
 export default async function buildActiveApp() {
-  const activeApp = getActiveApp();
+  const {
+    currentCommand: { app: activeApp },
+  } = getRuntimeConfig();
 
   if (activeApp.type === 'react') {
     await buildReactApp(activeApp);

@@ -50,16 +50,11 @@ function requireAtLeastOneFolder(paths: string[]) {
 
 interface GetAllAppsOptions {
   rootDir: string;
-  stage: string;
-  /** Name of currently active app */
-  activeAppName?: string;
 }
 
 /** Returns list of all React Apps, Packages and Node Apps */
 export default async function getAllApps({
   rootDir,
-  stage,
-  activeAppName,
 }: GetAllAppsOptions): Promise<CantaraApplication[]> {
   const FOLDER_NAMES: { [key: string]: string } = {
     REACT_APPS: 'react-apps',
@@ -133,24 +128,9 @@ export default async function getAllApps({
         userAddedMetadata = require(cantaraConfigPath);
       }
 
-      const envVars = await loadAppEnvVars({
-        projectRootDir: rootDir,
-        appRootDir: dir,
-        currentStage: stage,
-        expectedEnvVars: userAddedMetadata ? userAddedMetadata.env || [] : [],
-        fallbackStage: 'development',
-        /** If this is the currently active app,
-         * the env vars defined in cantara.config.js
-         * are required and an error is thrown
-         * if some are missing
-         */
-        required: appName === activeAppName,
-      });
-
       return {
         name: appName,
         type: typeToUse,
-        env: envVars,
         paths: {
           root: dir,
           src: path.join(dir, 'src'),

@@ -1,6 +1,5 @@
 import path from 'path';
 
-import getGlobalConfig from '../../cantara-config';
 import {
   getCurrentBranchName,
   getUnpushedCommits,
@@ -8,20 +7,19 @@ import {
   pullChanges,
 } from './util';
 import { writeJson } from '../../util/fs';
+import getGlobalConfig from '../../cantara-config/global-config';
 
 /**
  * Execute this function always
  * before the user is executing
  * 'git push'. Cantara implements
- * this using husky.
+ * this using git hooks.
  * It saves all needed information
  * to be able to execute
  * '*-changed' commands in CI.
  */
 export default async function onPrePush() {
-  const {
-    runtime: { projectDir: repoDir, dotCantaraDir },
-  } = getGlobalConfig();
+  const { projectDir: repoDir, dotCantaraDir } = getGlobalConfig();
   // pull possible differences
   await pullChanges({ repoDir });
 

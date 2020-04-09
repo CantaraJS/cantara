@@ -2,7 +2,7 @@ import path from 'path';
 import del from 'del';
 import { spawnCmd } from '../../util/exec';
 import { readdirSync, existsSync } from 'fs';
-import getGlobalConfig from '../../cantara-config';
+import getGlobalConfig from '../../cantara-config/global-config';
 
 interface InitializeNewProjectOptions {
   /** Optional absolute path/name of new folder */
@@ -18,9 +18,7 @@ export default async function initializeNewProject({
   newFolderPath,
   templateName,
 }: InitializeNewProjectOptions) {
-  const {
-    runtime: { projectDir: execDir },
-  } = getGlobalConfig();
+  const { projectDir: execDir } = getGlobalConfig();
   let projectDir = path.join(execDir, templateName);
   if (newFolderPath) {
     if (path.isAbsolute(newFolderPath)) {

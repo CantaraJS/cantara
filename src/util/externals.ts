@@ -4,9 +4,9 @@ import path from 'path';
 import fs from 'fs';
 
 import { readFileAsJSON } from './fs';
-import getGlobalConfig, { getActiveApp } from '../cantara-config';
 import { CantaraApplication } from './types';
 import { existsSync } from 'fs';
+import getGlobalConfig from '../cantara-config/global-config';
 
 function getAllModulesFromFolder(dirName: string): string[] {
   const atPrefix = new RegExp('^@', 'g');

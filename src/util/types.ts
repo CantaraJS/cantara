@@ -48,10 +48,6 @@ export interface CantaraApplication {
     static?: string;
     assets?: string;
   };
-  /** Environment variables loaded from
-   * either a .env.<stage> file or process.env
-   */
-  env?: { [key: string]: string };
   type: CantaraApplicationType;
   meta: CantaraApplicationMetaInformation;
 }
