@@ -26,12 +26,18 @@ interface GlobalCantaraSettings {
 interface CantaraLoadGlobalConfigOptions {
   /** Path of Cantara project */
   projectDir?: string;
+  additionalCliOptions?: string;
 }
 
 type Dependencies = { [key: string]: string };
 
 interface CantaraGlobalConfig {
   allApps: CantaraApplication[];
+  /** Unknown options for 3rd party CLI programs, e.g. Jest.
+   * Options which are foreign to Cantara are included
+   * in this string.
+   */
+  additionalCliOptions: string;
   allPackages: {
     /** Include all those paths into webpack configs */
     include: string[];
@@ -90,6 +96,8 @@ export default function getGlobalConfig() {
   return globalConfig;
 }
 
+// Make sure setup is only executed once
+let wasCantaraConfigured = false;
 /**
  * Creates current Cantara configuration
  * before the command which needs to
@@ -98,6 +106,10 @@ export default function getGlobalConfig() {
 export async function loadCantaraGlobalConfig(
   config: CantaraLoadGlobalConfigOptions,
 ) {
+  if (wasCantaraConfigured) {
+    return;
+  }
+  wasCantaraConfigured = true;
   const cantaraRootDir = path.join(__dirname, '..', '..');
   const staticFilesPath = path.join(cantaraRootDir, 'static');
   const tempFolder = path.join(staticFilesPath, '.temp');
@@ -138,6 +150,7 @@ export async function loadCantaraGlobalConfig(
   const nodeModulesPath = getCantaraDepenciesInstallationPath();
 
   const configToUse: CantaraGlobalConfig = {
+    additionalCliOptions: config.additionalCliOptions || '',
     allApps,
     projectDir,
     aliases: {

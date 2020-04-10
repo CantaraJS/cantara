@@ -6,11 +6,11 @@
     "lib": ["es2019", "es6", "es2015", "dom"],
     "declaration": true,
     "outDir": "dist",
-    "rootDir": "src",
     "strict": true,
-    "types": ["node"],
+    "types": ["node", "enquirer"],
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "typeRoots": ["./node_modules/@types", "./typings"]
   },
-  "include": ["/package.json/", "src"]
+  "include": ["/package.json/", "src", "./typings"]
 }

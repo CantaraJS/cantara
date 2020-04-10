@@ -6,7 +6,6 @@ import {
   CantaraApplicationMetaInformation,
 } from '../util/types';
 import { readFileAsJSON } from '../util/fs';
-import loadAppEnvVars from './envvars';
 
 const isDirectory = (source: string) => lstatSync(source).isDirectory();
 const getDirectories = (source: string) => {
@@ -38,14 +37,21 @@ export function getCantaraDepenciesInstallationPath() {
   return nodeModulesPath;
 }
 
-/** Requires that at least one of the specified folders exist */
-function requireAtLeastOneFolder(paths: string[]) {
-  const doesOneFolderExist = paths
-    .map(folderPath => existsSync(folderPath))
-    .includes(true);
-  if (!doesOneFolderExist) {
-    throw new Error('No apps or packages folders were detected!');
-  }
+export function getAllCantaraProjectFolders(rootDir: string) {
+  const FOLDER_NAMES: { [key: string]: string } = {
+    REACT_APPS: 'react-apps',
+    NODE_APPS: 'node-apps',
+    PACKAGES: 'packages',
+  };
+
+  const reactAppsRootDir = path.join(rootDir, FOLDER_NAMES.REACT_APPS);
+  const packagesAppsRootDir = path.join(rootDir, FOLDER_NAMES.PACKAGES);
+  const nodeAppsRootDir = path.join(rootDir, FOLDER_NAMES.NODE_APPS);
+  return {
+    reactAppsRootDir,
+    packagesAppsRootDir,
+    nodeAppsRootDir,
+  };
 }
 
 interface GetAllAppsOptions {
@@ -56,21 +62,11 @@ interface GetAllAppsOptions {
 export default async function getAllApps({
   rootDir,
 }: GetAllAppsOptions): Promise<CantaraApplication[]> {
-  const FOLDER_NAMES: { [key: string]: string } = {
-    REACT_APPS: 'react-apps',
-    NODE_APPS: 'node-apps',
-    PACKAGES: 'packages',
-  };
-
-  const reactAppsRootDir = path.join(rootDir, FOLDER_NAMES.REACT_APPS);
-  const packagesAppsRootDir = path.join(rootDir, FOLDER_NAMES.PACKAGES);
-  const nodeAppsRootDir = path.join(rootDir, FOLDER_NAMES.NODE_APPS);
-
-  requireAtLeastOneFolder([
-    reactAppsRootDir,
-    packagesAppsRootDir,
+  const {
     nodeAppsRootDir,
-  ]);
+    packagesAppsRootDir,
+    reactAppsRootDir,
+  } = getAllCantaraProjectFolders(rootDir);
 
   const allAppsDirectories: { dir: string; type: string }[] = [
     ...getDirectories(reactAppsRootDir).map(dir => ({ dir, type: 'react' })),

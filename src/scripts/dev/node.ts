@@ -8,12 +8,13 @@ export function startNodeAppDevelopmentServer() {
   const {
     allPackages: { include },
     projectDir,
+    additionalCliOptions,
     aliases: { packageAliases },
   } = getGlobalConfig();
 
   const {
     env,
-    currentCommand: { additionalCliOptions, app: activeApp },
+    currentCommand: { app: activeApp },
   } = getRuntimeConfig();
 
   const webpackConfig = createNodeWebpackConfig({

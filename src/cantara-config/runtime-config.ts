@@ -14,7 +14,6 @@ export interface CantaraRuntimeConfig {
   /** Information about current command */
   currentCommand: {
     name: string;
-    additionalCliOptions: string;
     app: CantaraApplication;
   };
   stage: string;
@@ -30,18 +29,13 @@ interface LoadCantaraRuntimeConfigOptions {
     appname: string;
   };
   stage: string;
-  /** Unknown options for 3rd party CLI programs, e.g. Jest.
-   * Options which are foreign to Cantara are included
-   * in this string.
-   */
-  additionalCliOptions?: string;
 }
 
 let runtimeConfig: CantaraRuntimeConfig | undefined = undefined;
 
 export default function getRuntimeConfig() {
   if (!runtimeConfig)
-    throw new Error("Cantara's global configuration was not set yet!");
+    throw new Error("Cantara's runtime configuration was not set yet!");
   return runtimeConfig;
 }
 
@@ -54,7 +48,6 @@ export default function getRuntimeConfig() {
 export async function loadCantaraRuntimeConfig({
   currentCommand,
   stage: stageParam,
-  additionalCliOptions = '',
 }: LoadCantaraRuntimeConfigOptions) {
   const { allApps, projectDir } = getGlobalConfig();
 
@@ -87,7 +80,6 @@ export async function loadCantaraRuntimeConfig({
       appDependencyAliases,
     },
     currentCommand: {
-      additionalCliOptions,
       name: currentCommand.name,
       app: currentActiveApp,
     },

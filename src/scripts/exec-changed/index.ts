@@ -14,7 +14,7 @@ async function getChangedApps() {
 
   // Get commit from .cantara/ci.json file
   const cantaraCiFilePath = path.join(dotCantaraDir, 'ci.json');
-  let fromCommit = 'HEAD~1';
+  let fromCommit = 'HEAD';
   if (existsSync(cantaraCiFilePath)) {
     const { fromCommit: fromCommitVal } = readFileAsJSON(cantaraCiFilePath);
     if (fromCommitVal) {
@@ -45,7 +45,6 @@ async function getChangedApps() {
 
 interface ExecUserCmdForChangedAppParams {
   appnames: string[];
-  userCmd: string;
 }
 
 /**
@@ -55,9 +54,9 @@ interface ExecUserCmdForChangedAppParams {
  */
 export default async function execCmdIfAppsChanged({
   appnames,
-  userCmd,
 }: ExecUserCmdForChangedAppParams) {
-  const { projectDir } = getGlobalConfig();
+  const { projectDir, additionalCliOptions: userCmd } = getGlobalConfig();
+
   const changedAppNames = await getChangedApps();
   const didChange = !!appnames.find(appname =>
     changedAppNames.includes(appname),

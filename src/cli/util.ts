@@ -42,10 +42,10 @@ export function setupErrorHandling() {
  * Only call this function after
  * dotenv has been executed!
  */
-export function getProjectPath() {
+export function getProjectPath(): string {
   const userProjectPath =
     process.env.NODE_ENV === 'development'
-      ? process.env.DEV_PROJECT_PATH
+      ? (process.env.DEV_PROJECT_PATH as string)
       : process.cwd();
   return userProjectPath;
 }

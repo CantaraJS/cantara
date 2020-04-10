@@ -1,6 +1,7 @@
 import execCmd from '../../util/exec';
 import allNpmCommands from './npmCommands';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
+import getGlobalConfig from '../../cantara-config/global-config';
 
 /**
  * This function is executed if no cantara command
@@ -8,13 +9,14 @@ import getRuntimeConfig from '../../cantara-config/runtime-config';
  * If not, try to execute it as an arbitrary command
  * with the package's/app's root as the CWD.
  */
-export default function executeArbitraryCmdWithinApp(
-  originalCommand: string[],
-) {
-  const [, , cmd, ...params] = originalCommand;
+export default function executeArbitraryCmdWithinApp() {
   const {
     currentCommand: { app: activeApp },
   } = getRuntimeConfig();
+
+  const { additionalCliOptions } = getGlobalConfig();
+
+  const [cmd, ...params] = additionalCliOptions.split(' ');
 
   const isNpmCommand = allNpmCommands.includes(cmd);
   let cmdToExecute = '';
