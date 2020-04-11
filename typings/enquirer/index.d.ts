@@ -2,7 +2,7 @@ declare module 'enquirer' {
   interface AutoCompleteConstructor {
     multiple?: boolean;
     initial?: number;
-    footer?: (selection: string) => string;
+    footer?: (obj: AutoComplete) => string;
     limit?: number;
     choices: string[];
     name: string;

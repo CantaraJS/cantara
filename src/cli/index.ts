@@ -1,6 +1,7 @@
 import yargs from 'yargs';
 
 import { AutoComplete, StringPrompt } from 'enquirer';
+import c from 'ansi-colors';
 
 import {
   setupErrorHandling,
@@ -56,17 +57,34 @@ export default async function setupCliInterface() {
       message: 'Which command do you want to execute?',
       initial: 0,
       choices: cmdChoices,
+      footer: prompt => {
+        return (
+          '\n' + c.black.bgCyan(availableCommands[prompt.index].description)
+        );
+      },
     });
     let newCmd = await prompt.run();
     const foundCmdObj = availableCommands[prompt.index];
     if (foundCmdObj.parameters) {
-      const prompt = new StringPrompt({
-        message: `Type in paramater for command ${foundCmdObj.name}: ${foundCmdObj.parameters}`,
-        footer: '(leave empty for none)',
-      });
-      const params = await prompt.run();
-      if (params) {
-        newCmd = `${newCmd} ${params}`;
+      for (const cmdParam of foundCmdObj.parameters) {
+        let prompt: StringPrompt | AutoComplete | null = null;
+        if (cmdParam.choices) {
+          prompt = new AutoComplete({
+            name: cmdParam.name,
+            message: cmdParam.description,
+            initial: 0,
+            choices: [...cmdParam.choices],
+          });
+        } else {
+          prompt = new StringPrompt({
+            message: cmdParam.description,
+          });
+        }
+
+        const params = await prompt.run();
+        if (params) {
+          newCmd = `${newCmd} ${params}`;
+        }
       }
     }
     cmdToUse = newCmd.split(' ');
@@ -84,7 +102,11 @@ export default async function setupCliInterface() {
     if (needsActiveApp) {
       cmd = `${cmd} [appname]`;
     }
-    if (command.parameters) [(cmd = `${cmd} ${command.parameters}`)];
+    if (command.parameters) {
+      cmd = `${cmd}${command.parameters
+        .map(param => ` [${param.name}]`)
+        .join('')}`;
+    }
     let additionalCliOptions = cmdToUse.slice(2).join(' ');
     if (needsGlobalConfig) {
       await loadCantaraGlobalConfig({ projectDir, additionalCliOptions });
@@ -93,6 +115,15 @@ export default async function setupCliInterface() {
       cmd,
       command.description,
       yargs => {
+        if (command.parameters) {
+          for (const cmdParam of command.parameters) {
+            yargs.positional(cmdParam.name, {
+              describe: cmdParam.description,
+              type: 'string',
+              ...(cmdParam.choices ? { choices: cmdParam.choices } : {}),
+            });
+          }
+        }
         if (needsActiveApp) {
           const { allApps } = getGlobalConfig();
           const filteredApps =

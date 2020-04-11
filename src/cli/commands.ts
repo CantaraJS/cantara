@@ -18,8 +18,19 @@ export interface CantaraCommand<TParameters = any> {
   ) => Promise<void> | void;
   /**
    * Additional yargs params
+   * (positional)
    */
-  parameters?: string;
+  parameters?: {
+    name: string;
+    description: string;
+    /**
+     * Limit possible value to a predefined
+     * set of values. If this is set, and
+     * the command is invoked without parameters,
+     * an autocomplete prompt is shown
+     */
+    choices?: string[];
+  }[];
   configuration: {
     /**
      * If set to true, the second parameter
@@ -104,7 +115,9 @@ const deployCommand: CantaraCommand = {
 
 const runCommand: CantaraCommand = {
   name: 'run',
-  parameters: '[commands]',
+  parameters: [
+    { name: 'commands', description: 'The command(s) you want to execute.' },
+  ],
   description: `Run an arbitrary command for the specified app/package. For NPM commands, you don't need to type "npm". Example: "ctra run my-api install express"`,
   configuration: {
     needsActiveApp: true,
@@ -119,7 +132,18 @@ const runCommand: CantaraCommand = {
 
 const execChangedCommand: CantaraCommand<{ appnames: string }> = {
   name: 'exec-changed',
-  parameters: '<appnames> [commands]',
+  parameters: [
+    {
+      name: 'appnames',
+      description:
+        'A comma separated list of apps/packages, e.g. "my-api,my-react-app,nice-package"',
+    },
+    {
+      name: 'commands',
+      description:
+        'The command(s) you want to execute in case one of the apps/packages changed.',
+    },
+  ],
   description: `Run commands for apps/packages if they changed according to the commit history. Pass in a comma separated list of apps. Useful for CI. Example: ctra exec-changed my-api ./deploy.sh`,
   configuration: {
     needsGlobalConfig: true,
@@ -132,8 +156,19 @@ const execChangedCommand: CantaraCommand<{ appnames: string }> = {
 
 const initCommand: CantaraCommand<{ path: string; template?: string }> = {
   name: 'init',
-  description: 'Initialize a new Cantara project',
-  parameters: '[path] [template]',
+  description: 'Initialize a new Cantara project.',
+  parameters: [
+    {
+      name: 'path',
+      description: 'The directory where you want to create the new project.',
+    },
+    {
+      name: 'template',
+      description:
+        'The name of the starter template. You can also specify a link to a git repository.',
+      choices: ['cantara-simple-starter'],
+    },
+  ],
   configuration: {
     needsActiveApp: false,
     needsGlobalConfig: false,
@@ -150,8 +185,15 @@ const initCommand: CantaraCommand<{ path: string; template?: string }> = {
 
 const newCommand: CantaraCommand<{ type: string; name: string }> = {
   name: 'new',
-  description: 'Initialize a new Cantara project',
-  parameters: '[type] [name]',
+  description: 'Create a new app/package',
+  parameters: [
+    {
+      name: 'type',
+      description: 'The type of package/app you would to create',
+      choices: ['react', 'node', 'js-package', 'react-component', 'serverless'],
+    },
+    { name: 'name', description: 'Name of the entity you want to create.' },
+  ],
   configuration: {
     needsActiveApp: false,
   },

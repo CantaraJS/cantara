@@ -3,6 +3,9 @@ import ncpCb from 'ncp';
 import del from 'del';
 import { promisify } from 'util';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import c from 'ansi-colors';
+import terminalLink from 'terminal-link';
+
 import { camalize } from '../../util/string-manipulation';
 import getGlobalConfig from '../../cantara-config/global-config';
 
@@ -65,9 +68,13 @@ export default async function createNewAppOrPackage({
 
   let templateFolderPath = '';
   let destinationPath = '';
+
+  let indexFilePath = '';
+
   if (type === 'react-app') {
     destinationPath = path.join(projectDir, 'react-apps', name);
     templateFolderPath = path.join(staticFolderPath, 'app-templates/react-app');
+    indexFilePath = 'src/index.tsx';
   }
   if (type === 'react-cmp' || type === 'react-component') {
     const resObj = await createReactComponent({
@@ -75,10 +82,12 @@ export default async function createNewAppOrPackage({
     });
     templateFolderPath = resObj.templateFolderPath;
     destinationPath = resObj.destinationPath;
+    indexFilePath = 'src/index.tsx';
   }
   if (type === 'node-app') {
     destinationPath = path.join(projectDir, 'node-apps', name);
     templateFolderPath = path.join(staticFolderPath, 'app-templates/node-app');
+    indexFilePath = 'src/index.ts';
   }
   if (type === 'serverless') {
     destinationPath = path.join(projectDir, 'node-apps', name);
@@ -86,6 +95,7 @@ export default async function createNewAppOrPackage({
       staticFolderPath,
       'app-templates/serverless',
     );
+    indexFilePath = 'handler.js';
   }
   if (type === 'js-package') {
     destinationPath = path.join(projectDir, 'packages', name);
@@ -93,6 +103,7 @@ export default async function createNewAppOrPackage({
       staticFolderPath,
       'app-templates/js-package',
     );
+    indexFilePath = 'src/index.ts';
   }
 
   if (!existsSync(templateFolderPath)) {
@@ -109,5 +120,8 @@ export default async function createNewAppOrPackage({
 
   await ncp(templateFolderPath, destinationPath);
 
-  console.log(`Created new ${type} at ${destinationPath}!`);
+  console.log(`
+    Created new ${c.cyan(type)} at
+    ${path.join(destinationPath, indexFilePath)}
+  `);
 }
