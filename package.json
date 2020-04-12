@@ -64,7 +64,7 @@
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
     "react-refresh": "^0.7.2",
-    "serverless": "^1.62.0",
+    "serverless": "^1.67.3",
     "serverless-offline": "^5.12.1",
     "serverless-webpack": "^5.3.1",
     "slash": "^3.0.0",

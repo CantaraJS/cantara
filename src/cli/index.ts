@@ -159,7 +159,7 @@ export default async function setupCliInterface() {
           if (!appname) {
             const prompt = new AutoComplete({
               name: 'Appname',
-              message: 'Pick an application',
+              message: 'Pick an application/package',
               initial: 0,
               choices: availableAppNames,
             });
