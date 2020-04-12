@@ -182,9 +182,11 @@ export default async function loadAppEnvVars({
       stage: currentStage,
     });
     if (envVarValue === undefined || envVarValue === null) {
-      const errMsg = `[${envFilePaths.join(
-        ', ',
-      )}] contain no variable named "${envVarName}" and process.env.${currentStage.toUpperCase()}_${envVarName} is not defined in the current environment. It is marked as required in cantara.config.js`;
+      const errMsg = `[${envFilePaths
+        .map(f => f.path)
+        .join(
+          ', ',
+        )}] contain no variable named "${envVarName}" and process.env.${currentStage.toUpperCase()}_${envVarName} is not defined in the current environment. It is marked as required in cantara.config.js`;
       if (required) {
         throw new Error(errMsg);
       }

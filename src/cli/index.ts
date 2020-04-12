@@ -145,6 +145,7 @@ export default async function setupCliInterface() {
         }
       },
       async args => {
+        const cmdName = args._[0];
         if (needsActiveApp) {
           const globalConfig = getGlobalConfig();
           const { allApps } = globalConfig;
@@ -177,7 +178,7 @@ export default async function setupCliInterface() {
           await loadCantaraRuntimeConfig({
             stage: 'not_set',
             currentCommand: {
-              name: 'dev',
+              name: cmdName,
               appname,
             },
           });
