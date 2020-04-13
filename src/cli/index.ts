@@ -6,6 +6,7 @@ import {
   setupCliContext,
   getProjectPath,
   loadPackageJson,
+  checkForUpdates,
 } from './util';
 import getGlobalConfig, {
   loadCantaraGlobalConfig,
@@ -66,6 +67,7 @@ export default async function setupCliInterface() {
   });
 
   const packageJson = await loadPackageJson();
+  checkForUpdates(packageJson);
 
   yargs.version(packageJson.version).parse(cmdToUse);
 }

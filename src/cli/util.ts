@@ -1,5 +1,6 @@
 import path from 'path';
 import dotenv from 'dotenv';
+import updateNotifier from 'update-notifier';
 import { fsReadFile } from '../util/fs';
 
 /** "Normalizes" the behaviour of the CLI
@@ -55,4 +56,14 @@ export async function loadPackageJson() {
   const packageJsonPath = path.resolve('package.json');
   const fileContent = (await fsReadFile(packageJsonPath)).toString();
   return JSON.parse(fileContent);
+}
+
+/**
+ * Display an info message if
+ * an update is available
+ */
+export function checkForUpdates(packageJson: any) {
+  updateNotifier({ pkg: packageJson }).notify({
+    boxenOptions: { borderColor: 'cyan', borderStyle: 'round' },
+  });
 }

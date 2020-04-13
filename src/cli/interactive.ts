@@ -30,7 +30,7 @@ export async function cantaraInteractiveMode({
   const foundCmdObj = availableCommands[prompt.index];
   if (foundCmdObj.parameters) {
     for (const cmdParam of foundCmdObj.parameters) {
-      let prompt: any | null = null;
+      let prompt: AutoComplete | StringPrompt | null = null;
       if (cmdParam.choices) {
         prompt = new AutoComplete({
           name: cmdParam.name,
