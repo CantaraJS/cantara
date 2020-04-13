@@ -1,5 +1,6 @@
 import path from 'path';
 import dotenv from 'dotenv';
+import { fsReadFile } from '../util/fs';
 
 /** "Normalizes" the behaviour of the CLI
  * no matter if Cantara is executed by the user
@@ -48,4 +49,10 @@ export function getProjectPath(): string {
       ? (process.env.DEV_PROJECT_PATH as string)
       : process.cwd();
   return userProjectPath;
+}
+
+export async function loadPackageJson() {
+  const packageJsonPath = path.resolve('package.json');
+  const fileContent = (await fsReadFile(packageJsonPath)).toString();
+  return JSON.parse(fileContent);
 }

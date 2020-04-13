@@ -1,14 +1,4 @@
-import startDevelopmentServer from '../scripts/dev';
-import initializeNewProject from '../scripts/init';
 import { CantaraApplicationType } from '../util/types';
-import buildActiveApp from '../scripts/build';
-import executeTests from '../scripts/test';
-import deployActiveApp from '../scripts/deploy';
-import executeArbitraryCmdWithinApp from '../scripts/arbitrary';
-import createNewAppOrPackage from '../scripts/new';
-import execCmdIfAppsChanged from '../scripts/exec-changed';
-import startEndToEndTests from '../scripts/e2e';
-import onPrePush from '../scripts/on-pre-push';
 
 export interface CantaraCommand<TParameters = any> {
   name: string;
@@ -74,6 +64,7 @@ const devCommand: CantaraCommand = {
     appTypes: ['node', 'react', 'serverless'],
   },
   execute: async () => {
+    const { default: startDevelopmentServer } = await import('../scripts/dev');
     await startDevelopmentServer();
   },
 };
@@ -86,6 +77,7 @@ const buildCommand: CantaraCommand = {
     appTypes: ['node', 'react', 'react-component', 'js-package'],
   },
   execute: async () => {
+    const { default: buildActiveApp } = await import('../scripts/build');
     await buildActiveApp();
   },
 };
@@ -97,6 +89,7 @@ const testCommand: CantaraCommand = {
     needsActiveApp: true,
   },
   execute: async () => {
+    const { default: executeTests } = await import('../scripts/test');
     await executeTests();
   },
 };
@@ -109,6 +102,7 @@ const deployCommand: CantaraCommand = {
     appTypes: ['serverless'],
   },
   execute: async () => {
+    const { default: deployActiveApp } = await import('../scripts/deploy');
     await deployActiveApp();
   },
 };
@@ -126,6 +120,9 @@ const runCommand: CantaraCommand = {
     },
   },
   execute: async () => {
+    const { default: executeArbitraryCmdWithinApp } = await import(
+      '../scripts/arbitrary'
+    );
     await executeArbitraryCmdWithinApp();
   },
 };
@@ -149,6 +146,9 @@ const execChangedCommand: CantaraCommand<{ appnames: string }> = {
     needsGlobalConfig: true,
   },
   execute: async ({ appnames: appnamesParam }) => {
+    const { default: execCmdIfAppsChanged } = await import(
+      '../scripts/exec-changed'
+    );
     const appnames = appnamesParam.split(',');
     return execCmdIfAppsChanged({ appnames });
   },
@@ -173,7 +173,8 @@ const initCommand: CantaraCommand<{ path: string; template?: string }> = {
     needsActiveApp: false,
     needsGlobalConfig: false,
   },
-  execute: ({ path: userPath, template, projectDir }) => {
+  execute: async ({ path: userPath, template, projectDir }) => {
+    const { default: initializeNewProject } = await import('../scripts/init');
     const templateToUse = template ? template : 'cantara-simple-starter';
     return initializeNewProject({
       newFolderPath: userPath,
@@ -197,7 +198,8 @@ const newCommand: CantaraCommand<{ type: string; name: string }> = {
   configuration: {
     needsActiveApp: false,
   },
-  execute: ({ name, type }) => {
+  execute: async ({ name, type }) => {
+    const { default: createNewAppOrPackage } = await import('../scripts/new');
     return createNewAppOrPackage({ type: type as any, name });
   },
 };
@@ -208,7 +210,8 @@ const e2eCommand: CantaraCommand = {
   configuration: {
     needsActiveApp: false,
   },
-  execute: () => {
+  execute: async () => {
+    const { default: startEndToEndTests } = await import('../scripts/e2e');
     return startEndToEndTests();
   },
 };
@@ -219,7 +222,8 @@ const onPrePushCommand: CantaraCommand = {
   configuration: {
     needsActiveApp: false,
   },
-  execute: () => {
+  execute: async () => {
+    const { default: onPrePush } = await import('../scripts/on-pre-push');
     return onPrePush();
   },
 };

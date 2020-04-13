@@ -180,5 +180,6 @@ export async function loadCantaraGlobalConfig(
     },
   };
   globalConfig = configToUse;
+
   return globalConfig;
 }

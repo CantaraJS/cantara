@@ -5,7 +5,7 @@ import {
   CantaraApplicationType,
   CantaraApplicationMetaInformation,
 } from '../util/types';
-import { readFileAsJSON } from '../util/fs';
+import { readFileAsJSON, fsExists, fsReadFile } from '../util/fs';
 
 const isDirectory = (source: string) => lstatSync(source).isDirectory();
 const getDirectories = (source: string) => {
@@ -81,6 +81,7 @@ export default async function getAllApps({
     allAppsDirectories.map(async ({ dir, type }) => {
       let typeToUse: CantaraApplicationType = type as CantaraApplicationType;
       let displayName = path.basename(dir);
+
       let appName = displayName;
       let userAddedMetadata:
         | CantaraApplicationMetaInformation
@@ -88,9 +89,9 @@ export default async function getAllApps({
 
       const packageJsonPath = path.join(dir, 'package.json');
       let packageJsonName = '';
-      if (existsSync(packageJsonPath)) {
+      if (await fsExists(packageJsonPath)) {
         const packageJSON = JSON.parse(
-          readFileSync(packageJsonPath).toString(),
+          (await fsReadFile(packageJsonPath)).toString(),
         );
         packageJsonName = packageJSON.name;
       }
@@ -108,19 +109,19 @@ export default async function getAllApps({
           appName = packageJsonName;
         }
         const packageSrc = path.join(dir, 'src');
-        typeToUse = existsSync(path.join(packageSrc, 'index.tsx'))
+        typeToUse = (await fsExists(path.join(packageSrc, 'index.tsx')))
           ? 'react-component'
           : 'js-package';
       }
 
       if (type === 'node') {
-        typeToUse = existsSync(path.join(dir, 'serverless.yml'))
+        typeToUse = (await fsExists(path.join(dir, 'serverless.yml')))
           ? 'serverless'
           : 'node';
       }
 
       const cantaraConfigPath = path.join(dir, 'cantara.config.js');
-      if (existsSync(cantaraConfigPath)) {
+      if (await fsExists(cantaraConfigPath)) {
         userAddedMetadata = require(cantaraConfigPath);
       }
 

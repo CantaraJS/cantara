@@ -1,10 +1,11 @@
 {
   "target": "esnext",
   "compilerOptions": {
+    "rootDir": "./src",
     "target": "esnext",
     "module": "commonjs",
     "lib": ["es2019", "es6", "es2015", "dom"],
-    "declaration": true,
+    "declaration": false,
     "outDir": "dist",
     "strict": true,
     "types": ["node", "enquirer"],
@@ -12,5 +13,5 @@
     "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types", "./typings"]
   },
-  "include": ["/package.json/", "src", "./typings"]
+  "include": ["src", "./typings"]
 }

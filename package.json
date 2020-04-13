@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "nodemon --watch src/**/*.ts --watch .env --exec cross-env NODE_ENV=development ts-node src/index.ts",
+    "debug": "node --inspect-brk -r ts-node/register src/index.ts",
     "build": "tsc -p .",
     "semantic-release": "semantic-release"
   },
