@@ -6,6 +6,12 @@ export type CantaraApplicationType =
   | 'serverless';
 
 export interface CantaraApplicationMetaInformation {
+  /**
+   * webpack dev server configurations
+   */
+  devServer?: {
+    port?: number;
+  };
   displayName: string;
   /** Used for manifest */
   themeColor?: string;
