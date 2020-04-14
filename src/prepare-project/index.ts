@@ -38,18 +38,20 @@ async function prepareUserProject() {
   // Copy global.d.ts file to project's root:
   // This way, static assets like images and CSS files can be imported using "import" syntax
   const STATIC_PATHS_TO_COPY = [
-    '.vscode',
-    '.gitignore',
-    '.prettierrc',
-    'global.d.ts',
+    { from: '.vscode' },
+    { from: '.gitignore-template', to: '.gitignore' },
+    { from: '.prettierrc' },
+    { from: 'global.d.ts' },
   ];
   for (const pathToCopy of STATIC_PATHS_TO_COPY) {
-    const fullPath = path.join(rootDir, pathToCopy);
+    const fromPath = path.join(
+      globalCantaraConfig.internalPaths.static,
+      pathToCopy.from,
+    );
+    const fullPath = path.join(rootDir, pathToCopy.to || pathToCopy.from);
+
     if (!existsSync(fullPath)) {
-      await ncp(
-        path.join(globalCantaraConfig.internalPaths.static, pathToCopy),
-        fullPath,
-      );
+      await ncp(fromPath, fullPath);
     }
   }
 
