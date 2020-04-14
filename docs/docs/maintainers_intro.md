@@ -5,6 +5,8 @@ title: Developing Cantara
 
 This is for everyone who wishes to contribute to Cantara.
 
+If you would like to contribute to Cantara, say hello on our [Contributing Channel on Spectrum](https://spectrum.chat/cantara/contributing)! We will be happy to further guide you!
+
 This page is heavily WIP.
 
 ## Start development
