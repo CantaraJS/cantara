@@ -20,6 +20,11 @@ module.exports = {
         { to: 'docs/introduction', label: 'Getting started', position: 'left' },
         { to: 'docs/docs_intro', label: 'Guides', position: 'left' },
         {
+          to: 'https://spectrum.chat/cantara',
+          label: 'Join the Community',
+          position: 'left',
+        },
+        {
           to: 'https://github.com/CantaraJS/cantara',
           label: 'Github',
           position: 'right',

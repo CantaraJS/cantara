@@ -30,7 +30,12 @@ But Cantara isn't only _exclusively_ for Fullstack TypeScript apps, it's also ve
 
 Despite it's **zero-config** nature, Cantara aims to be highly customizable, it shouldn't be in your way but adapt to the very specific needs of your project which may arise over time. There is no such thing as _ejecting_, if you want to change the internal behaviour of Cantara, you can do that through special hooks (**\***). Like that, you don't loose the many advantages of re-using the same configurations across multiple repositories.
 
-**\*** Note: This is yet to be implemented, as it is better to implement such a rather complex interface with as much community feedback as possible, to serve the different needs best. In the mean time, please open an issue with the feature you are missing. That would be a great help!
+**\*** Note: This is yet to be implemented, as it is better to implement such a rather complex interface with as much community feedback as possible, to serve the different needs best. In the mean time, please post a message with the feature you are missing to [our spectrum community](https://spectrum.chat/cantara). That would be a great help!
+
+## Getting help
+
+If you face any problems, have questions of feature requests, join our Spectrum Community:
+[![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/cantara)
 
 ## Next steps
 
