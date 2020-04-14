@@ -43,6 +43,8 @@ You can either execute the command directly like this:
 ctra init my-awesome-project
 ```
 
+![Cantara CLI Wizard](/img/ctra_init.gif)
+
 This will create a new folder `my-awesome-project`.
 
 Now, let's navigate to that folder.
@@ -64,7 +66,7 @@ Look at the code to get a better understanding of how the different parts work t
 
 When you execute Cantara without parameters, an easy to use wizard will prompt you with all the commands you can currently invoke! :sparkle:
 
-![Cantara CLI Wizard](/img/ctra_wizard.png)
+![Cantara CLI Wizard](/img/ctra_dev.gif)
 
 You can either use the wizard to build the final Cantara command you want to execute, or type it out in your terminal.
 

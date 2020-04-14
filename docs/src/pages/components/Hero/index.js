@@ -3,6 +3,7 @@ import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import './index.css';
 import TechStack from '../TechStack';
+import WizardCli from '../WizardCli';
 
 const Wave = () => (
   <div className="cantara__wave-container">
@@ -47,6 +48,7 @@ export default function Hero() {
           </div>
         </div>
         <TechStack />
+        <WizardCli />
       </div>
       <Wave />
     </header>
