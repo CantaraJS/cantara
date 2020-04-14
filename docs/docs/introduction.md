@@ -1,10 +1,10 @@
 ---
 id: introduction
-title: What is Cantara...
-sidebar_label: What is Cantara?
+title: Introduction
+sidebar_label: Introduction
 ---
 
-# ...and what problems does it solve?
+# What is Cantara?
 
 Cantara stands for: **C**reate **A** **N**ode, **T**ypeScript **A**nd **R**eact **A**pplication
 
@@ -37,4 +37,4 @@ Despite it's **zero-config** nature, Cantara aims to be highly customizable, it 
 Enough talking, let's get started:
 
 - [Go to the Quick Start guide to see how can get up and running with a Fullstack TypeScript project within 5 minutes](quick_start).
-- [You can also directly dive deeper and head over to the **Docs**, which aim cover every aspect of Cantara](glossary)
+- [You can also directly dive deeper and head over to the **Guides**, which aim cover every aspect of Cantara](docs_intro)

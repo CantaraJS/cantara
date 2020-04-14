@@ -24,16 +24,14 @@ First, install Cantara globally using your favorite package manager.
 npm i -g cantara
 ```
 
-Now you can access Cantara in the command line using one of those aliases:
+Expect this to take some time, as all development dependencies for backend and frontend development have to be installed.
+
+Once installed, you can access Cantara in the command line using one of those aliases:
 
 ```bash
 cantara
 ctra
 ```
-
-When you execute Cantara without parameters, an easy to use wizard will prompt you with all the commands you can currently invoke.
-
-![Cantara CLI Wizard](/img/ctra_wizard.png)
 
 ## Initialize a new project
 
@@ -45,9 +43,7 @@ You can either execute the command directly like this:
 ctra init my-awesome-project
 ```
 
-...or just invoke `ctra` to perform the same task using the wizard. :mage:
-
-Either ways, this will create a new folder `my-awesome-project`.
+This will create a new folder `my-awesome-project`.
 
 Now, let's navigate to that folder.
 
@@ -57,11 +53,22 @@ cd my-awesome-project
 
 As you will see, **3** new folders and several new files were copied into the directory. Also, a new git repository was initialized.
 
-The [`init`](commands/init) command, if executed with no other parameters, clones the [cantara-simple-starter](https://github.com/CantaraJS/cantara-simple-starter) project, which is a simple example project, consisting of an ExpressJS REST API, a serverless API and a React App. The functionality of this app is simple: Displaying a random image from Unsplash to the user.
+The [`init`](commands/init) command, if executed with no other parameters, clones the [cantara-simple-starter](https://github.com/CantaraJS/cantara-simple-starter) project, which is a simple example project, consisting of an ExpressJS REST API, a serverless API and a React pp.
+
+The functionality of this app is simple: Displaying a random image from Unsplash to the user.
+![Cantara Example Application](/img/starter_app.png)
 
 Look at the code to get a better understanding of how the different parts work together.
 
-## Start the development servers
+## The Cantara CLI wizard :mage:
+
+When you execute Cantara without parameters, an easy to use wizard will prompt you with all the commands you can currently invoke! :sparkle:
+
+![Cantara CLI Wizard](/img/ctra_wizard.png)
+
+You can either use the wizard to build the final Cantara command you want to execute, or type it out in your terminal.
+
+## Starting the development servers
 
 We can now start developing the server and the React app using the `dev` command.
 
@@ -71,9 +78,12 @@ First, let's start our ExpressJS REST API in development mode:
 ctra dev express-api
 # OR just
 ctra dev
+# and select "express-api"
 ```
 
-If you now edit files under `node-apps/express-api`, the server automatically restarts.
+The first time you invoke the `dev` command, the application's runtime dependencies need to be installed.
+
+Editing the files under `node-apps/express-api`, will cause the server to automatically restart.
 
 Now, let's start our React App development server!
 

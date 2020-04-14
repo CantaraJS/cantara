@@ -14,7 +14,7 @@ const Feature = ({ title, description }) => (
 
 export default function Features() {
   return (
-    <div style={{ backgroundColor: '#305bff' }}>
+    <div className="features__container">
       <div className="cantara__features">
         <h2 className="cantara__features__title" id="features">
           Features

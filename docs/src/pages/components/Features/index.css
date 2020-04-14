@@ -14,3 +14,11 @@
   font-size: 3em;
   font-style: italic;
 }
+
+.features__container {
+  background: #305bff;
+}
+
+html[data-theme='dark'] .features__container {
+  background: unset;
+}

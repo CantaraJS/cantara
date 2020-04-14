@@ -18,7 +18,7 @@ module.exports = {
       },
       links: [
         { to: 'docs/introduction', label: 'Getting started', position: 'left' },
-        { to: 'docs/docs_intro', label: 'Docs', position: 'left' },
+        { to: 'docs/docs_intro', label: 'Guides', position: 'left' },
         {
           to: 'https://github.com/CantaraJS/cantara',
           label: 'Github',
@@ -37,7 +37,7 @@ module.exports = {
               to: 'docs/introduction',
             },
             {
-              label: 'Docs',
+              label: 'Guides',
               to: 'docs/docs_intro',
             },
             {

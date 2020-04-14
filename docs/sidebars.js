@@ -8,7 +8,7 @@
 module.exports = {
   main: {
     Introduction: ['introduction', 'quick_start'],
-    ['Docs']: [
+    ['Guides']: [
       'docs_intro',
       'installing_and_getting_ready',
       'initializing_a_new_project',

@@ -19,7 +19,7 @@ const Wave = () => (
 export default function Hero() {
   return (
     <header className="cantara__hero">
-      <div style={{ backgroundColor: '#fff', width: '100%' }}>
+      <div className="cantara__hero__inner">
         <div className="cantara__hero__container">
           <span className="badge badge--secondary">Alpha</span>
 
