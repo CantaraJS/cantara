@@ -56,7 +56,7 @@ export default async function initializeNewProject({
     Initialized new Cantara project.
     
     Execute:
-    ${c.cyan(`cd ${newFolderPath}`)}
+    ${c.cyan(`cd ${path.basename(projectDir)}`)}
     ${c.cyan(`ctra`)}
 
     This will get you up and running with your new project.
