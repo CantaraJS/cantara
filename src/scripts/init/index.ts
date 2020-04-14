@@ -67,7 +67,7 @@ export default async function initializeNewProject({
       'Quick Start',
       c.magenta('https://cantara.js.org/docs/quick_start'),
     )}
-    ${terminalLink('Docs', c.magenta('https://cantara.js.org/docs'))}
+    ${terminalLink('Community', c.magenta('https://spectrum.chat/cantara'))}
 
     Have fun!
   `);

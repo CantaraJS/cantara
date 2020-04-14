@@ -13,7 +13,7 @@ const getDirectories = (source: string) => {
     return readdirSync(source)
       .map(name => path.join(source, name))
       .filter(isDirectory);
-  } catch {
+  } catch (e) {
     return [];
   }
 };

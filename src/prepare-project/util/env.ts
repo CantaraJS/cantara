@@ -19,7 +19,7 @@ export function createTempEnvJsonFile() {
     const { env } = getRuntimeConfig();
     const jsonFilePath = path.join(temp, '.env.json');
     writeJson(jsonFilePath, env || {});
-  } catch {
+  } catch (e) {
     // No app active, skipping this step...
   }
 }

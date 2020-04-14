@@ -11,7 +11,7 @@ function loadEnvVars() {
     Object.keys(envJson).forEach(envVarName => {
       process.env[envVarName] = envJson[envVarName];
     });
-  } catch {
+  } catch (e) {
     console.warn(
       'Could not read generated .env.json. This is likely an error with Cantara itself.',
     );

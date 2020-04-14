@@ -60,7 +60,7 @@ function getAllPeerDependencies(allApps: CantaraApplication[]) {
       try {
         const { peerDependencies = {} } = readFileAsJSON(filePath);
         return peerDependencies;
-      } catch {
+      } catch (e) {
         return {};
       }
     })

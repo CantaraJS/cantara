@@ -1,8 +1,7 @@
-import { promises, existsSync } from 'fs';
-
-const { readFile } = promises;
+import { existsSync } from 'fs';
 
 import path from 'path';
+import { fsReadFile } from '../util/fs';
 /**
  * Parses a .env file and returns and object
  * with it's values.
@@ -14,7 +13,7 @@ async function parseEnvFile(
 ): Promise<{ [key: string]: string }> {
   if (!existsSync(filePath)) return {};
   let result: { [key: string]: string } = {};
-  const lines = (await readFile(filePath)).toString().split('\n');
+  const lines = (await fsReadFile(filePath)).toString().split('\n');
 
   for (const line of lines) {
     const match = line.match(/^([^=:#]+?)[=:](.*)/);

@@ -118,7 +118,7 @@ function getJestAliases() {
       {},
     );
     return jestAliases;
-  } catch {
+  } catch (e) {
     // No active app, skipping...
     return {};
   }
