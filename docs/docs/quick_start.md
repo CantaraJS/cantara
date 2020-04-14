@@ -24,6 +24,8 @@ First, install Cantara globally using your favorite package manager.
 npm i -g cantara
 ```
 
+**Make sure that you have at least Node.js 10 installed. It is recommended to use Node.js >= 12**
+
 Expect this to take some time, as all development dependencies for backend and frontend development have to be installed.
 
 Once installed, you can access Cantara in the command line using one of those aliases:
