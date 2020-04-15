@@ -10,6 +10,11 @@ module.exports = {
   baseUrl: '/', // The name of your GitHub project.
   projectName: 'cantara', // The name of your GitHub project. Same as above.
   themeConfig: {
+    algolia: {
+      apiKey: 'af2f50bcdbfad04cca05fbec47c978df',
+      indexName: 'cantara',
+      algoliaOptions: {}, // Optional, if provided by Algolia
+    },
     navbar: {
       title: '',
       logo: {
