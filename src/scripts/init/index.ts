@@ -45,13 +45,13 @@ export default async function initializeNewProject({
     finalGitLink = `https://github.com/${templateName}.git`;
   }
 
-  await spawnCmd(`git clone ${finalGitLink} ${projectDir}`, {
+  await spawnCmd(`git clone "${finalGitLink}" "${projectDir}"`, {
     redirectIo: true,
   });
   const gitFolderToDelete = path.join(projectDir, '.git');
   // Set force to true because gitFolderToDelete is outside CWD
   await del(gitFolderToDelete, { force: true });
-  await spawnCmd(`git init ${projectDir}`);
+  await spawnCmd(`git init "${projectDir}"`);
   console.log(`
     Initialized new Cantara project.
     
