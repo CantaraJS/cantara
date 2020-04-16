@@ -87,6 +87,7 @@ export default function createNodeWebpackConfig({
             ext: 'js,graphql,ts,ps1,json,yaml',
             nodeArgs: [nodemonOptions],
             watch: app.paths.build,
+            restartable: true,
           })
         : undefined,
       isProduction
