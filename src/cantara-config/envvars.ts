@@ -207,5 +207,8 @@ export default async function loadAppEnvVars({
     );
   }
 
+  // Set stage env var
+  envVarsToReturn.STAGE = currentStage;
+
   return envVarsToReturn;
 }

@@ -64,17 +64,11 @@ export default async function buildYargsCommands({
               ? allApps
               : allApps.filter(app => appTypes.includes(app.type));
           const availableAppNames = filteredApps.map(app => app.name);
-          yargs
-            .positional('appname', {
-              describe: 'Name of the app (foldername)',
-              type: 'string',
-              choices: availableAppNames,
-            })
-            .option('stage', {
-              alias: 's',
-              type: 'string',
-              describe: `Current stage, e.g. development, production or something custom. Environment variables are chosen based on the currently set stage.`,
-            });
+          yargs.positional('appname', {
+            describe: 'Name of the app (foldername)',
+            type: 'string',
+            choices: availableAppNames,
+          });
         }
       },
       async args => {
@@ -113,7 +107,7 @@ export default async function buildYargsCommands({
             '../cantara-config/runtime-config'
           );
           await loadCantaraRuntimeConfig({
-            stage: 'not_set',
+            stage: (args.stage as string | undefined) || 'not_set',
             currentCommand: {
               name: cmdName,
               appname,
@@ -131,4 +125,9 @@ export default async function buildYargsCommands({
       },
     );
   }
+  yargs.option('stage', {
+    alias: 's',
+    type: 'string',
+    describe: `Current stage, e.g. development, production or something custom. Environment variables are chosen based on the currently set stage.`,
+  });
 }
