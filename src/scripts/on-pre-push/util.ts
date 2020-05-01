@@ -14,13 +14,17 @@ export async function getUnpushedCommits({
   remoteBranch,
   repoDir,
 }: GetUnpushedCommitsParams) {
-  const cmd = `git log ${remoteBranch}..${localBranch} --pretty=%H`;
-  const res = await execCmd(cmd, { workingDirectory: repoDir });
-  const unpushedCommits = res
-    .toString()
-    .trim()
-    .split('\n');
-  return unpushedCommits;
+  try {
+    const cmd = `git log ${remoteBranch}..${localBranch} --pretty=%H`;
+    const res = await execCmd(cmd, { workingDirectory: repoDir });
+    const unpushedCommits = res
+      .toString()
+      .trim()
+      .split('\n');
+    return unpushedCommits;
+  } catch (e) {
+    return [];
+  }
 }
 
 export async function getCurrentBranchName({ repoDir }: GitCmdBaseParams) {
