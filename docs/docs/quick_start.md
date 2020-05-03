@@ -7,9 +7,9 @@ title: Quick Start
 
 After this quick start guide, you'll have
 
-- A ExpressJS based REST API written in TypeScript
+- An ExpressJS based REST API written in TypeScript
 - The same REST API, but as a serverless endpoint, written in TypeScript
-- A re-usables React Component which consumes the REST API and can be published to NPM with just one command
+- A re-usable React Component which consumes the REST API and can be published to NPM with just one command
 - A React Application which makes use of the React Component
 
 All in under 10 minutes!
@@ -18,13 +18,17 @@ That should be a good starting point to develop your own fullstack application.
 
 ## Installing Cantara
 
-Install Cantara globally using your favorite package manager.
+First, install Cantara globally using your favorite package manager.
 
 ```bash
 npm i -g cantara
 ```
 
-Now you can access Cantara in the command line using one of those aliases:
+**Make sure that you have at least Node.js 10 installed. It is recommended to use Node.js >= 12**
+
+Expect this to take some time, as all development dependencies for backend and frontend development have to be installed.
+
+Once installed, you can access Cantara in the command line using one of those aliases:
 
 ```bash
 cantara
@@ -33,12 +37,19 @@ ctra
 
 ## Initialize a new project
 
-Let's get you a new folder on your computer!
-To kickstart a new Cantara project, use the [`init`](commands/init) command.
+Now, let's get you a new folder on your computer!
+To create a new Cantara project, use the [`init`](commands/init) command.
+You can either execute the command directly like this:
+
+```bash
+ctra init my-awesome-project
+```
+
+![Cantara CLI Wizard](/img/ctra_init.gif)
 
 This will create a new folder `my-awesome-project`.
 
-Now, let's go to that folder.
+Now, let's navigate to that folder.
 
 ```bash
 cd my-awesome-project
@@ -46,11 +57,22 @@ cd my-awesome-project
 
 As you will see, **3** new folders and several new files were copied into the directory. Also, a new git repository was initialized.
 
-The [`init`](commands/init), if executed with no other parameters, clones the [cantara-simple-starter](https://github.com/CantaraJS/cantara-simple-starter) project, which is a simple example project, consisting of an ExpressJS REST API, a serverless API and a React App. The functionality of this app is simple: Displaying a random image from Unsplash to the user.
+The [`init`](commands/init) command, if executed with no other parameters, clones the [cantara-simple-starter](https://github.com/CantaraJS/cantara-simple-starter) project, which is a simple example project, consisting of an ExpressJS REST API, a serverless API and a React pp.
+
+The functionality of this app is simple: Displaying a random image from Unsplash to the user.
+![Cantara Example Application](/img/starter_app.png)
 
 Look at the code to get a better understanding of how the different parts work together.
 
-## Start the development servers
+## The Cantara CLI wizard :mage:
+
+When you execute Cantara without parameters, an easy to use wizard will prompt you with all the commands you can currently invoke! :sparkle:
+
+![Cantara CLI Wizard](/img/ctra_dev.gif)
+
+You can either use the wizard to build the final Cantara command you want to execute, or type it out in your terminal.
+
+## Starting the development servers
 
 We can now start developing the server and the React app using the `dev` command.
 
@@ -58,9 +80,14 @@ First, let's start our ExpressJS REST API in development mode:
 
 ```bash
 ctra dev express-api
+# OR just
+ctra dev
+# and select "express-api"
 ```
 
-If you now edit files under `node-apps/express-api`, the server automatically restarts.
+The first time you invoke the `dev` command, the application's runtime dependencies need to be installed.
+
+Editing the files under `node-apps/express-api`, will cause the server to automatically restart.
 
 Now, let's start our React App development server!
 
@@ -68,7 +95,7 @@ Now, let's start our React App development server!
 ctra dev random-image-app
 ```
 
-Goto [http://localhost:8080](http://localhost:8080) and you should now see a nice random image which was pulled from our ExpressJS Server.
+Goto [http://localhost:8080](http://localhost:8080) and you should see a nice random image which was pulled from our ExpressJS Server.
 
 Alternatively, you can also start the serverless REST API in development mode. It is the exact same API, just _serverless_.
 
@@ -82,5 +109,5 @@ Now, get creative and play a bit around with the different parts of the applicat
 
 ## Further reading
 
-Now you have the basics to start developing your app.
-For the next steps, e.g. creating a production build of your app, publishung packages to NPM or writing and executing tests, go the [Guides section of the docs](guides_intro). Here, all of the more advanced topics are covered. Have fun!
+Now you have the basics to start developing your fullstack app.
+For the next steps, e.g. creating a production build of your app, publishing packages to NPM or writing and executing tests, go the [Docs](docs_intro). Here, all of the more advanced topics are covered. Have fun!

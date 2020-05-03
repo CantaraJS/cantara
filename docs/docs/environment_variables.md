@@ -10,7 +10,7 @@ Passing in environment variables through directly from the system is usally used
 
 ## Adding a new environment variable
 
-The first step when adding a new environment variable is adding a new entry under `env` in the `cantara.config.js` array. Go to the `cantara.config.js` file of the app/package where the environment variable is needed. If there is no `cantara.config.js`, create a new one. It could look like that:
+The first step when adding a new environment variable is adding a new entry in the `env` array of the app's `cantara.config.js`. Go to the `cantara.config.js` file of the app/package where the environment variable is needed. If there is no `cantara.config.js`, create a new one. It could look like that:
 
 ```javascript
 module.exports = {
@@ -31,6 +31,10 @@ MY_ENV_VAR=env_var_value123
 ```
 
 When you now start the development of your app using the `dev` command, the value of `process.env.MY_ENV_VAR` will be `env_var_value123`. When executing the `test` or `e2e` command, Cantara will look if there is a file called `.env.test` in the app's folder. If not, it will fall back to `.env.development`. For building/deploying, Cantara will look for a file called `.env.production`.
+
+### Project wide .env files
+
+If some env var values are needed in multiple applications, e.g. in two NodeJS APIs, you can create a `.env.<stage>` file in the project's root. This way, you don't need to define the env variable value twice.
 
 ## Defining environment variables manually
 

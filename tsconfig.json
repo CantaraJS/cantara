@@ -1,15 +1,17 @@
 {
+  "target": "esnext",
   "compilerOptions": {
-    "target": "es5",
+    "rootDir": "./src",
+    "target": "esnext",
     "module": "commonjs",
-    "lib": ["es6", "es2015", "dom"],
-    "declaration": true,
+    "lib": ["es2019", "es6", "es2015", "dom"],
+    "declaration": false,
     "outDir": "dist",
-    "rootDir": "src",
     "strict": true,
-    "types": ["node"],
+    "types": ["node", "enquirer"],
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "typeRoots": ["./node_modules/@types", "./typings"]
   },
-  "include": ["/package.json/", "src"]
+  "include": ["src", "./typings"]
 }

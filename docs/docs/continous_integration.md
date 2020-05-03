@@ -3,28 +3,53 @@ id: continous_integration
 title: Continous Integration
 ---
 
-One very useful command for CI is the `build-changed` command.
+## Using Cantara in CI
+
+On your local development machine you probably have Cantara installed globally. This is most likely not the case for your CI image. The recommended way of using Cantara is via `npx`, which is installed alongside `npm` (since version 5.2).
+
+**Example:**
 
 ```bash
-ctra build-changed
+npx cantara build my-react-app
+npx cantara deploy my-serverless-api
 ```
 
-This will only rebuild the parts of your repository which changed since the last commit and can therfore save precious CI execution time.
-
-The counterpart for testing is:
+To avoid unexpected breaking changes break your build, it is advised to specify a version number:
 
 ```bash
-ctra test-changed
+npx cantara@0.5.1 build my-react-app
+npx cantara@0.5.1 deploy my-serverless-api
 ```
 
-Like this, you can re-build and test only the parts of your repository which actually changed.
+## Re-build/deploy only changed parts of the repository
 
-Currently, you need to integrate those commands with your CI system yourself. Contributions in that area are very welcome!
+When deploying different parts of a monorepository, it is a commonly known problem that all parts of the application (the React app, the API, ecc.) need to be re-build and re-deployed, as it is hard to tell which parts changed. Thanks to Cantara's `exec-changed` command it is easy to re-build and deploy only the parts of the application which changed. This way, you can save precious CI time.
 
-To execute arbitrary commands when parts of the repository changed, you can use the `exec-changed` command. **Example**:
+The `exec-changed` works as folllows:
 
 ```bash
-ctra exec-changed express-api ./upload-to-server.sh
+ctra exec-changed <list> <command>
 ```
 
-If you execute this command in your CI system, the `upload-to-server.sh` script will only be executed if the code in `node-apps/express-api` changed since the last commit. This command can be useful to do stuff like uploading newly generated assets to a CDN or a server.
+`list` is a comma separated list of applications/packages.
+
+`command` is the command you want to execute when one of the apps/packages specified in `list` changed.
+
+**Example**:
+Assuming you are developing a React app called `admin-panel` which makes use of a local package caled `admin-ui`, use this command to re-build the `admin-panel` React app only of it changed.
+
+```bash
+cantara exec-changed admin-panel,admin-ui cantara build admin-panel
+```
+
+You don't need to use cantara commands, e.g.
+
+```bash
+cantara exec-changed admin-panel,admin-ui npm run build:admin
+```
+
+Or even:
+
+```bash
+cantara exec-changed admin-panel,admin-ui ./deploy-react-app.sh
+```

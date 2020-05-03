@@ -17,12 +17,13 @@ TypeScript types are generated automatically! So all consumers of this packages 
 
 Now you are ready to publish it!
 
-To do this, use the `publish` command.
+To do this, just invoke the standard npm `publish` command.
+Make sure that `private` is not set to true `true` in the package's `package.json`.
 
 ```bash
-ctra publish <package-name>
+ctra run <package-name> publish
 ```
 
-A wizard will prompt you some questions.
+This will execute `npm publish` for your package.
 
 **Congrats! Your package is now on NPM**

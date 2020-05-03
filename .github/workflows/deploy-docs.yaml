@@ -1,0 +1,31 @@
+name: Deploy docs
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+    - 'docs/**/*'
+    - 'docs/'
+    - 'docs/*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      #with:
+        #node-version: '12.x'
+    - name: Deploy docs
+      working-directory: docs
+      env:
+        GIT_USER: 'scriptify:${{ secrets.GITHUB_TOKEN }}'
+      run: |
+        git config --global user.email "bot@cantara.js.org"
+        git config --global user.name "Cantara Docs Bot"
+        npm i
+        npm run deploy

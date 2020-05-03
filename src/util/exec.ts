@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import path from 'path';
-import getGlobalConfig from '../cantara-config';
+import getGlobalConfig from '../cantara-config/global-config';
 
 interface CommonOptions {
   /** Defaults to current process.cwd() */
@@ -48,8 +48,12 @@ export function spawnCmd(
       stdio: redirectIo ? 'inherit' : undefined,
     });
 
-    function onExit(exData: any) {
-      resolve(retData);
+    function onExit(exitCode: number) {
+      if (exitCode === 0) {
+        resolve(retData);
+      } else {
+        reject(`Command "${cmd}" failed: ${retData}`);
+      }
     }
 
     newProcess.stdio.forEach(
@@ -63,7 +67,6 @@ export function spawnCmd(
     // newProcess.on('close', onExit);
     newProcess.on('exit', onExit);
     newProcess.on('error', e => {
-      console.log('ERRRRRRORRROROROR', e);
       reject(e);
     });
     // newProcess.on('disconnect', onExit);
@@ -98,7 +101,7 @@ function getCurrentPATH() {
     globalCantaraConfig.internalPaths.root,
   );
   const userProjectNodeModulesBinPath = getNodeModulesBinPath(
-    globalCantaraConfig.runtime.projectDir,
+    globalCantaraConfig.projectDir,
   );
 
   let newPathEnv = process.env.PATH || '';
@@ -126,7 +129,7 @@ export default async function execCmd(
   const globalCantaraConfig = getGlobalConfig();
   const NEW_PATH_ENV = getCurrentPATH();
 
-  const secretsEnvVars = withSecrets ? globalCantaraConfig.runtime.secrets : {};
+  const secretsEnvVars = withSecrets ? globalCantaraConfig.secrets : {};
 
   const options: SpawnOptions = {
     workingDirectory,

@@ -1,37 +1,20 @@
-import { existsSync, readFileSync } from 'fs';
+import { existsSync } from 'fs';
 
 import path from 'path';
-
-interface LoadEnvVarFromStageOptions {
-  envVarName: string;
-  stage: string;
-  envFileContent: { [key: string]: string };
-}
-
-function loadEnvVarFromStage({
-  envVarName,
-  stage,
-  envFileContent,
-}: LoadEnvVarFromStageOptions) {
-  const processEnvVarName = `${stage.toUpperCase()}_${envVarName}`;
-  const envVarValue =
-    envFileContent[envVarName] || process.env[processEnvVarName];
-
-  return envVarValue;
-}
-
+import { fsReadFile } from '../util/fs';
 /**
  * Parses a .env file and returns and object
  * with it's values.
  * If the file is not found, an empty object
  * is returned.
  */
-function parseEnvFile(filePath: string): { [key: string]: string } {
+async function parseEnvFile(
+  filePath: string,
+): Promise<{ [key: string]: string }> {
   if (!existsSync(filePath)) return {};
   let result: { [key: string]: string } = {};
-  const lines = readFileSync(filePath)
-    .toString()
-    .split('\n');
+  const lines = (await fsReadFile(filePath)).toString().split('\n');
+
   for (const line of lines) {
     const match = line.match(/^([^=:#]+?)[=:](.*)/);
     if (match) {
@@ -43,8 +26,80 @@ function parseEnvFile(filePath: string): { [key: string]: string } {
   return result;
 }
 
+/**
+ * Loads, parses and merges multiple
+ * env files
+ */
+async function loadMultipleEnvFiles(envFilePaths: string[]) {
+  let mergedEnvVars: { [key: string]: string } = {};
+  for (const envFilePath of envFilePaths) {
+    const envFileContent = await parseEnvFile(envFilePath);
+    mergedEnvVars = {
+      ...mergedEnvVars,
+      ...envFileContent,
+    };
+  }
+  return mergedEnvVars;
+}
+
+interface LoadEnvVarFromStageOptions {
+  envVarName: string;
+  stage: string;
+  envFilesContent: { [key: string]: string };
+}
+
+function loadEnvVarFromStage({
+  envVarName,
+  stage,
+  envFilesContent,
+}: LoadEnvVarFromStageOptions) {
+  const processEnvVarName = `${stage.toUpperCase()}_${envVarName}`;
+  const envVarValue =
+    process.env[processEnvVarName] || envFilesContent[envVarName];
+  return envVarValue;
+}
+
+interface GetEnvFilePathsOptions {
+  currentStage: string;
+  fallbackStage?: string;
+  appRootDir: string;
+  projectRootDir: string;
+}
+
+/**
+ * Returns an array of .env file paths
+ * which may be parsed if they exist,
+ * based on the current stage
+ */
+function getEnvFilePaths({
+  currentStage,
+  fallbackStage,
+  appRootDir,
+  projectRootDir,
+}: GetEnvFilePathsOptions): { path: string; type: string }[] {
+  // Unique stages, in case fallbackStage === currentStage
+  const stages = Array.from(
+    new Set([currentStage, fallbackStage].filter(Boolean) as string[]),
+  );
+  const rootDirs = [
+    { path: appRootDir, type: 'local' },
+    { path: projectRootDir, type: 'global' },
+  ];
+  return stages
+    .map(stage => {
+      const envFileName = `.env.${stage.toLowerCase()}`;
+      const envFilePaths = rootDirs.map(rootDir => ({
+        path: path.join(rootDir.path, envFileName),
+        type: rootDir.type,
+      }));
+      return envFilePaths;
+    })
+    .flat();
+}
+
 interface LoadAppEnvVarsOptions {
   appRootDir: string;
+  projectRootDir: string;
   /** Can be specified in app's cantara.config.js */
   expectedEnvVars: string[];
   currentStage: string;
@@ -55,7 +110,7 @@ interface LoadAppEnvVarsOptions {
   fallbackStage?: string;
   /** Set this to true if an error should
    * be thrown if a variable defined
-   * in expectedEnvVars is no presetn
+   * in expectedEnvVars is no present
    */
   required?: boolean;
 }
@@ -74,6 +129,11 @@ interface LoadAppEnvVarsOptions {
  * are ignored and a warning is shown.
  * The resulting object can later on
  * be used by the WebpackDefinePlugin.
+ * If an environment variable is needed
+ * in more than one app (e.g. two
+ * serverless endpoints), you can create
+ * a .env.<stage> file in the root
+ * of your project.
  *
  * Example:
  * Assume the envvar DB_CONNECTION_STR is required
@@ -86,36 +146,46 @@ interface LoadAppEnvVarsOptions {
  * Prefixing the envvars prevents you from accidently
  * using the wrong envvars.
  */
-export default function loadAppEnvVars({
+export default async function loadAppEnvVars({
   appRootDir,
   currentStage,
   expectedEnvVars,
   fallbackStage,
   required,
+  projectRootDir,
 }: LoadAppEnvVarsOptions) {
   let envVarsToReturn: { [key: string]: string } = { STAGE: currentStage };
   if (expectedEnvVars.length === 0) return envVarsToReturn;
-  const envFileName = `.env.${currentStage.toLowerCase()}`;
-  const currentStageEnvFile = path.join(appRootDir, envFileName);
-  const envFileContent = parseEnvFile(currentStageEnvFile);
-  const fallbackEnvFileContent = fallbackStage
-    ? parseEnvFile(path.join(appRootDir, `.env.${fallbackStage.toLowerCase()}`))
-    : {};
+  const envFilePaths = getEnvFilePaths({
+    appRootDir,
+    currentStage,
+    fallbackStage,
+    projectRootDir,
+  });
+  const globalEnvVars = await loadMultipleEnvFiles(
+    envFilePaths.filter(p => p.type === 'global').map(p => p.path),
+  );
+  const localEnvVars = await loadMultipleEnvFiles(
+    envFilePaths.filter(p => p.type === 'local').map(p => p.path),
+  );
+
+  const envFilesContent = {
+    ...globalEnvVars,
+    ...localEnvVars,
+  };
+
   for (const envVarName of expectedEnvVars) {
     let envVarValue = loadEnvVarFromStage({
-      envFileContent,
+      envFilesContent,
       envVarName,
       stage: currentStage,
     });
-    if (!envVarValue && fallbackStage) {
-      envVarValue = loadEnvVarFromStage({
-        envFileContent: fallbackEnvFileContent,
-        envVarName,
-        stage: fallbackStage,
-      });
-    }
     if (envVarValue === undefined || envVarValue === null) {
-      const errMsg = `File ${envFileName} contains no variable named "${envVarName}" and process.env.${currentStage.toUpperCase()}_${envVarName} is not defined in the current environment. It is marked as required in cantara.config.js`;
+      const errMsg = `[${envFilePaths
+        .map(f => f.path)
+        .join(
+          ', ',
+        )}] contain no variable named "${envVarName}" and process.env.${currentStage.toUpperCase()}_${envVarName} is not defined in the current environment. It is marked as required in cantara.config.js`;
       if (required) {
         throw new Error(errMsg);
       }
@@ -124,18 +194,21 @@ export default function loadAppEnvVars({
     }
   }
 
-  // Warnings for ignored env vars in .env file
-  const allEnvVarsInEnvFile = Object.keys(envFileContent);
+  // Warnings for ignored env vars in local .env file
+  const allEnvVarsInEnvFile = Object.keys(localEnvVars);
   const ignoredEnvVars = allEnvVarsInEnvFile.filter(
     envName => !expectedEnvVars.includes(envName),
   );
   if (ignoredEnvVars.length > 0) {
     console.warn(
-      `The following environment variables are ignored, because they are not present in the crana.config.js file:\n\t${ignoredEnvVars.join(
+      `The following environment variables are ignored, because they are not present in the cantara.config.js file:\n\t${ignoredEnvVars.join(
         '\n\t',
       )}`,
     );
   }
+
+  // Set stage env var
+  envVarsToReturn.STAGE = currentStage;
 
   return envVarsToReturn;
 }

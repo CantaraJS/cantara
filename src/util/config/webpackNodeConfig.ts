@@ -1,14 +1,21 @@
 import webpack, { Configuration } from 'webpack';
 import { CreateWebpackConfigParams } from './types';
+import fs from 'fs';
 import path from 'path';
 import babelConfig from './babelNodeConfig';
 import getAllWebpackExternals from '../externals';
+import slash from 'slash';
 
 const NodemonPlugin = require('nodemon-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+
+interface CreateNodeWebpackConfigOptions extends CreateWebpackConfigParams {
+  nodemonOptions?: string;
+}
 
 export default function createNodeWebpackConfig({
   app,
@@ -16,17 +23,22 @@ export default function createNodeWebpackConfig({
   alias,
   env = {},
   include = [],
-}: CreateWebpackConfigParams): Configuration {
+  nodemonOptions = '--inspect',
+}: CreateNodeWebpackConfigOptions): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
 
   const externals = getAllWebpackExternals();
 
+  const doesStaticFolderExist =
+    app.paths.static && fs.existsSync(app.paths.static);
+
   return {
     entry: app.paths.src,
     output: { path: app.paths.build },
-    node: { __dirname: true },
+    node: { __dirname: false, __filename: false },
     target: 'node',
+    devtool: mode === 'development' ? 'eval-source-map' : undefined,
     mode,
     externals,
     resolve: {
@@ -72,9 +84,10 @@ export default function createNodeWebpackConfig({
       new FriendlyErrorsWebpackPlugin(),
       isDevelopment
         ? new NodemonPlugin({
-            ext: 'js,graphql,ts,ps1,yaml,json',
-            nodeArgs: ['--inspect'],
-            watch: app.paths.root,
+            ext: 'js,graphql,ts,ps1,json,yaml',
+            nodeArgs: [nodemonOptions],
+            watch: app.paths.build,
+            restartable: true,
           })
         : undefined,
       isProduction
@@ -83,6 +96,14 @@ export default function createNodeWebpackConfig({
             dangerouslyAllowCleanPatternsOutsideProject: true,
             dry: false,
           })
+        : undefined,
+      doesStaticFolderExist
+        ? new CopyPlugin([
+            {
+              from: slash(app.paths.static || ''),
+              to: slash(app.paths.build),
+            },
+          ])
         : undefined,
     ].filter(Boolean),
   };

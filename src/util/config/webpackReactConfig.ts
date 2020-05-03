@@ -5,13 +5,16 @@ import path from 'path';
 import { CreateWebpackConfigParams } from './types';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import getCssLoaders from './common/cssLoaders';
+import slash from 'slash';
 
+const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+// const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpackMerge = require('webpack-merge');
@@ -20,7 +23,7 @@ export default function createReactWebpackConfig({
   app,
   alias = {},
   mode = 'development',
-  env,
+  env = {},
   include,
   projectDir,
 }: CreateWebpackConfigParams): Configuration {
@@ -29,7 +32,8 @@ export default function createReactWebpackConfig({
   let iconPathToUse = undefined;
   const appIconPathPng = path.join(app.paths.assets!, 'app_icon.png');
   const appIconPathSvg = path.join(app.paths.assets!, 'app_icon.svg');
-  const doesServiceWorkerExist = existsSync(path.join(app.paths.root, 'sw.js'));
+  const serviceWorkerPath = path.join(app.paths.src, 'sw.js');
+  const doesServiceWorkerExist = existsSync(serviceWorkerPath);
 
   if (existsSync(appIconPathPng)) {
     iconPathToUse = appIconPathPng;
@@ -45,6 +49,9 @@ export default function createReactWebpackConfig({
         }
       : {};
 
+  const doesStaticFolderExist =
+    app.paths.static && existsSync(app.paths.static);
+
   const webpackReactAppConfig: Configuration = {
     resolve: {
       alias: {
@@ -55,7 +62,7 @@ export default function createReactWebpackConfig({
     mode,
     devtool: isDevelopment ? 'eval-source-map' : undefined,
     output: {
-      // publicPath: '/',
+      publicPath: '/',
       filename: '[name].[hash:4].js',
       path: app.paths.build,
       chunkFilename: '[name].[chunkhash:4].js',
@@ -75,19 +82,19 @@ export default function createReactWebpackConfig({
         template: path.join(app.paths.assets!, 'index.html'),
         favicon: '',
       }),
-      iconPathToUse
-        ? new FaviconsWebpackPlugin({
-            logo: iconPathToUse,
-            inject: true,
-          })
-        : undefined,
+      // iconPathToUse
+      //   ? new FaviconsWebpackPlugin({
+      //       logo: iconPathToUse,
+      //       inject: true,
+      //     })
+      //   : undefined,
       // disableRefreshCheck: true needs to be set because of https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/15
       isDevelopment
         ? new ReactRefreshWebpackPlugin({
             disableRefreshCheck: true,
           })
         : undefined,
-      iconPathToUse
+      doesServiceWorkerExist
         ? new WebpackPwaManifest({
             // gcm_sender_id,
             theme_color: app.meta.themeColor,
@@ -95,18 +102,20 @@ export default function createReactWebpackConfig({
             name: app.meta.displayName,
             short_name: app.meta.displayName,
             ios: true,
-            icons: [
-              {
-                src: iconPathToUse,
-                sizes: [192, 512],
-              },
-            ],
+            icons: iconPathToUse
+              ? [
+                  {
+                    src: iconPathToUse,
+                    sizes: [192, 512],
+                  },
+                ]
+              : [],
             ...app.meta.pwaManifest,
           })
         : undefined,
-      doesServiceWorkerExist && isProduction
+      doesServiceWorkerExist
         ? new InjectManifest({
-            swSrc: path.join(app.paths.src, 'sw.js'),
+            swSrc: serviceWorkerPath,
           })
         : undefined,
       isProduction
@@ -116,6 +125,15 @@ export default function createReactWebpackConfig({
             dry: false,
           })
         : undefined,
+      doesStaticFolderExist
+        ? new CopyPlugin([
+            {
+              from: slash(app.paths.static || ''),
+              to: slash(app.paths.build),
+            },
+          ])
+        : undefined,
+      isProduction ? new MiniCssExtractPlugin() : undefined,
     ].filter(Boolean),
     module: {
       rules: [...getCssLoaders({ useExtractLoader: isProduction })],

@@ -39,7 +39,6 @@ export function getDependencyAliases(app: CantaraApplication) {
 
 interface GetAllPackageAliasesOptions {
   allApps: CantaraApplication[];
-  activeApp: CantaraApplication;
 }
 
 /** Returns all aliases for packages in the form
@@ -47,7 +46,6 @@ interface GetAllPackageAliasesOptions {
  */
 export default function getAllPackageAliases({
   allApps,
-  activeApp,
 }: GetAllPackageAliasesOptions): { [key: string]: string } {
   const packageAliases = allApps
     .filter(app => app.type === 'js-package' || app.type === 'react-component')

@@ -3,6 +3,7 @@ import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import './index.css';
 import TechStack from '../TechStack';
+import WizardCli from '../WizardCli';
 
 const Wave = () => (
   <div className="cantara__wave-container">
@@ -19,11 +20,14 @@ const Wave = () => (
 export default function Hero() {
   return (
     <header className="cantara__hero">
-      <div style={{ backgroundColor: '#fff', width: '100%' }}>
+      <div className="cantara__hero__inner">
         <div className="cantara__hero__container">
+          <span className="badge badge--secondary">Alpha</span>
+
           <div className="cantara__hero__logo">
             <img src={useBaseUrl('img/cantara.svg')} alt="Cantara" />
           </div>
+
           <h1 className="cantara__slogan">
             A CLI tool to create Fullstack React apps in minutes
           </h1>
@@ -35,12 +39,16 @@ export default function Hero() {
             >
               Get Started
             </Link>
-            <Link className="button button--secondary button--lg">
+            <Link
+              className="button button--secondary button--lg"
+              href="#features"
+            >
               Features
             </Link>
           </div>
         </div>
         <TechStack />
+        <WizardCli />
       </div>
       <Wave />
     </header>

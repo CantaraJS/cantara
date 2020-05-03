@@ -2,6 +2,10 @@
   background: #305bff;
 }
 
+html[data-theme='dark'] .cantara__hero {
+  background: unset;
+}
+
 .cantara__hero__container {
   display: flex;
   flex-flow: column;
@@ -12,6 +16,15 @@
   max-width: 400px;
   margin: 0 auto;
   padding: 2em;
+}
+
+.cantara__hero__inner {
+  background-color: #fff;
+}
+
+html[data-theme='dark'] .cantara__hero__container,
+html[data-theme='dark'] .cantara__hero__inner {
+  background-color: unset;
 }
 
 .cantara__hero__logo {
@@ -35,6 +48,10 @@
 
 .cantara__wave-container {
   width: 100%;
+}
+
+html[data-theme='dark'] .cantara__wave-container {
+  transform: scaleY(-1);
 }
 
 @keyframes animateWave {

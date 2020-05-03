@@ -1,8 +1,10 @@
-import { getActiveApp } from '../../cantara-config';
 import execCmd from '../../util/exec';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export default function startServerlessEndpointDevelopmentServer() {
-  const activeApp = getActiveApp();
+  const {
+    currentCommand: { app: activeApp },
+  } = getRuntimeConfig();
   const { skipCacheInvalidation } = activeApp.meta;
   const serverlessParametersToAdd = skipCacheInvalidation
     ? '--webpack-no-watch --skipCacheInvalidation'

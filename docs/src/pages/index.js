@@ -8,11 +8,10 @@ import Features from './components/Features';
 
 function Home() {
   const context = useDocusaurusContext();
-  const { siteConfig = {} } = context;
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
+      title={`CANTARA`}
+      description="A CLI tool to create Fullstack React apps in minutes"
     >
       <Hero />
       <Features />

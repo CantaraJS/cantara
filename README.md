@@ -1,5 +1,4 @@
 ![Cantara](docs/static/img/cantara.svg 'Cantara Logo')
-
 <h1 align="center">
    <a href="https://cantara.js.org">Cantara</a>
 </h1>

@@ -116,3 +116,5 @@ gen
 .env
 
 .temp
+
+dist/

@@ -5,9 +5,16 @@ module.exports = {
   url: 'https://cantara.js.org',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
-  organizationName: 'CantaraJS', // Usually your GitHub org/user name.
+  organizationName: 'cantarajs', // Usually your GitHub org/user name.
   projectName: 'cantara', // Usually your repo name.
+  baseUrl: '/', // The name of your GitHub project.
+  projectName: 'cantara', // The name of your GitHub project. Same as above.
   themeConfig: {
+    algolia: {
+      apiKey: 'af2f50bcdbfad04cca05fbec47c978df',
+      indexName: 'cantara',
+      algoliaOptions: {}, // Optional, if provided by Algolia
+    },
     navbar: {
       title: '',
       logo: {
@@ -16,7 +23,12 @@ module.exports = {
       },
       links: [
         { to: 'docs/introduction', label: 'Getting started', position: 'left' },
-        { to: 'docs/guides_intro', label: 'Guides', position: 'left' },
+        { to: 'docs/docs_intro', label: 'Guides', position: 'left' },
+        {
+          to: 'https://spectrum.chat/cantara',
+          label: 'Join the Community',
+          position: 'left',
+        },
         {
           to: 'https://github.com/CantaraJS/cantara',
           label: 'Github',
@@ -35,8 +47,12 @@ module.exports = {
               to: 'docs/introduction',
             },
             {
-              label: 'In-depth guides',
-              to: 'docs/guides_intro',
+              label: 'Guides',
+              to: 'docs/docs_intro',
+            },
+            {
+              label: 'Github',
+              to: 'https://github.com/CantaraJS/cantara',
             },
           ],
         },

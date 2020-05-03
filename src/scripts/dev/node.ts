@@ -1,25 +1,29 @@
 import webpack from 'webpack';
 
-import getGlobalConfig, { getActiveApp } from '../../cantara-config';
 import createNodeWebpackConfig from '../../util/config/webpackNodeConfig';
+import getGlobalConfig from '../../cantara-config/global-config';
+import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export function startNodeAppDevelopmentServer() {
   const {
     allPackages: { include },
-    runtime: {
-      projectDir,
-      aliases: { packageAliases },
-    },
+    projectDir,
+    additionalCliOptions,
+    aliases: { packageAliases },
   } = getGlobalConfig();
 
-  const activeApp = getActiveApp();
+  const {
+    env,
+    currentCommand: { app: activeApp },
+  } = getRuntimeConfig();
 
   const webpackConfig = createNodeWebpackConfig({
     app: activeApp,
     alias: packageAliases,
     projectDir,
-    env: activeApp.env,
+    env,
     include,
+    nodemonOptions: additionalCliOptions,
   });
 
   const compiler = webpack(webpackConfig);

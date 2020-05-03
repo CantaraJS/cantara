@@ -16,8 +16,19 @@ cantara
 ctra
 ```
 
-**For example**:
+When you execute Cantara without parameters, an easy to use wizard will prompt you with all the commands you can currently invoke.
+
+![Cantara CLI Wizard](/img/ctra_wizard.png)
+
+This applies to all commands! Throughout the docs we will always refer to the full commands.
+
+**Examples**:
 
 ```bash
+# Without wizard
 ctra dev my-app
+# With wizard
+ctra
+# OR
+ctra dev
 ```

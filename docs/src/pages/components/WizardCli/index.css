@@ -1,0 +1,11 @@
+.cantara__cli-wizard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+.cantara__cli-wizard > img {
+  box-shadow: 0px -4px 20px rgba(0, 0, 0, 0.4);
+  border-radius: 0.5em;
+  margin-top: 0.5em;
+}

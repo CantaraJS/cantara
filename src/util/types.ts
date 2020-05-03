@@ -6,6 +6,12 @@ export type CantaraApplicationType =
   | 'serverless';
 
 export interface CantaraApplicationMetaInformation {
+  /**
+   * webpack dev server configurations
+   */
+  devServer?: {
+    port?: number;
+  };
   displayName: string;
   /** Used for manifest */
   themeColor?: string;
@@ -26,6 +32,17 @@ export interface CantaraApplicationMetaInformation {
    * in the current environment's env file
    */
   env?: string[];
+  /**
+   * If set to true, no types will
+   * be generated. Only applies to
+   * packages.
+   */
+  skipTypeGeneration?: boolean;
+  /**
+   * List of TS errors to suppress when
+   * generating types for packages.
+   */
+  suppressTsErrors?: string[];
 }
 
 export interface CantaraApplication {
@@ -34,12 +51,9 @@ export interface CantaraApplication {
     src: string;
     build: string;
     root: string;
+    static?: string;
     assets?: string;
   };
-  /** Environment variables loaded from
-   * either a .env.<stage> file or process.env
-   */
-  env?: { [key: string]: string };
   type: CantaraApplicationType;
   meta: CantaraApplicationMetaInformation;
 }

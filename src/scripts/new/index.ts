@@ -3,8 +3,11 @@ import ncpCb from 'ncp';
 import del from 'del';
 import { promisify } from 'util';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import c from 'ansi-colors';
+import terminalLink from 'terminal-link';
+
 import { camalize } from '../../util/string-manipulation';
-import getGlobalConfig from '../../cantara-config';
+import getGlobalConfig from '../../cantara-config/global-config';
 
 const ncp = promisify(ncpCb);
 
@@ -17,14 +20,14 @@ interface CreateNewAppOrPackageOptions extends CreateNewOptions {
     | 'react-app'
     | 'node-app'
     | 'serverless'
-    | 'package'
+    | 'js-package'
     | 'react-component'
     | 'react-cmp';
 }
 
 async function createReactComponent({ name }: CreateNewOptions) {
   const {
-    runtime: { projectDir },
+    projectDir,
     internalPaths: { static: staticFolderPath, temp: tempFolderPath },
   } = getGlobalConfig();
 
@@ -38,6 +41,7 @@ async function createReactComponent({ name }: CreateNewOptions) {
     tempFolderPath,
     'react-component-app-template',
   );
+
   if (existsSync(templateFolderPath)) {
     await del(templateFolderPath);
   }
@@ -58,15 +62,19 @@ export default async function createNewAppOrPackage({
   name,
 }: CreateNewAppOrPackageOptions) {
   const {
-    runtime: { projectDir },
+    projectDir,
     internalPaths: { static: staticFolderPath },
   } = getGlobalConfig();
 
   let templateFolderPath = '';
   let destinationPath = '';
+
+  let indexFilePath = '';
+
   if (type === 'react-app') {
     destinationPath = path.join(projectDir, 'react-apps', name);
     templateFolderPath = path.join(staticFolderPath, 'app-templates/react-app');
+    indexFilePath = 'src/index.tsx';
   }
   if (type === 'react-cmp' || type === 'react-component') {
     const resObj = await createReactComponent({
@@ -74,10 +82,12 @@ export default async function createNewAppOrPackage({
     });
     templateFolderPath = resObj.templateFolderPath;
     destinationPath = resObj.destinationPath;
+    indexFilePath = 'src/index.tsx';
   }
   if (type === 'node-app') {
     destinationPath = path.join(projectDir, 'node-apps', name);
     templateFolderPath = path.join(staticFolderPath, 'app-templates/node-app');
+    indexFilePath = 'src/index.ts';
   }
   if (type === 'serverless') {
     destinationPath = path.join(projectDir, 'node-apps', name);
@@ -85,13 +95,15 @@ export default async function createNewAppOrPackage({
       staticFolderPath,
       'app-templates/serverless',
     );
+    indexFilePath = 'handler.js';
   }
-  if (type === 'package') {
+  if (type === 'js-package') {
     destinationPath = path.join(projectDir, 'packages', name);
     templateFolderPath = path.join(
       staticFolderPath,
       'app-templates/js-package',
     );
+    indexFilePath = 'src/index.ts';
   }
 
   if (!existsSync(templateFolderPath)) {
@@ -104,7 +116,12 @@ export default async function createNewAppOrPackage({
     );
   }
 
+  mkdirSync(destinationPath, { recursive: true });
+
   await ncp(templateFolderPath, destinationPath);
 
-  console.log(`Created new ${type} at ${destinationPath}!`);
+  console.log(`
+    Created new ${c.cyan(type)} at
+    ${path.join(destinationPath, indexFilePath)}
+  `);
 }

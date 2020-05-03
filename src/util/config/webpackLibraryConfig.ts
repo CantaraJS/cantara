@@ -11,7 +11,6 @@ import getCssLoaders from './common/cssLoaders';
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpackMerge = require('webpack-merge');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -59,10 +58,12 @@ export default function createLibraryWebpackConfig({
     output: {
       // publicPath: '/',
       filename:
-        libraryTarget === 'commonjs2' ? 'index.js' : `${app.name}.umd.min.js`,
+        libraryTarget === 'commonjs2'
+          ? 'index.js'
+          : `${path.basename(app.name)}.umd.min.js`,
       path:
         libraryTarget === 'commonjs2'
-          ? path.join(app.paths.build, app.name, 'src')
+          ? path.join(app.paths.build, path.basename(app.name), 'src')
           : app.paths.build,
       library: camalize(app.name),
       /** For bundlers and NodeJS, CommonJS is used.
@@ -72,12 +73,6 @@ export default function createLibraryWebpackConfig({
       libraryTarget,
     },
     plugins: [
-      noChecks
-        ? undefined
-        : new ForkTsCheckerWebpackPlugin({
-            tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
-            watch: app.paths.src,
-          }),
       noChecks
         ? new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: [app.paths.build],
@@ -110,7 +105,7 @@ export default function createLibraryWebpackConfig({
       rules: [
         {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
-          type: 'javascript/esm',
+          // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
             options: getBabelConfig('production'),
@@ -131,6 +126,7 @@ export default function createLibraryWebpackConfig({
       env,
       include,
       projectDir,
+      alwaysInlineImages: true,
     });
   }
 

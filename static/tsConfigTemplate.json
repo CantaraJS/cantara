@@ -1,0 +1,22 @@
+{
+  "target": "esnext",
+  "exclude": ["**/build/**/*"],
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "target": "esnext",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "allowJs": true,
+    "noEmit": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": "./",
+    "jsx": "react"
+  }
+}

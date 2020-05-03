@@ -9,7 +9,7 @@ module.exports = {
   main: {
     Introduction: ['introduction', 'quick_start'],
     ['Guides']: [
-      'guides_intro',
+      'docs_intro',
       'installing_and_getting_ready',
       'initializing_a_new_project',
       'developing',
@@ -25,5 +25,6 @@ module.exports = {
     ],
     ['Advanced']: ['css', 'cantara_config_js'],
     ['Other']: ['starter_templates'],
+    ['For maintainer']: ['maintainers_intro'],
   },
 };
