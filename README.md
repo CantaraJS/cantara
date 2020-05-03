@@ -1,4 +1,4 @@
-[Cantara](docs/static/img/cantara.svg 'Cantara Logo')
+![Cantara](docs/static/img/cantara.svg 'Cantara Logo')
 
 <h1 align="center">
    <a href="https://cantara.js.org">Cantara</a>
@@ -39,8 +39,8 @@ Cantara is a CLI tool to create Fullstack React applications in minutes
 
 - **Zero configuration**: Cantara takes care of all the configurations for your project. No more fiddling around with webpack, typescript, or jest configs. There is even a config for the VS Code debugger.
 - **Testing included**: Have a complete testing-setup before you even wrote your first line of code. [Jest](https://jestjs.io/) and [Cypress](https://www.cypress.io/) allow for all modern practices of automated software testing.
-- **Backends**: Fullstack applications have one or more backends. Build express or serverless APIs that easily connect with the rest of your application.
-- **Mono-repository**: All of your code lives inside a single repository. This makes it easy to share code between all your applications, while still allowing you to treat them as separate packages.
+- **Backends**: Fullstack applications have one or more backends. Build plain NodeJS or serverless APIs that easily connect with the rest of your application.
+- **Mono-repository**: All of your code lives inside a single repository. This makes it easy to share code between all your applications, while still keeping a clear separation of concerns thanks to packages..
 - **Typescript**: Use TypeScript throught your entire application.
 
 [Learn how to use Cantara for your next project](https://cantara.js.org/docs/introduction).
