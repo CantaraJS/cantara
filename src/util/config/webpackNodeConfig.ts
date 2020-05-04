@@ -77,11 +77,11 @@ export default function createNodeWebpackConfig({
     plugins: [
       new CaseSensitivePathsPlugin(),
       new webpack.EnvironmentPlugin(env),
+      new FriendlyErrorsWebpackPlugin(),
       new ForkTsCheckerWebpackPlugin({
         tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
         watch: app.paths.src,
       }),
-      new FriendlyErrorsWebpackPlugin(),
       isDevelopment
         ? new NodemonPlugin({
             ext: 'js,graphql,ts,ps1,json,yaml',
