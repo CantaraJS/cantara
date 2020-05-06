@@ -74,8 +74,10 @@ export default async function buildPackage(app: CantaraApplication) {
       cantaraRoot,
       'node_modules/typescript/lib/typescript.js',
     );
+
+    const tscSilentBin = path.join(cantaraRoot, 'node_modules/.bin/tsc-silent');
     await execCmd(
-      `tsc-silent --compiler ${tsPath} --project ${tsConfigPath}${suppress}`,
+      `"${tscSilentBin}" --compiler "${tsPath}" --project "${tsConfigPath}"${suppress}`,
       {
         workingDirectory: app.paths.root,
         redirectIo: true,
