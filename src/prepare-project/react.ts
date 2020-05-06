@@ -2,7 +2,10 @@ import path from 'path';
 import { copyFileSync, existsSync, mkdirSync } from 'fs';
 
 import { CantaraApplication } from '../util/types';
-import { createOrUpdatePackageJSON } from './util/npm';
+import {
+  createOrUpdatePackageJSON,
+  autoInstallMissingPackages,
+} from './util/npm';
 import { createReactJestConfig } from './util/jest';
 import { createLocalAppTsConfig } from './util/typescript';
 import getGlobalConfig from '../cantara-config/global-config';
@@ -33,6 +36,9 @@ export default async function prepareReactApps(app: CantaraApplication) {
     },
     rootDir: app.paths.root,
   });
+
+  // Auto-install packages
+  await autoInstallMissingPackages(app.paths.root);
 
   // Create react Jest config file and copy to current project
   createReactJestConfig(app);

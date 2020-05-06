@@ -6,7 +6,10 @@ import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
 
 import { webpackExternalsAsStringArray } from '../util/externals';
-import { createOrUpdatePackageJSON } from './util/npm';
+import {
+  createOrUpdatePackageJSON,
+  autoInstallMissingPackages,
+} from './util/npm';
 import { createNodeJestConfig } from './util/jest';
 import { createLocalAppTsConfig } from './util/typescript';
 import getGlobalConfig from '../cantara-config/global-config';
@@ -156,6 +159,9 @@ function createServerlessYml(app: CantaraApplication) {
 export default async function prepareServerlessApp(app: CantaraApplication) {
   // Create package.json
   await createOrUpdatePackageJSON({ rootDir: app.paths.root });
+
+  // Auto-install packages
+  await autoInstallMissingPackages(app.paths.root);
 
   // First, create the webpack and the babel config with the correct paths
   createWebpackAndBabelConfigFromTemplate(app);

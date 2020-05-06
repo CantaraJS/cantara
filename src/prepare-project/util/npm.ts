@@ -11,6 +11,44 @@ interface ActualInstalledDependencies {
 }
 
 /**
+ * Automatically installs missing
+ * packages or with a different
+ * version
+ */
+export async function autoInstallMissingPackages(rootDir: string) {
+  const localPackageJsonPath = path.join(rootDir, 'package.json');
+  const { devDependencies = {}, dependencies = {} } = readFileAsJSON(
+    localPackageJsonPath,
+  );
+  const {
+    devDependencies: actualDevDependencies = {},
+    dependencies: actualDependencies = {},
+  } = getInstalledDependencies({ rootDir });
+
+  const devDepsInstallationString = getDependenciesInstallationString({
+    expectedDependencies: devDependencies,
+    actualDependencies: actualDevDependencies,
+  });
+  const depsInstallationString = getDependenciesInstallationString({
+    expectedDependencies: dependencies,
+    actualDependencies,
+  });
+
+  if (depsInstallationString) {
+    await execCmd(`npm install -S ${depsInstallationString}`, {
+      workingDirectory: rootDir,
+      redirectIo: true,
+    });
+  }
+  if (devDepsInstallationString) {
+    await execCmd(`npm install -D ${devDepsInstallationString}`, {
+      workingDirectory: rootDir,
+      redirectIo: true,
+    });
+  }
+}
+
+/**
  * Returns installed dependencies
  * in the specified directory.
  * It first looks up the dependencies
@@ -19,6 +57,7 @@ interface ActualInstalledDependencies {
  * looks if they are *actually*
  * installed by looking them up
  * in node_modules
+ * (and the version matches)
  */
 function getInstalledDependencies({
   rootDir,
@@ -34,6 +73,15 @@ function getInstalledDependencies({
         // If found in node_modules folder, keep it
         const depPath = path.join(rootDir, 'node_modules', depName);
         if (existsSync(depPath)) {
+          let actualVersion = 'not_specified';
+          try {
+            actualVersion = readFileAsJSON(path.join(depPath, 'package.json'))
+              .version;
+          } catch (e) {}
+          // Version missmatch
+          if (!version.includes(actualVersion)) {
+            return obj;
+          }
           return {
             ...obj,
             [depName]: version,
