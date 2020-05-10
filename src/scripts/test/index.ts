@@ -18,13 +18,16 @@ export default function executeTests() {
   );
 
   let newAdditionalCliOptions = additionalCliOptions;
-  let nodeCmd = '';
+  let nodeCmd = 'node ';
 
   if (newAdditionalCliOptions.includes('--ctra-debug')) {
     nodeCmd = `node --inspect-brk=9239 `;
-    newAdditionalCliOptions = newAdditionalCliOptions.replace('--ctra-debug', '');
+    newAdditionalCliOptions = newAdditionalCliOptions.replace(
+      '--ctra-debug',
+      '',
+    );
   }
-    
+
   const cmdToExecute = `${nodeCmd}"${jestInstallPath}" ${newAdditionalCliOptions}`;
 
   execCmd(cmdToExecute, {
