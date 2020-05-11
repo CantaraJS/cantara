@@ -135,6 +135,8 @@ export default async function execCmd(
     workingDirectory,
     env: {
       ...secretsEnvVars,
+      // Needed on Windows for some reason
+      Path: NEW_PATH_ENV || '',
       PATH: NEW_PATH_ENV || '',
     },
     redirectIo,
