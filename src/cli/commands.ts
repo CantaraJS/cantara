@@ -216,14 +216,14 @@ const e2eCommand: CantaraCommand = {
   },
 };
 
-const onPrePushCommand: CantaraCommand = {
-  name: 'on-pre-push',
-  description: `Used internally. Executed every time before "git push" is executed.`,
+const onPreCommitCommand: CantaraCommand = {
+  name: 'on-pre-commit',
+  description: `Used internally. Executed every time before "git commit" is executed.`,
   configuration: {
     needsActiveApp: false,
   },
   execute: async () => {
-    const { default: onPrePush } = await import('../scripts/on-pre-push');
+    const { default: onPrePush } = await import('../scripts/on-pre-commit');
     return onPrePush();
   },
 };
@@ -238,7 +238,7 @@ const allCliCommands: CantaraCommand[] = [
   newCommand,
   execChangedCommand,
   e2eCommand,
-  onPrePushCommand,
+  onPreCommitCommand,
 ];
 
 export default allCliCommands;

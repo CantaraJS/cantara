@@ -3,7 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import getGlobalConfig from '../../cantara-config/global-config';
 
 /**
- * Creates a "pre-push" file
+ * Creates a "pre-commit" file
  * in the .git/hooks folder if
  * it doesn't exist already.
  * If it exists, look if the word
@@ -15,10 +15,10 @@ import getGlobalConfig from '../../cantara-config/global-config';
 export default async function setupGitHooks() {
   const { projectDir } = getGlobalConfig();
 
-  const prePushScriptPath = path.join(projectDir, '.git/hooks/pre-push');
+  const preCommitScriptPath = path.join(projectDir, '.git/hooks/pre-commit');
   let fileContent = '';
-  if (existsSync(prePushScriptPath)) {
-    fileContent = readFileSync(prePushScriptPath).toString();
+  if (existsSync(preCommitScriptPath)) {
+    fileContent = readFileSync(preCommitScriptPath).toString();
   }
   if (!fileContent.includes('# Cantara')) {
     let appendToFile = ``;
@@ -27,8 +27,8 @@ export default async function setupGitHooks() {
     }
     appendToFile += `
 # Cantara
-cantara on-pre-push
+cantara on-pre-commit
     `;
-    writeFileSync(prePushScriptPath, fileContent + appendToFile);
+    writeFileSync(preCommitScriptPath, fileContent + appendToFile);
   }
 }

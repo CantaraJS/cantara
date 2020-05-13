@@ -12,15 +12,17 @@ import getGlobalConfig from '../../cantara-config/global-config';
 /**
  * Execute this function always
  * before the user is executing
- * 'git push'. Cantara implements
+ * 'git commit'. Cantara implements
  * this using git hooks.
  * It saves all needed information
  * to be able to execute
  * '*-changed' commands in CI.
  */
-export default async function onPrePush() {
+export default async function onPreCommit() {
   const { projectDir: repoDir, dotCantaraDir } = getGlobalConfig();
   // await pullChanges({ repoDir });
+
+  console.log("CANTARA, recording unpushed commits...")
 
   // Get branch name
   const currentBranch = await getCurrentBranchName({ repoDir });
@@ -47,6 +49,7 @@ export default async function onPrePush() {
   if (lastCommit) {
     const ciFileContent = {
       fromCommit: lastCommit,
+      test: Date.now()
     };
     writeJson(cantaraCiFilePath, ciFileContent);
     await amendChanges({ repoDir });
