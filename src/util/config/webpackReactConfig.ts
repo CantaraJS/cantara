@@ -130,6 +130,9 @@ export default function createReactWebpackConfig({
             {
               from: slash(app.paths.static || ''),
               to: slash(app.paths.build),
+              globOptions: {
+                dot: true,
+              },
             },
           ])
         : undefined,

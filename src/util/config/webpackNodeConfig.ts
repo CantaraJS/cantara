@@ -102,6 +102,9 @@ export default function createNodeWebpackConfig({
             {
               from: slash(app.paths.static || ''),
               to: slash(app.paths.build),
+              globOptions: {
+                dot: true,
+              },
             },
           ])
         : undefined,
