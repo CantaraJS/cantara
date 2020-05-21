@@ -37,13 +37,5 @@ export async function getCurrentBranchName({ repoDir }: GitCmdBaseParams) {
 export async function amendChanges({ repoDir }: GitCmdBaseParams) {
   // Amend changes to last commit
   await execCmd('git add .', { workingDirectory: repoDir });
-  await execCmd('git commit --amend --no-edit --no-verify', {
-    workingDirectory: repoDir,
-  });
 }
 
-export async function pullChanges({ repoDir }: GitCmdBaseParams) {
-  await execCmd('git pull', {
-    workingDirectory: repoDir,
-  });
-}
