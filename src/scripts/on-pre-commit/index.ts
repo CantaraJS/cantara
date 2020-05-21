@@ -4,7 +4,6 @@ import {
   getCurrentBranchName,
   getUnpushedCommits,
   amendChanges,
-  // pullChanges,
 } from './util';
 import { writeJson } from '../../util/fs';
 import getGlobalConfig from '../../cantara-config/global-config';

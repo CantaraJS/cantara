@@ -39,8 +39,3 @@ export async function amendChanges({ repoDir }: GitCmdBaseParams) {
   await execCmd('git add .', { workingDirectory: repoDir });
 }
 
-export async function pullChanges({ repoDir }: GitCmdBaseParams) {
-  await execCmd('git pull', {
-    workingDirectory: repoDir,
-  });
-}
