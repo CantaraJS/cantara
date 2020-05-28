@@ -92,14 +92,14 @@ module.exports = {
     <--ENABLE_TYPECHECKING--> ? new ForkTsCheckerWebpackPlugin({
       tsconfig: '<--TSCONFIG_PATH-->',
     }) : undefined,
-    new CopyPlugin({
+    <--STATIC_FOLDER_EXISTS--> ? new CopyPlugin({
       patterns: [{
         from: '<--APP_STATIC_PATH-->/**/**',
         globOptions: {
           dot: true
         }
       }]
-    })
+    }) : undefined
   ].filter(Boolean),
   // Use a custom terser setup which keeps classnames.
   // This way libraries which depend on class names

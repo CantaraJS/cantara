@@ -1,5 +1,5 @@
 import path from 'path';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import slash from 'slash';
 
 import { CantaraApplication } from '../util/types';
@@ -86,6 +86,9 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ENABLE_TYPECHECKING: JSON.stringify(!skipCacheInvalidation),
     APP_STATIC_PATH: slash(app.paths.static || ''),
     APP_BUILD_PATH: slash(app.paths.build || ''),
+    STATIC_FOLDER_EXISTS: app.paths.static
+      ? existsSync(app.paths.static)
+      : false,
   };
 
   const newBabelConfig = renderTemplate({
