@@ -18,7 +18,7 @@ interface CreateNewOptions {
 interface CreateNewAppOrPackageOptions extends CreateNewOptions {
   type:
     | 'react-app'
-    | 'node-app'
+    | 'node'
     | 'serverless'
     | 'js-package'
     | 'react-component'
@@ -84,7 +84,7 @@ export default async function createNewAppOrPackage({
     destinationPath = resObj.destinationPath;
     indexFilePath = 'src/index.tsx';
   }
-  if (type === 'node-app') {
+  if (type === 'node') {
     destinationPath = path.join(projectDir, 'node-apps', name);
     templateFolderPath = path.join(staticFolderPath, 'app-templates/node-app');
     indexFilePath = 'src/index.ts';
