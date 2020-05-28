@@ -126,15 +126,17 @@ export default function createReactWebpackConfig({
           })
         : undefined,
       doesStaticFolderExist
-        ? new CopyPlugin([
-            {
-              from: slash(app.paths.static || ''),
-              to: slash(app.paths.build),
-              globOptions: {
-                dot: true,
+        ? new CopyPlugin({
+            patterns: [
+              {
+                from: slash(app.paths.static || ''),
+                to: slash(app.paths.build),
+                globOptions: {
+                  dot: true,
+                },
               },
-            },
-          ])
+            ],
+          })
         : undefined,
       isProduction ? new MiniCssExtractPlugin() : undefined,
     ].filter(Boolean),
