@@ -14,7 +14,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 interface CreateNodeWebpackConfigOptions extends CreateWebpackConfigParams {
-  nodemonOptions?: string;
+  nodemonOptions?: string[];
 }
 
 export default function createNodeWebpackConfig({
@@ -23,7 +23,7 @@ export default function createNodeWebpackConfig({
   alias,
   env = {},
   include = [],
-  nodemonOptions = '--inspect',
+  nodemonOptions = ["--inspect","--enable-source-maps"], 
 }: CreateNodeWebpackConfigOptions): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -38,7 +38,7 @@ export default function createNodeWebpackConfig({
     output: { path: app.paths.build },
     node: { __dirname: false, __filename: false },
     target: 'node',
-    devtool: mode === 'development' ? 'eval-source-map' : undefined,
+    devtool: isDevelopment ? 'eval-source-map' : app.meta.sourceMaps ? 'source-map' : undefined,
     mode,
     externals,
     resolve: {
@@ -85,7 +85,7 @@ export default function createNodeWebpackConfig({
       isDevelopment
         ? new NodemonPlugin({
             ext: 'js,graphql,ts,ps1,json,yaml',
-            nodeArgs: [nodemonOptions],
+            nodeArgs: nodemonOptions,
             watch: app.paths.build,
             restartable: true,
           })

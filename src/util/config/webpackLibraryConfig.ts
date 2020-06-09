@@ -56,7 +56,7 @@ export default function createLibraryWebpackConfig({
     },
     externals,
     mode: 'production',
-    devtool:  !!app.meta.sourceMaps ? 'source-map' : undefined,
+    devtool:  app.meta.sourceMaps ? 'source-map' : undefined,
     output: {
       // publicPath: '/',
       filename:
