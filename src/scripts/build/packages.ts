@@ -85,6 +85,7 @@ export default async function buildPackage(app: CantaraApplication) {
     );
   }
 
+
   // Set correct path to index.js in packageJson's "main" field
   const packageJsonPath = path.join(app.paths.root, 'package.json');
   const packageJson = readFileAsJSON(packageJsonPath);

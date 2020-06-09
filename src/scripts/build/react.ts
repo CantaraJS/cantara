@@ -4,6 +4,20 @@ import webpack from 'webpack';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
 
+function compile(config: webpack.Configuration) {
+  const compiler = webpack(config);
+  return new Promise((resolve, reject) => {
+    compiler.run(err => {
+      if (err) {
+        reject(new Error('Error while compiling.'));
+        return;
+      }
+      console.log('Successfully compiled!');
+      resolve();
+    });
+  });
+}
+
 export default async function buildReactApp(app: CantaraApplication) {
   const {
     allPackages: { include },
@@ -22,15 +36,6 @@ export default async function buildReactApp(app: CantaraApplication) {
     include,
   });
 
-  const compiler = webpack(webpackConfig);
-  return new Promise((resolve, reject) => {
-    compiler.run((err, stats) => {
-      if (err) {
-        console.log('Compile error', err);
-        reject(new Error('Error while compiling.'));
-      } else {
-        console.log('Successfully compiled!');
-      }
-    });
-  });
+  return compile(webpackConfig)
 }
+
