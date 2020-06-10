@@ -9,6 +9,6 @@ export default function getBabelReactConfig(
       '@babel/plugin-proposal-optional-chaining',
       '@babel/plugin-proposal-nullish-coalescing-operator',
       mode === 'development' ? 'react-refresh/babel' : undefined,
-    ].filter(Boolean),
+    ].filter(Boolean)
   };
 }

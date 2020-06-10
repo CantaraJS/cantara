@@ -3,6 +3,7 @@ import path from 'path';
 
 import { CreateWebpackConfigParams } from '../types';
 import getBabelConfig from '../babelReactConfig';
+import getSourceMapLoader from './soureMapLoader';
 
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -76,6 +77,7 @@ export default function createCommonReactWebpackConfig({
           include: [app.paths.src, ...include],
           // exclude: [/node_modules/],
         },
+        ...getSourceMapLoader({sourceMaps: app.meta.sourceMaps}),
         {
           test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
           loader: 'url-loader',
@@ -92,6 +94,9 @@ export default function createCommonReactWebpackConfig({
         //   },
         // },
       ],
+    },
+    stats: {
+      warningsFilter: [/Failed to parse source map/],
     },
     node: {
       fs: 'empty',

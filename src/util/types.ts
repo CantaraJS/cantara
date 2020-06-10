@@ -43,6 +43,11 @@ export interface CantaraApplicationMetaInformation {
    * generating types for packages.
    */
   suppressTsErrors?: string[];
+  /**
+   * If set to true source maps are generated for production
+   * and cantara will try to load source maps of all dependencies as well.
+   */
+  sourceMaps?: true;
 }
 
 export interface CantaraApplication {

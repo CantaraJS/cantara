@@ -23,7 +23,7 @@ export function startNodeAppDevelopmentServer() {
     projectDir,
     env,
     include,
-    nodemonOptions: additionalCliOptions,
+    nodemonOptions: additionalCliOptions ? [additionalCliOptions] : undefined,
   });
 
   const compiler = webpack(webpackConfig);

@@ -60,7 +60,7 @@ export default function createReactWebpackConfig({
       },
     },
     mode,
-    devtool: isDevelopment ? 'eval-source-map' : undefined,
+    devtool: (isDevelopment || app.meta.sourceMaps) ? 'eval-source-map' : undefined,
     output: {
       publicPath: '/',
       filename: '[name].[hash:4].js',

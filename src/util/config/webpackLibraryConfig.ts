@@ -7,6 +7,7 @@ import { camalize } from '../string-manipulation';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import { CreateWebpackConfigParams } from './types';
 import getCssLoaders from './common/cssLoaders';
+import getSourceMapLoader from './common/soureMapLoader';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -55,6 +56,7 @@ export default function createLibraryWebpackConfig({
     },
     externals,
     mode: 'production',
+    devtool:  app.meta.sourceMaps ? 'source-map' : undefined,
     output: {
       // publicPath: '/',
       filename:
@@ -113,7 +115,11 @@ export default function createLibraryWebpackConfig({
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],
         },
+        ...getSourceMapLoader({sourceMaps: app.meta.sourceMaps}),
       ],
+    },
+    stats: {
+      warningsFilter: [/Failed to parse source map/],
     },
   };
 

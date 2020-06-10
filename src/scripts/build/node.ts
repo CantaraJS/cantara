@@ -20,7 +20,7 @@ export default async function buildNodeApp(app: CantaraApplication) {
     mode: 'production',
     projectDir,
     include,
-    nodemonOptions: additionalCliOptions,
+    nodemonOptions: additionalCliOptions ? [additionalCliOptions] : undefined,
   });
 
   const compiler = webpack(webpackConfig);
