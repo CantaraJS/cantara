@@ -29,9 +29,12 @@ export interface CantaraApplicationMetaInformation {
   libraryTargets?: ('umd' | 'commonjs')[];
   /** Required env vars,
    * either defined in process.env or
-   * in the current environment's env file
+   * in the current environment's env file.
+   * By default the env var is required, by setting 
+   * optional = true, the env var does not have to be defined
+   * at build time.  
    */
-  env?: string[];
+  env?: (string | { var: string, optional?: boolean})[];
   /**
    * If set to true, no types will
    * be generated. Only applies to

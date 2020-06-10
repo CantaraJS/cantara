@@ -101,7 +101,7 @@ interface LoadAppEnvVarsOptions {
   appRootDir: string;
   projectRootDir: string;
   /** Can be specified in app's cantara.config.js */
-  expectedEnvVars: string[];
+  expectedEnvVars: (string | { var: string, optional?: boolean})[];
   currentStage: string;
   /** if envvar is not defined in currenStage,
    * this function looks if it is defined
@@ -174,7 +174,9 @@ export default async function loadAppEnvVars({
     ...localEnvVars,
   };
 
-  for (const envVarName of expectedEnvVars) {
+  for (const currentEnvVar of expectedEnvVars) {
+    let envVarName = typeof currentEnvVar == 'string' ? currentEnvVar : currentEnvVar.var;
+    let envVarOptional = (currentEnvVar as any).optional || false;
     let envVarValue = loadEnvVarFromStage({
       envFilesContent,
       envVarName,
@@ -186,7 +188,7 @@ export default async function loadAppEnvVars({
         .join(
           ', ',
         )}] contain no variable named "${envVarName}" and process.env.${currentStage.toUpperCase()}_${envVarName} is not defined in the current environment. It is marked as required in cantara.config.js`;
-      if (required) {
+      if (required && envVarOptional == false) {
         throw new Error(errMsg);
       }
     } else {
@@ -197,7 +199,7 @@ export default async function loadAppEnvVars({
   // Warnings for ignored env vars in local .env file
   const allEnvVarsInEnvFile = Object.keys(localEnvVars);
   const ignoredEnvVars = allEnvVarsInEnvFile.filter(
-    envName => !expectedEnvVars.includes(envName),
+    envName => !!!expectedEnvVars.find(v => typeof v == 'string' ? v == envName : v.var == envName),
   );
   if (ignoredEnvVars.length > 0) {
     console.warn(
