@@ -70,7 +70,6 @@ export async function loadCantaraRuntimeConfig({
     appRootDir: currentActiveApp.paths.root,
     currentStage: stage,
     expectedEnvVars: currentActiveApp.meta.env || [],
-    fallbackStage: 'development',
     required: true,
   });
 
