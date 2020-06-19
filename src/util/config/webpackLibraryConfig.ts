@@ -104,7 +104,7 @@ export default function createLibraryWebpackConfig({
     },
     optimization: {
       // Only minify for UMD
-      //minimize: libraryTarget === 'umd',
+      minimize: libraryTarget === 'umd',
     },
   };
 
@@ -123,6 +123,10 @@ export default function createLibraryWebpackConfig({
           exclude: [/node_modules/],
         },
         ...getSourceMapLoader({sourceMaps: app.meta.sourceMaps}),
+        {
+          exclude: [/\.(js|jsx|ts|tsx)$/, /\.html$/, /\.json$/, /\.css$/],
+          loader: 'url-loader',
+        },
       ],
     },
     stats: {
