@@ -79,7 +79,7 @@ export default function createCommonReactWebpackConfig({
         },
         ...getSourceMapLoader({sourceMaps: app.meta.sourceMaps}),
         {
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
+          exclude: [/\.(js|jsx|ts|tsx)$/, /\.html$/, /\.json$/, /\.css$/],
           loader: 'url-loader',
           options: {
             limit: alwaysInlineImages ? Number.MAX_VALUE : 15000,
