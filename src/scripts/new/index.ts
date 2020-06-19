@@ -8,6 +8,7 @@ import terminalLink from 'terminal-link';
 
 import { camalize } from '../../util/string-manipulation';
 import getGlobalConfig from '../../cantara-config/global-config';
+import { CantaraApplicationType } from '../../util/types';
 
 const ncp = promisify(ncpCb);
 
@@ -16,13 +17,7 @@ interface CreateNewOptions {
 }
 
 interface CreateNewAppOrPackageOptions extends CreateNewOptions {
-  type:
-    | 'react-app'
-    | 'node'
-    | 'serverless'
-    | 'js-package'
-    | 'react-component'
-    | 'react-cmp';
+  type: CantaraApplicationType;
 }
 
 async function createReactComponent({ name }: CreateNewOptions) {
@@ -71,12 +66,12 @@ export default async function createNewAppOrPackage({
 
   let indexFilePath = '';
 
-  if (type === 'react-app') {
+  if (type === 'react') {
     destinationPath = path.join(projectDir, 'react-apps', name);
     templateFolderPath = path.join(staticFolderPath, 'app-templates/react-app');
     indexFilePath = 'src/index.tsx';
   }
-  if (type === 'react-cmp' || type === 'react-component') {
+  if (type === 'react-component') {
     const resObj = await createReactComponent({
       name,
     });
