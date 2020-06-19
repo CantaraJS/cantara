@@ -57,7 +57,9 @@ export default function createLibraryWebpackConfig({
         '.jsx',
         '.ts',
         '.tsx',
-        '.ttf'
+        '.ttf',
+        '.html',
+        '.htm'
       ],
       alias,
     },
@@ -124,7 +126,12 @@ export default function createLibraryWebpackConfig({
         },
         ...getSourceMapLoader({sourceMaps: app.meta.sourceMaps}),
         {
-          exclude: [/\.(js|jsx|ts|tsx)$/, /\.html$/, /\.json$/, /\.css$/],
+          test: /\.html?$/,
+          exclude: /node_modules/,
+          use: { loader: "html-loader" },
+        },
+        {
+          exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/],
           loader: 'url-loader',
         },
       ],
