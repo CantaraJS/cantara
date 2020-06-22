@@ -82,11 +82,11 @@ export default function createCommonReactWebpackConfig({
         ...getSourceMapLoader({sourceMaps: app.meta.sourceMaps}),
         {
           test: /\.html?$/,
-          exclude: /node_modules/,
+          exclude: [/node_modules/, app.paths.assets || ''],
           use: { loader: "html-loader" },
         },
         {
-          exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/],
+          exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/, app.paths.assets || ''],
           loader: 'url-loader',
           options: {
             limit: alwaysInlineImages ? Number.MAX_VALUE : 15000,
