@@ -38,7 +38,7 @@ export default function createCommonReactWebpackConfig({
         '.ts',
         '.tsx',
         '.html',
-        '.htm'
+        '.htm',
       ],
     },
     mode,
@@ -79,14 +79,20 @@ export default function createCommonReactWebpackConfig({
           include: [app.paths.src, ...include],
           // exclude: [/node_modules/],
         },
-        ...getSourceMapLoader({sourceMaps: app.meta.sourceMaps}),
+        ...getSourceMapLoader({ sourceMaps: app.meta.sourceMaps }),
         {
           test: /\.html?$/,
           exclude: [/node_modules/, app.paths.assets || ''],
-          use: { loader: "html-loader" },
+          use: { loader: 'html-loader' },
         },
         {
-          exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/, app.paths.assets || ''],
+          exclude: [
+            /\.(js|jsx|ts|tsx|mjs)$/,
+            /\.html?$/,
+            /\.json$/,
+            /\.css$/,
+            app.paths.assets || '',
+          ],
           loader: 'url-loader',
           options: {
             limit: alwaysInlineImages ? Number.MAX_VALUE : 15000,

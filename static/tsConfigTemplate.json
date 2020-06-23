@@ -1,10 +1,9 @@
 {
-  "target": "esnext",
   "exclude": ["**/build/**/*"],
   "compilerOptions": {
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "target": "esnext",
+    "target": "ES2019",
     "moduleResolution": "node",
     "module": "esnext",
     "allowJs": true,
