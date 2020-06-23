@@ -80,7 +80,7 @@ export default function createReactWebpackConfig({
       new HtmlWebpackPlugin({
         title: app.meta.displayName,
         template: path.join(app.paths.assets!, 'index.html'),
-        favicon: '',
+        favicon: iconPathToUse,
       }),
       // iconPathToUse
       //   ? new FaviconsWebpackPlugin({

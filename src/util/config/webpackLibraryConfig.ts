@@ -35,9 +35,15 @@ export default function createLibraryWebpackConfig({
     : path.join(app.paths.src, 'index.ts');
 
   // For UMD builds (CDN ready) only exclude peer deps
-  const externals = getAllWebpackExternals({
-    peerOnly: libraryTarget === 'umd',
-  });
+  let externals : any = getAllWebpackExternals();
+
+  // TODO: Make this mapping extendable vai the cantara config
+  if(libraryTarget === 'umd') {
+    externals = {
+      'react': 'React',
+      'react-dom': 'ReactDOM'
+    }
+  }
 
   const commonLibraryConfig: Configuration = {
     entry: entryPath,
@@ -51,6 +57,9 @@ export default function createLibraryWebpackConfig({
         '.jsx',
         '.ts',
         '.tsx',
+        '.ttf',
+        '.html',
+        '.htm'
       ],
       alias,
     },
@@ -116,6 +125,15 @@ export default function createLibraryWebpackConfig({
           exclude: [/node_modules/],
         },
         ...getSourceMapLoader({sourceMaps: app.meta.sourceMaps}),
+        {
+          test: /\.html?$/,
+          exclude: /node_modules/,
+          use: { loader: "html-loader" },
+        },
+        {
+          exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/],
+          loader: 'url-loader',
+        },
       ],
     },
     stats: {
