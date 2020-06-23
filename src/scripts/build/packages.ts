@@ -33,12 +33,14 @@ export default async function buildPackage(app: CantaraApplication) {
 
   const {
     aliases: { appDependencyAliases },
+    env
   } = getRuntimeConfig();
   const allAliases = { ...appDependencyAliases, ...packageAliases };
 
   const commonOptions = {
     alias: allAliases,
     app,
+    env,
     projectDir,
     include,
   };
