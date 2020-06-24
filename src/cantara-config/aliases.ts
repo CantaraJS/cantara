@@ -13,10 +13,6 @@ import { existsSync } from 'fs';
     e.g. React, styled-components, ...
  */
 export function getDependencyAliases(app: CantaraApplication) {
-  const doSetAliasesForThisAppType =
-    app.type === 'serverless' || app.type === 'node' || app.type === 'react';
-
-  if (!doSetAliasesForThisAppType) return {};
   let dependencies = {};
   const packageJsonPath = path.join(app.paths.root, 'package.json');
   if (existsSync(packageJsonPath)) {
