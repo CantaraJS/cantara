@@ -11,10 +11,10 @@ export default async function buildNodeApp(app: CantaraApplication) {
     aliases: { packageAliases },
     additionalCliOptions,
   } = getGlobalConfig();
-  const { env } = getRuntimeConfig();
+  const { env, aliases: { appDependencyAliases } } = getRuntimeConfig();
 
   const webpackConfig = createNodeWebpackConfig({
-    alias: packageAliases,
+    alias: {...packageAliases, ...appDependencyAliases },
     app,
     env,
     mode: 'production',

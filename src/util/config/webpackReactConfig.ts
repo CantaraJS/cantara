@@ -41,28 +41,16 @@ export default function createReactWebpackConfig({
     iconPathToUse = appIconPathSvg;
   }
 
-  const reactDependencyAliases: { [key: string]: string } =
-    app.type === 'react'
-      ? {
-          react: path.join(app.paths.root, 'node_modules', 'react'),
-          'react-dom': path.join(app.paths.root, 'node_modules', 'react-dom'),
-        }
-      : {};
-
   const doesStaticFolderExist =
     app.paths.static && existsSync(app.paths.static);
 
   const webpackReactAppConfig: Configuration = {
     resolve: {
-      alias: {
-        ...alias,
-        ...reactDependencyAliases,
-      },
+      alias,
     },
     mode,
     devtool: (isDevelopment || app.meta.sourceMaps) ? 'eval-source-map' : undefined,
     output: {
-      publicPath: '/',
       filename: '[name].[hash:4].js',
       path: app.paths.build,
       chunkFilename: '[name].[chunkhash:4].js',
