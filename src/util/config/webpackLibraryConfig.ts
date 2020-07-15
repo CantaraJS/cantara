@@ -34,15 +34,25 @@ export default function createLibraryWebpackConfig({
     ? path.join(app.paths.src, 'index.tsx')
     : path.join(app.paths.src, 'index.ts');
 
-  // For UMD builds (CDN ready) only exclude peer deps
-  let externals : any = getAllWebpackExternals();
+  let externals: any = {};
 
-  // TODO: Make this mapping extendable vai the cantara config
-  if(libraryTarget === 'umd') {
+  if (libraryTarget === 'umd') {
+    const customExternals = app.meta.externalDependencies
+      ? app.meta.externalDependencies.umd
+      : {};
     externals = {
-      'react': 'React',
-      'react-dom': 'ReactDOM'
-    }
+      react: 'React',
+      'react-dom': 'ReactDOM',
+      ...customExternals,
+    };
+  } else {
+    const customExternals = app.meta.externalDependencies
+      ? app.meta.externalDependencies.commonjs
+      : {};
+    externals = {
+      ...getAllWebpackExternals(),
+      ...customExternals,
+    };
   }
 
   const commonLibraryConfig: Configuration = {
@@ -59,13 +69,13 @@ export default function createLibraryWebpackConfig({
         '.tsx',
         '.ttf',
         '.html',
-        '.htm'
+        '.htm',
       ],
       alias,
     },
     externals,
     mode: 'production',
-    devtool:  app.meta.sourceMaps ? 'source-map' : undefined,
+    devtool: app.meta.sourceMaps ? 'source-map' : undefined,
     output: {
       // publicPath: '/',
       filename:
@@ -108,6 +118,9 @@ export default function createLibraryWebpackConfig({
       // Only minify for UMD
       minimize: libraryTarget === 'umd',
     },
+    stats: {
+      warningsFilter: [/Failed to parse source map/],
+    },
   };
 
   // Webpack config for non-React JS packages
@@ -124,11 +137,11 @@ export default function createLibraryWebpackConfig({
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],
         },
-        ...getSourceMapLoader({sourceMaps: app.meta.sourceMaps}),
+        ...getSourceMapLoader({ sourceMaps: app.meta.sourceMaps }),
         {
           test: /\.html?$/,
           exclude: /node_modules/,
-          use: { loader: "html-loader" },
+          use: { loader: 'html-loader' },
         },
         {
           exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/],

@@ -44,12 +44,18 @@ export default function createReactWebpackConfig({
   const doesStaticFolderExist =
     app.paths.static && existsSync(app.paths.static);
 
+  const externals = app.meta.externalDependencies
+    ? app.meta.externalDependencies.commonjs
+    : {};
+
   const webpackReactAppConfig: Configuration = {
     resolve: {
       alias,
     },
+    externals,
     mode,
-    devtool: (isDevelopment || app.meta.sourceMaps) ? 'eval-source-map' : undefined,
+    devtool:
+      isDevelopment || app.meta.sourceMaps ? 'eval-source-map' : undefined,
     output: {
       filename: '[name].[hash:4].js',
       path: app.paths.build,

@@ -79,7 +79,9 @@ export default function createCommonReactWebpackConfig({
           include: [app.paths.src, ...include],
           // exclude: [/node_modules/],
         },
-        ...getSourceMapLoader({ sourceMaps: app.meta.sourceMaps }),
+        ...getSourceMapLoader({
+          sourceMaps: app.meta.sourceMaps || !isProduction,
+        }),
         {
           test: /\.html?$/,
           exclude: [/node_modules/, app.paths.assets || ''],

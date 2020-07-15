@@ -30,11 +30,11 @@ export interface CantaraApplicationMetaInformation {
   /** Required env vars,
    * either defined in process.env or
    * in the current environment's env file.
-   * By default the env var is required, by setting 
+   * By default the env var is required, by setting
    * optional = true, the env var does not have to be defined
-   * at build time.  
+   * at build time.
    */
-  env?: (string | { var: string, optional?: boolean})[];
+  env?: (string | { var: string; optional?: boolean })[];
   /**
    * If set to true, no types will
    * be generated. Only applies to
@@ -51,6 +51,14 @@ export interface CantaraApplicationMetaInformation {
    * and cantara will try to load source maps of all dependencies as well.
    */
   sourceMaps?: true;
+  externalDependencies?: {
+    umd?: {
+      [key: string]: string;
+    };
+    commonjs?: {
+      [key: string]: string;
+    };
+  };
 }
 
 export interface CantaraApplication {
