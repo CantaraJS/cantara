@@ -50,7 +50,7 @@ export default function createLibraryWebpackConfig({
       ? app.meta.externalDependencies.commonjs
       : {};
     externals = {
-      ...getAllWebpackExternals(),
+      ...getAllWebpackExternals({ provideAsObject: true }),
       ...customExternals,
     };
   }

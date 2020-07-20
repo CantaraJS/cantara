@@ -17,14 +17,14 @@ function getAllModulesFromFolder(dirName: string): string[] {
   try {
     return fs
       .readdirSync(dirName)
-      .map(moduleName => {
+      .map((moduleName) => {
         if (atPrefix.test(moduleName)) {
           // reset regexp
           atPrefix.lastIndex = 0;
           try {
             return fs
               .readdirSync(path.join(dirName, moduleName))
-              .map(function(scopedMod) {
+              .map(function (scopedMod) {
                 return moduleName + '/' + scopedMod;
               });
           } catch (e) {
@@ -43,8 +43,8 @@ function getAllModulesFromFolder(dirName: string): string[] {
 
 function getAllInstalledModules(allApps: CantaraApplication[]) {
   const allExistingNodeModuleFolders = allApps
-    .map(app => path.join(app.paths.root, 'node_modules'))
-    .filter(folderPath => existsSync(folderPath));
+    .map((app) => path.join(app.paths.root, 'node_modules'))
+    .filter((folderPath) => existsSync(folderPath));
   const allModules = allExistingNodeModuleFolders
     .map(getAllModulesFromFolder)
     .reduce((arr, arrToMerge) => [...arr, ...arrToMerge], []);
@@ -52,11 +52,11 @@ function getAllInstalledModules(allApps: CantaraApplication[]) {
 }
 
 function getAllPeerDependencies(allApps: CantaraApplication[]) {
-  const allPackageJsonPaths = allApps.map(app =>
+  const allPackageJsonPaths = allApps.map((app) =>
     path.join(app.paths.root, 'package.json'),
   );
   const allPeerDeps = allPackageJsonPaths
-    .map(filePath => {
+    .map((filePath) => {
       try {
         const { peerDependencies = {} } = readFileAsJSON(filePath);
         return peerDependencies;
@@ -89,6 +89,7 @@ function getModuleName(request: string) {
 
 interface GetAllWebpackExternalsOptions {
   peerOnly?: boolean;
+  provideAsObject?: boolean;
 }
 
 export function webpackExternalsAsStringArray({
@@ -115,20 +116,26 @@ export function webpackExternalsAsStringArray({
  * If `peerOnly` is set to `true`, only peer
  * dependecies are excluded. Useful for
  * CDN bundles.
+ * If `provideAsObject` is set to `true`, in stead
+ * of the callback a plain object is returned
  */
 export default function getAllWebpackExternals({
   peerOnly,
+  provideAsObject,
 }: GetAllWebpackExternalsOptions = {}) {
   const externals = webpackExternalsAsStringArray({ peerOnly });
 
-  // const externalsObj = externals.reduce((retObj, externalName) => {
-  //   return {
-  //     ...retObj,
-  //     [externalName]: {
-  //       commonjs: externalName,
-  //     },
-  //   };
-  // }, {});
+  if (provideAsObject) {
+    const externalsObj = externals.reduce((retObj, externalName) => {
+      return {
+        ...retObj,
+        [externalName]: {
+          commonjs: externalName,
+        },
+      };
+    }, {});
+    return externalsObj;
+  }
 
   // For some reason, only works with this function,
   // but not when defining excplictly through object
