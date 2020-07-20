@@ -72,7 +72,10 @@ export default function createLibraryWebpackConfig({
       ],
       alias,
     },
-    externals: [getAllWebpackExternals({ custom: externals })],
+    externals:
+      libraryTarget === 'umd'
+        ? externals
+        : [getAllWebpackExternals({ custom: externals })],
     mode: 'production',
     devtool: app.meta.sourceMaps ? 'source-map' : undefined,
     output: {
