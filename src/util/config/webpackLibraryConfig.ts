@@ -50,7 +50,6 @@ export default function createLibraryWebpackConfig({
       ? app.meta.externalDependencies.commonjs
       : {};
     externals = {
-      ...getAllWebpackExternals({ provideAsObject: true }),
       ...customExternals,
     };
   }
@@ -73,7 +72,7 @@ export default function createLibraryWebpackConfig({
       ],
       alias,
     },
-    externals,
+    externals: [getAllWebpackExternals({ custom: externals })],
     mode: 'production',
     devtool: app.meta.sourceMaps ? 'source-map' : undefined,
     output: {

@@ -90,6 +90,7 @@ function getModuleName(request: string) {
 interface GetAllWebpackExternalsOptions {
   peerOnly?: boolean;
   provideAsObject?: boolean;
+  custom?: any;
 }
 
 export function webpackExternalsAsStringArray({
@@ -122,18 +123,24 @@ export function webpackExternalsAsStringArray({
 export default function getAllWebpackExternals({
   peerOnly,
   provideAsObject,
+  custom,
 }: GetAllWebpackExternalsOptions = {}) {
   const externals = webpackExternalsAsStringArray({ peerOnly });
 
+  let externalsObj = externals.reduce((retObj, externalName) => {
+    return {
+      ...retObj,
+      [externalName]: {
+        commonjs: externalName,
+      },
+    };
+  }, {});
+  externalsObj = {
+    ...externalsObj,
+    custom,
+  };
+
   if (provideAsObject) {
-    const externalsObj = externals.reduce((retObj, externalName) => {
-      return {
-        ...retObj,
-        [externalName]: {
-          commonjs: externalName,
-        },
-      };
-    }, {});
     return externalsObj;
   }
 
