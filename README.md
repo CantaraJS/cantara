@@ -1,4 +1,5 @@
 ![Cantara](docs/static/img/cantara.svg 'Cantara Logo')
+
 <h1 align="center">
    <a href="https://cantara.js.org">Cantara</a>
 </h1>
@@ -18,7 +19,7 @@
     <img src="https://github.com/CantaraJS/cantara/workflows/Release/badge.svg" alt="Release" />
   </a>
   <a href="https://spectrum.chat/cantara">
-    <img src="https://withspectrum.github.io/badge/badge.svg" alt="Join the community on Spectrum" />
+    <img src="https://withspectrum.github.io/badge/badge.svg" alt="Join the  on Spectrum" />
   </a>
 </p>
 
