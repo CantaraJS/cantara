@@ -6,11 +6,8 @@ import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
 
 import { webpackExternalsAsStringArray } from '../util/externals';
-import {
-  createOrUpdatePackageJSON,
-  autoInstallMissingPackages,
-} from './util/npm';
-import { createNodeJestConfig } from './util/jest';
+import { createOrUpdatePackageJSON } from './util/yarn';
+import { createNodeJestConfig } from './util/testing';
 import { createLocalAppTsConfig } from './util/typescript';
 import getGlobalConfig from '../cantara-config/global-config';
 import getRuntimeConfig from '../cantara-config/runtime-config';
@@ -63,7 +60,6 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   ).toString();
 
   const allAliases = {
-    ...runtimeConfig.aliases.appDependencyAliases,
     ...globalCantaraConfig.aliases.packageAliases,
   };
   const externals = webpackExternalsAsStringArray();
@@ -163,9 +159,6 @@ function createServerlessYml(app: CantaraApplication) {
 export default async function prepareServerlessApp(app: CantaraApplication) {
   // Create package.json
   await createOrUpdatePackageJSON({ rootDir: app.paths.root });
-
-  // Auto-install packages
-  await autoInstallMissingPackages(app.paths.root);
 
   // First, create the webpack and the babel config with the correct paths
   createWebpackAndBabelConfigFromTemplate(app);

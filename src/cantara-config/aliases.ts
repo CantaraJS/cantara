@@ -11,8 +11,10 @@ import { existsSync } from 'fs';
     node_modules folder. Some libs require
     that there's only one instance present,
     e.g. React, styled-components, ...
+    NOT USED ANYMORE. Keep it for documentation
+    purposes.
  */
-export function getDependencyAliases(app: CantaraApplication) {
+function getDependencyAliases(app: CantaraApplication) {
   let dependencies = {};
   const packageJsonPath = path.join(app.paths.root, 'package.json');
   if (existsSync(packageJsonPath)) {

@@ -9,11 +9,12 @@ import prepareServerlessApp from './serverless';
 import prepareJsPackage from './packages';
 import { writeJson } from '../util/fs';
 import prepareNodeApp from './node';
-import { createOrUpdatePackageJSON } from './util/npm';
+import { createOrUpdatePackageJSON } from './util/yarn';
 import { createTempEnvJsonFile } from './util/env';
-import { createJestConfig } from './util/jest';
+import { createJestConfig } from './util/testing';
 import setupGitHooks from './util/git-hooks';
 import getGlobalConfig from '../cantara-config/global-config';
+import execCmd from '../util/exec';
 
 const ncp = promisify(ncpCb);
 
@@ -77,10 +78,9 @@ async function prepareUserProject() {
   };
   writeJson(path.join(rootDir, 'tsconfig.json'), newTsConfig);
 
-  // Install React + Typescript dependencies globally for project
+  // Install Typescript dependencies globally for project
   await createOrUpdatePackageJSON({
     rootDir,
-    expectedDependencies: globalCantaraConfig.dependencies.react,
     expectedDevDependencies: {
       ...globalCantaraConfig.dependencies.typescript,
       // ...globalCantaraConfig.dependencies.testing,
@@ -137,4 +137,7 @@ export default async function prepareCantaraProject() {
       await prepareNodeApp(app);
     }
   }
+
+  // Run "yarn" in the project's root, which syncs all dependencies
+  await execCmd('yarn', { workingDirectory: globalCantaraConfig.projectDir });
 }

@@ -5,11 +5,8 @@ import { CantaraApplication } from '../util/types';
 import { readFileAsJSON, writeJson } from '../util/fs';
 import renderTemplate from '../util/configTemplates';
 import { readFileSync, copyFileSync } from 'fs';
-import {
-  createOrUpdatePackageJSON,
-  autoInstallMissingPackages,
-} from './util/npm';
-import { createReactJestConfig, createNodeJestConfig } from './util/jest';
+import { createOrUpdatePackageJSON } from './util/yarn';
+import { createReactJestConfig, createNodeJestConfig } from './util/testing';
 import getGlobalConfig from '../cantara-config/global-config';
 
 function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
@@ -44,9 +41,6 @@ export default async function prepareJsPackage(app: CantaraApplication) {
     expectedDevDependencies,
     expectedDependencies: {},
   });
-
-  // Auto-install packages
-  await autoInstallMissingPackages(app.paths.root);
 
   if (isReactComponent) {
     // For React Components, add react and react-dom to the peer dependencies

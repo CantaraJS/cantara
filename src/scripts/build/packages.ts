@@ -31,11 +31,8 @@ export default async function buildPackage(app: CantaraApplication) {
     internalPaths: { root: cantaraRoot },
   } = getGlobalConfig();
 
-  const {
-    aliases: { appDependencyAliases },
-    env
-  } = getRuntimeConfig();
-  const allAliases = { ...appDependencyAliases, ...packageAliases };
+  const { env } = getRuntimeConfig();
+  const allAliases = { ...packageAliases };
 
   const commonOptions = {
     alias: allAliases,
@@ -86,7 +83,6 @@ export default async function buildPackage(app: CantaraApplication) {
       },
     );
   }
-
 
   // Set correct path to index.js in packageJson's "main" field
   const packageJsonPath = path.join(app.paths.root, 'package.json');

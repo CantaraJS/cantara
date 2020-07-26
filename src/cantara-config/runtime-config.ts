@@ -1,16 +1,9 @@
 import { CantaraApplication } from '../util/types';
-import { getDependencyAliases } from './aliases';
 import getGlobalConfig from './global-config';
 import loadAppEnvVars from './envvars';
 import deriveStageNameFromCmd from '../util/deriveStage';
 
 export interface CantaraRuntimeConfig {
-  /** Aliases which need to be set by
-   * tools like webpack
-   */
-  aliases: {
-    appDependencyAliases: { [key: string]: string };
-  };
   /** Information about current command */
   currentCommand: {
     name: string;
@@ -63,8 +56,6 @@ export async function loadCantaraRuntimeConfig({
     throw new Error(`No app with the name ${currentCommand.appname}!`);
   }
 
-  const appDependencyAliases = getDependencyAliases(currentActiveApp);
-
   const envVars = await loadAppEnvVars({
     projectRootDir: projectDir,
     appRootDir: currentActiveApp.paths.root,
@@ -75,9 +66,6 @@ export async function loadCantaraRuntimeConfig({
 
   runtimeConfig = {
     env: envVars,
-    aliases: {
-      appDependencyAliases,
-    },
     currentCommand: {
       name: currentCommand.name,
       app: currentActiveApp,

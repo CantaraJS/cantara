@@ -15,12 +15,11 @@ export function startReactAppDevelopmentServer() {
     projectDir,
   } = getGlobalConfig();
   const {
-    aliases: { appDependencyAliases },
     env,
     currentCommand: { app: activeApp },
   } = getRuntimeConfig();
   const webpackConfig = createReactWebpackConfig({
-    alias: { ...packageAliases, ...appDependencyAliases },
+    alias: packageAliases,
     app: activeApp,
     projectDir,
     env,
