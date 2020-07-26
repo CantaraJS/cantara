@@ -137,6 +137,7 @@ interface CreateOrUpdatePackageJSONParams {
   expectedDependencies?: { [key: string]: string };
   expectedDevDependencies?: { [key: string]: string };
   rootDir: string;
+  workspaces?: string[];
 }
 
 interface GetDependenciesInstallationStringOptions {
@@ -177,6 +178,7 @@ export async function createOrUpdatePackageJSON({
   rootDir,
   expectedDependencies,
   expectedDevDependencies,
+  workspaces,
 }: CreateOrUpdatePackageJSONParams) {
   // Install/update dependencies
   // Add dependencies
@@ -197,5 +199,11 @@ export async function createOrUpdatePackageJSON({
       ...expectedDependencies,
     },
   };
+  if (workspaces) {
+    packageJsonContent = {
+      ...packageJsonContent,
+      workspaces,
+    };
+  }
   writeJson(localPackageJsonPath, packageJsonContent);
 }

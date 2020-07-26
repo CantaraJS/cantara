@@ -79,6 +79,7 @@ async function prepareUserProject() {
   writeJson(path.join(rootDir, 'tsconfig.json'), newTsConfig);
 
   // Install Typescript dependencies globally for project
+  // + Add workspace declarations to package.json
   await createOrUpdatePackageJSON({
     rootDir,
     expectedDevDependencies: {
@@ -86,6 +87,7 @@ async function prepareUserProject() {
       // ...globalCantaraConfig.dependencies.testing,
       ...globalCantaraConfig.dependencies.common,
     },
+    workspaces: ['packages/*', 'node-apps/*', 'react-apps/*'],
   });
 
   // Setup git hooks
