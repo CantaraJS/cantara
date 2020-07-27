@@ -1,5 +1,5 @@
 {
-  "packages": ["packages/*", "react-apps/*", "node-apps/*"],
+  "useWorkspaces": true,
   "npmClient": "yarn",
   "version": "independent"
 }
