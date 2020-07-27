@@ -44,6 +44,7 @@ export default function createLibraryWebpackConfig({
       react: 'React',
       'react-dom': 'ReactDOM',
       ...customExternals,
+      ...externals,
     };
   } else {
     const customExternals = app.meta.externalDependencies
@@ -52,6 +53,7 @@ export default function createLibraryWebpackConfig({
     externals = {
       ...customExternals,
     };
+    externals = getAllWebpackExternals({ custom: externals });
   }
 
   const commonLibraryConfig: Configuration = {
@@ -72,10 +74,7 @@ export default function createLibraryWebpackConfig({
       ],
       alias,
     },
-    externals:
-      libraryTarget === 'umd'
-        ? externals
-        : [getAllWebpackExternals({ custom: externals })],
+    externals,
     mode: 'production',
     devtool: app.meta.sourceMaps ? 'source-map' : undefined,
     output: {

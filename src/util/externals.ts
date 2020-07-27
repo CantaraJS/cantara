@@ -17,14 +17,14 @@ function getAllModulesFromFolder(dirName: string): string[] {
   try {
     return fs
       .readdirSync(dirName)
-      .map((moduleName) => {
+      .map(moduleName => {
         if (atPrefix.test(moduleName)) {
           // reset regexp
           atPrefix.lastIndex = 0;
           try {
             return fs
               .readdirSync(path.join(dirName, moduleName))
-              .map(function (scopedMod) {
+              .map(function(scopedMod) {
                 return moduleName + '/' + scopedMod;
               });
           } catch (e) {
@@ -41,10 +41,21 @@ function getAllModulesFromFolder(dirName: string): string[] {
   }
 }
 
-function getAllInstalledModules(allApps: CantaraApplication[]) {
-  const allExistingNodeModuleFolders = allApps
-    .map((app) => path.join(app.paths.root, 'node_modules'))
-    .filter((folderPath) => existsSync(folderPath));
+function getAllInstalledModules(
+  allApps: CantaraApplication[],
+  projectDir: string,
+) {
+  let allExistingNodeModuleFolders = allApps.map(app =>
+    path.join(app.paths.root, 'node_modules'),
+  );
+  // Append root node_modules folder
+  allExistingNodeModuleFolders = allExistingNodeModuleFolders.concat(
+    path.join(projectDir, 'node_modules'),
+  );
+  // Only include existing folders
+  allExistingNodeModuleFolders = allExistingNodeModuleFolders.filter(
+    folderPath => existsSync(folderPath),
+  );
   const allModules = allExistingNodeModuleFolders
     .map(getAllModulesFromFolder)
     .reduce((arr, arrToMerge) => [...arr, ...arrToMerge], []);
@@ -52,11 +63,11 @@ function getAllInstalledModules(allApps: CantaraApplication[]) {
 }
 
 function getAllPeerDependencies(allApps: CantaraApplication[]) {
-  const allPackageJsonPaths = allApps.map((app) =>
+  const allPackageJsonPaths = allApps.map(app =>
     path.join(app.paths.root, 'package.json'),
   );
   const allPeerDeps = allPackageJsonPaths
-    .map((filePath) => {
+    .map(filePath => {
       try {
         const { peerDependencies = {} } = readFileAsJSON(filePath);
         return peerDependencies;
@@ -96,7 +107,7 @@ interface GetAllWebpackExternalsOptions {
 export function webpackExternalsAsStringArray({
   peerOnly,
 }: GetAllWebpackExternalsOptions = {}) {
-  const { allApps } = getGlobalConfig();
+  const { allApps, projectDir } = getGlobalConfig();
   let externals: string[] = [];
 
   if (peerOnly) {
@@ -105,7 +116,7 @@ export function webpackExternalsAsStringArray({
   } else {
     // Read all node_modules folders to know which packages to externalize,
     // same as the popular nodeExternals() does
-    externals = getAllInstalledModules(allApps);
+    externals = getAllInstalledModules(allApps, projectDir);
   }
   return externals;
 }
