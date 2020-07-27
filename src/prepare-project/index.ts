@@ -43,6 +43,7 @@ async function prepareUserProject() {
     { from: '.gitignore-template', to: '.gitignore' },
     { from: '.prettierrc' },
     { from: 'global.d.ts' },
+    { from: 'lerna.json' },
   ];
   for (const pathToCopy of STATIC_PATHS_TO_COPY) {
     const fromPath = path.join(
