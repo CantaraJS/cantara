@@ -1,6 +1,6 @@
 import execCmd from '../../util/exec';
-import { getChangedAppNames } from './util';
 import getGlobalConfig from '../../cantara-config/global-config';
+import { getChangedAppNames } from '../../util/lerna';
 
 /** Returns a list of applications
  * which changed based on Lerna

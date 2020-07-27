@@ -8,12 +8,7 @@ import {
   loadPackageJson,
   checkForUpdates,
 } from './util';
-import getGlobalConfig, {
-  loadCantaraGlobalConfig,
-} from '../cantara-config/global-config';
-import { loadCantaraRuntimeConfig } from '../cantara-config/runtime-config';
 
-import prepareCantaraProject from '../prepare-project';
 import clearConsole from '../util/clearConsole';
 import allCliCommands from './commands';
 import { isCantaraProject } from '../cantara-config';

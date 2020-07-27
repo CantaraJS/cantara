@@ -1,4 +1,4 @@
-import execCmd from '../../util/exec';
+import execCmd from './exec';
 
 /**
  * Returns changed app names

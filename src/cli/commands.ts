@@ -41,7 +41,9 @@ export interface CantaraCommand<TParameters = any> {
      * don't need the global configuration
      * to be present. IF that's the case,
      * set this value to false. It
-     * defaults to true
+     * defaults to true.
+     * ONLY WORKS OUTSIDE CANTARA
+     * PROJECTS!
      */
     needsGlobalConfig?: boolean;
     /**
@@ -222,19 +224,27 @@ const onPrePushCommand: CantaraCommand = {
   configuration: {
     needsActiveApp: false,
   },
-  execute: async () => {
-  },
+  execute: async () => {},
 };
 
 const onPreCommitCommand: CantaraCommand = {
   name: 'on-pre-commit',
-  description: `Used internally. Executed every time before "git commit" is executed.`,
+  description: `Does nothing, is just kept in order to not break older versions.`,
   configuration: {
     needsActiveApp: false,
   },
-  execute: async () => {
-    const { default: onPreCommit } = await import('../scripts/on-pre-commit');
-    return onPreCommit();
+  execute: async () => {},
+};
+
+const buildChangedCommand: CantaraCommand = {
+  name: 'build-changed',
+  description: `Runs the build command for all changed packages or apps, based on the git history.`,
+  configuration: {
+    needsActiveApp: false,
+  },
+  execute: async ({ projectDir }) => {
+    const { default: buildChanged } = await import('../scripts/build-changed');
+    return buildChanged(projectDir);
   },
 };
 
@@ -250,6 +260,7 @@ const allCliCommands: CantaraCommand[] = [
   e2eCommand,
   onPrePushCommand,
   onPreCommitCommand,
+  buildChangedCommand,
 ];
 
 export default allCliCommands;
