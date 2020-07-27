@@ -141,5 +141,8 @@ export default async function prepareCantaraProject() {
   }
 
   // Run "yarn" in the project's root, which syncs all dependencies
-  await execCmd('yarn', { workingDirectory: globalCantaraConfig.projectDir });
+  await execCmd('yarn', {
+    workingDirectory: globalCantaraConfig.projectDir,
+    redirectIo: true,
+  });
 }
