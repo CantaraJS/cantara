@@ -1,20 +1,18 @@
 import execCmd from '../../util/exec';
 
-interface GetFilesChangedSinceCommitParams {
-  fromCommit: string;
-  repoDir: string;
-}
+/**
+ * Returns changed app names
+ * based on Lerna
+ */
+export async function getChangedAppNames(projectDir: string) {
+  type LernaChangedCmdRetType = { name: string; version: string }[];
 
-export async function getFilesChangedSinceCommit({
-  fromCommit,
-  repoDir,
-}: GetFilesChangedSinceCommitParams) {
-  const res = (
-    await execCmd(`git diff ${fromCommit}~1 HEAD --name-only`, {
-      workingDirectory: repoDir,
-    })
-  ).toString();
+  const cmdRes = await execCmd('lerna changed --json --all --loglevel silent', {
+    workingDirectory: projectDir,
+  });
 
-  const changedFiles = res.trim().split('\n');
-  return changedFiles;
+  const changedAppNames = JSON.parse(
+    cmdRes.toString(),
+  ) as LernaChangedCmdRetType;
+  return changedAppNames;
 }

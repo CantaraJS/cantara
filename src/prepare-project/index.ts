@@ -12,7 +12,6 @@ import prepareNodeApp from './node';
 import { createOrUpdatePackageJSON } from './util/yarn';
 import { createTempEnvJsonFile } from './util/env';
 import { createJestConfig } from './util/testing';
-import setupGitHooks from './util/git-hooks';
 import getGlobalConfig from '../cantara-config/global-config';
 import execCmd from '../util/exec';
 
@@ -90,9 +89,6 @@ async function prepareUserProject() {
     },
     workspaces: ['packages/*', 'node-apps/*', 'react-apps/*'],
   });
-
-  // Setup git hooks
-  await setupGitHooks();
 
   // Create .temp folder if it doesn't exist yet
   if (!existsSync(globalCantaraConfig.internalPaths.temp)) {
