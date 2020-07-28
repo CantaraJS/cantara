@@ -4,6 +4,7 @@ import { existsSync } from 'fs';
 import getAllApps, {
   loadSecrets,
   getCantaraDepenciesInstallationPath,
+  getDependecyVersions,
 } from './util';
 import { CantaraApplication } from '../util/types';
 
@@ -42,6 +43,13 @@ interface CantaraGlobalConfig {
     /** Include all those paths into webpack configs */
     include: string[];
   };
+  /**
+   * List of dependencies;
+   * The actual versions are retrieved from
+   * cantara's package.json. This way,
+   * all runtime dependencies are alway
+   * kept up to date thanks to dependabot
+   */
   dependencies: {
     /** Current React and React DOM version */
     react: Dependencies;
@@ -167,10 +175,10 @@ export async function loadCantaraGlobalConfig(
         .map(app => app.paths.src),
     },
     dependencies: {
-      react: reactDependencies,
-      typescript: typescriptDependencies,
-      testing: testingDependencies,
-      common: commonDependencies,
+      react: getDependecyVersions(reactDependencies),
+      typescript: getDependecyVersions(typescriptDependencies),
+      testing: getDependecyVersions(testingDependencies),
+      common: getDependecyVersions(commonDependencies),
     },
     internalPaths: {
       root: cantaraRootDir,

@@ -1,5 +1,5 @@
-import { existsSync, lstatSync, readdirSync, readFileSync } from 'fs';
-import path = require('path');
+import { existsSync, lstatSync, readdirSync } from 'fs';
+import path from 'path';
 import {
   CantaraApplication,
   CantaraApplicationType,
@@ -197,4 +197,24 @@ export function loadSecrets({
   }
 
   return secrets;
+}
+
+/**
+ * Transforms an array of npm package names
+ * into a map containing the currently
+ * installed version in cantara by retrieving
+ * it from the package.json
+ */
+export function getDependecyVersions(dependencies: string[]) {
+  const cantaraRootDir = path.join(__dirname, '..', '..');
+  const packageJson = readFileAsJSON(path.join(cantaraRootDir, 'package.json'));
+  const versionMap = dependencies.reduce((obj, dep) => {
+    const version =
+      packageJson.dependencies[dep] || packageJson.devDependencies[dep];
+    return {
+      ...obj,
+      [dep]: version,
+    };
+  }, {} as { [key: string]: string });
+  return versionMap;
 }
