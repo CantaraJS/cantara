@@ -21,6 +21,12 @@ export interface CantaraCommand<TParameters = any> {
      */
     choices?: string[];
   }[];
+  options?: {
+    name: string;
+    alias?: string;
+    type: 'string' | 'number' | 'boolean' | 'array' | 'count' | undefined;
+    describe?: string;
+  }[];
   configuration: {
     /**
      * If set to true, the second parameter
@@ -236,15 +242,23 @@ const onPreCommitCommand: CantaraCommand = {
   execute: async () => {},
 };
 
-const buildChangedCommand: CantaraCommand = {
+const buildChangedCommand: CantaraCommand<{ exclude?: string[] }> = {
   name: 'build-changed',
   description: `Runs the build command for all changed packages or apps, based on the git history.`,
   configuration: {
     needsActiveApp: false,
   },
-  execute: async ({ projectDir }) => {
+  options: [
+    {
+      name: 'exclude',
+      type: 'array',
+      alias: 'e',
+      describe: 'Exclude applications/packages from building.',
+    },
+  ],
+  execute: async ({ projectDir, exclude }) => {
     const { default: buildChanged } = await import('../scripts/build-changed');
-    return buildChanged(projectDir);
+    return buildChanged({ projectDir, exclude });
   },
 };
 

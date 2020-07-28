@@ -31,7 +31,7 @@ export default async function buildYargsCommands({
     }
     if (command.parameters) {
       cmd = `${cmd}${command.parameters
-        .map(param => ` [${param.name}]`)
+        .map((param) => ` [${param.name}]`)
         .join('')}`;
     }
     let additionalCliOptions = cmdToUse.slice(2).join(' ');
@@ -44,7 +44,13 @@ export default async function buildYargsCommands({
     yargs.command(
       cmd,
       command.description,
-      async yargs => {
+      async (yargs) => {
+        if (command.options) {
+          for (const option of command.options) {
+            const { name, ...rest } = option;
+            yargs.option(name, rest);
+          }
+        }
         if (command.parameters) {
           for (const cmdParam of command.parameters) {
             yargs.positional(cmdParam.name, {
@@ -62,8 +68,8 @@ export default async function buildYargsCommands({
           const filteredApps =
             appTypes.length === 0
               ? allApps
-              : allApps.filter(app => appTypes.includes(app.type));
-          const availableAppNames = filteredApps.map(app => app.name);
+              : allApps.filter((app) => appTypes.includes(app.type));
+          const availableAppNames = filteredApps.map((app) => app.name);
           yargs.positional('appname', {
             describe: 'Name of the app (foldername)',
             type: 'string',
@@ -71,7 +77,7 @@ export default async function buildYargsCommands({
           });
         }
       },
-      async args => {
+      async (args) => {
         const cmdName = args._[0];
         if (needsActiveApp) {
           const { default: getGlobalConfig } = await import(
@@ -82,8 +88,8 @@ export default async function buildYargsCommands({
           const filteredApps =
             appTypes.length === 0
               ? allApps
-              : allApps.filter(app => appTypes.includes(app.type));
-          const availableAppNames = filteredApps.map(app => app.name);
+              : allApps.filter((app) => appTypes.includes(app.type));
+          const availableAppNames = filteredApps.map((app) => app.name);
 
           let appname = args.appname as string | undefined;
           if (!appname) {
