@@ -60,6 +60,7 @@ export default function createReactWebpackConfig({
       filename: '[name].[hash:4].js',
       path: app.paths.build,
       chunkFilename: '[name].[chunkhash:4].js',
+      publicPath: '/',
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin({

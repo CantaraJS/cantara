@@ -30,6 +30,7 @@ export function startReactAppDevelopmentServer() {
   const devServerConfig = activeApp.meta.devServer || { port: 8080 };
   const devServer = new WebpackDevServer(compiler, {
     contentBase: activeApp.paths.build,
+    publicPath: '/',
     historyApiFallback: true,
     quiet: true,
     hot: true,
