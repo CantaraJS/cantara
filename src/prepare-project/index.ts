@@ -102,12 +102,6 @@ async function prepareUserProject() {
     dir: rootDir,
     configTemplateFileName: 'jestGlobalConfig.template.js',
   });
-
-  // Create .cantara folder if it doesn't exist
-  const dotCantaraDir = globalCantaraConfig.dotCantaraDir;
-  if (!existsSync(dotCantaraDir)) {
-    mkdirSync(dotCantaraDir, { recursive: true });
-  }
 }
 
 /**

@@ -80,8 +80,6 @@ interface CantaraGlobalConfig {
   };
   /** Working directory where user executed Cantara */
   projectDir: string;
-  /** Path of .cantara folder */
-  dotCantaraDir: string;
   /** Secrets from user's .secrets.json file */
   secrets: {
     AWS_ACCESS_KEY_ID?: string;
@@ -164,7 +162,6 @@ export async function loadCantaraGlobalConfig(
     aliases: {
       packageAliases,
     },
-    dotCantaraDir: cantaraProjectMetaFolderPath,
     globalCantaraSettings,
     secrets: loadSecrets({ projectDir, secrets: EXPECTED_CANTARA_SECRETS }),
     allPackages: {
