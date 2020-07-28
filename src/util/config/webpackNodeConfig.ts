@@ -23,7 +23,7 @@ export default function createNodeWebpackConfig({
   alias,
   env = {},
   include = [],
-  nodemonOptions = ["--inspect","--enable-source-maps"], 
+  nodemonOptions = ['--inspect', '--enable-source-maps'],
 }: CreateNodeWebpackConfigOptions): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -38,7 +38,11 @@ export default function createNodeWebpackConfig({
     output: { path: app.paths.build },
     node: { __dirname: false, __filename: false },
     target: 'node',
-    devtool: isDevelopment ? 'eval-source-map' : app.meta.sourceMaps ? 'source-map' : undefined,
+    devtool: isDevelopment
+      ? 'eval-source-map'
+      : app.meta.sourceMaps
+      ? 'source-map'
+      : undefined,
     mode,
     externals,
     resolve: {
@@ -79,8 +83,10 @@ export default function createNodeWebpackConfig({
       new webpack.EnvironmentPlugin(env),
       new FriendlyErrorsWebpackPlugin(),
       new ForkTsCheckerWebpackPlugin({
-        tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
-        watch: app.paths.src,
+        typescript: {
+          configFile: path.join(app.paths.root, '.tsconfig.local.json'),
+        },
+        // watch: app.paths.src,
       }),
       isDevelopment
         ? new NodemonPlugin({

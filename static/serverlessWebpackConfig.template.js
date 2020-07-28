@@ -90,7 +90,9 @@ module.exports = {
     new webpack.EnvironmentPlugin(<--ENV_VARS-->),
     new CaseSensitivePathsPlugin(),
     <--ENABLE_TYPECHECKING--> ? new ForkTsCheckerWebpackPlugin({
-      tsconfig: '<--TSCONFIG_PATH-->',
+      typescript: {
+        configFile: '<--TSCONFIG_PATH-->',
+      }
     }) : undefined,
     <--STATIC_FOLDER_EXISTS--> ? new CopyPlugin({
       patterns: [{

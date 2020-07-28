@@ -17,8 +17,8 @@ export default function getCssLoaders({
         ? {
             modules: {
               localIdentName: '[name]--[hash:base64:5]',
+              exportLocalsConvention: 'camelCase',
             },
-            localsConvention: 'camelCase',
             importLoaders: 1,
           }
         : {},

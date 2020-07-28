@@ -17,7 +17,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const webpackMerge = require('webpack-merge');
+const { merge: webpackMerge } = require('webpack-merge');
 
 export default function createReactWebpackConfig({
   app,
@@ -63,8 +63,10 @@ export default function createReactWebpackConfig({
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin({
-        tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
-        watch: app.paths.src,
+        typescript: {
+          configFile: path.join(app.paths.root, '.tsconfig.local.json'),
+        },
+        // watch: app.paths.src,
       }),
       isDevelopment ? new webpack.HotModuleReplacementPlugin() : undefined,
       new WebpackNotifierPlugin({
@@ -82,12 +84,7 @@ export default function createReactWebpackConfig({
       //       inject: true,
       //     })
       //   : undefined,
-      // disableRefreshCheck: true needs to be set because of https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/15
-      isDevelopment
-        ? new ReactRefreshWebpackPlugin({
-            disableRefreshCheck: true,
-          })
-        : undefined,
+      isDevelopment ? new ReactRefreshWebpackPlugin() : undefined,
       doesServiceWorkerExist
         ? new WebpackPwaManifest({
             // gcm_sender_id,

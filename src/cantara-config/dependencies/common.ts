@@ -1,1 +1,1 @@
-export const commonDependencies = ['prettier', 'lerna'];
+export const commonDependencies = ['prettier', 'lerna', 'react-refresh'];
