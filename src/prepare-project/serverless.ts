@@ -62,7 +62,10 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   const allAliases = {
     ...globalCantaraConfig.aliases.packageAliases,
   };
-  const externals = webpackExternalsAsStringArray();
+  // Externals must not contain alises
+  const externals = webpackExternalsAsStringArray({
+    ignore: Object.keys(allAliases),
+  });
 
   const allIncludes = [
     app.paths.src,
