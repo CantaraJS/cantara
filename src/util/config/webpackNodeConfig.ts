@@ -28,7 +28,9 @@ export default function createNodeWebpackConfig({
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
 
-  const externals = getAllWebpackExternals();
+  const externals = getAllWebpackExternals(
+    alias ? { ignore: Object.keys(alias) } : {},
+  );
 
   const doesStaticFolderExist =
     app.paths.static && fs.existsSync(app.paths.static);
