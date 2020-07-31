@@ -6,11 +6,14 @@ import { getChangedAppNames } from '../../util/lerna';
  * which changed based on Lerna
  */
 async function getChangedApps() {
-  const { projectDir } = getGlobalConfig();
+  const { projectDir, allApps } = getGlobalConfig();
 
-  const changedAppNames = (await getChangedAppNames(projectDir)).map(
-    res => res.name,
-  );
+  const changedAppNames = (
+    await getChangedAppNames(
+      projectDir,
+      allApps.map((app) => app.name),
+    )
+  ).map((res) => res.name);
 
   return changedAppNames;
 }
@@ -30,7 +33,7 @@ export default async function execCmdIfAppsChanged({
   const { projectDir, additionalCliOptions: userCmd } = getGlobalConfig();
 
   const changedAppNames = await getChangedApps();
-  const didChange = !!appnames.find(appname =>
+  const didChange = !!appnames.find((appname) =>
     changedAppNames.includes(appname),
   );
 

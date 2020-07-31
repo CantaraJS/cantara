@@ -11,8 +11,12 @@ export default async function buildChanged({
   projectDir,
   exclude = [],
 }: BuildChangedParams) {
-  const changedApps = await getChangedAppNames(projectDir);
   const { allApps } = getGlobalConfig();
+
+  const changedApps = await getChangedAppNames(
+    projectDir,
+    allApps.map((app) => app.name),
+  );
   for (const app of changedApps) {
     const foundApp = allApps.find((currApp) => currApp.name === app.name);
     if (

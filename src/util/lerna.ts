@@ -4,7 +4,10 @@ import execCmd from './exec';
  * Returns changed app names
  * based on Lerna
  */
-export async function getChangedAppNames(projectDir: string) {
+export async function getChangedAppNames(
+  projectDir: string,
+  allAppNames: string[],
+) {
   type LernaChangedCmdRetType = { name: string; version: string }[];
 
   let cmdRes = (
@@ -22,8 +25,15 @@ export async function getChangedAppNames(projectDir: string) {
     // cli using local version of lerna
 
     cmdRes = cmdRes.split('\n').slice(3).join('\n').trim();
-
-    changedAppNames = JSON.parse(cmdRes.toString());
+    try {
+      changedAppNames = JSON.parse(cmdRes.toString());
+    } catch {
+      // In worst case return all app names
+      console.log(
+        'Failed detecting changes using Lerna. Marking all apps as changed...',
+      );
+      return allAppNames.map((name) => ({ name, version: '0.0.0' }));
+    }
   }
   return changedAppNames;
 }
