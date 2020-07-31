@@ -46,7 +46,7 @@ By appending the `--stage` parameter to any Cantara command, you can explicitly 
 
 ## Optional Environment Variables
 
-By default cantara replaces all environment variables, specified in the `cantara.config.js`, with there value on build time. While this is a desierable behavior for frontend code, in nodejs applications running on a server I my want to read environment varialbes on runtime direclty form the server environment.
+By default cantara replaces all environment variables, specified in the `cantara.config.js`, with there value on build time. While this is a desierable behavior for frontend code, in nodejs applications running on a server, it may be expected to read environment varialbes on runtime direclty form the server environment.
 
 To aceive this it is possible to mark environment varialbes as optional:
 
