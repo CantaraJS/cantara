@@ -59,6 +59,13 @@ export interface CantaraApplicationMetaInformation {
       [key: string]: string;
     };
   };
+  /**
+   * Optionally, the default folder location
+   * of an application ('/static')
+   * can be overwritten.
+   * always relative to the current app.
+   */
+  staticFolder?: string;
 }
 
 export interface CantaraApplication {

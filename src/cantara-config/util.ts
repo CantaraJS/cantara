@@ -11,7 +11,7 @@ const isDirectory = (source: string) => lstatSync(source).isDirectory();
 const getDirectories = (source: string) => {
   try {
     return readdirSync(source)
-      .map(name => path.join(source, name))
+      .map((name) => path.join(source, name))
       .filter(isDirectory);
   } catch (e) {
     return [];
@@ -69,12 +69,12 @@ export default async function getAllApps({
   } = getAllCantaraProjectFolders(rootDir);
 
   const allAppsDirectories: { dir: string; type: string }[] = [
-    ...getDirectories(reactAppsRootDir).map(dir => ({ dir, type: 'react' })),
-    ...getDirectories(packagesAppsRootDir).map(dir => ({
+    ...getDirectories(reactAppsRootDir).map((dir) => ({ dir, type: 'react' })),
+    ...getDirectories(packagesAppsRootDir).map((dir) => ({
       dir,
       type: 'package',
     })),
-    ...getDirectories(nodeAppsRootDir).map(dir => ({ dir, type: 'node' })),
+    ...getDirectories(nodeAppsRootDir).map((dir) => ({ dir, type: 'node' })),
   ];
 
   const allApps: CantaraApplication[] = await Promise.all(
@@ -125,6 +125,16 @@ export default async function getAllApps({
         userAddedMetadata = require(cantaraConfigPath);
       }
 
+      const appMeta: CantaraApplicationMetaInformation = {
+        displayName,
+        ...userAddedMetadata,
+      };
+
+      // Custom or standard app static folder
+      const appStaticFolder = appMeta.staticFolder
+        ? path.join(dir, appMeta.staticFolder)
+        : path.join(dir, 'static');
+
       return {
         name: appName,
         type: typeToUse,
@@ -133,19 +143,16 @@ export default async function getAllApps({
           src: path.join(dir, 'src'),
           build: path.join(dir, 'build'),
           assets: path.join(dir, 'assets'),
-          static: path.join(dir, 'static'),
+          static: appStaticFolder,
         },
-        meta: {
-          displayName,
-          ...userAddedMetadata,
-        },
+        meta: appMeta,
       };
     }),
   );
 
   // Require index.ts(x) file to exist for every app
   // and react component
-  allApps.forEach(app => {
+  allApps.forEach((app) => {
     let doesIndexFileExist = false;
     if (app.type === 'js-package') {
       doesIndexFileExist = true;
