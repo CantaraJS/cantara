@@ -65,7 +65,13 @@ export default async function prepareJsPackage(app: CantaraApplication) {
     },
   });
   const packageTsConfigPath = path.join(app.paths.root, '.tsconfig.local.json');
-  writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
+  let tsConfig = JSON.parse(renderedTsConfig);
+  const customTypes = app.meta.customTypes || [];
+  tsConfig = {
+    ...tsConfig,
+    include: [...(tsConfig.include || []), ...customTypes],
+  };
+  writeJson(packageTsConfigPath, tsConfig);
 
   // Copy .npmignore ignore file
   const npmignorePath = path.join(staticFilesFolder, '.npmignore-template');

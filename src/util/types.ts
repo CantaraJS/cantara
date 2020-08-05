@@ -66,6 +66,12 @@ export interface CantaraApplicationMetaInformation {
    * always relative to the current app.
    */
   staticFolder?: string;
+  /**
+   * Folders or files which contain
+   * custom types.
+   * always relative to the current app.
+   */
+  customTypes?: string[];
 }
 
 export interface CantaraApplication {
