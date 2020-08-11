@@ -30,5 +30,6 @@ export default function executeArbitraryCmdWithinApp() {
     workingDirectory: activeApp.paths.root,
     withSecrets: true,
     redirectIo: true,
+    includeAppEnvVars: true,
   });
 }
