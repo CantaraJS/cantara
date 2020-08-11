@@ -77,7 +77,7 @@ export default async function getAllApps({
     ...getDirectories(nodeAppsRootDir).map((dir) => ({ dir, type: 'node' })),
   ];
 
-  const allApps: CantaraApplication[] = await Promise.all(
+  let allApps: CantaraApplication[] = await Promise.all(
     allAppsDirectories.map(async ({ dir, type }) => {
       let typeToUse: CantaraApplicationType = type as CantaraApplicationType;
       let displayName = path.basename(dir);
@@ -152,7 +152,7 @@ export default async function getAllApps({
 
   // Require index.ts(x) file to exist for every app
   // and react component
-  allApps.forEach((app) => {
+  allApps = allApps.filter((app) => {
     let doesIndexFileExist = false;
     if (app.type === 'js-package') {
       doesIndexFileExist = true;
@@ -168,10 +168,11 @@ export default async function getAllApps({
     }
 
     if (!doesIndexFileExist) {
-      throw new Error(
+      console.log(
         `Entry file for "${app.name}" was not found. Please create it.`,
       );
     }
+    return doesIndexFileExist;
   });
 
   return allApps;
