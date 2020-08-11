@@ -34,7 +34,10 @@ export default async function buildYargsCommands({
         .map((param) => ` [${param.name}]`)
         .join('')}`;
     }
-    let additionalCliOptions = cmdToUse.slice(2).join(' ');
+    let additionalCliOptions = cmdToUse
+      .slice(2)
+      .join(' ')
+      .replace(new RegExp(/--stage[^\-]*/, 'g'), '');
     if (needsGlobalConfig) {
       const { loadCantaraGlobalConfig } = await import(
         '../cantara-config/global-config'
