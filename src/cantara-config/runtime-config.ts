@@ -46,11 +46,13 @@ export async function loadCantaraRuntimeConfig({
 
   const stage =
     !stageParam || stageParam === 'not_set'
-      ? deriveStageNameFromCmd(currentCommand.name)
+      ? process.env.STAGE || deriveStageNameFromCmd(currentCommand.name)
       : stageParam;
 
+  console.log(`[STAGE]: ${stage}`);
+
   const currentActiveApp = allApps.find(
-    app => app.name === currentCommand.appname,
+    (app) => app.name === currentCommand.appname,
   );
   if (!currentActiveApp) {
     throw new Error(`No app with the name ${currentCommand.appname}!`);
