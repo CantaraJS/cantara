@@ -83,6 +83,8 @@ interface ExecOptions extends CommonOptions {
    * are made accessible for the current command.
    * Useful to execute scripts which need
    * access to the environment variables.
+   * ATTENTION: Requires an app to be active
+   * and the runtime config to be defined!
    */
   includeAppEnvVars?: boolean;
 }
@@ -138,11 +140,10 @@ export default async function execCmd(
   }: ExecOptions = {},
 ) {
   const globalCantaraConfig = getGlobalConfig();
-  const { env } = getRuntimeConfig();
   const NEW_PATH_ENV = getCurrentPATH();
 
   const secretsEnvVars = withSecrets ? globalCantaraConfig.secrets : {};
-  const appEnvVars = includeAppEnvVars ? env : {};
+  const appEnvVars = includeAppEnvVars ? getRuntimeConfig().env : {};
 
   const options: SpawnOptions = {
     workingDirectory,
