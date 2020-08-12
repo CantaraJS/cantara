@@ -45,7 +45,10 @@ export default function createCommonReactWebpackConfig({
     plugins: [
       new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
-      new webpack.EnvironmentPlugin(env),
+      new webpack.EnvironmentPlugin({
+        ...env,
+        WEBPACK_BUILD_TIMESTAMP: Date.now(),
+      }),
       isProduction
         ? new OptimizeCSSAssetsPlugin({
             cssProcessor: cssnano,
