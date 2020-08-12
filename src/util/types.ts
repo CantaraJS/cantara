@@ -33,8 +33,9 @@ export interface CantaraApplicationMetaInformation {
    * By default the env var is required, by setting
    * optional = true, the env var does not have to be defined
    * at build time.
+   * Instead via the env file, the value can also be set directly
    */
-  env?: (string | { var: string; optional?: boolean })[];
+  env?: (string | { var: string; optional?: boolean; value?: boolean })[];
   /**
    * If set to true, no types will
    * be generated. Only applies to
