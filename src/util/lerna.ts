@@ -13,7 +13,7 @@ export async function getChangedAppNames(
   let cmdRes: any;
   try {
     cmdRes = (
-      await execCmd('lerna changed --json --all', {
+      await execCmd('lerna changed --json --all --loglevel silent', {
         workingDirectory: projectDir,
       })
     ).toString();
