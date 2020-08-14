@@ -10,11 +10,17 @@ export async function getChangedAppNames(
 ) {
   type LernaChangedCmdRetType = { name: string; version: string }[];
 
-  let cmdRes = (
-    await execCmd('lerna changed --json --all --loglevel silent', {
-      workingDirectory: projectDir,
-    })
-  ).toString();
+  let cmdRes: any;
+  try {
+    cmdRes = (
+      await execCmd('lerna changed --json --all', {
+        workingDirectory: projectDir,
+      })
+    ).toString();
+  } catch {
+    // lerna has non zero exit code, if there are no changes, set to empty array to work around this
+    cmdRes = '[]';
+  }
 
   let changedAppNames: LernaChangedCmdRetType = [];
   try {
