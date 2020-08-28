@@ -30,7 +30,7 @@ Now, in the application folder create a new file called `.env.development` and a
 MY_ENV_VAR=env_var_value123
 ```
 
-When you now start the development of your app using the `dev` command, the value of `process.env.MY_ENV_VAR` will be `env_var_value123`. When executing the `test` or `e2e` command, Cantara will look if there is a file called `.env.test` in the app's folder. If not, it will fall back to `.env.development`. For building/deploying, Cantara will look for a file called `.env.production`.
+When you now start the development of your app using the `dev` command, the value of `process.env.MY_ENV_VAR` will be `env_var_value123`. When executing the `test` or `e2e` command, Cantara will look if there is a file called `.env.test` in the app's folder. If not, it will fall back to `.env`. For building/deploying, Cantara will look for a file called `.env.production`.
 
 ### Project wide .env files
 
@@ -43,3 +43,17 @@ Instead of creating those files, you can also define the environment variabled y
 ## The --stage parameter
 
 By appending the `--stage` parameter to any Cantara command, you can explicitly define which `.env` file or which environment variables from the system should be used. For example if you execute `ctra dev my-app --stage production` the `.env.production` file will be used. You can also create custom stages, e.g. `.env.staging` and execute commands using those stages, e.g. `ctra build --stage staging`. This can be useful if you have other environments then just your local development environemnt and the production environment, e.g. a staging server.
+
+## Optional Environment Variables
+
+By default cantara replaces all environment variables, specified in the `cantara.config.js`, with there value on build time. While this is a desierable behavior for frontend code, in nodejs applications running on a server, it may be expected to read environment varialbes on runtime direclty form the server environment.
+
+To aceive this it is possible to mark environment varialbes as optional:
+
+```javascript
+module.exports = {
+  env: [{ var: 'MY_ENV_VAR', optional: true }],
+};
+```
+
+This way cantara will replace the environment variable if it is defined on build (i.e. during development), but will leave it as is, if it is not defined (i.e. for production).
