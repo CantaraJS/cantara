@@ -57,3 +57,14 @@ module.exports = {
 ```
 
 This way cantara will replace the environment variable if it is defined on build (i.e. during development), but will leave it as is, if it is not defined (i.e. for production).
+
+## Setting Evironment Variables Directly in Configuration
+
+In some rare use cases it might not be possible to define environment varialbes in the .env files, but the values must be computed at build time. In this cases the value can be directly injected in the `cantara.config.js`. A common use case for this is the injection of the version from the `package.json` :
+
+```javascript
+const pkg = require('./package.json');
+module.exports = {
+  env: [{ var: 'VERSION', value: pkg.version }],
+};
+```
