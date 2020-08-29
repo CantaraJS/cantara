@@ -1,7 +1,7 @@
 import { Configuration } from 'webpack';
 import path from 'path';
 
-import getBabelConfig from './babelReactConfig';
+import { getBabelReactConfig } from './babelReactConfig';
 import getAllWebpackExternals from '../externals';
 import { camalize } from '../string-manipulation';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
@@ -133,7 +133,7 @@ export default function createLibraryWebpackConfig({
           // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
-            options: getBabelConfig('production'),
+            options: getBabelReactConfig('production'),
           },
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],

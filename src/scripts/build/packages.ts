@@ -8,11 +8,13 @@ import execCmd from '../../util/exec';
 import slash from 'slash';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
+import babelNodeConfig from '../../util/config/babelNodeConfig';
+import { transpile } from '../../util/babel';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
   return new Promise((resolve, reject) => {
-    compiler.run(err => {
+    compiler.run((err) => {
       if (err) {
         reject(new Error('Error while compiling.'));
         return;
@@ -54,10 +56,15 @@ export default async function buildPackage(app: CantaraApplication) {
     noChecks: false,
   });
 
-  const { libraryTargets = ['umd', 'commonjs'] } = app.meta;
+  const { libraryTargets = ['umd', 'commonjs'], skipBundling } = app.meta;
 
   if (libraryTargets.includes('commonjs')) {
-    await compile(webpackCommonJsConfig);
+    if (skipBundling) {
+      console.log('[CTRA] skipping bundling');
+      await transpile(app);
+    } else {
+      await compile(webpackCommonJsConfig);
+    }
   }
   if (libraryTargets.includes('umd')) {
     await compile(webpackUmdConfig);
