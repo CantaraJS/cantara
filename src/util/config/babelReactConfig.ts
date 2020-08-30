@@ -1,6 +1,4 @@
-export default function getBabelReactConfig(
-  mode: 'development' | 'production',
-) {
+export function getBabelReactConfig(mode: 'development' | 'production') {
   return {
     presets: ['@babel/react', '@babel/typescript'],
     plugins: [
@@ -9,6 +7,11 @@ export default function getBabelReactConfig(
       '@babel/plugin-proposal-optional-chaining',
       '@babel/plugin-proposal-nullish-coalescing-operator',
       mode === 'development' ? 'react-refresh/babel' : undefined,
-    ].filter(Boolean)
+    ].filter(Boolean),
   };
 }
+
+// So it can be used as input for babel cli
+// Since this is only relevant for packages we can always use 'production'
+const reactConfig = getBabelReactConfig('production');
+export default reactConfig;

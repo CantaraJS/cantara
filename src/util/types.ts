@@ -48,10 +48,13 @@ export interface CantaraApplicationMetaInformation {
    */
   suppressTsErrors?: string[];
   /**
-   * If set to true source maps are generated for production
-   * and cantara will try to load source maps of all dependencies as well.
+   * If set to true source maps are generated for production as well.
    */
-  sourceMaps?: true;
+  sourceMaps?: boolean;
+  /**
+   * Define external dependencies mapping for webpack.
+   * Can be configured for either of the build targets.
+   */
   externalDependencies?: {
     umd?: {
       [key: string]: string;
@@ -73,6 +76,10 @@ export interface CantaraApplicationMetaInformation {
    * always relative to the current app.
    */
   customTypes?: string[];
+  /**
+   * If Set to true, the commonjs target will not be bundled.
+   */
+  skipBundling?: boolean;
 }
 
 export interface CantaraApplication {

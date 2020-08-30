@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@alexlafroscia/yaml-merge": "^2.0.0",
+    "@babel/cli": "^7.10.5",
     "@babel/core": "^7.8.4",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-decorators": "^7.8.3",

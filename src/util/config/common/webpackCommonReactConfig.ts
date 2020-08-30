@@ -2,7 +2,7 @@ import webpack, { Configuration } from 'webpack';
 import path from 'path';
 
 import { CreateWebpackConfigParams } from '../types';
-import getBabelConfig from '../babelReactConfig';
+import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
 
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -77,7 +77,7 @@ export default function createCommonReactWebpackConfig({
           // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
-            options: getBabelConfig(mode),
+            options: getBabelReactConfig(mode),
           },
           include: [app.paths.src, ...include],
           // exclude: [/node_modules/],
