@@ -15,14 +15,10 @@ export async function transpile(app: CantaraApplication) {
     `dist/util/config/${babelConfigFile}`,
   );
   const outputPath = path.join(app.paths.build, path.basename(app.name), 'src');
-  const sourceMap = app.meta.sourceMaps ? '--source-maps' : '';
-
-  // clean build dir
-  await execCmd(`rm -rf ${app.paths.build}`);
 
   const cmdRes = (
     await execCmd(
-      `npx babel --config-file ${babelConfigPath} --extensions [.js,.ts,.tsx,.jsx] ${sourceMap} --out-dir ${outputPath} --copy-files ${app.paths.src}`,
+      `npx babel --config-file ${babelConfigPath} --extensions [.js,.ts,.tsx,.jsx] --source-maps --out-dir ${outputPath} --copy-files ${app.paths.src}`,
     )
   ).toString();
 
