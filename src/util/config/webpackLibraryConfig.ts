@@ -8,6 +8,7 @@ import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import { CreateWebpackConfigParams } from './types';
 import getCssLoaders from './common/cssLoaders';
 import getSourceMapLoader from './common/soureMapLoader';
+import { merge } from '../babel';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
@@ -133,7 +134,7 @@ export default function createLibraryWebpackConfig({
           // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
-            options: getBabelReactConfig('production'),
+            options: merge(app, getBabelReactConfig('production')),
           },
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],

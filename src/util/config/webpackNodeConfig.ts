@@ -5,6 +5,7 @@ import path from 'path';
 import babelConfig from './babelNodeConfig';
 import getAllWebpackExternals from '../externals';
 import slash from 'slash';
+import { merge } from '../babel';
 
 const NodemonPlugin = require('nodemon-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -68,7 +69,7 @@ export default function createNodeWebpackConfig({
           exclude: [/node_modules/],
           use: {
             loader: 'babel-loader',
-            options: babelConfig,
+            options: merge(app, babelConfig),
           },
         },
         {

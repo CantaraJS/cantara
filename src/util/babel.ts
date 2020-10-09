@@ -2,6 +2,7 @@ import { CantaraApplication } from './types';
 import execCmd from './exec';
 import getGlobalConfig from '../cantara-config/global-config';
 import path from 'path';
+const babelMerge = require('babel-merge');
 
 export async function transpile(app: CantaraApplication) {
   const {
@@ -27,4 +28,17 @@ export async function transpile(app: CantaraApplication) {
   ).toString();
 
   console.log(cmdRes);
+}
+
+export function merge(app: CantaraApplication, config: { [k: string]: any }) {
+  if (!app.meta.customBabelConfig) {
+    return config;
+  }
+  const customConfig = require(path.join(
+    app.paths.root,
+    app.meta.customBabelConfig,
+  ));
+  const merged = babelMerge(config, customConfig);
+  console.log(merged);
+  return merged;
 }

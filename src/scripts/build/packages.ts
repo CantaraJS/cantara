@@ -8,19 +8,18 @@ import execCmd from '../../util/exec';
 import slash from 'slash';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
-import babelNodeConfig from '../../util/config/babelNodeConfig';
 import { transpile } from '../../util/babel';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
-  return new Promise((resolve, reject) => {
-    compiler.run((err) => {
+  return new Promise<webpack.Stats>((resolve, reject) => {
+    compiler.run((err, stats) => {
       if (err) {
         reject(new Error('Error while compiling.'));
         return;
       }
       console.log('Successfully compiled!');
-      resolve();
+      resolve(stats);
     });
   });
 }
@@ -63,11 +62,15 @@ export default async function buildPackage(app: CantaraApplication) {
       console.log('[CTRA] skipping bundling');
       await transpile(app);
     } else {
-      await compile(webpackCommonJsConfig);
+      const stats = await compile(webpackCommonJsConfig);
+      const statsPath = path.join(app.paths.root, 'stats.commonjs.json');
+      writeJson(statsPath, stats.toJson('verbose'));
     }
   }
   if (libraryTargets.includes('umd')) {
-    await compile(webpackUmdConfig);
+    const stats = await compile(webpackUmdConfig);
+    const statsPath = path.join(app.paths.root, 'stats.umd.json');
+    writeJson(statsPath, stats.toJson('verbose'));
   }
 
   if (!app.meta.skipTypeGeneration) {

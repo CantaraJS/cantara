@@ -77,6 +77,11 @@ export interface CantaraApplicationMetaInformation {
    */
   customTypes?: string[];
   /**
+   * File containing a babel configuration,
+   * which will be merged with the cantara standard babel configuration.
+   */
+  customBabelConfig?: string;
+  /**
    * If Set to true, the commonjs target will not be bundled.
    */
   skipBundling?: boolean;
