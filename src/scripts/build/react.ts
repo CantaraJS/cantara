@@ -4,10 +4,10 @@ import webpack from 'webpack';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
 
-function compile(config: webpack.Configuration) {
+function compile(config: webpack.Configuration): Promise<void> {
   const compiler = webpack(config);
   return new Promise((resolve, reject) => {
-    compiler.run(err => {
+    compiler.run((err) => {
       if (err) {
         reject(new Error('Error while compiling.'));
         return;

@@ -115,7 +115,7 @@ export default async function buildYargsCommands({
           await loadCantaraRuntimeConfig({
             stage: (args.stage as string | undefined) || 'not_set',
             currentCommand: {
-              name: cmdName,
+              name: cmdName.toString(),
               appname,
             },
           });
