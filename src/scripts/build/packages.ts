@@ -8,7 +8,6 @@ import execCmd from '../../util/exec';
 import slash from 'slash';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
-import babelNodeConfig from '../../util/config/babelNodeConfig';
 import { transpile } from '../../util/babel';
 
 function compile(config: webpack.Configuration) {
@@ -20,7 +19,7 @@ function compile(config: webpack.Configuration) {
         return;
       }
       console.log('Successfully compiled!');
-      resolve();
+      resolve(true);
     });
   });
 }

@@ -1,6 +1,14 @@
 export function getBabelReactConfig(mode: 'development' | 'production') {
   return {
-    presets: ['@babel/react', '@babel/typescript'],
+    presets: [
+      [
+        '@babel/preset-react',
+        {
+          runtime: 'automatic',
+        },
+      ],
+      '@babel/typescript',
+    ],
     plugins: [
       '@babel/plugin-proposal-class-properties',
       '@babel/plugin-proposal-object-rest-spread',

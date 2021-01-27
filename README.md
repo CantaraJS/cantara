@@ -18,9 +18,6 @@
   <a href="">
     <img src="https://github.com/CantaraJS/cantara/workflows/Release/badge.svg" alt="Release" />
   </a>
-  <a href="https://spectrum.chat/cantara">
-    <img src="https://withspectrum.github.io/badge/badge.svg" alt="Join the  on Spectrum" />
-  </a>
 </p>
 
 <h3 align="center">
@@ -31,8 +28,6 @@
   <a href="https://cantara.js.org/docs/starter_templates/">Starters</a>
   <span> · </span>
   <a href="https://cantara.js.org/docs/maintainers_intro">Contribute</a>
-  <span> · </span>
-  Support: <a href="https://spectrum.chat/cantara">Spectrum</a>
 </h3>
 
 Cantara is a CLI tool to create Fullstack React applications in minutes
