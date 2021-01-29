@@ -4,6 +4,7 @@ import path from 'path';
 import { CreateWebpackConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
+import NodePolyfillPlugin from './NodePolyfillPlugin';
 
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 // CaseSensitivePathsPlugin webpack 5 support: https://github.com/Urthen/case-sensitive-paths-webpack-plugin/issues/56
@@ -53,6 +54,7 @@ export default function createCommonReactWebpackConfig({
     plugins: [
       // new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
+      new NodePolyfillPlugin(),
       new webpack.EnvironmentPlugin({
         ...env,
         WEBPACK_BUILD_TIMESTAMP: Date.now(),

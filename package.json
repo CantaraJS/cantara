@@ -8,7 +8,7 @@
     "ctra": "dist/index.js"
   },
   "scripts": {
-    "start": "nodemon --config ./nodemon_config.json --watch src/**/*.ts --watch .env --exec cross-env NODE_ENV=development ts-node src/index.ts",
+    "start": "nodemon --config ./nodemon_config.json --watch src/**/*.ts --watch .env --exec cross-env NODE_ENV=development ts-node src/index.ts --trace-deprecation",
     "debug": "node --inspect-brk -r ts-node/register src/index.ts",
     "build": "tsc -p .",
     "semantic-release": "semantic-release"
@@ -79,6 +79,7 @@
     "serverless-webpack": "^5.3.5",
     "slash": "^3.0.0",
     "source-map-loader": "^2.0.0",
+    "stream-browserify": "^3.0.0",
     "style-loader": "^2.0.0",
     "terminal-link": "^2.1.1",
     "terser-webpack-plugin": "^5.1.1",
@@ -94,7 +95,28 @@
     "webpack-notifier": "^1.12.0",
     "webpack-pwa-manifest": "^4.3.0",
     "workbox-webpack-plugin": "^6.0.2",
-    "yargs": "^16.2.0"
+    "yargs": "^16.2.0",
+    "assert": "^2.0.0",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "console-browserify": "^1.2.0",
+    "constants-browserify": "^1.0.0",
+    "crypto-browserify": "^3.12.0",
+    "domain-browser": "^4.19.0",
+    "events": "^3.2.0",
+    "https-browserify": "^1.0.0",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "punycode": "^2.1.1",
+    "querystring-es3": "^0.2.1",
+    "readable-stream": "^3.6.0",
+    "stream-http": "^3.1.1",
+    "string_decoder": "^1.3.0",
+    "timers-browserify": "^2.0.12",
+    "tty-browserify": "^0.0.1",
+    "url": "^0.11.0",
+    "util": "^0.12.3",
+    "vm-browserify": "^1.1.2"
   },
   "repository": {
     "type": "git",

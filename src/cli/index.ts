@@ -16,6 +16,8 @@ import buildYargsCommands from './yargs';
 
 export default async function setupCliInterface() {
   if (process.env.NODE_ENV === 'development') {
+    // Make sure deprecation warnings show stack trace
+    process.traceDeprecation = true;
     clearConsole();
   }
 
@@ -35,7 +37,7 @@ export default async function setupCliInterface() {
   cmdToUse = cmdToUse.filter(Boolean);
 
   // Determine commands which can be executed in current folder.
-  const availableCommands = allCliCommands.filter(command => {
+  const availableCommands = allCliCommands.filter((command) => {
     const { needsGlobalConfig = true } = command.configuration;
     if (needsGlobalConfig && !isCwdCantaraProject) {
       return false;
