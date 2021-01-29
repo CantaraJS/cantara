@@ -12,8 +12,14 @@ function compile(config: webpack.Configuration): Promise<void> {
         reject(new Error('Error while compiling.'));
         return;
       }
-      console.log('Successfully compiled!');
-      resolve();
+      compiler.close((err) => {
+        if (err) {
+          reject(new Error('Error while compiling.'));
+        } else {
+          console.log('Successfully compiled!');
+          resolve();
+        }
+      });
     });
   });
 }

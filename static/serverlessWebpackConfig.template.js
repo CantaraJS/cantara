@@ -78,11 +78,8 @@ module.exports = {
         include: <--INCLUDES-->,
       },
       {
-        loader: '<--MODULES_PATH-->file-loader',
         exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-        options: {
-          name: 'static/media/[name].[hash:8].[ext]',
-        },
+        type: 'asset'
       }
     ],
   },
@@ -111,7 +108,6 @@ module.exports = {
     minimizer: [
       new TerserPlugin({
         parallel: true,
-        cache: true,
         // sourceMap: true,
         terserOptions: {
           keep_classnames: true,

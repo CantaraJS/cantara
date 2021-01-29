@@ -40,6 +40,13 @@ export default function createCommonReactWebpackConfig({
         '.html',
         '.htm',
       ],
+      fallback: {
+        fs: false,
+        dns: false,
+        net: false,
+        tls: false,
+        module: false,
+      },
     },
     mode,
     plugins: [
@@ -98,10 +105,11 @@ export default function createCommonReactWebpackConfig({
             /\.css$/,
             app.paths.assets || '',
           ],
-          loader: 'url-loader',
-          options: {
-            limit: alwaysInlineImages ? Number.MAX_VALUE : 15000,
-            name: 'static/media/[name].[hash:8].[ext]',
+          type: 'asset',
+          parser: {
+            dataUrlCondition: {
+              maxSize: alwaysInlineImages ? Number.MAX_VALUE : 8 * 1024,
+            },
           },
         },
         // {
@@ -115,13 +123,6 @@ export default function createCommonReactWebpackConfig({
     },
     stats: {
       warningsFilter: [/Failed to parse source map/],
-    },
-    node: {
-      fs: 'empty',
-      dns: 'empty',
-      net: 'empty',
-      tls: 'empty',
-      module: 'empty',
     },
   };
 }

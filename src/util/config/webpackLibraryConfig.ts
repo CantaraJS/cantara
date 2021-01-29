@@ -146,7 +146,7 @@ export default function createLibraryWebpackConfig({
         },
         {
           exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/],
-          loader: 'url-loader',
+          type: 'asset/inline',
         },
       ],
     },
