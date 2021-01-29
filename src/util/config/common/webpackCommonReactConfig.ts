@@ -6,7 +6,8 @@ import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
 
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+// CaseSensitivePathsPlugin webpack 5 support: https://github.com/Urthen/case-sensitive-paths-webpack-plugin/issues/56
+// const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const cssnano = require('cssnano');
 
@@ -50,7 +51,7 @@ export default function createCommonReactWebpackConfig({
     },
     mode,
     plugins: [
-      new CaseSensitivePathsPlugin(),
+      // new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
       new webpack.EnvironmentPlugin({
         ...env,
@@ -78,6 +79,12 @@ export default function createCommonReactWebpackConfig({
     ].filter(Boolean),
     module: {
       rules: [
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
         {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           /** For some reason, using 'javascript/esm' causes ReactRefresh to fail */

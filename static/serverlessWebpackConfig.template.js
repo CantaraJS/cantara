@@ -6,7 +6,7 @@
 
 const path = require('path');
 
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+// CaseSensitivePathsPlugin webpack 5 support: https://github.com/Urthen/case-sensitive-paths-webpack-plugin/issues/56
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const slsw = require('serverless-webpack');
@@ -63,6 +63,12 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
         test: [/\.js$/, /\.tsx?$/],
         // include: app.paths.src,
         exclude: [/node_modules/],
@@ -85,7 +91,7 @@ module.exports = {
   },
   plugins: [
     new webpack.EnvironmentPlugin(<--ENV_VARS-->),
-    new CaseSensitivePathsPlugin(),
+    // new CaseSensitivePathsPlugin(),
     <--ENABLE_TYPECHECKING--> ? new ForkTsCheckerWebpackPlugin({
       typescript: {
         configFile: '<--TSCONFIG_PATH-->',
