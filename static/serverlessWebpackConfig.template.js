@@ -32,7 +32,7 @@ function getModuleName(request) {
   return req.split(delimiter)[0];
 }
 
-function shouldExternalize(_, request, callback) {
+function shouldExternalize({context, request}, callback) {
   const moduleName = getModuleName(request);
     if (<--EXTERNALS_ARRAY-->.includes(moduleName)) {
       // mark this module as external
