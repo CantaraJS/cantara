@@ -6,6 +6,7 @@ plugins:
 custom:
   serverless-offline:
     useChildProcesses: true
+    noPrependStageInUrl: true
   webpack:
     webpackConfig: '<--WEBPACK_CONFIG_PATH-->'
     includeModules:
