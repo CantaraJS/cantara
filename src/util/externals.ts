@@ -165,8 +165,7 @@ export default function getAllWebpackExternals({
   // but not when defining excplictly through object
   // (which should be the same)
   return (
-    _: any,
-    request: string,
+    { request, context }: { request: string; context: any },
     callback: (err?: string | null, module?: string) => void,
   ) => {
     const moduleName = getModuleName(request);
