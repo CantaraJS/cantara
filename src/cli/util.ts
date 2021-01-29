@@ -71,8 +71,8 @@ export function checkForUpdates(packageJson: any) {
         bottomRight: 'round',
         topLeft: 'round',
         topRight: 'round',
-        horizontal: '',
-        vertical: '',
+        horizontal: 'round',
+        vertical: 'round',
       },
     },
   });

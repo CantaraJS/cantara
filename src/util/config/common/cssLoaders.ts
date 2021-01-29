@@ -1,5 +1,4 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const postcssPresetEnv = require('postcss-preset-env');
 
 interface GetCssLoadersOptions {
   /** If true, use MiniCssExtractPlugin, otherwise style-loader */
@@ -10,24 +9,38 @@ export default function getCssLoaders({
   useExtractLoader,
 }: GetCssLoadersOptions) {
   const cssLoaders = (modules: boolean, extractCss: boolean) => [
-    ...(extractCss ? [MiniCssExtractPlugin.loader] : ['style-loader']),
+    ...(extractCss
+      ? [MiniCssExtractPlugin.loader]
+      : [
+          {
+            loader: 'style-loader',
+            options: {
+              esModule: true,
+              modules: {
+                namedExport: true,
+              },
+            },
+          },
+        ]),
     {
       loader: 'css-loader',
       options: modules
         ? {
             modules: {
               localIdentName: '[name]--[hash:base64:5]',
-              exportLocalsConvention: 'camelCase',
+              exportLocalsConvention: 'camelCaseOnly',
+              namedExport: true,
             },
-            importLoaders: 1,
+            esModule: true,
           }
         : {},
     },
     {
       loader: 'postcss-loader',
       options: {
-        ident: 'postcss',
-        plugins: () => [postcssPresetEnv()],
+        postcssOptions: {
+          plugins: ['postcss-preset-env'],
+        },
       },
     },
   ];
