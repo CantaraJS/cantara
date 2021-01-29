@@ -95,6 +95,11 @@ module.exports = {
     <--ENABLE_TYPECHECKING--> ? new ForkTsCheckerWebpackPlugin({
       typescript: {
         configFile: '<--TSCONFIG_PATH-->',
+        diagnosticOptions: {
+          semantic: true,
+          syntactic: true,
+        },
+        mode: 'write-references',
       }
     }) : undefined,
     <--STATIC_FOLDER_EXISTS--> ? new CopyPlugin({

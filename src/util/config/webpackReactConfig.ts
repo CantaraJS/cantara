@@ -66,6 +66,11 @@ export default function createReactWebpackConfig({
       new ForkTsCheckerWebpackPlugin({
         typescript: {
           configFile: path.join(app.paths.root, '.tsconfig.local.json'),
+          diagnosticOptions: {
+            semantic: true,
+            syntactic: true,
+          },
+          mode: 'write-references',
         },
         // watch: app.paths.src,
       }),
