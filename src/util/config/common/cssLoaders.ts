@@ -10,7 +10,17 @@ export default function getCssLoaders({
 }: GetCssLoadersOptions) {
   const cssLoaders = (modules: boolean, extractCss: boolean) => [
     ...(extractCss
-      ? [MiniCssExtractPlugin.loader]
+      ? [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              esModule: true,
+              modules: {
+                namedExport: true,
+              },
+            },
+          },
+        ]
       : [
           {
             loader: 'style-loader',
