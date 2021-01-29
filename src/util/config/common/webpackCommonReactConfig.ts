@@ -97,21 +97,15 @@ export default function createCommonReactWebpackConfig({
           exclude: [/node_modules/, app.paths.assets || ''],
           use: { loader: 'html-loader' },
         },
-        {
-          exclude: [
-            /\.(js|jsx|ts|tsx|mjs)$/,
-            /\.html?$/,
-            /\.json$/,
-            /\.css$/,
-            app.paths.assets || '',
-          ],
-          type: 'asset',
-          parser: {
-            dataUrlCondition: {
-              maxSize: alwaysInlineImages ? Number.MAX_VALUE : 8 * 1024,
+        alwaysInlineImages
+          ? {
+              test: /\.(?:ico|gif|png|jpg|jpeg|svg|woff(2)?|eot|ttf|otf)$/i,
+              type: 'asset/inline',
+            }
+          : {
+              test: /\.(?:ico|gif|png|jpg|jpeg|svg|woff(2)?|eot|ttf|otf)$/i,
+              type: 'asset',
             },
-          },
-        },
         // {
         //   loader: 'file-loader',
         //   exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],

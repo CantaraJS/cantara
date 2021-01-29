@@ -72,7 +72,7 @@ export default function createNodeWebpackConfig({
           },
         },
         {
-          exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+          test: /\.(?:ico|gif|png|jpg|jpeg|svg|woff(2)?|eot|ttf|otf)$/i,
           type: 'asset',
         },
       ],
