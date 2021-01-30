@@ -22,6 +22,7 @@ module.exports = {
       'continous_integration',
       'execute_arbitrary_cmds',
       'e2e_testing',
+      'migrations',
     ],
     ['Advanced']: ['css', 'external_dependencies', 'cantara_config_js'],
     ['Other']: ['starter_templates'],

@@ -21,7 +21,7 @@ module.exports = {
         alt: 'Cantara',
         src: 'img/cantara.svg',
       },
-      links: [
+      items: [
         { to: 'docs/introduction', label: 'Getting started', position: 'left' },
         { to: 'docs/docs_intro', label: 'Guides', position: 'left' },
         // {
