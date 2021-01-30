@@ -66,14 +66,6 @@ export function checkForUpdates(packageJson: any) {
   updateNotifier({ pkg: packageJson }).notify({
     boxenOptions: {
       borderColor: 'cyan',
-      borderStyle: {
-        bottomLeft: 'round',
-        bottomRight: 'round',
-        topLeft: 'round',
-        topRight: 'round',
-        horizontal: 'round',
-        vertical: 'round',
-      },
     },
   });
 }
