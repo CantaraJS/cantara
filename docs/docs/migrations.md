@@ -28,3 +28,4 @@ Some common problems which you could come along:
 - The chunk splitting behaviour was changed to `all`, as that should be more effective (https://webpack.js.org/plugins/split-chunks-plugin/)
 
 :rocket:
+:rocket:
