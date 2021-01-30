@@ -17,6 +17,7 @@ import buildYargsCommands from './yargs';
 export default async function setupCliInterface() {
   if (process.env.NODE_ENV === 'development') {
     // Make sure deprecation warnings show stack trace
+    console.log('Tracing depreactions...');
     process.traceDeprecation = true;
     clearConsole();
   }
