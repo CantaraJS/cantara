@@ -8,6 +8,8 @@ sidebar_label: Live Link
 
 Live Link is only active for applications during development!
 
+Before packages from another Cantara project show up, you need to execute at least one Cantara command (it doesn't matter which) in that project. This only needs to be done once per project, forever (unless you re-install Cantara).
+
 ## Shortcomings
 
 In 99% of the cases, you'll be able to use Cantara Live Link without issues.

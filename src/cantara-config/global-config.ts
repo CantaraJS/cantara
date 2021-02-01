@@ -14,9 +14,14 @@ import { typescriptDependencies } from './dependencies/types';
 import { testingDependencies } from './dependencies/testing';
 import { commonDependencies } from './dependencies/common';
 import {
+  getAllLiveLinkPackages,
   linkedPackagesToWebpackAliases,
   linkedPackagesToWebpackInclude,
 } from '../util/live-link';
+import {
+  addProjectPathToPersistentData,
+  readCantaraPersistentData,
+} from './persistence';
 
 const EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
 
@@ -130,6 +135,11 @@ export async function loadCantaraGlobalConfig(
   const tempFolder = path.join(staticFilesPath, '.temp');
   const projectDir = config.projectDir || process.cwd();
 
+  addProjectPathToPersistentData({
+    projectPath: projectDir,
+    tempFolder,
+  });
+
   const allApps = await getAllApps({
     rootDir: projectDir,
   });
@@ -163,13 +173,13 @@ export async function loadCantaraGlobalConfig(
 
   const nodeModulesPath = getCantaraDepenciesInstallationPath();
 
-  const linkedPackages: LiveLinkedPackage[] = [
-    {
-      packageRoot:
-        'C:\\Users\\maxim\\DEV\\ctra-test-link\\packages\\react-clock',
-      projectRoot: 'C:\\Users\\maxim\\DEV\\ctra-test-link',
-    },
-  ];
+  const persistanceData = readCantaraPersistentData(tempFolder);
+
+  const linkedPackages: LiveLinkedPackage[] = persistanceData
+    ? await getAllLiveLinkPackages({ persistanceData, projectDir })
+    : [];
+
+  console.log({ linkedPackages });
 
   const linkedPackageAliases = linkedPackagesToWebpackAliases(linkedPackages);
 

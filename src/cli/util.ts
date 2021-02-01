@@ -18,9 +18,7 @@ export function setupCliContext() {
  * (only during development)
  */
 export function loadEnv() {
-  if (process.env.NODE_ENV === 'development') {
-    dotenv.config();
-  }
+  dotenv.config();
 }
 
 /**

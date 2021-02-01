@@ -20,10 +20,10 @@ export default async function setupCliInterface() {
     console.log('Tracing depreactions...');
     process.traceDeprecation = true;
     clearConsole();
+    // Load envs from .env for development
+    loadEnv();
   }
 
-  // Load envs from .env for development
-  loadEnv();
   // User's project path
   const projectDir = getProjectPath();
   setupErrorHandling();

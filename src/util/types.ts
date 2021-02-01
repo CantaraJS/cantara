@@ -102,4 +102,21 @@ export interface CantaraApplication {
 export interface LiveLinkedPackage {
   projectRoot: string;
   packageRoot: string;
+  /**
+   * Name in package.json
+   */
+  packageName: string;
+}
+
+/**
+ * Saves temporary data about
+ * all Cantara projects on disk.
+ * This way, we always know which
+ * Cantara projects are installed
+ * and where
+ */
+export interface CantaraPersistenceData {
+  projects: {
+    rootPath: string;
+  }[];
 }

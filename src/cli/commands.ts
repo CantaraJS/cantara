@@ -1,3 +1,4 @@
+import liveLinkAdd from '../scripts/link/add';
 import { CantaraApplicationType } from '../util/types';
 
 export interface CantaraCommand<TParameters = any> {
@@ -37,6 +38,15 @@ export interface CantaraCommand<TParameters = any> {
      * Cantara's runtime configuration is loaded.
      */
     needsActiveApp?: boolean;
+    /**
+     * If true, the second parameter
+     * of this command needs to be
+     * set to a path to another
+     * Cantara project and the third
+     * paramater to an existent
+     * package name inside that project
+     */
+    needsLiveLinkPackage?: boolean;
     /**
      * App types this command can
      * be executed with.
@@ -262,6 +272,36 @@ const buildChangedCommand: CantaraCommand<{ exclude?: string[] }> = {
   },
 };
 
+const liveLinkAddCommand: CantaraCommand<{
+  externalProjectPath: string;
+  packageName: string;
+}> = {
+  name: 'link-add',
+  description: `Add live link during development for external Cantara packages`,
+  configuration: {
+    needsActiveApp: false,
+    needsLiveLinkPackage: true,
+  },
+  options: [
+    // {
+    //   name: 'externalProjectPath',
+    //   type: 'string',
+    //   alias: 'project',
+    //   describe: 'Path to another Cantara project',
+    // },
+    // {
+    //   name: 'packageName',
+    //   type: 'string',
+    //   alias: 'package',
+    //   describe:
+    //     'Name of packages in the /packages folder (refers to "name" field in package.json)',
+    // },
+  ],
+  execute: async ({ externalProjectPath, packageName }) => {
+    return liveLinkAdd();
+  },
+};
+
 const allCliCommands: CantaraCommand[] = [
   initCommand,
   devCommand,
@@ -275,6 +315,7 @@ const allCliCommands: CantaraCommand[] = [
   onPrePushCommand,
   onPreCommitCommand,
   buildChangedCommand,
+  liveLinkAddCommand,
 ];
 
 export default allCliCommands;

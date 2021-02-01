@@ -1,7 +1,12 @@
+import { statSync } from 'fs';
 import path from 'path';
 import slash from 'slash';
-import { readFileAsJSON } from './fs';
-import { CantaraApplication, LiveLinkedPackage } from './types';
+import { fsExists, fsReaddir, fsReadFile, readFileAsJSON } from './fs';
+import {
+  CantaraApplication,
+  CantaraPersistenceData,
+  LiveLinkedPackage,
+} from './types';
 
 export function linkedPackagesToWebpackAliases(
   linkedPackages: LiveLinkedPackage[],
@@ -79,4 +84,58 @@ export function linkedPackagesToWebpackInclude(
   return linkedPackages.map((currPackage) => {
     return path.join(currPackage.packageRoot, 'src');
   });
+}
+
+interface GetAllLiveLinkPackagesParams {
+  persistanceData: CantaraPersistenceData;
+  /**
+   * Cantara project in which the command
+   * was executed. Needed in order to
+   * not live link packages from own packages
+   * folder.
+   */
+  projectDir: string;
+}
+
+/**
+ * Returns a list of all Cantara packages
+ * which could be live linked
+ */
+export async function getAllLiveLinkPackages({
+  persistanceData,
+  projectDir,
+}: GetAllLiveLinkPackagesParams) {
+  const liveLinkPackages: LiveLinkedPackage[] = [];
+  const allProjectPaths = persistanceData.projects.map(
+    (project) => project.rootPath,
+  );
+  for (const projectPath of allProjectPaths) {
+    if (projectPath === projectDir) {
+      continue;
+    }
+    const packagesFolderPath = path.join(projectPath, 'packages');
+    if (!(await fsExists(packagesFolderPath))) {
+      continue;
+    }
+    let allPackagesFolder = await fsReaddir(packagesFolderPath);
+    allPackagesFolder = allPackagesFolder
+      .map((pName) => path.join(packagesFolderPath, pName))
+      .filter((fullPath) => statSync(fullPath).isDirectory());
+    for (const packageFolder of allPackagesFolder) {
+      const packageJsonPath = path.join(packageFolder, 'package.json');
+      if (!(await fsExists(packageJsonPath))) {
+        continue;
+      }
+      const { name: packageName } = JSON.parse(
+        (await fsReadFile(packageJsonPath)).toString(),
+      );
+      liveLinkPackages.push({
+        packageName: packageName,
+        packageRoot: packageFolder,
+        projectRoot: projectPath,
+      });
+    }
+  }
+
+  return liveLinkPackages;
 }
