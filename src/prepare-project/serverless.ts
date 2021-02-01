@@ -62,14 +62,18 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   const allAliases = {
     ...globalCantaraConfig.aliases.packageAliases,
   };
-  // Externals must not contain alises
+  // Externals must not contain aliases
   const externals = webpackExternalsAsStringArray({
     ignore: Object.keys(allAliases),
   });
 
   const allIncludes = [
     app.paths.src,
-    ...globalCantaraConfig.allPackages.include,
+    ...globalCantaraConfig.includes.internalPackages,
+    // TODO: We shouldn't include linked packages during development here,
+    // but I really don't see any practical difference for now, as in most cases
+    // you won't deploy serverless endpoints directly from your machine
+    ...globalCantaraConfig.includes.linkedPackages,
   ];
 
   const MODULES_PATH =

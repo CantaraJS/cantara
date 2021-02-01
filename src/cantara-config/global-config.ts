@@ -6,13 +6,17 @@ import getAllApps, {
   getCantaraDepenciesInstallationPath,
   getDependecyVersions,
 } from './util';
-import { CantaraApplication } from '../util/types';
+import { CantaraApplication, LiveLinkedPackage } from '../util/types';
 
 import getAllPackageAliases from './aliases';
 import { reactDependencies } from './dependencies/react';
 import { typescriptDependencies } from './dependencies/types';
 import { testingDependencies } from './dependencies/testing';
 import { commonDependencies } from './dependencies/common';
+import {
+  linkedPackagesToWebpackAliases,
+  linkedPackagesToWebpackInclude,
+} from '../util/live-link';
 
 const EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
 
@@ -39,9 +43,12 @@ interface CantaraGlobalConfig {
    * in this string.
    */
   additionalCliOptions: string;
-  allPackages: {
+  /** Paths to be included by webpack */
+  includes: {
     /** Include all those paths into webpack configs */
-    include: string[];
+    internalPackages: string[];
+    /** Only during development */
+    linkedPackages: string[];
   };
   /**
    * List of dependencies;
@@ -77,7 +84,9 @@ interface CantaraGlobalConfig {
    */
   aliases: {
     packageAliases: { [key: string]: string };
+    linkedPackageAliases: { [key: string]: string };
   };
+  linkedPackages: LiveLinkedPackage[];
   /** Working directory where user executed Cantara */
   projectDir: string;
   /** Secrets from user's .secrets.json file */
@@ -120,7 +129,6 @@ export async function loadCantaraGlobalConfig(
   const staticFilesPath = path.join(cantaraRootDir, 'static');
   const tempFolder = path.join(staticFilesPath, '.temp');
   const projectDir = config.projectDir || process.cwd();
-  const cantaraProjectMetaFolderPath = path.join(projectDir, '.cantara');
 
   const allApps = await getAllApps({
     rootDir: projectDir,
@@ -155,21 +163,38 @@ export async function loadCantaraGlobalConfig(
 
   const nodeModulesPath = getCantaraDepenciesInstallationPath();
 
+  const linkedPackages: LiveLinkedPackage[] = [
+    {
+      packageRoot:
+        'C:\\Users\\maxim\\DEV\\ctra-test-link\\packages\\react-clock',
+      projectRoot: 'C:\\Users\\maxim\\DEV\\ctra-test-link',
+    },
+  ];
+
+  const linkedPackageAliases = linkedPackagesToWebpackAliases(linkedPackages);
+
+  const internalPackageIncludes = allApps
+    .filter(
+      (app) => app.type === 'js-package' || app.type === 'react-component',
+    )
+    .map((app) => app.paths.src);
+
+  const linkedPackageIncludes = linkedPackagesToWebpackInclude(linkedPackages);
+
   const configToUse: CantaraGlobalConfig = {
     additionalCliOptions: config.additionalCliOptions || '',
     allApps,
     projectDir,
+    linkedPackages,
     aliases: {
       packageAliases,
+      linkedPackageAliases,
     },
     globalCantaraSettings,
     secrets: loadSecrets({ projectDir, secrets: EXPECTED_CANTARA_SECRETS }),
-    allPackages: {
-      include: allApps
-        .filter(
-          app => app.type === 'js-package' || app.type === 'react-component',
-        )
-        .map(app => app.paths.src),
+    includes: {
+      internalPackages: internalPackageIncludes,
+      linkedPackages: linkedPackageIncludes,
     },
     dependencies: {
       react: getDependecyVersions(reactDependencies),

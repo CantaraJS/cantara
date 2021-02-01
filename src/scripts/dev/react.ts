@@ -9,21 +9,26 @@ import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export function startReactAppDevelopmentServer() {
   const {
-    allPackages: { include },
-    aliases: { packageAliases },
-
+    includes: { internalPackages, linkedPackages },
+    aliases: { packageAliases, linkedPackageAliases },
     projectDir,
   } = getGlobalConfig();
+
   const {
     env,
     currentCommand: { app: activeApp },
+    resolveModulesInDevelopment,
   } = getRuntimeConfig();
   const webpackConfig = createReactWebpackConfig({
-    alias: packageAliases,
+    alias: {
+      ...packageAliases,
+      ...linkedPackageAliases,
+    },
     app: activeApp,
     projectDir,
     env,
-    include,
+    include: [...internalPackages, ...linkedPackages],
+    resolveModules: resolveModulesInDevelopment,
   });
 
   const compiler = webpack(webpackConfig);
@@ -42,7 +47,7 @@ export function startReactAppDevelopmentServer() {
     clientLogLevel: 'none',
     ...devServerConfig,
   });
-  devServer.listen(devServerConfig.port || 8080, '::', err => {
+  devServer.listen(devServerConfig.port || 8080, '::', (err) => {
     clearConsole();
     if (err) {
       console.log('Error starting webpack dev server:', err);

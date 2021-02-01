@@ -26,7 +26,7 @@ function compile(config: webpack.Configuration): Promise<void> {
 
 export default async function buildReactApp(app: CantaraApplication) {
   const {
-    allPackages: { include },
+    includes: { internalPackages },
     projectDir,
     aliases: { packageAliases },
   } = getGlobalConfig();
@@ -39,7 +39,7 @@ export default async function buildReactApp(app: CantaraApplication) {
     env: env,
     mode: 'production',
     projectDir,
-    include,
+    include: internalPackages,
   });
 
   return compile(webpackConfig);

@@ -18,14 +18,14 @@ import execCmd from '../util/exec';
 const ncp = promisify(ncpCb);
 
 /** Make paths relative for typescript */
-function aliasesAbsoluteToRelative(aliases: { [key: string]: string }) {
+function aliasesToTypeScriptPaths(aliases: { [key: string]: string }) {
   return Object.keys(aliases).reduce((newObj, currAliasName) => {
     const currPath = aliases[currAliasName];
-    const newPath = currPath.slice(currPath.lastIndexOf('packages'));
+    // const newPath = currPath.slice(currPath.lastIndexOf('packages'));
     return {
       ...newObj,
-      [currAliasName]: [newPath],
-      [`${currAliasName}/*`]: [`${newPath}/*`],
+      [currAliasName]: [currPath],
+      [`${currAliasName}/*`]: [`${currPath}/*`],
     };
   }, {});
 }
@@ -66,14 +66,17 @@ async function prepareUserProject() {
     ).toString(),
   );
   const {
-    aliases: { packageAliases },
+    aliases: { packageAliases, linkedPackageAliases },
   } = globalCantaraConfig;
 
   const newTsConfig = {
     ...tsConfig,
     compilerOptions: {
       ...tsConfig.compilerOptions,
-      paths: aliasesAbsoluteToRelative(packageAliases),
+      paths: aliasesToTypeScriptPaths({
+        ...packageAliases,
+        ...linkedPackageAliases,
+      }),
     },
   };
   writeJson(path.join(rootDir, 'tsconfig.json'), newTsConfig);

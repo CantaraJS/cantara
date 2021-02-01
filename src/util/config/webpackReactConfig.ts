@@ -24,8 +24,9 @@ export default function createReactWebpackConfig({
   alias = {},
   mode = 'development',
   env = {},
-  include,
+  include = [],
   projectDir,
+  resolveModules,
 }: CreateWebpackConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -52,6 +53,7 @@ export default function createReactWebpackConfig({
   const webpackReactAppConfig: Configuration = {
     resolve: {
       alias,
+      modules: resolveModules,
     },
     externals,
     mode,

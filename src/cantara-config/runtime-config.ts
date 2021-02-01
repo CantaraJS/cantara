@@ -2,6 +2,7 @@ import { CantaraApplication } from '../util/types';
 import getGlobalConfig from './global-config';
 import loadAppEnvVars from './envvars';
 import deriveStageNameFromCmd from '../util/deriveStage';
+import { getNodeModulesResolvingOrder } from '../util/live-link';
 
 export interface CantaraRuntimeConfig {
   /** Information about current command */
@@ -14,6 +15,13 @@ export interface CantaraRuntimeConfig {
    * either a .env.<stage> file or process.env
    */
   env: { [key: string]: string };
+  /**
+   * `node_modules` folders which
+   * get searched to resolve modules.
+   * Only relevant during development
+   * because of Cantara Live Link
+   */
+  resolveModulesInDevelopment: string[];
 }
 
 interface LoadCantaraRuntimeConfigOptions {
@@ -42,7 +50,12 @@ export async function loadCantaraRuntimeConfig({
   currentCommand,
   stage: stageParam,
 }: LoadCantaraRuntimeConfigOptions) {
-  const { allApps, projectDir } = getGlobalConfig();
+  const {
+    allApps,
+    projectDir,
+    linkedPackages,
+    internalPaths: { nodeModules: cantaraNodeModulesPath },
+  } = getGlobalConfig();
 
   const stage =
     !stageParam || stageParam === 'not_set'
@@ -66,6 +79,13 @@ export async function loadCantaraRuntimeConfig({
     required: true,
   });
 
+  const resolveModulesInDevelopment = getNodeModulesResolvingOrder({
+    activeApp: currentActiveApp,
+    cantaraNodeModulesPath,
+    linkedPackages,
+    projectRoot: projectDir,
+  });
+
   runtimeConfig = {
     env: envVars,
     currentCommand: {
@@ -73,6 +93,7 @@ export async function loadCantaraRuntimeConfig({
       app: currentActiveApp,
     },
     stage,
+    resolveModulesInDevelopment,
   };
 
   return runtimeConfig;

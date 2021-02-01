@@ -6,7 +6,7 @@ import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export function startNodeAppDevelopmentServer() {
   const {
-    allPackages: { include },
+    includes: { internalPackages, linkedPackages },
     projectDir,
     additionalCliOptions,
     aliases: { packageAliases },
@@ -22,7 +22,7 @@ export function startNodeAppDevelopmentServer() {
     alias: packageAliases,
     projectDir,
     env,
-    include,
+    include: [...internalPackages, ...linkedPackages],
     nodemonOptions: additionalCliOptions ? [additionalCliOptions] : undefined,
   });
 

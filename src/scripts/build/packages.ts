@@ -32,7 +32,7 @@ function compile(config: webpack.Configuration) {
 
 export default async function buildPackage(app: CantaraApplication) {
   const {
-    allPackages: { include },
+    includes: { internalPackages },
     projectDir,
     aliases: { packageAliases },
     internalPaths: { root: cantaraRoot },
@@ -46,7 +46,7 @@ export default async function buildPackage(app: CantaraApplication) {
     app,
     env,
     projectDir,
-    include,
+    include: internalPackages,
   };
 
   const webpackCommonJsConfig = createLibraryWebpackConfig({

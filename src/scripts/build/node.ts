@@ -6,10 +6,10 @@ import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export default async function buildNodeApp(app: CantaraApplication) {
   const {
-    allPackages: { include },
     projectDir,
     aliases: { packageAliases },
     additionalCliOptions,
+    includes: { internalPackages },
   } = getGlobalConfig();
   const { env } = getRuntimeConfig();
 
@@ -19,7 +19,7 @@ export default async function buildNodeApp(app: CantaraApplication) {
     env,
     mode: 'production',
     projectDir,
-    include,
+    include: internalPackages,
     nodemonOptions: additionalCliOptions ? [additionalCliOptions] : undefined,
   });
 

@@ -1,4 +1,4 @@
-import { CantaraApplication } from '../types';
+import { CantaraApplication, LiveLinkedPackage } from '../types';
 
 export interface CreateWebpackConfigParams {
   app: CantaraApplication;
@@ -19,4 +19,5 @@ export interface CreateWebpackConfigParams {
    * in the bundle
    */
   env?: { [key: string]: string };
+  resolveModules?: string[];
 }

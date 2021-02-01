@@ -94,3 +94,12 @@ export interface CantaraApplication {
   type: CantaraApplicationType;
   meta: CantaraApplicationMetaInformation;
 }
+
+/**
+ * Packages which were linked using
+ * Cantara's Live Link
+ */
+export interface LiveLinkedPackage {
+  projectRoot: string;
+  packageRoot: string;
+}
