@@ -1,4 +1,4 @@
-import { existsSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import path from 'path';
 import { readFileAsJSON } from './fs';
 import { CantaraPersistenceData, CantaraProjectPersistenceData } from './types';
@@ -52,6 +52,10 @@ export function writeProjectPersistenData({
     (project) => project.rootPath !== projectData.rootPath,
   );
   data.projects = [...data.projects, projectData];
+
+  if (!existsSync(tempFolder)) {
+    mkdirSync(tempFolder);
+  }
 
   writeFileSync(
     path.join(tempFolder, PERSISTENCE_DATA_FILE_NAME),
