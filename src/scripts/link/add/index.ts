@@ -1,5 +1,8 @@
 import getGlobalConfig from '../../../cantara-config/global-config';
-import { writeProjectPersistenData } from '../../../util/persistence';
+import {
+  getProjectPersistentData,
+  writeProjectPersistenData,
+} from '../../../util/persistence';
 
 interface LiveLinkAddParams {
   liveLinkPackagePath: string;
@@ -14,11 +17,21 @@ export default async function liveLinkAdd({
     internalPaths: { temp: tempFolder },
   } = getGlobalConfig();
 
+  const projectPersistanceData = await getProjectPersistentData({
+    tempFolder,
+    rootPath: projectDir,
+  });
+
+  if (!projectPersistanceData) return;
+
   await writeProjectPersistenData({
     tempFolder,
     data: {
-      rootPath: projectDir,
-      linkedPackages: [liveLinkPackagePath],
+      ...projectPersistanceData,
+      linkedPackages: [
+        ...projectPersistanceData.linkedPackages,
+        liveLinkPackagePath,
+      ],
     },
   });
 }

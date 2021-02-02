@@ -90,10 +90,14 @@ export async function chooseLiveLinkPackage(
     name: 'Appname',
     message: 'Pick a package',
     initial: 0,
-    choices: beatifulPackageNames,
+    choices: [...beatifulPackageNames],
   });
   const chosen = await prompt.run();
-  const packagePath = availablePackages[beatifulPackageNames.indexOf(chosen)];
+  const packageIndex = beatifulPackageNames.findIndex(
+    (pName) => pName === chosen,
+  );
+
+  const packagePath = availablePackages[packageIndex];
   return packagePath;
 }
 

@@ -99,12 +99,7 @@ export async function getAllLiveLinkPackageSuggestions({
   const allProjectPaths = persistanceData.projects.map(
     (project) => project.rootPath,
   );
-  const projectPersistanceData = persistanceData.projects.find(
-    (project) => project.rootPath === projectDir,
-  );
-  const alreadyLinkedPackages = projectPersistanceData
-    ? projectPersistanceData.linkedPackages
-    : [];
+
   for (const projectPath of allProjectPaths) {
     if (projectPath === projectDir) {
       continue;
@@ -125,13 +120,11 @@ export async function getAllLiveLinkPackageSuggestions({
       const { name: packageName } = JSON.parse(
         (await fsReadFile(packageJsonPath)).toString(),
       );
-      if (!alreadyLinkedPackages.includes(packageFolder)) {
-        liveLinkPackages.push({
-          packageName: packageName,
-          packageRoot: packageFolder,
-          projectRoot: projectPath,
-        });
-      }
+      liveLinkPackages.push({
+        packageName: packageName,
+        packageRoot: packageFolder,
+        projectRoot: projectPath,
+      });
     }
   }
 

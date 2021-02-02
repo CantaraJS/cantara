@@ -1,5 +1,6 @@
 import liveLinkAdd from '../scripts/link/add';
 import liveLinkList from '../scripts/link/ls';
+import liveLinkRemove from '../scripts/link/rm';
 import { CantaraApplicationType } from '../util/types';
 
 export interface CantaraCommand<TParameters = any> {
@@ -43,11 +44,18 @@ export interface CantaraCommand<TParameters = any> {
      * If true, the second parameter
      * of this command needs to be
      * set to a path to another
-     * Cantara project and the third
-     * paramater to an existent
-     * package name inside that project
+     * Cantara project's package
      */
-    needsLiveLinkPackage?: boolean;
+    needsLiveLinkSuggestion?: boolean;
+    /**
+     * If true, the second parameter
+     * of this command needs to be
+     * set to a path to another
+     * Cantara project's package
+     * which is currently linked
+     * in this project
+     */
+    needsActiveLiveLink?: boolean;
     /**
      * App types this command can
      * be executed with.
@@ -278,7 +286,7 @@ const liveLinkAddCommand: CantaraCommand<{ liveLinkPackagePath: string }> = {
   description: `Add live link during development for external Cantara packages`,
   configuration: {
     needsActiveApp: false,
-    needsLiveLinkPackage: true,
+    needsLiveLinkSuggestion: true,
     needsGlobalConfig: true,
   },
   execute: async ({ liveLinkPackagePath, projectDir }) => {
@@ -298,12 +306,26 @@ const liveLinkListCommand: CantaraCommand = {
   },
 };
 
+const liveLinkRemoveCommand: CantaraCommand<{ liveLinkPackagePath: string }> = {
+  name: 'link-rm',
+  description: `Remove a Live Link package`,
+  configuration: {
+    needsActiveApp: false,
+    needsGlobalConfig: true,
+    needsActiveLiveLink: true,
+  },
+  execute: async ({ projectDir, liveLinkPackagePath }) => {
+    return liveLinkRemove({ projectDir, liveLinkPackagePath });
+  },
+};
+
 const allCliCommands: CantaraCommand[] = [
   initCommand,
   devCommand,
   testCommand,
   liveLinkAddCommand,
   liveLinkListCommand,
+  liveLinkRemoveCommand,
   buildCommand,
   deployCommand,
   runCommand,

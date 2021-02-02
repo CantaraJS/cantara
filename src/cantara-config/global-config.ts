@@ -21,6 +21,7 @@ import { getAllLiveLinkPackageSuggestions } from '../util/live-link';
 import {
   writeProjectPersistenData,
   readCantaraPersistentData,
+  getProjectPersistentData,
 } from '../util/persistence';
 
 const EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
@@ -137,13 +138,20 @@ export async function loadCantaraGlobalConfig(
   const tempFolder = path.join(staticFilesPath, '.temp');
   const projectDir = config.projectDir || process.cwd();
 
-  writeProjectPersistenData({
-    data: {
-      rootPath: projectDir,
-      linkedPackages: [],
-    },
+  const persistanceData = readCantaraPersistentData(tempFolder);
+  const projectPersistanceData = getProjectPersistentData({
+    rootPath: projectDir,
     tempFolder,
   });
+  if (!projectPersistanceData) {
+    writeProjectPersistenData({
+      data: {
+        rootPath: projectDir,
+        linkedPackages: [],
+      },
+      tempFolder,
+    });
+  }
 
   const allApps = await getAllApps({
     rootDir: projectDir,
@@ -178,8 +186,6 @@ export async function loadCantaraGlobalConfig(
 
   const nodeModulesPath = getCantaraDepenciesInstallationPath();
 
-  const persistanceData = readCantaraPersistentData(tempFolder);
-
   const liveLinkSuggestions: LiveLinkedPackageSuggestion[] = persistanceData
     ? await getAllLiveLinkPackageSuggestions({ persistanceData, projectDir })
     : [];
@@ -189,10 +195,6 @@ export async function loadCantaraGlobalConfig(
       (app) => app.type === 'js-package' || app.type === 'react-component',
     )
     .map((app) => app.paths.src);
-
-  const projectPersistanceData = persistanceData!.projects.find(
-    (project) => project.rootPath === projectDir,
-  );
 
   const configToUse: CantaraGlobalConfig = {
     additionalCliOptions: config.additionalCliOptions || '',

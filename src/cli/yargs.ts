@@ -22,7 +22,8 @@ export default async function buildYargsCommands({
     const {
       needsActiveApp,
       needsGlobalConfig = true,
-      needsLiveLinkPackage,
+      needsActiveLiveLink,
+      needsLiveLinkSuggestion,
       appTypes = [],
       retrieveAdditionalCliParams,
     } = command.configuration;
@@ -31,7 +32,9 @@ export default async function buildYargsCommands({
       cmd = `${cmd} [appname]`;
     }
 
-    if (needsLiveLinkPackage) {
+    const isLiveLinkParamNeeded =
+      needsActiveLiveLink || needsLiveLinkSuggestion;
+    if (isLiveLinkParamNeeded) {
       cmd = `${cmd} [externalCantaraPackage]`;
     }
 
@@ -83,7 +86,7 @@ export default async function buildYargsCommands({
           });
         }
 
-        if (needsLiveLinkPackage) {
+        if (isLiveLinkParamNeeded) {
           const { default: getGlobalConfig } = await import(
             '../cantara-config/global-config'
           );
@@ -101,12 +104,26 @@ export default async function buildYargsCommands({
       async (args) => {
         const cmdName = args._[0];
 
-        if (needsLiveLinkPackage) {
+        if (isLiveLinkParamNeeded) {
           const { default: getGlobalConfig } = await import(
             '../cantara-config/global-config'
           );
           const globalConfig = getGlobalConfig();
-          const { liveLinkSuggestions } = globalConfig;
+          let { liveLinkSuggestions, projectPersistanceData } = globalConfig;
+          if (needsLiveLinkSuggestion) {
+            liveLinkSuggestions = liveLinkSuggestions.filter((suggestion) => {
+              return !projectPersistanceData.linkedPackages.includes(
+                suggestion.packageRoot,
+              );
+            });
+          }
+          if (needsActiveLiveLink) {
+            liveLinkSuggestions = liveLinkSuggestions.filter((suggestion) => {
+              return projectPersistanceData.linkedPackages.includes(
+                suggestion.packageRoot,
+              );
+            });
+          }
           if (liveLinkSuggestions.length === 0) {
             throw new Error('No more Live Link packages available!');
           }

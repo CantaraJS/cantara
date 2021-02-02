@@ -15,6 +15,23 @@ export function readCantaraPersistentData(
   return null;
 }
 
+interface GetProjectPersistentDataParams {
+  tempFolder: string;
+  rootPath: string;
+}
+
+export function getProjectPersistentData({
+  tempFolder,
+  rootPath,
+}: GetProjectPersistentDataParams) {
+  const data = readCantaraPersistentData(tempFolder);
+  if (!data) return null;
+  const foundProject = data.projects.find(
+    (project) => project.rootPath === rootPath,
+  );
+  return foundProject;
+}
+
 interface AddProjectPathToPersistentDataParams {
   tempFolder: string;
   data: CantaraProjectPersistenceData;
@@ -31,19 +48,10 @@ export function writeProjectPersistenData({
     };
   }
 
-  const foundProject = data.projects.find(
-    (project) => project.rootPath === projectData.rootPath,
+  data.projects = data.projects.filter(
+    (project) => project.rootPath !== projectData.rootPath,
   );
-  if (!foundProject) {
-    data.projects = [...data.projects, projectData];
-  } else {
-    foundProject.linkedPackages = [
-      ...new Set([
-        ...projectData.linkedPackages,
-        ...foundProject.linkedPackages,
-      ]),
-    ];
-  }
+  data.projects = [...data.projects, projectData];
 
   writeFileSync(
     path.join(tempFolder, PERSISTENCE_DATA_FILE_NAME),
@@ -51,27 +59,4 @@ export function writeProjectPersistenData({
   );
 
   return data;
-}
-
-interface AddLiveLinkPackagePathParams {
-  tempFolder: string;
-  /**
-   * Absolute path to current project
-   */
-  projectPath: string;
-  liveLinkPackagePath: string;
-}
-
-export function addLiveLinkPackagePath({
-  liveLinkPackagePath,
-  tempFolder,
-  projectPath,
-}: AddLiveLinkPackagePathParams) {
-  return writeProjectPersistenData({
-    tempFolder,
-    data: {
-      linkedPackages: [liveLinkPackagePath],
-      rootPath: projectPath,
-    },
-  });
 }
