@@ -139,12 +139,12 @@ export async function loadCantaraGlobalConfig(
   const projectDir = config.projectDir || process.cwd();
 
   const persistanceData = readCantaraPersistentData(tempFolder);
-  const projectPersistanceData = getProjectPersistentData({
+  let projectPersistanceData = getProjectPersistentData({
     rootPath: projectDir,
     tempFolder,
   });
   if (!projectPersistanceData) {
-    writeProjectPersistenData({
+    projectPersistanceData = writeProjectPersistenData({
       data: {
         rootPath: projectDir,
         linkedPackages: [],
@@ -201,7 +201,7 @@ export async function loadCantaraGlobalConfig(
     allApps,
     projectDir,
     liveLinkSuggestions,
-    projectPersistanceData: projectPersistanceData!,
+    projectPersistanceData: projectPersistanceData,
     aliases: {
       packageAliases,
     },
