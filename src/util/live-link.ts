@@ -36,9 +36,9 @@ interface GetNodeModulesResolvingOrderParams {
  * Modules resolving oder:
  * - App 'node_modules' folder
  * - Project's 'node_modules' folder
- * - Cantara (CLI package) 'node_modules' folder
  * - Currently linked package's 'node_modules' folder
  * - Currently linked package root (project) 'node_modules' folder
+ * - Cantara (CLI package) 'node_modules' folder
  * - Fallback 'node_modules' relative folder (which will traverse up to Cantara's modules folder)
  */
 export function getNodeModulesResolvingOrder({
@@ -61,9 +61,9 @@ export function getNodeModulesResolvingOrder({
 
   const resolve = [
     appNodeModules,
-    cantaraNodeModulesPath,
     projectRootNodeModules,
     ...linkedPackagesNodeModules,
+    cantaraNodeModulesPath,
     'node_modules',
   ];
 

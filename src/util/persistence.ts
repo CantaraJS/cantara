@@ -58,5 +58,5 @@ export function writeProjectPersistenData({
     JSON.stringify(data),
   );
 
-  return data;
+  return projectData;
 }
