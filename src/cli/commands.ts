@@ -1,4 +1,5 @@
 import liveLinkAdd from '../scripts/link/add';
+import liveLinkList from '../scripts/link/ls';
 import { CantaraApplicationType } from '../util/types';
 
 export interface CantaraCommand<TParameters = any> {
@@ -285,11 +286,24 @@ const liveLinkAddCommand: CantaraCommand<{ liveLinkPackagePath: string }> = {
   },
 };
 
+const liveLinkListCommand: CantaraCommand = {
+  name: 'link-ls',
+  description: `Get a list of all currently active Live Links`,
+  configuration: {
+    needsActiveApp: false,
+    needsGlobalConfig: true,
+  },
+  execute: async ({ projectDir }) => {
+    return liveLinkList({ projectDir });
+  },
+};
+
 const allCliCommands: CantaraCommand[] = [
   initCommand,
   devCommand,
   testCommand,
   liveLinkAddCommand,
+  liveLinkListCommand,
   buildCommand,
   deployCommand,
   runCommand,
