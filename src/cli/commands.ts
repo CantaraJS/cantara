@@ -272,33 +272,16 @@ const buildChangedCommand: CantaraCommand<{ exclude?: string[] }> = {
   },
 };
 
-const liveLinkAddCommand: CantaraCommand<{
-  externalProjectPath: string;
-  packageName: string;
-}> = {
+const liveLinkAddCommand: CantaraCommand<{ liveLinkPackagePath: string }> = {
   name: 'link-add',
   description: `Add live link during development for external Cantara packages`,
   configuration: {
     needsActiveApp: false,
     needsLiveLinkPackage: true,
+    needsGlobalConfig: true,
   },
-  options: [
-    // {
-    //   name: 'externalProjectPath',
-    //   type: 'string',
-    //   alias: 'project',
-    //   describe: 'Path to another Cantara project',
-    // },
-    // {
-    //   name: 'packageName',
-    //   type: 'string',
-    //   alias: 'package',
-    //   describe:
-    //     'Name of packages in the /packages folder (refers to "name" field in package.json)',
-    // },
-  ],
-  execute: async ({ externalProjectPath, packageName }) => {
-    return liveLinkAdd();
+  execute: async ({ liveLinkPackagePath, projectDir }) => {
+    return liveLinkAdd({ liveLinkPackagePath, projectDir });
   },
 };
 
@@ -306,6 +289,7 @@ const allCliCommands: CantaraCommand[] = [
   initCommand,
   devCommand,
   testCommand,
+  liveLinkAddCommand,
   buildCommand,
   deployCommand,
   runCommand,
@@ -315,7 +299,6 @@ const allCliCommands: CantaraCommand[] = [
   onPrePushCommand,
   onPreCommitCommand,
   buildChangedCommand,
-  liveLinkAddCommand,
 ];
 
 export default allCliCommands;

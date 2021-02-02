@@ -9,10 +9,15 @@ import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export function startReactAppDevelopmentServer() {
   const {
-    includes: { internalPackages, linkedPackages },
-    aliases: { packageAliases, linkedPackageAliases },
+    includes: { internalPackages },
+    aliases: { packageAliases },
     projectDir,
   } = getGlobalConfig();
+
+  const {
+    aliases: { linkedPackageAliases },
+    includes: { linkedPackages },
+  } = getRuntimeConfig();
 
   const {
     env,

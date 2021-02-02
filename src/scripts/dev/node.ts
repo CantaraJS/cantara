@@ -6,11 +6,15 @@ import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export function startNodeAppDevelopmentServer() {
   const {
-    includes: { internalPackages, linkedPackages },
+    includes: { internalPackages },
     projectDir,
     additionalCliOptions,
     aliases: { packageAliases },
   } = getGlobalConfig();
+
+  const {
+    includes: { linkedPackages },
+  } = getRuntimeConfig();
 
   const {
     env,

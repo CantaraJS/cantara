@@ -6,22 +6,22 @@ import getAllApps, {
   getCantaraDepenciesInstallationPath,
   getDependecyVersions,
 } from './util';
-import { CantaraApplication, LiveLinkedPackage } from '../util/types';
+import {
+  CantaraApplication,
+  CantaraProjectPersistenceData,
+  LiveLinkedPackageSuggestion,
+} from '../util/types';
 
 import getAllPackageAliases from './aliases';
 import { reactDependencies } from './dependencies/react';
 import { typescriptDependencies } from './dependencies/types';
 import { testingDependencies } from './dependencies/testing';
 import { commonDependencies } from './dependencies/common';
+import { getAllLiveLinkPackageSuggestions } from '../util/live-link';
 import {
-  getAllLiveLinkPackages,
-  linkedPackagesToWebpackAliases,
-  linkedPackagesToWebpackInclude,
-} from '../util/live-link';
-import {
-  addProjectPathToPersistentData,
+  writeProjectPersistenData,
   readCantaraPersistentData,
-} from './persistence';
+} from '../util/persistence';
 
 const EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
 
@@ -52,8 +52,6 @@ interface CantaraGlobalConfig {
   includes: {
     /** Include all those paths into webpack configs */
     internalPackages: string[];
-    /** Only during development */
-    linkedPackages: string[];
   };
   /**
    * List of dependencies;
@@ -89,9 +87,12 @@ interface CantaraGlobalConfig {
    */
   aliases: {
     packageAliases: { [key: string]: string };
-    linkedPackageAliases: { [key: string]: string };
   };
-  linkedPackages: LiveLinkedPackage[];
+  /**
+   * All possible packages which could be
+   * live linked. Needed for CLI wizard.
+   */
+  liveLinkSuggestions: LiveLinkedPackageSuggestion[];
   /** Working directory where user executed Cantara */
   projectDir: string;
   /** Secrets from user's .secrets.json file */
@@ -106,6 +107,7 @@ interface CantaraGlobalConfig {
   /** Settings from cantara.config.js
    * at the project's root */
   globalCantaraSettings: GlobalCantaraSettings;
+  projectPersistanceData: CantaraProjectPersistenceData;
 }
 
 let globalConfig: CantaraGlobalConfig | undefined = undefined;
@@ -135,8 +137,11 @@ export async function loadCantaraGlobalConfig(
   const tempFolder = path.join(staticFilesPath, '.temp');
   const projectDir = config.projectDir || process.cwd();
 
-  addProjectPathToPersistentData({
-    projectPath: projectDir,
+  writeProjectPersistenData({
+    data: {
+      rootPath: projectDir,
+      linkedPackages: [],
+    },
     tempFolder,
   });
 
@@ -175,13 +180,9 @@ export async function loadCantaraGlobalConfig(
 
   const persistanceData = readCantaraPersistentData(tempFolder);
 
-  const linkedPackages: LiveLinkedPackage[] = persistanceData
-    ? await getAllLiveLinkPackages({ persistanceData, projectDir })
+  const liveLinkSuggestions: LiveLinkedPackageSuggestion[] = persistanceData
+    ? await getAllLiveLinkPackageSuggestions({ persistanceData, projectDir })
     : [];
-
-  console.log({ linkedPackages });
-
-  const linkedPackageAliases = linkedPackagesToWebpackAliases(linkedPackages);
 
   const internalPackageIncludes = allApps
     .filter(
@@ -189,22 +190,23 @@ export async function loadCantaraGlobalConfig(
     )
     .map((app) => app.paths.src);
 
-  const linkedPackageIncludes = linkedPackagesToWebpackInclude(linkedPackages);
+  const projectPersistanceData = persistanceData!.projects.find(
+    (project) => project.rootPath === projectDir,
+  );
 
   const configToUse: CantaraGlobalConfig = {
     additionalCliOptions: config.additionalCliOptions || '',
     allApps,
     projectDir,
-    linkedPackages,
+    liveLinkSuggestions,
+    projectPersistanceData: projectPersistanceData!,
     aliases: {
       packageAliases,
-      linkedPackageAliases,
     },
     globalCantaraSettings,
     secrets: loadSecrets({ projectDir, secrets: EXPECTED_CANTARA_SECRETS }),
     includes: {
       internalPackages: internalPackageIncludes,
-      linkedPackages: linkedPackageIncludes,
     },
     dependencies: {
       react: getDependecyVersions(reactDependencies),

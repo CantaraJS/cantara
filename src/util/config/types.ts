@@ -1,4 +1,4 @@
-import { CantaraApplication, LiveLinkedPackage } from '../types';
+import { CantaraApplication } from '../types';
 
 export interface CreateWebpackConfigParams {
   app: CantaraApplication;

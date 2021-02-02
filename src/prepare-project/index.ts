@@ -14,6 +14,7 @@ import { createTempEnvJsonFile } from './util/env';
 import { createJestConfig } from './util/testing';
 import getGlobalConfig from '../cantara-config/global-config';
 import execCmd from '../util/exec';
+import getRuntimeConfig from '../cantara-config/runtime-config';
 
 const ncp = promisify(ncpCb);
 
@@ -66,8 +67,12 @@ async function prepareUserProject() {
     ).toString(),
   );
   const {
-    aliases: { packageAliases, linkedPackageAliases },
+    aliases: { packageAliases },
   } = globalCantaraConfig;
+
+  const {
+    aliases: { linkedPackageAliases },
+  } = getRuntimeConfig();
 
   const newTsConfig = {
     ...tsConfig,

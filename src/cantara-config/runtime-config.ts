@@ -2,7 +2,11 @@ import { CantaraApplication } from '../util/types';
 import getGlobalConfig from './global-config';
 import loadAppEnvVars from './envvars';
 import deriveStageNameFromCmd from '../util/deriveStage';
-import { getNodeModulesResolvingOrder } from '../util/live-link';
+import {
+  getNodeModulesResolvingOrder,
+  linkedPackagesToWebpackAliases,
+  linkedPackagesToWebpackInclude,
+} from '../util/live-link';
 
 export interface CantaraRuntimeConfig {
   /** Information about current command */
@@ -22,6 +26,16 @@ export interface CantaraRuntimeConfig {
    * because of Cantara Live Link
    */
   resolveModulesInDevelopment: string[];
+  includes: {
+    /** Only during development */
+    linkedPackages: string[];
+  };
+  /** Aliases which need to be set by
+   * tools like webpack
+   */
+  aliases: {
+    linkedPackageAliases: { [key: string]: string };
+  };
 }
 
 interface LoadCantaraRuntimeConfigOptions {
@@ -53,9 +67,17 @@ export async function loadCantaraRuntimeConfig({
   const {
     allApps,
     projectDir,
-    linkedPackages,
     internalPaths: { nodeModules: cantaraNodeModulesPath },
+    projectPersistanceData,
   } = getGlobalConfig();
+
+  const { linkedPackages: projectLinkedPackages } = projectPersistanceData;
+  const linkedPackageAliases = linkedPackagesToWebpackAliases(
+    projectLinkedPackages,
+  );
+  const linkedPackageIncludes = linkedPackagesToWebpackInclude(
+    projectLinkedPackages,
+  );
 
   const stage =
     !stageParam || stageParam === 'not_set'
@@ -82,7 +104,7 @@ export async function loadCantaraRuntimeConfig({
   const resolveModulesInDevelopment = getNodeModulesResolvingOrder({
     activeApp: currentActiveApp,
     cantaraNodeModulesPath,
-    linkedPackages,
+    linkedPackages: projectLinkedPackages,
     projectRoot: projectDir,
   });
 
@@ -94,6 +116,12 @@ export async function loadCantaraRuntimeConfig({
     },
     stage,
     resolveModulesInDevelopment,
+    aliases: {
+      linkedPackageAliases,
+    },
+    includes: {
+      linkedPackages: linkedPackageIncludes,
+    },
   };
 
   return runtimeConfig;

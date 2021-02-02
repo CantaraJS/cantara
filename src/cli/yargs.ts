@@ -22,6 +22,7 @@ export default async function buildYargsCommands({
     const {
       needsActiveApp,
       needsGlobalConfig = true,
+      needsLiveLinkPackage,
       appTypes = [],
       retrieveAdditionalCliParams,
     } = command.configuration;
@@ -29,6 +30,11 @@ export default async function buildYargsCommands({
     if (needsActiveApp) {
       cmd = `${cmd} [appname]`;
     }
+
+    if (needsLiveLinkPackage) {
+      cmd = `${cmd} [externalCantaraPackage]`;
+    }
+
     if (command.parameters) {
       cmd = `${cmd}${command.parameters
         .map((param) => ` [${param.name}]`)
@@ -76,9 +82,46 @@ export default async function buildYargsCommands({
             choices: availableAppNames,
           });
         }
+
+        if (needsLiveLinkPackage) {
+          const { default: getGlobalConfig } = await import(
+            '../cantara-config/global-config'
+          );
+          const { liveLinkSuggestions } = getGlobalConfig();
+          const availablePackagePaths = liveLinkSuggestions.map(
+            (liveLinkPackage) => liveLinkPackage.packageRoot,
+          );
+          yargs.positional('externalCantaraPackage', {
+            describe: 'Path to a package inside another Cantara project',
+            type: 'string',
+            choices: availablePackagePaths,
+          });
+        }
       },
       async (args) => {
         const cmdName = args._[0];
+
+        if (needsLiveLinkPackage) {
+          const { default: getGlobalConfig } = await import(
+            '../cantara-config/global-config'
+          );
+          const globalConfig = getGlobalConfig();
+          const { liveLinkSuggestions } = globalConfig;
+          if (liveLinkSuggestions.length === 0) {
+            throw new Error('No more Live Link packages available!');
+          }
+          let liveLinkPackagePath = args.externalCantaraPackage as
+            | string
+            | undefined;
+          if (!liveLinkPackagePath) {
+            const { chooseLiveLinkPackage } = await import('./interactive');
+            liveLinkPackagePath = await chooseLiveLinkPackage(
+              liveLinkSuggestions,
+            );
+          }
+          args.liveLinkPackagePath = liveLinkPackagePath;
+        }
+
         if (needsActiveApp) {
           const { default: getGlobalConfig } = await import(
             '../cantara-config/global-config'

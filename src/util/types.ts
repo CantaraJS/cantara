@@ -96,16 +96,20 @@ export interface CantaraApplication {
 }
 
 /**
- * Packages which were linked using
- * Cantara's Live Link
+ * Package which could be live linked
  */
-export interface LiveLinkedPackage {
+export interface LiveLinkedPackageSuggestion {
   projectRoot: string;
   packageRoot: string;
   /**
    * Name in package.json
    */
   packageName: string;
+}
+
+export interface CantaraProjectPersistenceData {
+  rootPath: string;
+  linkedPackages: string[];
 }
 
 /**
@@ -116,7 +120,5 @@ export interface LiveLinkedPackage {
  * and where
  */
 export interface CantaraPersistenceData {
-  projects: {
-    rootPath: string;
-  }[];
+  projects: CantaraProjectPersistenceData[];
 }

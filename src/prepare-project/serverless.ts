@@ -73,7 +73,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     // TODO: We shouldn't include linked packages during development here,
     // but I really don't see any practical difference for now, as in most cases
     // you won't deploy serverless endpoints directly from your machine
-    ...globalCantaraConfig.includes.linkedPackages,
+    ...runtimeConfig.includes.linkedPackages,
   ];
 
   const MODULES_PATH =

@@ -5,16 +5,14 @@ import { fsExists, fsReaddir, fsReadFile, readFileAsJSON } from './fs';
 import {
   CantaraApplication,
   CantaraPersistenceData,
-  LiveLinkedPackage,
+  LiveLinkedPackageSuggestion,
 } from './types';
 
-export function linkedPackagesToWebpackAliases(
-  linkedPackages: LiveLinkedPackage[],
-) {
+export function linkedPackagesToWebpackAliases(linkedPackages: string[]) {
   const linkedPackagesAliases = linkedPackages.reduce((newObj, currPackage) => {
-    const packageJsonPath = path.join(currPackage.packageRoot, 'package.json');
+    const packageJsonPath = path.join(currPackage, 'package.json');
     const { name } = readFileAsJSON(packageJsonPath);
-    const packageSrcPath = slash(path.join(currPackage.packageRoot, 'src'));
+    const packageSrcPath = slash(path.join(currPackage, 'src'));
     return {
       ...newObj,
       [name]: packageSrcPath,
@@ -25,7 +23,7 @@ export function linkedPackagesToWebpackAliases(
 }
 
 interface GetNodeModulesResolvingOrderParams {
-  linkedPackages: LiveLinkedPackage[];
+  linkedPackages: string[];
   cantaraNodeModulesPath: string;
   activeApp: CantaraApplication;
   projectRoot: string;
@@ -55,14 +53,8 @@ export function getNodeModulesResolvingOrder({
 
   const linkedPackagesNodeModules = linkedPackages
     .map((currPackage) => {
-      const packageNodeModules = path.join(
-        currPackage.packageRoot,
-        'node_modules',
-      );
-      const projectNodeModules = path.join(
-        currPackage.packageRoot,
-        'node_modules',
-      );
+      const packageNodeModules = path.join(currPackage, 'node_modules');
+      const projectNodeModules = path.join(currPackage, '../../node_modules');
       return [packageNodeModules, projectNodeModules];
     })
     .flat();
@@ -78,11 +70,9 @@ export function getNodeModulesResolvingOrder({
   return resolve;
 }
 
-export function linkedPackagesToWebpackInclude(
-  linkedPackages: LiveLinkedPackage[],
-) {
+export function linkedPackagesToWebpackInclude(linkedPackages: string[]) {
   return linkedPackages.map((currPackage) => {
-    return path.join(currPackage.packageRoot, 'src');
+    return path.join(currPackage, 'src');
   });
 }
 
@@ -101,14 +91,20 @@ interface GetAllLiveLinkPackagesParams {
  * Returns a list of all Cantara packages
  * which could be live linked
  */
-export async function getAllLiveLinkPackages({
+export async function getAllLiveLinkPackageSuggestions({
   persistanceData,
   projectDir,
 }: GetAllLiveLinkPackagesParams) {
-  const liveLinkPackages: LiveLinkedPackage[] = [];
+  const liveLinkPackages: LiveLinkedPackageSuggestion[] = [];
   const allProjectPaths = persistanceData.projects.map(
     (project) => project.rootPath,
   );
+  const projectPersistanceData = persistanceData.projects.find(
+    (project) => project.rootPath === projectDir,
+  );
+  const alreadyLinkedPackages = projectPersistanceData
+    ? projectPersistanceData.linkedPackages
+    : [];
   for (const projectPath of allProjectPaths) {
     if (projectPath === projectDir) {
       continue;
@@ -129,11 +125,13 @@ export async function getAllLiveLinkPackages({
       const { name: packageName } = JSON.parse(
         (await fsReadFile(packageJsonPath)).toString(),
       );
-      liveLinkPackages.push({
-        packageName: packageName,
-        packageRoot: packageFolder,
-        projectRoot: projectPath,
-      });
+      if (!alreadyLinkedPackages.includes(packageFolder)) {
+        liveLinkPackages.push({
+          packageName: packageName,
+          packageRoot: packageFolder,
+          projectRoot: projectPath,
+        });
+      }
     }
   }
 
