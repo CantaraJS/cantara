@@ -10,9 +10,9 @@ export default class NodePolyfillPlugin {
   public apply(compiler: InstanceType<typeof Compiler>) {
     compiler.options.plugins.push(
       new ProvidePlugin({
-        // Buffer: ['buffer', 'Buffer'],
+        Buffer: ['buffer', 'Buffer'],
         // console: require('console-browserify'),
-        // process: require('process/browser'),
+        process: 'process/browser',
       }),
     );
 
