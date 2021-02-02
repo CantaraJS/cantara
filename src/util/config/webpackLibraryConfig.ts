@@ -88,7 +88,7 @@ export default function createLibraryWebpackConfig({
         libraryTarget === 'commonjs2'
           ? path.join(app.paths.build, path.basename(app.name), 'src')
           : app.paths.build,
-      library: camalize(app.name),
+      library: libraryTarget !== 'commonjs2' ? camalize(app.name) : undefined,
       /** For bundlers and NodeJS, CommonJS is used.
        * As soon webpack supports ESM as a libraryTarget,
        * ESMs are favoured
