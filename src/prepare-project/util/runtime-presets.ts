@@ -40,8 +40,6 @@ export async function generateRuntimePresetCode(app: CantaraApplication) {
     loadedRuntimePreset = (await fsReadFile(runtimePresetFilePath)).toString();
   }
 
-  console.log({ loadedRuntimePreset });
-
   let code = `
     const appRuntimePreset = ${loadedRuntimePreset};
 

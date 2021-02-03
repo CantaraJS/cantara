@@ -105,3 +105,22 @@ export function stringPrompt(options: StringPromptConstructor) {
   const prompt = new StringPrompt(options);
   return prompt.run();
 }
+
+interface ChooseRuntimePresetNameParams {
+  availablePresetName: string[];
+}
+
+/**
+ * Let user interactively choose an application/package
+ */
+export function chooseRuntimePresetName({
+  availablePresetName,
+}: ChooseRuntimePresetNameParams) {
+  const prompt = new AutoComplete({
+    name: 'Runtime preset',
+    message: 'Choose a runtime preset to configure the application',
+    initial: 0,
+    choices: availablePresetName,
+  });
+  return prompt.run();
+}

@@ -1,5 +1,8 @@
 import yargs from 'yargs';
+import { fsExists } from '../util/fs';
+import { getAllRuntimePresetNames } from '../util/runtime-presets';
 import { CantaraCommand } from './commands';
+import { chooseRuntimePresetName } from './interactive';
 
 interface BuildYargsCommandsParams {
   availableCommands: CantaraCommand[];
@@ -178,15 +181,32 @@ export default async function buildYargsCommands({
           const { loadCantaraRuntimeConfig } = await import(
             '../cantara-config/runtime-config'
           );
-          await loadCantaraRuntimeConfig({
+
+          const runtimePresetArg = args.preset as string | undefined;
+
+          const runtimeConfig = await loadCantaraRuntimeConfig({
             stage: (args.stage as string | undefined) || 'not_set',
             currentCommand: {
               name: cmdName.toString(),
               appname,
             },
-            activeRuntimeApplicationPresetName:
-              (args.preset as string | undefined) || 'default',
+            activeRuntimeApplicationPresetName: runtimePresetArg || 'default',
           });
+
+          const canSelectRuntimePreset = await fsExists(
+            runtimeConfig.currentCommand.app.paths.runtimePresets,
+          );
+
+          if (canSelectRuntimePreset) {
+            const availablePresetName = getAllRuntimePresetNames(
+              runtimeConfig.currentCommand.app,
+            );
+            const newRuntimePresetName = await chooseRuntimePresetName({
+              availablePresetName,
+            });
+            runtimeConfig.activeRuntimeApplicationPresetName = newRuntimePresetName;
+          }
+
           await prepareCantaraProject();
         }
 
