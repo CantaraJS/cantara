@@ -31,10 +31,16 @@ export default async function buildReactApp(app: CantaraApplication) {
     aliases: { packageAliases },
   } = getGlobalConfig();
 
-  const { env } = getRuntimeConfig();
+  const {
+    env,
+    aliases: { otherAliases },
+  } = getRuntimeConfig();
 
   const webpackConfig = createReactWebpackConfig({
-    alias: packageAliases,
+    alias: {
+      ...packageAliases,
+      ...otherAliases,
+    },
     app,
     env: env,
     mode: 'production',

@@ -15,7 +15,7 @@ export function startReactAppDevelopmentServer() {
   } = getGlobalConfig();
 
   const {
-    aliases: { linkedPackageAliases },
+    aliases: { linkedPackageAliases, otherAliases },
     includes: { linkedPackages },
   } = getRuntimeConfig();
 
@@ -28,6 +28,7 @@ export function startReactAppDevelopmentServer() {
     alias: {
       ...packageAliases,
       ...linkedPackageAliases,
+      ...otherAliases,
     },
     app: activeApp,
     projectDir,

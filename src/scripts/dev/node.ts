@@ -19,11 +19,15 @@ export function startNodeAppDevelopmentServer() {
   const {
     env,
     currentCommand: { app: activeApp },
+    aliases: { otherAliases },
   } = getRuntimeConfig();
 
   const webpackConfig = createNodeWebpackConfig({
     app: activeApp,
-    alias: packageAliases,
+    alias: {
+      ...packageAliases,
+      ...otherAliases,
+    },
     projectDir,
     env,
     include: [...internalPackages, ...linkedPackages],

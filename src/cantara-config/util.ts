@@ -135,15 +135,19 @@ export default async function getAllApps({
         ? path.join(dir, appMeta.staticFolder)
         : path.join(dir, 'static');
 
+      const appSrc = path.join(dir, 'src');
+
       return {
         name: appName,
         type: typeToUse,
         paths: {
           root: dir,
-          src: path.join(dir, 'src'),
+          src: appSrc,
           build: path.join(dir, 'build'),
           assets: path.join(dir, 'assets'),
           static: appStaticFolder,
+          runtimePresets: path.join(dir, 'presets'),
+          runtimePresetEntry: path.join(appSrc, 'app-preset/index.ts'),
         },
         meta: appMeta,
       };

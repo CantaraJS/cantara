@@ -84,6 +84,12 @@ export default async function buildYargsCommands({
             type: 'string',
             choices: availableAppNames,
           });
+          yargs.option('preset', {
+            alias: 'p',
+            type: 'string',
+            describe: `Runtime preset name inside 'presets' folder`,
+            default: 'default',
+          });
         }
 
         if (isLiveLinkParamNeeded) {
@@ -178,6 +184,8 @@ export default async function buildYargsCommands({
               name: cmdName.toString(),
               appname,
             },
+            activeRuntimeApplicationPresetName:
+              (args.preset as string | undefined) || 'default',
           });
           await prepareCantaraProject();
         }

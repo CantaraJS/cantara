@@ -11,6 +11,7 @@ import { createNodeJestConfig } from './util/testing';
 import { createLocalAppTsConfig } from './util/typescript';
 import getGlobalConfig from '../cantara-config/global-config';
 import getRuntimeConfig from '../cantara-config/runtime-config';
+import { generateRuntimePresetCode } from './util/runtime-presets';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 
@@ -61,6 +62,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
 
   const allAliases = {
     ...globalCantaraConfig.aliases.packageAliases,
+    ...runtimeConfig.aliases.otherAliases,
   };
   // Externals must not contain aliases
   const externals = webpackExternalsAsStringArray({
@@ -180,4 +182,6 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
   createLocalAppTsConfig({ app, indexFileName: 'index.tsx' });
+
+  await generateRuntimePresetCode(app);
 }

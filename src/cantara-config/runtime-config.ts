@@ -35,7 +35,19 @@ export interface CantaraRuntimeConfig {
    */
   aliases: {
     linkedPackageAliases: { [key: string]: string };
+    /**
+     * Runtime Preset Entry file
+     * and other utility runtime
+     * aliases if needed
+     */
+    otherAliases: { [key: string]: string };
   };
+  /**
+   * Name of a runtime
+   * preset of the current active
+   * application
+   */
+  activeRuntimeApplicationPresetName?: string;
 }
 
 interface LoadCantaraRuntimeConfigOptions {
@@ -44,6 +56,7 @@ interface LoadCantaraRuntimeConfigOptions {
     appname: string;
   };
   stage: string;
+  activeRuntimeApplicationPresetName?: string;
 }
 
 let runtimeConfig: CantaraRuntimeConfig | undefined = undefined;
@@ -63,6 +76,7 @@ export default function getRuntimeConfig() {
 export async function loadCantaraRuntimeConfig({
   currentCommand,
   stage: stageParam,
+  activeRuntimeApplicationPresetName,
 }: LoadCantaraRuntimeConfigOptions) {
   const {
     allApps,
@@ -108,6 +122,10 @@ export async function loadCantaraRuntimeConfig({
     projectRoot: projectDir,
   });
 
+  const otherAliases = {
+    '@app-preset': currentActiveApp.paths.runtimePresetEntry,
+  };
+
   runtimeConfig = {
     env: envVars,
     currentCommand: {
@@ -118,10 +136,12 @@ export async function loadCantaraRuntimeConfig({
     resolveModulesInDevelopment,
     aliases: {
       linkedPackageAliases,
+      otherAliases,
     },
     includes: {
       linkedPackages: linkedPackageIncludes,
     },
+    activeRuntimeApplicationPresetName,
   };
 
   return runtimeConfig;

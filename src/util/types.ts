@@ -90,6 +90,8 @@ export interface CantaraApplication {
     root: string;
     static?: string;
     assets?: string;
+    runtimePresets: string;
+    runtimePresetEntry: string;
   };
   type: CantaraApplicationType;
   meta: CantaraApplicationMetaInformation;

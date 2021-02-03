@@ -71,7 +71,7 @@ async function prepareUserProject() {
   } = globalCantaraConfig;
 
   const {
-    aliases: { linkedPackageAliases },
+    aliases: { linkedPackageAliases, otherAliases },
   } = getRuntimeConfig();
 
   const newTsConfig = {
@@ -81,6 +81,7 @@ async function prepareUserProject() {
       paths: aliasesToTypeScriptPaths({
         ...packageAliases,
         ...linkedPackageAliases,
+        ...otherAliases,
       }),
     },
   };
