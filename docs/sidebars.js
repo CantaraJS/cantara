@@ -20,6 +20,8 @@ module.exports = {
       'deploying_serverless',
       'publish_to_npm',
       'continous_integration',
+      'live_link',
+      'raps',
       'execute_arbitrary_cmds',
       'e2e_testing',
       'migrations',
