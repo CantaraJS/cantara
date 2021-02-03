@@ -22,7 +22,7 @@ export default function Hero() {
     <header className="cantara__hero">
       <div className="cantara__hero__inner">
         <div className="cantara__hero__container">
-          <span className="badge badge--secondary">Alpha</span>
+          <span className="badge badge--secondary">v3!</span>
 
           <div className="cantara__hero__logo">
             <img src={useBaseUrl('img/cantara.svg')} alt="Cantara" />
