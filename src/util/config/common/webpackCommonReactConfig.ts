@@ -6,10 +6,10 @@ import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
 import NodePolyfillPlugin from './NodePolyfillPlugin';
 
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 // CaseSensitivePathsPlugin webpack 5 support: https://github.com/Urthen/case-sensitive-paths-webpack-plugin/issues/56
 // const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const cssnano = require('cssnano');
 
 interface CreateCommonReactWebpackConfigParams
@@ -59,20 +59,6 @@ export default function createCommonReactWebpackConfig({
         ...env,
         WEBPACK_BUILD_TIMESTAMP: Date.now(),
       }),
-      isProduction
-        ? new OptimizeCSSAssetsPlugin({
-            cssProcessor: cssnano,
-            cssProcessorOptions: {
-              discardComments: {
-                removeAll: true,
-              },
-              // Run cssnano in safe mode to avoid
-              // potentially unsafe transformations.
-              safe: true,
-            },
-            canPrint: false,
-          })
-        : undefined,
       isProduction
         ? new webpack.BannerPlugin({
             banner: 'filename:[name]',
@@ -127,5 +113,11 @@ export default function createCommonReactWebpackConfig({
     stats: {
       warningsFilter: [/Failed to parse source map/],
     },
+    optimization: isProduction
+      ? {
+          minimize: true,
+          minimizer: [`...`, new CssMinimizerPlugin()],
+        }
+      : undefined,
   };
 }
