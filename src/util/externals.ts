@@ -41,10 +41,21 @@ function getAllModulesFromFolder(dirName: string): string[] {
   }
 }
 
-function getAllInstalledModules(allApps: CantaraApplication[]) {
-  const allExistingNodeModuleFolders = allApps
-    .map((app) => path.join(app.paths.root, 'node_modules'))
-    .filter((folderPath) => existsSync(folderPath));
+function getAllInstalledModules(
+  allApps: CantaraApplication[],
+  projectDir: string,
+) {
+  let allExistingNodeModuleFolders = allApps.map((app) =>
+    path.join(app.paths.root, 'node_modules'),
+  );
+  // Append root node_modules folder
+  allExistingNodeModuleFolders = allExistingNodeModuleFolders.concat(
+    path.join(projectDir, 'node_modules'),
+  );
+  // Only include existing folders
+  allExistingNodeModuleFolders = allExistingNodeModuleFolders.filter(
+    (folderPath) => existsSync(folderPath),
+  );
   const allModules = allExistingNodeModuleFolders
     .map(getAllModulesFromFolder)
     .reduce((arr, arrToMerge) => [...arr, ...arrToMerge], []);
@@ -91,12 +102,14 @@ interface GetAllWebpackExternalsOptions {
   peerOnly?: boolean;
   provideAsObject?: boolean;
   custom?: any;
+  ignore?: string[];
 }
 
 export function webpackExternalsAsStringArray({
   peerOnly,
+  ignore,
 }: GetAllWebpackExternalsOptions = {}) {
-  const { allApps } = getGlobalConfig();
+  const { allApps, projectDir } = getGlobalConfig();
   let externals: string[] = [];
 
   if (peerOnly) {
@@ -105,7 +118,10 @@ export function webpackExternalsAsStringArray({
   } else {
     // Read all node_modules folders to know which packages to externalize,
     // same as the popular nodeExternals() does
-    externals = getAllInstalledModules(allApps);
+    externals = getAllInstalledModules(allApps, projectDir);
+  }
+  if (ignore) {
+    externals = externals.filter((external) => !ignore.includes(external));
   }
   return externals;
 }
@@ -124,8 +140,9 @@ export default function getAllWebpackExternals({
   peerOnly,
   provideAsObject,
   custom,
+  ignore,
 }: GetAllWebpackExternalsOptions = {}) {
-  const externals = webpackExternalsAsStringArray({ peerOnly });
+  const externals = webpackExternalsAsStringArray({ peerOnly, ignore });
 
   let externalsObj = externals.reduce((retObj, externalName) => {
     return {
@@ -148,8 +165,7 @@ export default function getAllWebpackExternals({
   // but not when defining excplictly through object
   // (which should be the same)
   return (
-    _: any,
-    request: string,
+    { request, context }: { request: string; context: any },
     callback: (err?: string | null, module?: string) => void,
   ) => {
     const moduleName = getModuleName(request);

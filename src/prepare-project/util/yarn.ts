@@ -119,7 +119,7 @@ interface CreatePackageJsonOptions {
  * where none exists.
  */
 async function createPackageJson({ folderPath }: CreatePackageJsonOptions) {
-  await execCmd(`npm init -y`, {
+  await execCmd(`yarn init -y`, {
     workingDirectory: folderPath,
   });
   // Set private to true
@@ -137,6 +137,7 @@ interface CreateOrUpdatePackageJSONParams {
   expectedDependencies?: { [key: string]: string };
   expectedDevDependencies?: { [key: string]: string };
   rootDir: string;
+  workspaces?: string[];
 }
 
 interface GetDependenciesInstallationStringOptions {
@@ -169,71 +170,40 @@ function getDependenciesInstallationString({
   return dependenciesToInstall;
 }
 
-/** Updates/installs the specified dependecies in the
- * specified folder. Creates a package.json if none exists.
+/** Creates a package.json file if none exists.
+ * Sets the dependencies in that file
+ * accordingly
  */
 export async function createOrUpdatePackageJSON({
   rootDir,
   expectedDependencies,
   expectedDevDependencies,
+  workspaces,
 }: CreateOrUpdatePackageJSONParams) {
   // Install/update dependencies
   // Add dependencies
   const localPackageJsonPath = path.join(rootDir, 'package.json');
-  const nodeModulesPath = path.join(rootDir, 'node_modules');
-  if (existsSync(localPackageJsonPath)) {
-    // If no node_modules folder exists, run "npm install"
-    if (!existsSync(nodeModulesPath)) {
-      await execCmd(`npm i`, {
-        workingDirectory: rootDir,
-        redirectIo: true,
-      });
-      // If it still doesn't exist,
-      // dependencies/devDependencies is empty
-      // in package.json
-      // Therefore create node_modules folder ourselves
-      // so that "npm i" isn't called every time
-      // this function is executed
-      if (!existsSync(nodeModulesPath)) {
-        mkdirSync(nodeModulesPath);
-      }
-    }
-    // Look if dependencies need to be updated
-    const {
-      dependencies = {},
-      devDependencies = {},
-    } = getInstalledDependencies({ rootDir });
-    if (expectedDependencies) {
-      const dependenciesToInstall = getDependenciesInstallationString({
-        expectedDependencies,
-        actualDependencies: dependencies,
-      });
-      if (dependenciesToInstall) {
-        await execCmd(`npm install -S ${dependenciesToInstall}`, {
-          workingDirectory: rootDir,
-          redirectIo: true,
-        });
-      }
-    }
-    if (expectedDevDependencies) {
-      const devDependenciesToInstall = getDependenciesInstallationString({
-        expectedDependencies: expectedDevDependencies,
-        actualDependencies: devDependencies,
-      });
-      if (devDependenciesToInstall) {
-        await execCmd(`npm install -D ${devDependenciesToInstall}`, {
-          workingDirectory: rootDir,
-          redirectIo: true,
-        });
-      }
-    }
-  } else {
-    // Create new packageJSON and install dependencies
-    await createPackageJson({ folderPath: rootDir });
-    await createOrUpdatePackageJSON({
-      rootDir,
-      expectedDependencies,
-      expectedDevDependencies,
-    });
+  const doesExist = existsSync(localPackageJsonPath);
+  if (!doesExist) {
+    await execCmd('yarn init -y', { workingDirectory: rootDir });
   }
+  let packageJsonContent = readFileAsJSON(localPackageJsonPath);
+  packageJsonContent = {
+    ...packageJsonContent,
+    devDependencies: {
+      ...packageJsonContent.devDependencies,
+      ...expectedDevDependencies,
+    },
+    dependencies: {
+      ...packageJsonContent.dependencies,
+      ...expectedDependencies,
+    },
+  };
+  if (workspaces) {
+    packageJsonContent = {
+      ...packageJsonContent,
+      workspaces,
+    };
+  }
+  writeJson(localPackageJsonPath, packageJsonContent);
 }

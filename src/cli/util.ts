@@ -18,21 +18,19 @@ export function setupCliContext() {
  * (only during development)
  */
 export function loadEnv() {
-  if (process.env.NODE_ENV === 'development') {
-    dotenv.config();
-  }
+  dotenv.config();
 }
 
 /**
  * Catch uncaught errors
  */
 export function setupErrorHandling() {
-  process.on('uncaughtException', err => {
+  process.on('uncaughtException', (err) => {
     console.log(err);
     process.exit(1);
   });
 
-  process.on('unhandledRejection', err => {
+  process.on('unhandledRejection', (err) => {
     console.log(err);
     process.exit(1);
   });
@@ -64,6 +62,8 @@ export async function loadPackageJson() {
  */
 export function checkForUpdates(packageJson: any) {
   updateNotifier({ pkg: packageJson }).notify({
-    boxenOptions: { borderColor: 'cyan', borderStyle: 'round' },
+    boxenOptions: {
+      borderColor: 'cyan',
+    },
   });
 }

@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["./src/<--INDEX_FILE_NAME-->", "../../global.d.ts"],
+  "include": ["../../global.d.ts", "./src/**/*"],
   "exclude": ["node_modules", "build"],
   "compilerOptions": {
     "noEmit": true,

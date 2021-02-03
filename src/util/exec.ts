@@ -1,6 +1,7 @@
 import { spawn } from 'child_process';
 import path from 'path';
 import getGlobalConfig from '../cantara-config/global-config';
+import getRuntimeConfig from '../cantara-config/runtime-config';
 
 interface CommonOptions {
   /** Defaults to current process.cwd() */
@@ -57,16 +58,16 @@ export function spawnCmd(
     }
 
     newProcess.stdio.forEach(
-      io =>
+      (io) =>
         io &&
-        io.on('data', data => {
+        io.on('data', (data) => {
           retData += `\n${data.toString()}`;
         }),
     );
 
     // newProcess.on('close', onExit);
     newProcess.on('exit', onExit);
-    newProcess.on('error', e => {
+    newProcess.on('error', (e) => {
       reject(e);
     });
     // newProcess.on('disconnect', onExit);
@@ -75,6 +76,17 @@ export function spawnCmd(
 
 interface ExecOptions extends CommonOptions {
   withSecrets?: boolean;
+  /**
+   * If true, environment variables
+   * for the current application
+   * (e.g. from the .env.development file),
+   * are made accessible for the current command.
+   * Useful to execute scripts which need
+   * access to the environment variables.
+   * ATTENTION: Requires an app to be active
+   * and the runtime config to be defined!
+   */
+  includeAppEnvVars?: boolean;
 }
 
 /**
@@ -124,18 +136,22 @@ export default async function execCmd(
     workingDirectory = process.cwd(),
     redirectIo,
     withSecrets,
+    includeAppEnvVars,
   }: ExecOptions = {},
 ) {
   const globalCantaraConfig = getGlobalConfig();
   const NEW_PATH_ENV = getCurrentPATH();
 
   const secretsEnvVars = withSecrets ? globalCantaraConfig.secrets : {};
+  const appEnvVars = includeAppEnvVars ? getRuntimeConfig().env : {};
 
   const options: SpawnOptions = {
     workingDirectory,
     env: {
       ...secretsEnvVars,
-      // Needed on Windows for some reason
+      ...appEnvVars,
+      // to make it work on Windows too,
+      // Path + PATH is needed
       Path: NEW_PATH_ENV || '',
       PATH: NEW_PATH_ENV || '',
     },

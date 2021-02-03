@@ -1,3 +1,6 @@
+import liveLinkAdd from '../scripts/link/add';
+import liveLinkList from '../scripts/link/ls';
+import liveLinkRemove from '../scripts/link/rm';
 import { CantaraApplicationType } from '../util/types';
 
 export interface CantaraCommand<TParameters = any> {
@@ -21,6 +24,12 @@ export interface CantaraCommand<TParameters = any> {
      */
     choices?: string[];
   }[];
+  options?: {
+    name: string;
+    alias?: string;
+    type: 'string' | 'number' | 'boolean' | 'array' | 'count' | undefined;
+    describe?: string;
+  }[];
   configuration: {
     /**
      * If set to true, the second parameter
@@ -32,6 +41,22 @@ export interface CantaraCommand<TParameters = any> {
      */
     needsActiveApp?: boolean;
     /**
+     * If true, the second parameter
+     * of this command needs to be
+     * set to a path to another
+     * Cantara project's package
+     */
+    needsLiveLinkSuggestion?: boolean;
+    /**
+     * If true, the second parameter
+     * of this command needs to be
+     * set to a path to another
+     * Cantara project's package
+     * which is currently linked
+     * in this project
+     */
+    needsActiveLiveLink?: boolean;
+    /**
      * App types this command can
      * be executed with.
      */
@@ -41,7 +66,9 @@ export interface CantaraCommand<TParameters = any> {
      * don't need the global configuration
      * to be present. IF that's the case,
      * set this value to false. It
-     * defaults to true
+     * defaults to true.
+     * ONLY WORKS OUTSIDE CANTARA
+     * PROJECTS!
      */
     needsGlobalConfig?: boolean;
     /**
@@ -222,19 +249,73 @@ const onPrePushCommand: CantaraCommand = {
   configuration: {
     needsActiveApp: false,
   },
-  execute: async () => {
-  },
+  execute: async () => {},
 };
 
 const onPreCommitCommand: CantaraCommand = {
   name: 'on-pre-commit',
-  description: `Used internally. Executed every time before "git commit" is executed.`,
+  description: `Does nothing, is just kept in order to not break older versions.`,
   configuration: {
     needsActiveApp: false,
   },
-  execute: async () => {
-    const { default: onPreCommit } = await import('../scripts/on-pre-commit');
-    return onPreCommit();
+  execute: async () => {},
+};
+
+const buildChangedCommand: CantaraCommand<{ exclude?: string[] }> = {
+  name: 'build-changed',
+  description: `Runs the build command for all changed packages or apps, based on the git history.`,
+  configuration: {
+    needsActiveApp: false,
+  },
+  options: [
+    {
+      name: 'exclude',
+      type: 'array',
+      alias: 'e',
+      describe: 'Exclude applications/packages from building.',
+    },
+  ],
+  execute: async ({ projectDir, exclude }) => {
+    const { default: buildChanged } = await import('../scripts/build-changed');
+    return buildChanged({ projectDir, exclude });
+  },
+};
+
+const liveLinkAddCommand: CantaraCommand<{ liveLinkPackagePath: string }> = {
+  name: 'link-add',
+  description: `Add live link during development for external Cantara packages`,
+  configuration: {
+    needsActiveApp: false,
+    needsLiveLinkSuggestion: true,
+    needsGlobalConfig: true,
+  },
+  execute: async ({ liveLinkPackagePath, projectDir }) => {
+    return liveLinkAdd({ liveLinkPackagePath, projectDir });
+  },
+};
+
+const liveLinkListCommand: CantaraCommand = {
+  name: 'link-ls',
+  description: `Get a list of all currently active Live Links`,
+  configuration: {
+    needsActiveApp: false,
+    needsGlobalConfig: true,
+  },
+  execute: async ({ projectDir }) => {
+    return liveLinkList({ projectDir });
+  },
+};
+
+const liveLinkRemoveCommand: CantaraCommand<{ liveLinkPackagePath: string }> = {
+  name: 'link-rm',
+  description: `Remove a Live Link package`,
+  configuration: {
+    needsActiveApp: false,
+    needsGlobalConfig: true,
+    needsActiveLiveLink: true,
+  },
+  execute: async ({ projectDir, liveLinkPackagePath }) => {
+    return liveLinkRemove({ projectDir, liveLinkPackagePath });
   },
 };
 
@@ -242,6 +323,9 @@ const allCliCommands: CantaraCommand[] = [
   initCommand,
   devCommand,
   testCommand,
+  liveLinkAddCommand,
+  liveLinkListCommand,
+  liveLinkRemoveCommand,
   buildCommand,
   deployCommand,
   runCommand,
@@ -250,6 +334,7 @@ const allCliCommands: CantaraCommand[] = [
   e2eCommand,
   onPrePushCommand,
   onPreCommitCommand,
+  buildChangedCommand,
 ];
 
 export default allCliCommands;

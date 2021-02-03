@@ -7,7 +7,8 @@ import getAllWebpackExternals from '../externals';
 import slash from 'slash';
 
 const NodemonPlugin = require('nodemon-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+// CaseSensitivePathsPlugin webpack 5 support: https://github.com/Urthen/case-sensitive-paths-webpack-plugin/issues/56
+// const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -23,12 +24,14 @@ export default function createNodeWebpackConfig({
   alias,
   env = {},
   include = [],
-  nodemonOptions = ["--inspect","--enable-source-maps"], 
+  nodemonOptions = ['--inspect', '--enable-source-maps'],
 }: CreateNodeWebpackConfigOptions): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
 
-  const externals = getAllWebpackExternals();
+  const externals = getAllWebpackExternals(
+    alias ? { ignore: Object.keys(alias) } : {},
+  );
 
   const doesStaticFolderExist =
     app.paths.static && fs.existsSync(app.paths.static);
@@ -38,7 +41,11 @@ export default function createNodeWebpackConfig({
     output: { path: app.paths.build },
     node: { __dirname: false, __filename: false },
     target: 'node',
-    devtool: isDevelopment ? 'eval-source-map' : app.meta.sourceMaps ? 'source-map' : undefined,
+    devtool: isDevelopment
+      ? 'eval-source-map'
+      : app.meta.sourceMaps
+      ? 'source-map'
+      : undefined,
     mode,
     externals,
     resolve: {
@@ -57,6 +64,12 @@ export default function createNodeWebpackConfig({
     module: {
       rules: [
         {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
+        {
           test: [/\.js$/, /\.tsx?$/],
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],
@@ -66,21 +79,25 @@ export default function createNodeWebpackConfig({
           },
         },
         {
-          loader: 'file-loader',
-          exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-          options: {
-            name: 'static/media/[name].[hash:8].[ext]',
-          },
+          test: /\.(?:ico|gif|png|jpg|jpeg|svg|woff(2)?|eot|ttf|otf)$/i,
+          type: 'asset',
         },
       ],
     },
     plugins: [
-      new CaseSensitivePathsPlugin(),
+      // new CaseSensitivePathsPlugin(),
       new webpack.EnvironmentPlugin(env),
       new FriendlyErrorsWebpackPlugin(),
       new ForkTsCheckerWebpackPlugin({
-        tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
-        watch: app.paths.src,
+        typescript: {
+          configFile: path.join(app.paths.root, '.tsconfig.local.json'),
+          diagnosticOptions: {
+            semantic: true,
+            syntactic: true,
+          },
+          mode: 'write-references',
+        },
+        // watch: app.paths.src,
       }),
       isDevelopment
         ? new NodemonPlugin({

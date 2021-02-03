@@ -6,28 +6,40 @@ import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export default async function buildNodeApp(app: CantaraApplication) {
   const {
-    allPackages: { include },
     projectDir,
     aliases: { packageAliases },
     additionalCliOptions,
+    includes: { internalPackages },
   } = getGlobalConfig();
-  const { env, aliases: { appDependencyAliases } } = getRuntimeConfig();
+  const {
+    env,
+    aliases: { otherAliases },
+  } = getRuntimeConfig();
 
   const webpackConfig = createNodeWebpackConfig({
-    alias: {...packageAliases, ...appDependencyAliases },
+    alias: {
+      ...packageAliases,
+      ...otherAliases,
+    },
     app,
     env,
     mode: 'production',
     projectDir,
-    include,
+    include: internalPackages,
     nodemonOptions: additionalCliOptions ? [additionalCliOptions] : undefined,
   });
 
   const compiler = webpack(webpackConfig);
-  compiler.run(err => {
+  compiler.run((err) => {
     if (err) {
       throw new Error('Error while compiling.');
     }
-    console.log('Successfully compiled!');
+    compiler.close(() => {
+      if (err) {
+        console.error('Error while compiling.');
+      } else {
+        console.log('Successfully compiled!');
+      }
+    });
   });
 }

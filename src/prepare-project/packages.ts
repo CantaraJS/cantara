@@ -5,11 +5,8 @@ import { CantaraApplication } from '../util/types';
 import { readFileAsJSON, writeJson } from '../util/fs';
 import renderTemplate from '../util/configTemplates';
 import { readFileSync, copyFileSync } from 'fs';
-import {
-  createOrUpdatePackageJSON,
-  autoInstallMissingPackages,
-} from './util/npm';
-import { createReactJestConfig, createNodeJestConfig } from './util/jest';
+import { createOrUpdatePackageJSON } from './util/yarn';
+import { createReactJestConfig, createNodeJestConfig } from './util/testing';
 import getGlobalConfig from '../cantara-config/global-config';
 
 function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
@@ -45,9 +42,6 @@ export default async function prepareJsPackage(app: CantaraApplication) {
     expectedDependencies: {},
   });
 
-  // Auto-install packages
-  await autoInstallMissingPackages(app.paths.root);
-
   if (isReactComponent) {
     // For React Components, add react and react-dom to the peer dependencies
     addPeerDeps(path.join(app.paths.root, 'package.json'), reactDeps);
@@ -71,7 +65,13 @@ export default async function prepareJsPackage(app: CantaraApplication) {
     },
   });
   const packageTsConfigPath = path.join(app.paths.root, '.tsconfig.local.json');
-  writeJson(packageTsConfigPath, JSON.parse(renderedTsConfig));
+  let tsConfig = JSON.parse(renderedTsConfig);
+  const customTypes = app.meta.customTypes || [];
+  tsConfig = {
+    ...tsConfig,
+    include: [...(tsConfig.include || []), ...customTypes],
+  };
+  writeJson(packageTsConfigPath, tsConfig);
 
   // Copy .npmignore ignore file
   const npmignorePath = path.join(staticFilesFolder, '.npmignore-template');

@@ -48,10 +48,13 @@ export interface CantaraApplicationMetaInformation {
    */
   suppressTsErrors?: string[];
   /**
-   * If set to true source maps are generated for production
-   * and cantara will try to load source maps of all dependencies as well.
+   * If set to true source maps are generated for production as well.
    */
-  sourceMaps?: true;
+  sourceMaps?: boolean;
+  /**
+   * Define external dependencies mapping for webpack.
+   * Can be configured for either of the build targets.
+   */
   externalDependencies?: {
     umd?: {
       [key: string]: string;
@@ -60,6 +63,23 @@ export interface CantaraApplicationMetaInformation {
       [key: string]: string;
     };
   };
+  /**
+   * Optionally, the default folder location
+   * of an application ('/static')
+   * can be overwritten.
+   * always relative to the current app.
+   */
+  staticFolder?: string;
+  /**
+   * Folders or files which contain
+   * custom types.
+   * always relative to the current app.
+   */
+  customTypes?: string[];
+  /**
+   * If Set to true, the commonjs target will not be bundled.
+   */
+  skipBundling?: boolean;
 }
 
 export interface CantaraApplication {
@@ -70,7 +90,37 @@ export interface CantaraApplication {
     root: string;
     static?: string;
     assets?: string;
+    runtimePresets: string;
+    runtimePresetEntry: string;
   };
   type: CantaraApplicationType;
   meta: CantaraApplicationMetaInformation;
+}
+
+/**
+ * Package which could be live linked
+ */
+export interface LiveLinkedPackageSuggestion {
+  projectRoot: string;
+  packageRoot: string;
+  /**
+   * Name in package.json
+   */
+  packageName: string;
+}
+
+export interface CantaraProjectPersistenceData {
+  rootPath: string;
+  linkedPackages: string[];
+}
+
+/**
+ * Saves temporary data about
+ * all Cantara projects on disk.
+ * This way, we always know which
+ * Cantara projects are installed
+ * and where
+ */
+export interface CantaraPersistenceData {
+  projects: CantaraProjectPersistenceData[];
 }

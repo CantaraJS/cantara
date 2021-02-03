@@ -2,6 +2,7 @@ import { AutoComplete, StringPrompt, StringPromptConstructor } from 'enquirer';
 import c from 'ansi-colors';
 
 import { CantaraCommand } from './commands';
+import { LiveLinkedPackageSuggestion } from '../util/types';
 
 interface StartCantaraInteractiveMode {
   availableCommands: CantaraCommand[];
@@ -16,13 +17,13 @@ interface StartCantaraInteractiveMode {
 export async function cantaraInteractiveMode({
   availableCommands,
 }: StartCantaraInteractiveMode) {
-  const cmdChoices = availableCommands.map(cmd => cmd.name);
+  const cmdChoices = availableCommands.map((cmd) => cmd.name);
   const prompt = new AutoComplete({
     name: 'Command',
     message: 'Which command do you want to execute?',
     initial: 0,
     choices: cmdChoices,
-    footer: prompt => {
+    footer: (prompt) => {
       return '\n' + c.black.bgCyan(availableCommands[prompt.index].description);
     },
   });
@@ -72,7 +73,54 @@ export function chooseApplication({
   return prompt.run();
 }
 
+/**
+ * Returns absolute path to package
+ */
+export async function chooseLiveLinkPackage(
+  liveLinkSuggestions: LiveLinkedPackageSuggestion[],
+) {
+  const availablePackages = liveLinkSuggestions.map(
+    (liveLinkPackage) => liveLinkPackage.packageRoot,
+  );
+  const beatifulPackageNames = liveLinkSuggestions.map(
+    (liveLinkPackage) =>
+      `${liveLinkPackage.packageName} (-> ${liveLinkPackage.projectRoot})`,
+  );
+  const prompt = new AutoComplete({
+    name: 'Appname',
+    message: 'Pick a package',
+    initial: 0,
+    choices: [...beatifulPackageNames],
+  });
+  const chosen = await prompt.run();
+  const packageIndex = beatifulPackageNames.findIndex(
+    (pName) => pName === chosen,
+  );
+
+  const packagePath = availablePackages[packageIndex];
+  return packagePath;
+}
+
 export function stringPrompt(options: StringPromptConstructor) {
   const prompt = new StringPrompt(options);
+  return prompt.run();
+}
+
+interface ChooseRuntimePresetNameParams {
+  availablePresetName: string[];
+}
+
+/**
+ * Let user interactively choose an application/package
+ */
+export function chooseRuntimePresetName({
+  availablePresetName,
+}: ChooseRuntimePresetNameParams) {
+  const prompt = new AutoComplete({
+    name: 'Runtime preset',
+    message: 'Choose a runtime preset to configure the application',
+    initial: 0,
+    choices: availablePresetName,
+  });
   return prompt.run();
 }

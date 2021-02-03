@@ -1,16 +1,14 @@
 import { CantaraApplication } from '../util/types';
-import { getDependencyAliases } from './aliases';
 import getGlobalConfig from './global-config';
 import loadAppEnvVars from './envvars';
 import deriveStageNameFromCmd from '../util/deriveStage';
+import {
+  getNodeModulesResolvingOrder,
+  linkedPackagesToWebpackAliases,
+  linkedPackagesToWebpackInclude,
+} from '../util/live-link';
 
 export interface CantaraRuntimeConfig {
-  /** Aliases which need to be set by
-   * tools like webpack
-   */
-  aliases: {
-    appDependencyAliases: { [key: string]: string };
-  };
   /** Information about current command */
   currentCommand: {
     name: string;
@@ -21,6 +19,35 @@ export interface CantaraRuntimeConfig {
    * either a .env.<stage> file or process.env
    */
   env: { [key: string]: string };
+  /**
+   * `node_modules` folders which
+   * get searched to resolve modules.
+   * Only relevant during development
+   * because of Cantara Live Link
+   */
+  resolveModulesInDevelopment: string[];
+  includes: {
+    /** Only during development */
+    linkedPackages: string[];
+  };
+  /** Aliases which need to be set by
+   * tools like webpack
+   */
+  aliases: {
+    linkedPackageAliases: { [key: string]: string };
+    /**
+     * Runtime Preset Entry file
+     * and other utility runtime
+     * aliases if needed
+     */
+    otherAliases: { [key: string]: string };
+  };
+  /**
+   * Name of a runtime
+   * preset of the current active
+   * application
+   */
+  activeRuntimeApplicationPresetName?: string;
 }
 
 interface LoadCantaraRuntimeConfigOptions {
@@ -29,6 +56,7 @@ interface LoadCantaraRuntimeConfigOptions {
     appname: string;
   };
   stage: string;
+  activeRuntimeApplicationPresetName?: string;
 }
 
 let runtimeConfig: CantaraRuntimeConfig | undefined = undefined;
@@ -48,22 +76,36 @@ export default function getRuntimeConfig() {
 export async function loadCantaraRuntimeConfig({
   currentCommand,
   stage: stageParam,
+  activeRuntimeApplicationPresetName,
 }: LoadCantaraRuntimeConfigOptions) {
-  const { allApps, projectDir } = getGlobalConfig();
+  const {
+    allApps,
+    projectDir,
+    internalPaths: { nodeModules: cantaraNodeModulesPath },
+    projectPersistanceData,
+  } = getGlobalConfig();
+
+  const { linkedPackages: projectLinkedPackages } = projectPersistanceData;
+  const linkedPackageAliases = linkedPackagesToWebpackAliases(
+    projectLinkedPackages,
+  );
+  const linkedPackageIncludes = linkedPackagesToWebpackInclude(
+    projectLinkedPackages,
+  );
 
   const stage =
     !stageParam || stageParam === 'not_set'
-      ? deriveStageNameFromCmd(currentCommand.name)
+      ? process.env.STAGE || deriveStageNameFromCmd(currentCommand.name)
       : stageParam;
 
+  console.log(`[STAGE]: ${stage}`);
+
   const currentActiveApp = allApps.find(
-    app => app.name === currentCommand.appname,
+    (app) => app.name === currentCommand.appname,
   );
   if (!currentActiveApp) {
     throw new Error(`No app with the name ${currentCommand.appname}!`);
   }
-
-  const appDependencyAliases = getDependencyAliases(currentActiveApp);
 
   const envVars = await loadAppEnvVars({
     projectRootDir: projectDir,
@@ -73,16 +115,33 @@ export async function loadCantaraRuntimeConfig({
     required: true,
   });
 
+  const resolveModulesInDevelopment = getNodeModulesResolvingOrder({
+    activeApp: currentActiveApp,
+    cantaraNodeModulesPath,
+    linkedPackages: projectLinkedPackages,
+    projectRoot: projectDir,
+  });
+
+  const otherAliases = {
+    '@app-preset': currentActiveApp.paths.runtimePresetEntry,
+  };
+
   runtimeConfig = {
     env: envVars,
-    aliases: {
-      appDependencyAliases,
-    },
     currentCommand: {
       name: currentCommand.name,
       app: currentActiveApp,
     },
     stage,
+    resolveModulesInDevelopment,
+    aliases: {
+      linkedPackageAliases,
+      otherAliases,
+    },
+    includes: {
+      linkedPackages: linkedPackageIncludes,
+    },
+    activeRuntimeApplicationPresetName,
   };
 
   return runtimeConfig;

@@ -1,7 +1,7 @@
 import { Configuration } from 'webpack';
 import path from 'path';
 
-import getBabelConfig from './babelReactConfig';
+import { getBabelReactConfig } from './babelReactConfig';
 import getAllWebpackExternals from '../externals';
 import { camalize } from '../string-manipulation';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
@@ -11,9 +11,10 @@ import getSourceMapLoader from './common/soureMapLoader';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+// CaseSensitivePathsPlugin webpack 5 support: https://github.com/Urthen/case-sensitive-paths-webpack-plugin/issues/56
+// const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const webpackMerge = require('webpack-merge');
+const { merge: webpackMerge } = require('webpack-merge');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 /**
@@ -44,6 +45,7 @@ export default function createLibraryWebpackConfig({
       react: 'React',
       'react-dom': 'ReactDOM',
       ...customExternals,
+      ...externals,
     };
   } else {
     const customExternals = app.meta.externalDependencies
@@ -52,6 +54,7 @@ export default function createLibraryWebpackConfig({
     externals = {
       ...customExternals,
     };
+    externals = getAllWebpackExternals({ custom: externals });
   }
 
   const commonLibraryConfig: Configuration = {
@@ -72,10 +75,7 @@ export default function createLibraryWebpackConfig({
       ],
       alias,
     },
-    externals:
-      libraryTarget === 'umd'
-        ? externals
-        : [getAllWebpackExternals({ custom: externals })],
+    externals,
     mode: 'production',
     devtool: app.meta.sourceMaps ? 'source-map' : undefined,
     output: {
@@ -88,7 +88,7 @@ export default function createLibraryWebpackConfig({
         libraryTarget === 'commonjs2'
           ? path.join(app.paths.build, path.basename(app.name), 'src')
           : app.paths.build,
-      library: camalize(app.name),
+      library: libraryTarget !== 'commonjs2' ? camalize(app.name) : undefined,
       /** For bundlers and NodeJS, CommonJS is used.
        * As soon webpack supports ESM as a libraryTarget,
        * ESMs are favoured
@@ -104,7 +104,7 @@ export default function createLibraryWebpackConfig({
           })
         : undefined,
       noChecks ? undefined : new WebpackNotifierPlugin(),
-      new CaseSensitivePathsPlugin(),
+      // new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
       libraryTarget === 'commonjs2'
         ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
@@ -130,11 +130,17 @@ export default function createLibraryWebpackConfig({
     module: {
       rules: [
         {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
+        {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
-            options: getBabelConfig('production'),
+            options: getBabelReactConfig('production'),
           },
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],
@@ -147,7 +153,7 @@ export default function createLibraryWebpackConfig({
         },
         {
           exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/],
-          loader: 'url-loader',
+          type: 'asset/inline',
         },
       ],
     },

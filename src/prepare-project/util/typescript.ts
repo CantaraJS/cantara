@@ -34,5 +34,13 @@ export function createLocalAppTsConfig({
     app.paths.root,
     '.tsconfig.local.json',
   );
-  writeJson(appLocalTsConfigPath, JSON.parse(renderedTsConfig));
+
+  let tsConfig = JSON.parse(renderedTsConfig);
+  const customTypes = app.meta.customTypes || [];
+  tsConfig = {
+    ...tsConfig,
+    include: [...(tsConfig.include || []), ...customTypes],
+  };
+
+  writeJson(appLocalTsConfigPath, tsConfig);
 }

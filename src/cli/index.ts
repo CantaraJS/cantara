@@ -8,12 +8,7 @@ import {
   loadPackageJson,
   checkForUpdates,
 } from './util';
-import getGlobalConfig, {
-  loadCantaraGlobalConfig,
-} from '../cantara-config/global-config';
-import { loadCantaraRuntimeConfig } from '../cantara-config/runtime-config';
 
-import prepareCantaraProject from '../prepare-project';
 import clearConsole from '../util/clearConsole';
 import allCliCommands from './commands';
 import { isCantaraProject } from '../cantara-config';
@@ -21,11 +16,14 @@ import buildYargsCommands from './yargs';
 
 export default async function setupCliInterface() {
   if (process.env.NODE_ENV === 'development') {
+    // Make sure deprecation warnings show stack trace
+    console.log('Tracing depreactions...');
+    process.traceDeprecation = true;
     clearConsole();
+    // Load envs from .env for development
+    loadEnv();
   }
 
-  // Load envs from .env for development
-  loadEnv();
   // User's project path
   const projectDir = getProjectPath();
   setupErrorHandling();
@@ -40,7 +38,7 @@ export default async function setupCliInterface() {
   cmdToUse = cmdToUse.filter(Boolean);
 
   // Determine commands which can be executed in current folder.
-  const availableCommands = allCliCommands.filter(command => {
+  const availableCommands = allCliCommands.filter((command) => {
     const { needsGlobalConfig = true } = command.configuration;
     if (needsGlobalConfig && !isCwdCantaraProject) {
       return false;

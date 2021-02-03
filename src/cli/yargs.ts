@@ -1,5 +1,8 @@
 import yargs from 'yargs';
+import { fsExists } from '../util/fs';
+import { getAllRuntimePresetNames } from '../util/runtime-presets';
 import { CantaraCommand } from './commands';
+import { chooseRuntimePresetName } from './interactive';
 
 interface BuildYargsCommandsParams {
   availableCommands: CantaraCommand[];
@@ -22,6 +25,8 @@ export default async function buildYargsCommands({
     const {
       needsActiveApp,
       needsGlobalConfig = true,
+      needsActiveLiveLink,
+      needsLiveLinkSuggestion,
       appTypes = [],
       retrieveAdditionalCliParams,
     } = command.configuration;
@@ -29,9 +34,16 @@ export default async function buildYargsCommands({
     if (needsActiveApp) {
       cmd = `${cmd} [appname]`;
     }
+
+    const isLiveLinkParamNeeded =
+      needsActiveLiveLink || needsLiveLinkSuggestion;
+    if (isLiveLinkParamNeeded) {
+      cmd = `${cmd} [externalCantaraPackage]`;
+    }
+
     if (command.parameters) {
       cmd = `${cmd}${command.parameters
-        .map(param => ` [${param.name}]`)
+        .map((param) => ` [${param.name}]`)
         .join('')}`;
     }
     let additionalCliOptions = cmdToUse.slice(2).join(' ');
@@ -44,7 +56,13 @@ export default async function buildYargsCommands({
     yargs.command(
       cmd,
       command.description,
-      async yargs => {
+      async (yargs) => {
+        if (command.options) {
+          for (const option of command.options) {
+            const { name, ...rest } = option;
+            yargs.option(name, rest);
+          }
+        }
         if (command.parameters) {
           for (const cmdParam of command.parameters) {
             yargs.positional(cmdParam.name, {
@@ -62,17 +80,74 @@ export default async function buildYargsCommands({
           const filteredApps =
             appTypes.length === 0
               ? allApps
-              : allApps.filter(app => appTypes.includes(app.type));
-          const availableAppNames = filteredApps.map(app => app.name);
+              : allApps.filter((app) => appTypes.includes(app.type));
+          const availableAppNames = filteredApps.map((app) => app.name);
           yargs.positional('appname', {
             describe: 'Name of the app (foldername)',
             type: 'string',
             choices: availableAppNames,
           });
+          yargs.option('preset', {
+            alias: 'p',
+            type: 'string',
+            describe: `Runtime preset name inside 'presets' folder`,
+            default: 'default',
+          });
+        }
+
+        if (isLiveLinkParamNeeded) {
+          const { default: getGlobalConfig } = await import(
+            '../cantara-config/global-config'
+          );
+          const { liveLinkSuggestions } = getGlobalConfig();
+          const availablePackagePaths = liveLinkSuggestions.map(
+            (liveLinkPackage) => liveLinkPackage.packageRoot,
+          );
+          yargs.positional('externalCantaraPackage', {
+            describe: 'Path to a package inside another Cantara project',
+            type: 'string',
+            choices: availablePackagePaths,
+          });
         }
       },
-      async args => {
+      async (args) => {
         const cmdName = args._[0];
+
+        if (isLiveLinkParamNeeded) {
+          const { default: getGlobalConfig } = await import(
+            '../cantara-config/global-config'
+          );
+          const globalConfig = getGlobalConfig();
+          let { liveLinkSuggestions, projectPersistanceData } = globalConfig;
+          if (needsLiveLinkSuggestion) {
+            liveLinkSuggestions = liveLinkSuggestions.filter((suggestion) => {
+              return !projectPersistanceData.linkedPackages.includes(
+                suggestion.packageRoot,
+              );
+            });
+          }
+          if (needsActiveLiveLink) {
+            liveLinkSuggestions = liveLinkSuggestions.filter((suggestion) => {
+              return projectPersistanceData.linkedPackages.includes(
+                suggestion.packageRoot,
+              );
+            });
+          }
+          if (liveLinkSuggestions.length === 0) {
+            throw new Error('No more Live Link packages available!');
+          }
+          let liveLinkPackagePath = args.externalCantaraPackage as
+            | string
+            | undefined;
+          if (!liveLinkPackagePath) {
+            const { chooseLiveLinkPackage } = await import('./interactive');
+            liveLinkPackagePath = await chooseLiveLinkPackage(
+              liveLinkSuggestions,
+            );
+          }
+          args.liveLinkPackagePath = liveLinkPackagePath;
+        }
+
         if (needsActiveApp) {
           const { default: getGlobalConfig } = await import(
             '../cantara-config/global-config'
@@ -82,8 +157,8 @@ export default async function buildYargsCommands({
           const filteredApps =
             appTypes.length === 0
               ? allApps
-              : allApps.filter(app => appTypes.includes(app.type));
-          const availableAppNames = filteredApps.map(app => app.name);
+              : allApps.filter((app) => appTypes.includes(app.type));
+          const availableAppNames = filteredApps.map((app) => app.name);
 
           let appname = args.appname as string | undefined;
           if (!appname) {
@@ -106,13 +181,32 @@ export default async function buildYargsCommands({
           const { loadCantaraRuntimeConfig } = await import(
             '../cantara-config/runtime-config'
           );
-          await loadCantaraRuntimeConfig({
+
+          const runtimePresetArg = args.preset as string | undefined;
+
+          const runtimeConfig = await loadCantaraRuntimeConfig({
             stage: (args.stage as string | undefined) || 'not_set',
             currentCommand: {
-              name: cmdName,
+              name: cmdName.toString(),
               appname,
             },
+            activeRuntimeApplicationPresetName: runtimePresetArg || 'default',
           });
+
+          const canSelectRuntimePreset = await fsExists(
+            runtimeConfig.currentCommand.app.paths.runtimePresets,
+          );
+
+          if (canSelectRuntimePreset) {
+            const availablePresetName = getAllRuntimePresetNames(
+              runtimeConfig.currentCommand.app,
+            );
+            const newRuntimePresetName = await chooseRuntimePresetName({
+              availablePresetName,
+            });
+            runtimeConfig.activeRuntimeApplicationPresetName = newRuntimePresetName;
+          }
+
           await prepareCantaraProject();
         }
 

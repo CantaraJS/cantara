@@ -12,7 +12,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "baseUrl": "./",

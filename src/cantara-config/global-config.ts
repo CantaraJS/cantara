@@ -4,14 +4,25 @@ import { existsSync } from 'fs';
 import getAllApps, {
   loadSecrets,
   getCantaraDepenciesInstallationPath,
+  getDependecyVersions,
 } from './util';
-import { CantaraApplication } from '../util/types';
+import {
+  CantaraApplication,
+  CantaraProjectPersistenceData,
+  LiveLinkedPackageSuggestion,
+} from '../util/types';
 
 import getAllPackageAliases from './aliases';
 import { reactDependencies } from './dependencies/react';
 import { typescriptDependencies } from './dependencies/types';
 import { testingDependencies } from './dependencies/testing';
 import { commonDependencies } from './dependencies/common';
+import { getAllLiveLinkPackageSuggestions } from '../util/live-link';
+import {
+  writeProjectPersistenData,
+  readCantaraPersistentData,
+  getProjectPersistentData,
+} from '../util/persistence';
 
 const EXPECTED_CANTARA_SECRETS = ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY'];
 
@@ -38,10 +49,18 @@ interface CantaraGlobalConfig {
    * in this string.
    */
   additionalCliOptions: string;
-  allPackages: {
+  /** Paths to be included by webpack */
+  includes: {
     /** Include all those paths into webpack configs */
-    include: string[];
+    internalPackages: string[];
   };
+  /**
+   * List of dependencies;
+   * The actual versions are retrieved from
+   * cantara's package.json. This way,
+   * all runtime dependencies are alway
+   * kept up to date thanks to dependabot
+   */
   dependencies: {
     /** Current React and React DOM version */
     react: Dependencies;
@@ -70,10 +89,13 @@ interface CantaraGlobalConfig {
   aliases: {
     packageAliases: { [key: string]: string };
   };
+  /**
+   * All possible packages which could be
+   * live linked. Needed for CLI wizard.
+   */
+  liveLinkSuggestions: LiveLinkedPackageSuggestion[];
   /** Working directory where user executed Cantara */
   projectDir: string;
-  /** Path of .cantara folder */
-  dotCantaraDir: string;
   /** Secrets from user's .secrets.json file */
   secrets: {
     AWS_ACCESS_KEY_ID?: string;
@@ -86,6 +108,7 @@ interface CantaraGlobalConfig {
   /** Settings from cantara.config.js
    * at the project's root */
   globalCantaraSettings: GlobalCantaraSettings;
+  projectPersistanceData: CantaraProjectPersistenceData;
 }
 
 let globalConfig: CantaraGlobalConfig | undefined = undefined;
@@ -114,7 +137,21 @@ export async function loadCantaraGlobalConfig(
   const staticFilesPath = path.join(cantaraRootDir, 'static');
   const tempFolder = path.join(staticFilesPath, '.temp');
   const projectDir = config.projectDir || process.cwd();
-  const cantaraProjectMetaFolderPath = path.join(projectDir, '.cantara');
+
+  const persistanceData = readCantaraPersistentData(tempFolder);
+  let projectPersistanceData = getProjectPersistentData({
+    rootPath: projectDir,
+    tempFolder,
+  });
+  if (!projectPersistanceData) {
+    projectPersistanceData = writeProjectPersistenData({
+      data: {
+        rootPath: projectDir,
+        linkedPackages: [],
+      },
+      tempFolder,
+    });
+  }
 
   const allApps = await getAllApps({
     rootDir: projectDir,
@@ -149,28 +186,35 @@ export async function loadCantaraGlobalConfig(
 
   const nodeModulesPath = getCantaraDepenciesInstallationPath();
 
+  const liveLinkSuggestions: LiveLinkedPackageSuggestion[] = persistanceData
+    ? await getAllLiveLinkPackageSuggestions({ persistanceData, projectDir })
+    : [];
+
+  const internalPackageIncludes = allApps
+    .filter(
+      (app) => app.type === 'js-package' || app.type === 'react-component',
+    )
+    .map((app) => app.paths.src);
+
   const configToUse: CantaraGlobalConfig = {
     additionalCliOptions: config.additionalCliOptions || '',
     allApps,
     projectDir,
+    liveLinkSuggestions,
+    projectPersistanceData: projectPersistanceData,
     aliases: {
       packageAliases,
     },
-    dotCantaraDir: cantaraProjectMetaFolderPath,
     globalCantaraSettings,
     secrets: loadSecrets({ projectDir, secrets: EXPECTED_CANTARA_SECRETS }),
-    allPackages: {
-      include: allApps
-        .filter(
-          app => app.type === 'js-package' || app.type === 'react-component',
-        )
-        .map(app => app.paths.src),
+    includes: {
+      internalPackages: internalPackageIncludes,
     },
     dependencies: {
-      react: reactDependencies,
-      typescript: typescriptDependencies,
-      testing: testingDependencies,
-      common: commonDependencies,
+      react: getDependecyVersions(reactDependencies),
+      typescript: getDependecyVersions(typescriptDependencies),
+      testing: getDependecyVersions(testingDependencies),
+      common: getDependecyVersions(commonDependencies),
     },
     internalPaths: {
       root: cantaraRootDir,

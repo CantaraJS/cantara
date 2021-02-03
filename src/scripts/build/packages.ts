@@ -8,41 +8,45 @@ import execCmd from '../../util/exec';
 import slash from 'slash';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
+import { transpile } from '../../util/babel';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
   return new Promise((resolve, reject) => {
-    compiler.run(err => {
+    compiler.run((err) => {
       if (err) {
         reject(new Error('Error while compiling.'));
         return;
       }
-      console.log('Successfully compiled!');
-      resolve();
+      compiler.close((err) => {
+        if (err) {
+          reject(new Error('Error while compiling.'));
+        } else {
+          console.log('Successfully compiled!');
+          resolve(true);
+        }
+      });
     });
   });
 }
 
 export default async function buildPackage(app: CantaraApplication) {
   const {
-    allPackages: { include },
+    includes: { internalPackages },
     projectDir,
     aliases: { packageAliases },
     internalPaths: { root: cantaraRoot },
   } = getGlobalConfig();
 
-  const {
-    aliases: { appDependencyAliases },
-    env
-  } = getRuntimeConfig();
-  const allAliases = { ...appDependencyAliases, ...packageAliases };
+  const { env } = getRuntimeConfig();
+  const allAliases = { ...packageAliases };
 
   const commonOptions = {
     alias: allAliases,
     app,
     env,
     projectDir,
-    include,
+    include: internalPackages,
   };
 
   const webpackCommonJsConfig = createLibraryWebpackConfig({
@@ -57,10 +61,15 @@ export default async function buildPackage(app: CantaraApplication) {
     noChecks: false,
   });
 
-  const { libraryTargets = ['umd', 'commonjs'] } = app.meta;
+  const { libraryTargets = ['umd', 'commonjs'], skipBundling } = app.meta;
 
   if (libraryTargets.includes('commonjs')) {
-    await compile(webpackCommonJsConfig);
+    if (skipBundling) {
+      console.log('[CTRA] skipping bundling');
+      await transpile(app);
+    } else {
+      await compile(webpackCommonJsConfig);
+    }
   }
   if (libraryTargets.includes('umd')) {
     await compile(webpackUmdConfig);
@@ -86,7 +95,6 @@ export default async function buildPackage(app: CantaraApplication) {
       },
     );
   }
-
 
   // Set correct path to index.js in packageJson's "main" field
   const packageJsonPath = path.join(app.paths.root, 'package.json');

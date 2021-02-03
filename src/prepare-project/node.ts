@@ -1,17 +1,15 @@
 import { CantaraApplication } from '../util/types';
-import {
-  createOrUpdatePackageJSON,
-  autoInstallMissingPackages,
-} from './util/npm';
-import { createNodeJestConfig } from './util/jest';
+import { createOrUpdatePackageJSON } from './util/yarn';
+import { createNodeJestConfig } from './util/testing';
 import { createLocalAppTsConfig } from './util/typescript';
+import { generateRuntimePresetCode } from './util/runtime-presets';
 
 export default async function prepareNodeApp(app: CantaraApplication) {
   await createOrUpdatePackageJSON({ rootDir: app.paths.root });
-  // Auto-install packages
-  await autoInstallMissingPackages(app.paths.root);
   createNodeJestConfig(app);
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
   createLocalAppTsConfig({ app, indexFileName: 'index.ts' });
+
+  await generateRuntimePresetCode(app);
 }

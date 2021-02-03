@@ -1,5 +1,5 @@
-import { existsSync, lstatSync, readdirSync, readFileSync } from 'fs';
-import path = require('path');
+import { existsSync, lstatSync, readdirSync } from 'fs';
+import path from 'path';
 import {
   CantaraApplication,
   CantaraApplicationType,
@@ -11,7 +11,7 @@ const isDirectory = (source: string) => lstatSync(source).isDirectory();
 const getDirectories = (source: string) => {
   try {
     return readdirSync(source)
-      .map(name => path.join(source, name))
+      .map((name) => path.join(source, name))
       .filter(isDirectory);
   } catch (e) {
     return [];
@@ -69,15 +69,15 @@ export default async function getAllApps({
   } = getAllCantaraProjectFolders(rootDir);
 
   const allAppsDirectories: { dir: string; type: string }[] = [
-    ...getDirectories(reactAppsRootDir).map(dir => ({ dir, type: 'react' })),
-    ...getDirectories(packagesAppsRootDir).map(dir => ({
+    ...getDirectories(reactAppsRootDir).map((dir) => ({ dir, type: 'react' })),
+    ...getDirectories(packagesAppsRootDir).map((dir) => ({
       dir,
       type: 'package',
     })),
-    ...getDirectories(nodeAppsRootDir).map(dir => ({ dir, type: 'node' })),
+    ...getDirectories(nodeAppsRootDir).map((dir) => ({ dir, type: 'node' })),
   ];
 
-  const allApps: CantaraApplication[] = await Promise.all(
+  let allApps: CantaraApplication[] = await Promise.all(
     allAppsDirectories.map(async ({ dir, type }) => {
       let typeToUse: CantaraApplicationType = type as CantaraApplicationType;
       let displayName = path.basename(dir);
@@ -125,27 +125,38 @@ export default async function getAllApps({
         userAddedMetadata = require(cantaraConfigPath);
       }
 
+      const appMeta: CantaraApplicationMetaInformation = {
+        displayName,
+        ...userAddedMetadata,
+      };
+
+      // Custom or standard app static folder
+      const appStaticFolder = appMeta.staticFolder
+        ? path.join(dir, appMeta.staticFolder)
+        : path.join(dir, 'static');
+
+      const appSrc = path.join(dir, 'src');
+
       return {
         name: appName,
         type: typeToUse,
         paths: {
           root: dir,
-          src: path.join(dir, 'src'),
+          src: appSrc,
           build: path.join(dir, 'build'),
           assets: path.join(dir, 'assets'),
-          static: path.join(dir, 'static'),
+          static: appStaticFolder,
+          runtimePresets: path.join(dir, 'presets'),
+          runtimePresetEntry: path.join(appSrc, 'app-preset/index.ts'),
         },
-        meta: {
-          displayName,
-          ...userAddedMetadata,
-        },
+        meta: appMeta,
       };
     }),
   );
 
   // Require index.ts(x) file to exist for every app
   // and react component
-  allApps.forEach(app => {
+  allApps = allApps.filter((app) => {
     let doesIndexFileExist = false;
     if (app.type === 'js-package') {
       doesIndexFileExist = true;
@@ -161,10 +172,11 @@ export default async function getAllApps({
     }
 
     if (!doesIndexFileExist) {
-      throw new Error(
+      console.log(
         `Entry file for "${app.name}" was not found. Please create it.`,
       );
     }
+    return doesIndexFileExist;
   });
 
   return allApps;
@@ -197,4 +209,24 @@ export function loadSecrets({
   }
 
   return secrets;
+}
+
+/**
+ * Transforms an array of npm package names
+ * into a map containing the currently
+ * installed version in cantara by retrieving
+ * it from the package.json
+ */
+export function getDependecyVersions(dependencies: string[]) {
+  const cantaraRootDir = path.join(__dirname, '..', '..');
+  const packageJson = readFileAsJSON(path.join(cantaraRootDir, 'package.json'));
+  const versionMap = dependencies.reduce((obj, dep) => {
+    const version =
+      packageJson.dependencies[dep] || packageJson.devDependencies[dep];
+    return {
+      ...obj,
+      [dep]: version,
+    };
+  }, {} as { [key: string]: string });
+  return versionMap;
 }

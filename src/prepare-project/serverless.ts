@@ -6,14 +6,12 @@ import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
 
 import { webpackExternalsAsStringArray } from '../util/externals';
-import {
-  createOrUpdatePackageJSON,
-  autoInstallMissingPackages,
-} from './util/npm';
-import { createNodeJestConfig } from './util/jest';
+import { createOrUpdatePackageJSON } from './util/yarn';
+import { createNodeJestConfig } from './util/testing';
 import { createLocalAppTsConfig } from './util/typescript';
 import getGlobalConfig from '../cantara-config/global-config';
 import getRuntimeConfig from '../cantara-config/runtime-config';
+import { generateRuntimePresetCode } from './util/runtime-presets';
 
 const mergeYaml = require('@alexlafroscia/yaml-merge');
 
@@ -63,14 +61,21 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   ).toString();
 
   const allAliases = {
-    ...runtimeConfig.aliases.appDependencyAliases,
     ...globalCantaraConfig.aliases.packageAliases,
+    ...runtimeConfig.aliases.otherAliases,
   };
-  const externals = webpackExternalsAsStringArray();
+  // Externals must not contain aliases
+  const externals = webpackExternalsAsStringArray({
+    ignore: Object.keys(allAliases),
+  });
 
   const allIncludes = [
     app.paths.src,
-    ...globalCantaraConfig.allPackages.include,
+    ...globalCantaraConfig.includes.internalPackages,
+    // TODO: We shouldn't include linked packages during development here,
+    // but I really don't see any practical difference for now, as in most cases
+    // you won't deploy serverless endpoints directly from your machine
+    ...runtimeConfig.includes.linkedPackages,
   ];
 
   const MODULES_PATH =
@@ -164,9 +169,6 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
   // Create package.json
   await createOrUpdatePackageJSON({ rootDir: app.paths.root });
 
-  // Auto-install packages
-  await autoInstallMissingPackages(app.paths.root);
-
   // First, create the webpack and the babel config with the correct paths
   createWebpackAndBabelConfigFromTemplate(app);
 
@@ -180,4 +182,6 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
   createLocalAppTsConfig({ app, indexFileName: 'index.tsx' });
+
+  await generateRuntimePresetCode(app);
 }

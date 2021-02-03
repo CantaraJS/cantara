@@ -1,12 +1,15 @@
 # <--CANTARA specific configuration START --> Do not edit this!
 plugins:
-  - <--MODULES_PATH-->serverless-offline
   - <--MODULES_PATH-->serverless-webpack
+  - <--MODULES_PATH-->serverless-offline
 
 custom:
+  serverless-offline:
+    useChildProcesses: true
+    noPrependStageInUrl: true
   webpack:
     webpackConfig: '<--WEBPACK_CONFIG_PATH-->'
     includeModules:
       packagePath: './package.json'
-    packager: 'npm'
+    packager: 'yarn'
 # <--CANTARA specific configuration END -->

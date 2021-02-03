@@ -19,4 +19,5 @@ export interface CreateWebpackConfigParams {
    * in the bundle
    */
   env?: { [key: string]: string };
+  resolveModules?: string[];
 }

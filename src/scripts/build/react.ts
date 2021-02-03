@@ -4,38 +4,49 @@ import webpack from 'webpack';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
 
-function compile(config: webpack.Configuration) {
+function compile(config: webpack.Configuration): Promise<void> {
   const compiler = webpack(config);
   return new Promise((resolve, reject) => {
-    compiler.run(err => {
+    compiler.run((err) => {
       if (err) {
         reject(new Error('Error while compiling.'));
         return;
       }
-      console.log('Successfully compiled!');
-      resolve();
+      compiler.close((err) => {
+        if (err) {
+          reject(new Error('Error while compiling.'));
+        } else {
+          console.log('Successfully compiled!');
+          resolve();
+        }
+      });
     });
   });
 }
 
 export default async function buildReactApp(app: CantaraApplication) {
   const {
-    allPackages: { include },
+    includes: { internalPackages },
     projectDir,
     aliases: { packageAliases },
   } = getGlobalConfig();
 
-  const { env, aliases: { appDependencyAliases} } = getRuntimeConfig();
+  const {
+    env,
+    aliases: { otherAliases },
+  } = getRuntimeConfig();
 
   const webpackConfig = createReactWebpackConfig({
-    alias: { ...packageAliases, ...appDependencyAliases },
+    alias: {
+      ...packageAliases,
+      ...otherAliases,
+    },
     app,
     env: env,
     mode: 'production',
     projectDir,
-    include,
+    include: internalPackages,
   });
 
-  return compile(webpackConfig)
+  return compile(webpackConfig);
 }
-

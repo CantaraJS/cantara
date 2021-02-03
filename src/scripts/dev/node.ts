@@ -6,23 +6,31 @@ import getRuntimeConfig from '../../cantara-config/runtime-config';
 
 export function startNodeAppDevelopmentServer() {
   const {
-    allPackages: { include },
+    includes: { internalPackages },
     projectDir,
     additionalCliOptions,
     aliases: { packageAliases },
   } = getGlobalConfig();
 
   const {
+    includes: { linkedPackages },
+  } = getRuntimeConfig();
+
+  const {
     env,
     currentCommand: { app: activeApp },
+    aliases: { otherAliases },
   } = getRuntimeConfig();
 
   const webpackConfig = createNodeWebpackConfig({
     app: activeApp,
-    alias: packageAliases,
+    alias: {
+      ...packageAliases,
+      ...otherAliases,
+    },
     projectDir,
     env,
-    include,
+    include: [...internalPackages, ...linkedPackages],
     nodemonOptions: additionalCliOptions ? [additionalCliOptions] : undefined,
   });
 

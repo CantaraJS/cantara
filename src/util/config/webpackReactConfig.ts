@@ -17,15 +17,16 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const webpackMerge = require('webpack-merge');
+const { merge: webpackMerge } = require('webpack-merge');
 
 export default function createReactWebpackConfig({
   app,
   alias = {},
   mode = 'development',
   env = {},
-  include,
+  include = [],
   projectDir,
+  resolveModules,
 }: CreateWebpackConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -34,6 +35,7 @@ export default function createReactWebpackConfig({
   const appIconPathSvg = path.join(app.paths.assets!, 'app_icon.svg');
   const serviceWorkerPath = path.join(app.paths.src, 'sw.js');
   const doesServiceWorkerExist = existsSync(serviceWorkerPath);
+  const enablePwa = isProduction;
 
   if (existsSync(appIconPathPng)) {
     iconPathToUse = appIconPathPng;
@@ -51,20 +53,29 @@ export default function createReactWebpackConfig({
   const webpackReactAppConfig: Configuration = {
     resolve: {
       alias,
+      modules: resolveModules,
     },
     externals,
     mode,
     devtool:
       isDevelopment || app.meta.sourceMaps ? 'eval-source-map' : undefined,
     output: {
-      filename: '[name].[hash:4].js',
+      filename: '[name].[contenthash].js',
       path: app.paths.build,
       chunkFilename: '[name].[chunkhash:4].js',
+      publicPath: '/',
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin({
-        tsconfig: path.join(app.paths.root, '.tsconfig.local.json'),
-        watch: app.paths.src,
+        typescript: {
+          configFile: path.join(app.paths.root, '.tsconfig.local.json'),
+          diagnosticOptions: {
+            semantic: true,
+            syntactic: true,
+          },
+          mode: 'write-references',
+        },
+        // watch: app.paths.src,
       }),
       isDevelopment ? new webpack.HotModuleReplacementPlugin() : undefined,
       new WebpackNotifierPlugin({
@@ -82,13 +93,8 @@ export default function createReactWebpackConfig({
       //       inject: true,
       //     })
       //   : undefined,
-      // disableRefreshCheck: true needs to be set because of https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/15
-      isDevelopment
-        ? new ReactRefreshWebpackPlugin({
-            disableRefreshCheck: true,
-          })
-        : undefined,
-      doesServiceWorkerExist
+      isDevelopment ? new ReactRefreshWebpackPlugin() : undefined,
+      enablePwa && doesServiceWorkerExist
         ? new WebpackPwaManifest({
             // gcm_sender_id,
             theme_color: app.meta.themeColor,
@@ -107,7 +113,7 @@ export default function createReactWebpackConfig({
             ...app.meta.pwaManifest,
           })
         : undefined,
-      doesServiceWorkerExist
+      enablePwa && doesServiceWorkerExist
         ? new InjectManifest({
             swSrc: serviceWorkerPath,
           })
@@ -143,11 +149,11 @@ export default function createReactWebpackConfig({
     optimization: isProduction
       ? {
           splitChunks: {
-            chunks: 'initial',
+            chunks: 'all',
           },
-          runtimeChunk: {
-            name: 'manifest',
-          },
+          // runtimeChunk: {
+          //   name: 'manifest',
+          // },
         }
       : undefined,
   };

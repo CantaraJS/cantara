@@ -9,23 +9,24 @@ import prepareServerlessApp from './serverless';
 import prepareJsPackage from './packages';
 import { writeJson } from '../util/fs';
 import prepareNodeApp from './node';
-import { createOrUpdatePackageJSON } from './util/npm';
+import { createOrUpdatePackageJSON } from './util/yarn';
 import { createTempEnvJsonFile } from './util/env';
-import { createJestConfig } from './util/jest';
-import setupGitHooks from './util/git-hooks';
+import { createJestConfig } from './util/testing';
 import getGlobalConfig from '../cantara-config/global-config';
+import execCmd from '../util/exec';
+import getRuntimeConfig from '../cantara-config/runtime-config';
 
 const ncp = promisify(ncpCb);
 
 /** Make paths relative for typescript */
-function aliasesAbsoluteToRelative(aliases: { [key: string]: string }) {
+function aliasesToTypeScriptPaths(aliases: { [key: string]: string }) {
   return Object.keys(aliases).reduce((newObj, currAliasName) => {
     const currPath = aliases[currAliasName];
-    const newPath = currPath.slice(currPath.lastIndexOf('packages'));
+    // const newPath = currPath.slice(currPath.lastIndexOf('packages'));
     return {
       ...newObj,
-      [currAliasName]: [newPath],
-      [`${currAliasName}/*`]: [`${newPath}/*`],
+      [currAliasName]: [currPath],
+      [`${currAliasName}/*`]: [`${currPath}/*`],
     };
   }, {});
 }
@@ -42,6 +43,7 @@ async function prepareUserProject() {
     { from: '.gitignore-template', to: '.gitignore' },
     { from: '.prettierrc' },
     { from: 'global.d.ts' },
+    { from: 'lerna.json' },
   ];
   for (const pathToCopy of STATIC_PATHS_TO_COPY) {
     const fromPath = path.join(
@@ -68,28 +70,34 @@ async function prepareUserProject() {
     aliases: { packageAliases },
   } = globalCantaraConfig;
 
+  const {
+    aliases: { linkedPackageAliases, otherAliases },
+  } = getRuntimeConfig();
+
   const newTsConfig = {
     ...tsConfig,
     compilerOptions: {
       ...tsConfig.compilerOptions,
-      paths: aliasesAbsoluteToRelative(packageAliases),
+      paths: aliasesToTypeScriptPaths({
+        ...packageAliases,
+        ...linkedPackageAliases,
+        ...otherAliases,
+      }),
     },
   };
   writeJson(path.join(rootDir, 'tsconfig.json'), newTsConfig);
 
-  // Install React + Typescript dependencies globally for project
+  // Install Typescript dependencies globally for project
+  // + Add workspace declarations to package.json
   await createOrUpdatePackageJSON({
     rootDir,
-    expectedDependencies: globalCantaraConfig.dependencies.react,
     expectedDevDependencies: {
       ...globalCantaraConfig.dependencies.typescript,
       // ...globalCantaraConfig.dependencies.testing,
       ...globalCantaraConfig.dependencies.common,
     },
+    workspaces: ['packages/*', 'node-apps/*', 'react-apps/*'],
   });
-
-  // Setup git hooks
-  await setupGitHooks();
 
   // Create .temp folder if it doesn't exist yet
   if (!existsSync(globalCantaraConfig.internalPaths.temp)) {
@@ -103,12 +111,6 @@ async function prepareUserProject() {
     dir: rootDir,
     configTemplateFileName: 'jestGlobalConfig.template.js',
   });
-
-  // Create .cantara folder if it doesn't exist
-  const dotCantaraDir = globalCantaraConfig.dotCantaraDir;
-  if (!existsSync(dotCantaraDir)) {
-    mkdirSync(dotCantaraDir, { recursive: true });
-  }
 }
 
 /**
@@ -137,4 +139,10 @@ export default async function prepareCantaraProject() {
       await prepareNodeApp(app);
     }
   }
+
+  // Run "yarn" in the project's root, which syncs all dependencies
+  await execCmd('yarn', {
+    workingDirectory: globalCantaraConfig.projectDir,
+    redirectIo: true,
+  });
 }
