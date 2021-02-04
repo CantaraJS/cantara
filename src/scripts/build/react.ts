@@ -3,6 +3,7 @@ import createReactWebpackConfig from '../../util/config/webpackReactConfig';
 import webpack from 'webpack';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
+import { logBuildTime } from './util';
 
 function compile(config: webpack.Configuration): Promise<void> {
   const compiler = webpack(config);
@@ -16,7 +17,6 @@ function compile(config: webpack.Configuration): Promise<void> {
         if (err) {
           reject(new Error('Error while compiling.'));
         } else {
-          console.log('Successfully compiled!');
           resolve();
         }
       });
@@ -48,5 +48,12 @@ export default async function buildReactApp(app: CantaraApplication) {
     include: internalPackages,
   });
 
-  return compile(webpackConfig);
+  const onComplete = logBuildTime({
+    stepName: 'Compiling optimized bundle',
+    toolName: 'Webpack',
+  });
+
+  await compile(webpackConfig);
+
+  onComplete();
 }
