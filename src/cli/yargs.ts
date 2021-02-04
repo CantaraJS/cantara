@@ -193,9 +193,11 @@ export default async function buildYargsCommands({
             activeRuntimeApplicationPresetName: runtimePresetArg || 'default',
           });
 
-          const canSelectRuntimePreset = await fsExists(
-            runtimeConfig.currentCommand.app.paths.runtimePresets,
-          );
+          const canSelectRuntimePreset =
+            !runtimePresetArg &&
+            (await fsExists(
+              runtimeConfig.currentCommand.app.paths.runtimePresets,
+            ));
 
           if (canSelectRuntimePreset) {
             const availablePresetName = getAllRuntimePresetNames(
