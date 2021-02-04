@@ -9,6 +9,7 @@ import slash from 'slash';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
 import { transpile } from '../../util/babel';
+import { logBuildTime } from './util';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
@@ -22,7 +23,6 @@ function compile(config: webpack.Configuration) {
         if (err) {
           reject(new Error('Error while compiling.'));
         } else {
-          console.log('Successfully compiled!');
           resolve(true);
         }
       });
@@ -65,14 +65,28 @@ export default async function buildPackage(app: CantaraApplication) {
 
   if (libraryTargets.includes('commonjs')) {
     if (skipBundling) {
-      console.log('[CTRA] skipping bundling');
+      const onTranspiled = logBuildTime({
+        stepName: 'Transpiling',
+        toolName: 'Babel',
+      });
       await transpile(app);
+      onTranspiled();
     } else {
+      const onCompiled = logBuildTime({
+        stepName: 'Bundling as CommonJS module',
+        toolName: 'Webpack',
+      });
       await compile(webpackCommonJsConfig);
+      onCompiled();
     }
   }
   if (libraryTargets.includes('umd')) {
+    const onCompiled = logBuildTime({
+      stepName: 'Creating optimized UMD build',
+      toolName: 'Webpack',
+    });
     await compile(webpackUmdConfig);
+    onCompiled();
   }
 
   if (!app.meta.skipTypeGeneration) {
@@ -87,6 +101,10 @@ export default async function buildPackage(app: CantaraApplication) {
     );
 
     const tscSilentBin = path.join(cantaraRoot, 'node_modules/.bin/tsc-silent');
+    const onTypesGenerated = logBuildTime({
+      stepName: 'Generating types',
+      toolName: 'TSC',
+    });
     await execCmd(
       `"${tscSilentBin}" --compiler "${tsPath}" --project "${tsConfigPath}"${suppress}`,
       {
@@ -94,6 +112,7 @@ export default async function buildPackage(app: CantaraApplication) {
         redirectIo: true,
       },
     );
+    onTypesGenerated();
   }
 
   // Set correct path to index.js in packageJson's "main" field
