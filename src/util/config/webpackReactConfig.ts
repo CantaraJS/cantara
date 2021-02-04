@@ -166,6 +166,10 @@ export default function createReactWebpackConfig({
     include,
     projectDir,
   });
-  const mergedConfig = webpackMerge(commonConfig, webpackReactAppConfig);
+  const mergedConfig = webpackMerge(
+    webpackReactAppConfig,
+    commonConfig,
+  ) as Configuration;
+
   return mergedConfig;
 }
