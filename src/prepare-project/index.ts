@@ -15,6 +15,7 @@ import { createJestConfig } from './util/testing';
 import getGlobalConfig from '../cantara-config/global-config';
 import execCmd from '../util/exec';
 import getRuntimeConfig from '../cantara-config/runtime-config';
+import slash from 'slash';
 
 const ncp = promisify(ncpCb);
 
@@ -58,14 +59,19 @@ async function prepareUserProject() {
   }
 
   // Read tsconfig.json and add package aliases
-  const tsConfig = JSON.parse(
-    readFileSync(
-      path.join(
-        globalCantaraConfig.internalPaths.static,
-        'tsConfigTemplate.json',
-      ),
-    ).toString(),
+  let tsConfigTemplate = readFileSync(
+    path.join(
+      globalCantaraConfig.internalPaths.static,
+      'tsConfigTemplate.json',
+    ),
+  ).toString();
+
+  tsConfigTemplate = tsConfigTemplate.replace(
+    '<--MODULES_PATH-->',
+    slash(globalCantaraConfig.internalPaths.nodeModules),
   );
+
+  const tsConfig = JSON.parse(tsConfigTemplate);
   const {
     aliases: { packageAliases },
   } = globalCantaraConfig;

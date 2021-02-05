@@ -26,7 +26,12 @@ module.exports = {
       'e2e_testing',
       'migrations',
     ],
-    ['Advanced']: ['css', 'external_dependencies', 'cantara_config_js'],
+    ['Advanced']: [
+      'css',
+      'external_dependencies',
+      'css_modules_types',
+      'cantara_config_js',
+    ],
     ['Other']: ['starter_templates'],
     ['For maintainer']: ['maintainers_intro'],
   },

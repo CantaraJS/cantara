@@ -16,6 +16,12 @@
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "baseUrl": "./",
-    "jsx": "react"
+    "jsx": "react",
+    "plugins": [
+      {
+        "name": "<--MODULES_PATH-->/typescript-plugin-css-modules",
+        "options": { "classnameTransform": "camelCaseOnly" }
+      }
+    ]
   }
 }
