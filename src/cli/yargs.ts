@@ -29,6 +29,7 @@ export default async function buildYargsCommands({
       needsLiveLinkSuggestion,
       appTypes = [],
       retrieveAdditionalCliParams,
+      canHaveRuntimePreset,
     } = command.configuration;
 
     if (needsActiveApp) {
@@ -87,6 +88,9 @@ export default async function buildYargsCommands({
             type: 'string',
             choices: availableAppNames,
           });
+        }
+
+        if (canHaveRuntimePreset) {
           yargs.option('preset', {
             alias: 'p',
             type: 'string',
@@ -194,6 +198,7 @@ export default async function buildYargsCommands({
           });
 
           const canSelectRuntimePreset =
+            canHaveRuntimePreset &&
             !runtimePresetArg &&
             (await fsExists(
               runtimeConfig.currentCommand.app.paths.runtimePresets,
