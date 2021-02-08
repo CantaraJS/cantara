@@ -57,6 +57,12 @@ export interface CantaraCommand<TParameters = any> {
      */
     needsActiveLiveLink?: boolean;
     /**
+     * Set to true if you want
+     * the runtime preset selection
+     * dialog to appear for this command
+     */
+    canHaveRuntimePreset?: boolean;
+    /**
      * App types this command can
      * be executed with.
      */
@@ -88,6 +94,7 @@ const devCommand: CantaraCommand = {
   description: 'Start the development server',
   configuration: {
     needsActiveApp: true,
+    canHaveRuntimePreset: true,
     appTypes: ['node', 'react', 'serverless'],
   },
   execute: async () => {
@@ -101,6 +108,7 @@ const buildCommand: CantaraCommand = {
   description: 'Create a production build of a package/app',
   configuration: {
     needsActiveApp: true,
+    canHaveRuntimePreset: true,
     appTypes: ['node', 'react', 'react-component', 'js-package'],
   },
   execute: async () => {
