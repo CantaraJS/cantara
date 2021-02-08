@@ -5,6 +5,8 @@ title: TypeScript + CSS Modules
 
 When using CSS Modules, it's handy to have correctly typed imports during development.
 
+![autocomplete](https://raw.githubusercontent.com/mrmckeb/typescript-plugin-css-modules/main/.github/images/example.gif)
+
 This should work out of the box with Cantara thanks to an [awesome language server plugin](https://github.com/mrmckeb/typescript-plugin-css-modules).
 
 Because it's just a language server plugin, this won't work during build time and is just a helper when developing your app with VSCode.
