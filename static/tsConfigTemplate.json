@@ -3,6 +3,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "skipLibCheck": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
     "target": "ES2019",
     "moduleResolution": "node",
     "module": "esnext",
