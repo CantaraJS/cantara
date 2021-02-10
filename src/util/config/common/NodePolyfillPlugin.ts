@@ -12,7 +12,7 @@ export default class NodePolyfillPlugin {
       new ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
         // console: require('console-browserify'),
-        process: 'process/browser',
+        process: require.resolve('process/browser'),
       }),
     );
 
