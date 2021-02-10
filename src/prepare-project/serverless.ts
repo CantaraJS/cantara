@@ -154,14 +154,20 @@ function createServerlessYml(app: CantaraApplication) {
   );
   writeFileSync(serverlessPartsFilePath, newServerlessYmlParts);
 
-  const userServerlessYmlPath = path.join(app.paths.root, 'serverless.yml');
+  const userServerlessYmlPath = path.join(
+    app.paths.root,
+    'serverless.main.yml',
+  );
+
+  const actualServerlessFilePath = path.join(app.paths.root, 'serverless.yml');
 
   // Merge user's yaml file and this one
-  const newServerlessYml = mergeYaml(
-    userServerlessYmlPath,
+  let newServerlessYml = mergeYaml(
     serverlessPartsFilePath,
+    userServerlessYmlPath,
   );
-  writeFileSync(userServerlessYmlPath, newServerlessYml);
+
+  writeFileSync(actualServerlessFilePath, newServerlessYml);
 }
 
 /** Prepares Serverless App Folder */

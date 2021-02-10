@@ -46,6 +46,7 @@
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.3",
     "@types/jest": "^26.0.20",
+    "@types/js-yaml": "^4.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "array-flat-polyfill": "^1.0.1",
