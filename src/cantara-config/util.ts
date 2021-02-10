@@ -115,9 +115,18 @@ export default async function getAllApps({
       }
 
       if (type === 'node') {
-        typeToUse = (await fsExists(path.join(dir, 'serverless.yml')))
-          ? 'serverless'
-          : 'node';
+        const doesLegacyServerlessYmlExist = await fsExists(
+          path.join(dir, 'serverless.yml'),
+        );
+        const doesNewServerlessYmlExist = await fsExists(
+          path.join(dir, 'serverless.main.yml'),
+        );
+        if (doesLegacyServerlessYmlExist && !doesNewServerlessYmlExist) {
+          throw new Error(
+            'Rename your serverless.yml files to serverless.main.yml and add serverless.yml to .gitignore!',
+          );
+        }
+        typeToUse = doesNewServerlessYmlExist ? 'serverless' : 'node';
       }
 
       const cantaraConfigPath = path.join(dir, 'cantara.config.js');

@@ -33,7 +33,7 @@ ctra new react-component awesome-image-viewer
 
 ## Adding parts _manually_ by creating the respective files yourself
 
-To add a new package/Node app/React app to your project, simply create a new folder either under `node-apps`, `packages` or `react-apps` and create a `src` folder. Depending if it is a React app/component or not, create a new file `index.ts` / `index.tsx` in the `src` directory. For new serverless endpoints, you also need to create a `handler.js` and a `serverless.yml` file (but not under `src`, one layer above). And that's it, now you are ready to go!
+To add a new package/Node app/React app to your project, simply create a new folder either under `node-apps`, `packages` or `react-apps` and create a `src` folder. Depending if it is a React app/component or not, create a new file `index.ts` / `index.tsx` in the `src` directory. For new serverless endpoints, you also need to create a `handler.js` and a `serverless.main.yml` file (but not under `src`, one layer above). And that's it, now you are ready to go!
 
 Now, that you've create a new package or app, you can start using it straight away.
 For packages, just `import` them into your apps.
