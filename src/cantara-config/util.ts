@@ -182,7 +182,7 @@ export default async function getAllApps({
 
     if (!doesIndexFileExist) {
       console.log(
-        `Entry file for "${app.name}" was not found. Please create it.`,
+        `Entry file for "${app.name}" (type: ${app.type}) was not found. Please create it.`,
       );
     }
     return doesIndexFileExist;
