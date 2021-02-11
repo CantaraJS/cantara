@@ -116,6 +116,7 @@ module.exports = {
   // (e.g. typegoose) don't break in production
   // which is a nightmare to debug and find out 
   optimization: {
+    concatenateModules: false,
     minimizer: [
       new TerserPlugin({
         parallel: true,
