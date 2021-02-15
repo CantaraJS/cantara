@@ -25,6 +25,7 @@ export default function createNodeWebpackConfig({
   env = {},
   include = [],
   nodemonOptions = ['--inspect', '--enable-source-maps'],
+  resolveModules,
 }: CreateNodeWebpackConfigOptions): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -60,6 +61,7 @@ export default function createNodeWebpackConfig({
         '.d.ts',
       ],
       alias,
+      modules: resolveModules,
     },
     module: {
       rules: [
