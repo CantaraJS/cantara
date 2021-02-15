@@ -83,10 +83,16 @@ export function createGlobalTsConfig() {
 
   const {
     aliases: { linkedPackageAliases, otherAliases },
+    tsFilesToInclude,
   } = getRuntimeConfig();
 
   const newTsConfig = {
     ...tsConfig,
+    include: [
+      ...(tsConfig.include ? tsConfig.include : []),
+      '**/*',
+      ...tsFilesToInclude,
+    ],
     compilerOptions: {
       ...tsConfig.compilerOptions,
       paths: aliasesToTypeScriptPaths({

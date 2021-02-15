@@ -7,6 +7,8 @@ import {
   linkedPackagesToWebpackAliases,
   linkedPackagesToWebpackInclude,
 } from '../util/live-link';
+import path from 'path';
+import { existsSync } from 'fs';
 
 export interface CantaraRuntimeConfig {
   /** Information about current command */
@@ -48,6 +50,12 @@ export interface CantaraRuntimeConfig {
    * application
    */
   activeRuntimeApplicationPresetName?: string;
+  /**
+   * Additional TS files which
+   * need to be included in
+   * tsconfig.json
+   */
+  tsFilesToInclude: string[];
 }
 
 interface LoadCantaraRuntimeConfigOptions {
@@ -91,6 +99,7 @@ export async function loadCantaraRuntimeConfig({
   let linkedPackageIncludes: string[] = [];
 
   const { linkedPackages: projectLinkedPackages } = projectPersistanceData;
+  let tsFilesToInclude: string[] = [];
 
   if (currentCommand.name === 'dev') {
     // Cantara Live Link is only active during development
@@ -100,6 +109,16 @@ export async function loadCantaraRuntimeConfig({
     linkedPackageIncludes = linkedPackagesToWebpackInclude(
       projectLinkedPackages,
     );
+    // Include global.d.ts file of the package's project
+    // (if exists)
+    const packagesRootGlobalTsFiles = [
+      ...new Set(
+        projectLinkedPackages
+          .map((packagePath) => path.join(packagePath, '../..', 'global.d.ts'))
+          .filter(existsSync),
+      ),
+    ];
+    tsFilesToInclude = packagesRootGlobalTsFiles;
   }
 
   const stage =
@@ -151,6 +170,7 @@ export async function loadCantaraRuntimeConfig({
       linkedPackages: linkedPackageIncludes,
     },
     activeRuntimeApplicationPresetName,
+    tsFilesToInclude,
   };
 
   return runtimeConfig;
