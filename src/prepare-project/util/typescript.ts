@@ -33,6 +33,7 @@ export function createLocalAppTsConfig({
   app,
 }: CreateLocalAppTsConfigOptions) {
   const globalCantaraConfig = getGlobalConfig();
+  const { tsFilesToInclude } = getRuntimeConfig();
   const appLocalTsConfigTemplate = readFileSync(
     path.join(
       globalCantaraConfig.internalPaths.static,
@@ -54,7 +55,7 @@ export function createLocalAppTsConfig({
   const customTypes = app.meta.customTypes || [];
   tsConfig = {
     ...tsConfig,
-    include: [...(tsConfig.include || []), ...customTypes],
+    include: [...(tsConfig.include || []), ...customTypes, ...tsFilesToInclude],
   };
 
   writeJson(appLocalTsConfigPath, tsConfig);
@@ -83,16 +84,10 @@ export function createGlobalTsConfig() {
 
   const {
     aliases: { linkedPackageAliases, otherAliases },
-    tsFilesToInclude,
   } = getRuntimeConfig();
 
   const newTsConfig = {
     ...tsConfig,
-    include: [
-      ...(tsConfig.include ? tsConfig.include : []),
-      '**/*',
-      ...tsFilesToInclude,
-    ],
     compilerOptions: {
       ...tsConfig.compilerOptions,
       paths: aliasesToTypeScriptPaths({
