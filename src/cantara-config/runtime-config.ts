@@ -85,13 +85,22 @@ export async function loadCantaraRuntimeConfig({
     projectPersistanceData,
   } = getGlobalConfig();
 
+  let linkedPackageAliases: {
+    [key: string]: string;
+  } = {};
+  let linkedPackageIncludes: string[] = [];
+
   const { linkedPackages: projectLinkedPackages } = projectPersistanceData;
-  const linkedPackageAliases = linkedPackagesToWebpackAliases(
-    projectLinkedPackages,
-  );
-  const linkedPackageIncludes = linkedPackagesToWebpackInclude(
-    projectLinkedPackages,
-  );
+
+  if (currentCommand.name === 'dev') {
+    // Cantara Live Link is only active during development
+    linkedPackageAliases = linkedPackagesToWebpackAliases(
+      projectLinkedPackages,
+    );
+    linkedPackageIncludes = linkedPackagesToWebpackInclude(
+      projectLinkedPackages,
+    );
+  }
 
   const stage =
     !stageParam || stageParam === 'not_set'

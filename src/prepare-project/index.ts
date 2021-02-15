@@ -7,30 +7,15 @@ import prepareReactApps from './react';
 
 import prepareServerlessApp from './serverless';
 import prepareJsPackage from './packages';
-import { writeJson } from '../util/fs';
 import prepareNodeApp from './node';
 import { createOrUpdatePackageJSON } from './util/yarn';
 import { createTempEnvJsonFile } from './util/env';
 import { createJestConfig } from './util/testing';
 import getGlobalConfig from '../cantara-config/global-config';
 import execCmd from '../util/exec';
-import getRuntimeConfig from '../cantara-config/runtime-config';
-import slash from 'slash';
+import { createGlobalTsConfig } from './util/typescript';
 
 const ncp = promisify(ncpCb);
-
-/** Make paths relative for typescript */
-function aliasesToTypeScriptPaths(aliases: { [key: string]: string }) {
-  return Object.keys(aliases).reduce((newObj, currAliasName) => {
-    const currPath = aliases[currAliasName];
-    // const newPath = currPath.slice(currPath.lastIndexOf('packages'));
-    return {
-      ...newObj,
-      [currAliasName]: [currPath],
-      [`${currAliasName}/*`]: [`${currPath}/*`],
-    };
-  }, {});
-}
 
 /** Prepares user's project */
 async function prepareUserProject() {
@@ -58,40 +43,8 @@ async function prepareUserProject() {
     }
   }
 
-  // Read tsconfig.json and add package aliases
-  let tsConfigTemplate = readFileSync(
-    path.join(
-      globalCantaraConfig.internalPaths.static,
-      'tsConfigTemplate.json',
-    ),
-  ).toString();
-
-  tsConfigTemplate = tsConfigTemplate.replace(
-    '<--MODULES_PATH-->',
-    slash(globalCantaraConfig.internalPaths.nodeModules),
-  );
-
-  const tsConfig = JSON.parse(tsConfigTemplate);
-  const {
-    aliases: { packageAliases },
-  } = globalCantaraConfig;
-
-  const {
-    aliases: { linkedPackageAliases, otherAliases },
-  } = getRuntimeConfig();
-
-  const newTsConfig = {
-    ...tsConfig,
-    compilerOptions: {
-      ...tsConfig.compilerOptions,
-      paths: aliasesToTypeScriptPaths({
-        ...packageAliases,
-        ...linkedPackageAliases,
-        ...otherAliases,
-      }),
-    },
-  };
-  writeJson(path.join(rootDir, 'tsconfig.json'), newTsConfig);
+  // CREATE GLOBAL TSCONFIG
+  createGlobalTsConfig();
 
   // Install Typescript dependencies globally for project
   // + Add workspace declarations to package.json
