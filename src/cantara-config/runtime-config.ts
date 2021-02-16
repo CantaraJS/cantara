@@ -3,6 +3,7 @@ import getGlobalConfig from './global-config';
 import loadAppEnvVars from './envvars';
 import deriveStageNameFromCmd from '../util/deriveStage';
 import {
+  excludeInexistentPackages,
   getNodeModulesResolvingOrder,
   linkedPackagesToWebpackAliases,
   linkedPackagesToWebpackInclude,
@@ -96,12 +97,13 @@ export async function loadCantaraRuntimeConfig({
   let linkedPackageAliases: {
     [key: string]: string;
   } = {};
-  let linkedPackageIncludes: string[] = [];
 
-  const { linkedPackages: projectLinkedPackages } = projectPersistanceData;
+  let linkedPackageIncludes: string[] = [];
+  let { linkedPackages: projectLinkedPackages } = projectPersistanceData;
   let tsFilesToInclude: string[] = [];
 
   if (currentCommand.name === 'dev') {
+    projectLinkedPackages = excludeInexistentPackages(projectLinkedPackages);
     // Cantara Live Link is only active during development
     linkedPackageAliases = linkedPackagesToWebpackAliases(
       projectLinkedPackages,

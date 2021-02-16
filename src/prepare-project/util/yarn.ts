@@ -1,5 +1,5 @@
 import path from 'path';
-import { existsSync, readFileSync, mkdirSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import execCmd from '../../util/exec';
 import { writeJson, readFileAsJSON } from '../../util/fs';
 
@@ -109,28 +109,6 @@ function getInstalledDependencies({
     };
   }
   return { dependencies: {}, devDependencies: {} };
-}
-
-interface CreatePackageJsonOptions {
-  folderPath: string;
-}
-
-/** Create new package.json
- * where none exists.
- */
-async function createPackageJson({ folderPath }: CreatePackageJsonOptions) {
-  await execCmd(`yarn init -y`, {
-    workingDirectory: folderPath,
-  });
-  // Set private to true
-  const packageJsonPath = path.join(folderPath, 'package.json');
-  const packageJsonContent = readFileAsJSON(packageJsonPath);
-  const newPackageJsonContent = {
-    ...packageJsonContent,
-    private: true,
-    main: 'build/index.js',
-  };
-  writeJson(packageJsonPath, newPackageJsonContent);
 }
 
 interface CreateOrUpdatePackageJSONParams {
