@@ -13,25 +13,25 @@ export function startNodeAppDevelopmentServer() {
   } = getGlobalConfig();
 
   const {
-    includes: { linkedPackages },
-  } = getRuntimeConfig();
-
-  const {
     env,
     currentCommand: { app: activeApp },
-    aliases: { otherAliases },
+    includes: { linkedPackages },
+    aliases: { linkedPackageAliases, otherAliases },
+    resolveModulesInDevelopment,
   } = getRuntimeConfig();
 
   const webpackConfig = createNodeWebpackConfig({
     app: activeApp,
     alias: {
       ...packageAliases,
+      ...linkedPackageAliases,
       ...otherAliases,
     },
     projectDir,
     env,
     include: [...internalPackages, ...linkedPackages],
     nodemonOptions: additionalCliOptions ? [additionalCliOptions] : undefined,
+    resolveModules: resolveModulesInDevelopment,
   });
 
   const compiler = webpack(webpackConfig);

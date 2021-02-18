@@ -3,10 +3,13 @@ import getGlobalConfig from './global-config';
 import loadAppEnvVars from './envvars';
 import deriveStageNameFromCmd from '../util/deriveStage';
 import {
+  excludeInexistentPackages,
   getNodeModulesResolvingOrder,
   linkedPackagesToWebpackAliases,
   linkedPackagesToWebpackInclude,
 } from '../util/live-link';
+import path from 'path';
+import { existsSync } from 'fs';
 
 export interface CantaraRuntimeConfig {
   /** Information about current command */
@@ -48,6 +51,12 @@ export interface CantaraRuntimeConfig {
    * application
    */
   activeRuntimeApplicationPresetName?: string;
+  /**
+   * Additional TS files which
+   * need to be included in
+   * tsconfig.json
+   */
+  tsFilesToInclude: string[];
 }
 
 interface LoadCantaraRuntimeConfigOptions {
@@ -85,13 +94,34 @@ export async function loadCantaraRuntimeConfig({
     projectPersistanceData,
   } = getGlobalConfig();
 
-  const { linkedPackages: projectLinkedPackages } = projectPersistanceData;
-  const linkedPackageAliases = linkedPackagesToWebpackAliases(
-    projectLinkedPackages,
-  );
-  const linkedPackageIncludes = linkedPackagesToWebpackInclude(
-    projectLinkedPackages,
-  );
+  let linkedPackageAliases: {
+    [key: string]: string;
+  } = {};
+
+  let linkedPackageIncludes: string[] = [];
+  let { linkedPackages: projectLinkedPackages } = projectPersistanceData;
+  let tsFilesToInclude: string[] = [];
+
+  if (currentCommand.name === 'dev') {
+    projectLinkedPackages = excludeInexistentPackages(projectLinkedPackages);
+    // Cantara Live Link is only active during development
+    linkedPackageAliases = linkedPackagesToWebpackAliases(
+      projectLinkedPackages,
+    );
+    linkedPackageIncludes = linkedPackagesToWebpackInclude(
+      projectLinkedPackages,
+    );
+    // Include global.d.ts file of the package's project
+    // (if exists)
+    const packagesRootGlobalTsFiles = [
+      ...new Set(
+        projectLinkedPackages
+          .map((packagePath) => path.join(packagePath, '../..', 'global.d.ts'))
+          .filter(existsSync),
+      ),
+    ];
+    tsFilesToInclude = packagesRootGlobalTsFiles;
+  }
 
   const stage =
     !stageParam || stageParam === 'not_set'
@@ -142,6 +172,7 @@ export async function loadCantaraRuntimeConfig({
       linkedPackages: linkedPackageIncludes,
     },
     activeRuntimeApplicationPresetName,
+    tsFilesToInclude,
   };
 
   return runtimeConfig;

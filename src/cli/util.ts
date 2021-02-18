@@ -1,5 +1,6 @@
 import path from 'path';
 import dotenv from 'dotenv';
+import c from 'ansi-colors';
 import updateNotifier from 'update-notifier';
 import { fsReadFile } from '../util/fs';
 
@@ -65,5 +66,8 @@ export function checkForUpdates(packageJson: any) {
     boxenOptions: {
       borderColor: 'cyan',
     },
+    message: `Update available: {currentVersion} -> {latestVersion}\nRun ${c.cyan(
+      'yarn global add cantara',
+    )} to update.`,
   });
 }

@@ -7,6 +7,7 @@ import {
   readdir,
   unlink,
   mkdir,
+  existsSync,
 } from 'fs';
 import path from 'path';
 import { promisify } from 'util';
@@ -16,7 +17,26 @@ export function readFileAsJSON(path: string) {
 }
 
 export function writeJson(path: string, content: any) {
-  const prettyPrintedJson = JSON.stringify(content, null, 2);
+  let jsonLineBreak = '\n';
+  if (existsSync(path)) {
+    const jsonFileContent = readFileSync(path).toString();
+    jsonLineBreak = jsonFileContent.includes('\r\n') ? '\r\n' : '\n';
+  }
+
+  let prettyPrintedJson = JSON.stringify(content, null, 2);
+
+  // \n = default for JSON stringify
+  if (jsonLineBreak !== '\n') {
+    prettyPrintedJson = prettyPrintedJson.replace(
+      new RegExp('\n', 'g'),
+      jsonLineBreak,
+    );
+  }
+
+  if (!prettyPrintedJson.endsWith(jsonLineBreak)) {
+    prettyPrintedJson += jsonLineBreak;
+  }
+
   writeFileSync(path, prettyPrintedJson);
 }
 

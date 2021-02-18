@@ -4,7 +4,6 @@ import del from 'del';
 import { promisify } from 'util';
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import c from 'ansi-colors';
-import terminalLink from 'terminal-link';
 
 import { camalize } from '../../util/string-manipulation';
 import getGlobalConfig from '../../cantara-config/global-config';

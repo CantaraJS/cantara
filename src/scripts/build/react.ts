@@ -34,6 +34,7 @@ export default async function buildReactApp(app: CantaraApplication) {
   const {
     env,
     aliases: { otherAliases },
+    // resolveModulesInDevelopment,
   } = getRuntimeConfig();
 
   const webpackConfig = createReactWebpackConfig({
@@ -46,6 +47,8 @@ export default async function buildReactApp(app: CantaraApplication) {
     mode: 'production',
     projectDir,
     include: internalPackages,
+    // TODO: Evaluate if this should also be set for prod builds
+    // resolveModules: resolveModulesInDevelopment,
   });
 
   const onComplete = logBuildTime({

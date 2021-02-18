@@ -1,4 +1,4 @@
-import { statSync } from 'fs';
+import { existsSync, statSync } from 'fs';
 import path from 'path';
 import slash from 'slash';
 import { fsExists, fsReaddir, fsReadFile, readFileAsJSON } from './fs';
@@ -7,6 +7,14 @@ import {
   CantaraPersistenceData,
   LiveLinkedPackageSuggestion,
 } from './types';
+
+export function excludeInexistentPackages(linkedPackages: string[]) {
+  const existingPackages = linkedPackages.filter((currPackage) => {
+    const packageJsonPath = path.join(currPackage, 'package.json');
+    return existsSync(packageJsonPath);
+  });
+  return existingPackages;
+}
 
 export function linkedPackagesToWebpackAliases(linkedPackages: string[]) {
   const linkedPackagesAliases = linkedPackages.reduce((newObj, currPackage) => {

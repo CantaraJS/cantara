@@ -74,6 +74,11 @@ export default function createCommonReactWebpackConfig({
           },
         },
         {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: 'javascript/auto',
+        },
+        {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           /** For some reason, using 'javascript/esm' causes ReactRefresh to fail */
           // type: 'javascript/esm',
