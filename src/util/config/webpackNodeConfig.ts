@@ -7,8 +7,7 @@ import getAllWebpackExternals from '../externals';
 import slash from 'slash';
 
 const NodemonPlugin = require('nodemon-webpack-plugin');
-// CaseSensitivePathsPlugin webpack 5 support: https://github.com/Urthen/case-sensitive-paths-webpack-plugin/issues/56
-// const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -66,12 +65,6 @@ export default function createNodeWebpackConfig({
     module: {
       rules: [
         {
-          test: /\.m?js/,
-          resolve: {
-            fullySpecified: false,
-          },
-        },
-        {
           test: [/\.js$/, /\.tsx?$/],
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],
@@ -81,13 +74,16 @@ export default function createNodeWebpackConfig({
           },
         },
         {
-          test: /\.(?:ico|gif|png|jpg|jpeg|svg|woff(2)?|eot|ttf|otf)$/i,
-          type: 'asset',
+          loader: 'file-loader',
+          exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+          options: {
+            name: 'static/media/[name].[hash:8].[ext]',
+          },
         },
       ],
     },
     plugins: [
-      // new CaseSensitivePathsPlugin(),
+      new CaseSensitivePathsPlugin(),
       new webpack.EnvironmentPlugin(env),
       new FriendlyErrorsWebpackPlugin(),
       new ForkTsCheckerWebpackPlugin({

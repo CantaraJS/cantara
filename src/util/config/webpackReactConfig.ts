@@ -60,7 +60,7 @@ export default function createReactWebpackConfig({
     devtool:
       isDevelopment || app.meta.sourceMaps ? 'eval-source-map' : undefined,
     output: {
-      filename: '[name].[contenthash].js',
+      filename: '[name].[hash:4].js',
       path: app.paths.build,
       chunkFilename: '[name].[chunkhash:4].js',
       publicPath: '/',
@@ -149,11 +149,11 @@ export default function createReactWebpackConfig({
     optimization: isProduction
       ? {
           splitChunks: {
-            chunks: 'all',
+            chunks: 'initial',
           },
-          // runtimeChunk: {
-          //   name: 'manifest',
-          // },
+          runtimeChunk: {
+            name: 'manifest',
+          },
         }
       : undefined,
   };

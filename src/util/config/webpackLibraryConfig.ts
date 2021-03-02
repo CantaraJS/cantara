@@ -11,8 +11,7 @@ import getSourceMapLoader from './common/soureMapLoader';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-// CaseSensitivePathsPlugin webpack 5 support: https://github.com/Urthen/case-sensitive-paths-webpack-plugin/issues/56
-// const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -88,7 +87,7 @@ export default function createLibraryWebpackConfig({
         libraryTarget === 'commonjs2'
           ? path.join(app.paths.build, path.basename(app.name), 'src')
           : app.paths.build,
-      library: libraryTarget !== 'commonjs2' ? camalize(app.name) : undefined,
+      library: camalize(app.name),
       /** For bundlers and NodeJS, CommonJS is used.
        * As soon webpack supports ESM as a libraryTarget,
        * ESMs are favoured
@@ -104,7 +103,7 @@ export default function createLibraryWebpackConfig({
           })
         : undefined,
       noChecks ? undefined : new WebpackNotifierPlugin(),
-      // new CaseSensitivePathsPlugin(),
+      new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
       libraryTarget === 'commonjs2'
         ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
@@ -130,12 +129,6 @@ export default function createLibraryWebpackConfig({
     module: {
       rules: [
         {
-          test: /\.m?js/,
-          resolve: {
-            fullySpecified: false,
-          },
-        },
-        {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           // type: 'javascript/esm',
           use: {
@@ -153,7 +146,7 @@ export default function createLibraryWebpackConfig({
         },
         {
           exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/],
-          type: 'asset/inline',
+          loader: 'url-loader',
         },
       ],
     },

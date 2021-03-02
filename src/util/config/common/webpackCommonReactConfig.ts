@@ -4,12 +4,10 @@ import path from 'path';
 import { CreateWebpackConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
-import NodePolyfillPlugin from './NodePolyfillPlugin';
 
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-// CaseSensitivePathsPlugin webpack 5 support: https://github.com/Urthen/case-sensitive-paths-webpack-plugin/issues/56
-// const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const cssnano = require('cssnano');
 
 interface CreateCommonReactWebpackConfigParams
@@ -42,23 +40,29 @@ export default function createCommonReactWebpackConfig({
         '.html',
         '.htm',
       ],
-      fallback: {
-        fs: false,
-        dns: false,
-        net: false,
-        tls: false,
-        module: false,
-      },
     },
     mode,
     plugins: [
-      // new CaseSensitivePathsPlugin(),
+      new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
-      new NodePolyfillPlugin(),
       new webpack.EnvironmentPlugin({
         ...env,
         WEBPACK_BUILD_TIMESTAMP: Date.now(),
       }),
+      isProduction
+        ? new OptimizeCSSAssetsPlugin({
+            cssProcessor: cssnano,
+            cssProcessorOptions: {
+              discardComments: {
+                removeAll: true,
+              },
+              // Run cssnano in safe mode to avoid
+              // potentially unsafe transformations.
+              safe: true,
+            },
+            canPrint: false,
+          })
+        : undefined,
       isProduction
         ? new webpack.BannerPlugin({
             banner: 'filename:[name]',
@@ -67,17 +71,6 @@ export default function createCommonReactWebpackConfig({
     ].filter(Boolean),
     module: {
       rules: [
-        {
-          test: /\.m?js/,
-          resolve: {
-            fullySpecified: false,
-          },
-        },
-        {
-          test: /\.mjs$/,
-          include: /node_modules/,
-          type: 'javascript/auto',
-        },
         {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           /** For some reason, using 'javascript/esm' causes ReactRefresh to fail */
@@ -97,15 +90,20 @@ export default function createCommonReactWebpackConfig({
           exclude: [/node_modules/, app.paths.assets || ''],
           use: { loader: 'html-loader' },
         },
-        alwaysInlineImages
-          ? {
-              test: /\.(?:ico|gif|png|jpg|jpeg|svg|woff(2)?|eot|ttf|otf)$/i,
-              type: 'asset/inline',
-            }
-          : {
-              test: /\.(?:ico|gif|png|jpg|jpeg|svg|woff(2)?|eot|ttf|otf)$/i,
-              type: 'asset',
-            },
+        {
+          exclude: [
+            /\.(js|jsx|ts|tsx|mjs)$/,
+            /\.html?$/,
+            /\.json$/,
+            /\.css$/,
+            app.paths.assets || '',
+          ],
+          loader: 'url-loader',
+          options: {
+            limit: alwaysInlineImages ? Number.MAX_VALUE : 15000,
+            name: 'static/media/[name].[hash:8].[ext]',
+          },
+        },
         // {
         //   loader: 'file-loader',
         //   exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
@@ -118,11 +116,12 @@ export default function createCommonReactWebpackConfig({
     stats: {
       warningsFilter: [/Failed to parse source map/],
     },
-    optimization: isProduction
-      ? {
-          minimize: true,
-          minimizer: [`...`, new CssMinimizerPlugin()],
-        }
-      : undefined,
+    node: {
+      fs: 'empty',
+      dns: 'empty',
+      net: 'empty',
+      tls: 'empty',
+      module: 'empty',
+    },
   };
 }

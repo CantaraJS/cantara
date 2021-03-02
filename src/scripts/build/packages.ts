@@ -19,13 +19,8 @@ function compile(config: webpack.Configuration) {
         reject(new Error('Error while compiling.'));
         return;
       }
-      compiler.close((err) => {
-        if (err) {
-          reject(new Error('Error while compiling.'));
-        } else {
-          resolve(true);
-        }
-      });
+      console.log('Successfully compiled!');
+      resolve(true);
     });
   });
 }
