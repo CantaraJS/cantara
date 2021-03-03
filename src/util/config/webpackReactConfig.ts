@@ -2,7 +2,7 @@ import webpack, { Configuration } from 'webpack';
 import { existsSync } from 'fs';
 import path from 'path';
 
-import { CreateWebpackConfigParams } from './types';
+import { BundlerConfigParams } from './types';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import getCssLoaders from './common/cssLoaders';
 import slash from 'slash';
@@ -27,7 +27,7 @@ export default function createReactWebpackConfig({
   include = [],
   projectDir,
   resolveModules,
-}: CreateWebpackConfigParams): Configuration {
+}: BundlerConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
   let iconPathToUse = undefined;

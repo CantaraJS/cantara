@@ -5,7 +5,7 @@ import slash from 'slash';
 import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
 
-import { webpackExternalsAsStringArray } from '../util/externals';
+import { externalsAsStringArray } from '../util/externals';
 import { createOrUpdatePackageJSON } from './util/yarn';
 import { createNodeJestConfig } from './util/testing';
 import { createLocalAppTsConfig } from './util/typescript';
@@ -65,7 +65,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
     ...runtimeConfig.aliases.otherAliases,
   };
   // Externals must not contain aliases
-  const externals = webpackExternalsAsStringArray({
+  const externals = externalsAsStringArray({
     ignore: Object.keys(allAliases),
   });
 

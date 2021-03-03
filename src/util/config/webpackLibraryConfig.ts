@@ -5,7 +5,7 @@ import { getBabelReactConfig } from './babelReactConfig';
 import getAllWebpackExternals from '../externals';
 import { camalize } from '../string-manipulation';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
-import { CreateWebpackConfigParams } from './types';
+import { BundlerConfigParams } from './types';
 import getCssLoaders from './common/cssLoaders';
 import getSourceMapLoader from './common/soureMapLoader';
 
@@ -27,7 +27,7 @@ export default function createLibraryWebpackConfig({
   libraryTarget,
   noChecks,
   env,
-}: CreateWebpackConfigParams): Configuration {
+}: BundlerConfigParams): Configuration {
   const isReactComponent = app.type === 'react-component';
 
   const entryPath = isReactComponent
@@ -80,11 +80,11 @@ export default function createLibraryWebpackConfig({
     output: {
       // publicPath: '/',
       filename:
-        libraryTarget === 'commonjs2'
+        libraryTarget === 'commonjs'
           ? 'index.js'
           : `${path.basename(app.name)}.umd.min.js`,
       path:
-        libraryTarget === 'commonjs2'
+        libraryTarget === 'commonjs'
           ? path.join(app.paths.build, path.basename(app.name), 'src')
           : app.paths.build,
       library: camalize(app.name),
@@ -92,7 +92,7 @@ export default function createLibraryWebpackConfig({
        * As soon webpack supports ESM as a libraryTarget,
        * ESMs are favoured
        */
-      libraryTarget,
+      // libraryTarget,
     },
     plugins: [
       noChecks
@@ -105,7 +105,7 @@ export default function createLibraryWebpackConfig({
       noChecks ? undefined : new WebpackNotifierPlugin(),
       new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
-      libraryTarget === 'commonjs2'
+      libraryTarget === 'commonjs'
         ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
         : undefined,
     ].filter(Boolean),

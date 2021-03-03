@@ -1,7 +1,7 @@
 import webpack, { Configuration } from 'webpack';
 import path from 'path';
 
-import { CreateWebpackConfigParams } from '../types';
+import { BundlerConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
 
@@ -10,8 +10,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const cssnano = require('cssnano');
 
-interface CreateCommonReactWebpackConfigParams
-  extends CreateWebpackConfigParams {
+interface CreateCommonReactWebpackConfigParams extends BundlerConfigParams {
   /** Set to true for NPM packages */
   alwaysInlineImages?: boolean;
 }

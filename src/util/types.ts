@@ -26,7 +26,7 @@ export interface CantaraApplicationMetaInformation {
    * if you need this.
    */
   skipCacheInvalidation?: boolean;
-  libraryTargets?: ('umd' | 'commonjs')[];
+  libraryTargets?: ('umd' | 'commonjs' | 'esm')[];
   /** Required env vars,
    * either defined in process.env or
    * in the current environment's env file.
