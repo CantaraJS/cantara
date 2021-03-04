@@ -19,30 +19,8 @@ import postCssPresetEnv from 'postcss-preset-env';
 import { BundlerConfigParams } from './types';
 import { externalsAsStringArray } from '../externals';
 import path from 'path';
-import { camalize } from '../string-manipulation';
 import { getBabelReactConfig } from './babelReactConfig';
 import slash from 'slash';
-
-function pathToGlob(pathStr: string) {
-  let slashed = pathStr.replace(new RegExp('\\\\', 'g'), '/');
-  if (!slashed.endsWith('/')) {
-    slashed += '/';
-  }
-
-  slashed += '**/*';
-
-  return slashed;
-}
-
-/**
- * Yields relative path of
- * entry files for each build
- */
-interface BuildResult {
-  cjs?: string;
-  esm?: string;
-  umd?: string;
-}
 
 /**
  * Create a package production
@@ -53,11 +31,14 @@ export default async function buildPackageWithRollup({
   projectDir,
   alias: buildAliases = {},
   env = {},
-  libraryTargets = [],
+  libraryTarget,
   app,
-}: BundlerConfigParams): Promise<BuildResult> {
-  const buildResult: BuildResult = {};
+}: BundlerConfigParams): Promise<string> {
+  // This path just acts as a result of this process
+  let relativeEntryPath: string = '';
 
+  // It could be that when using local aliases to other packages
+  // that this fails. TODO: Try that out
   const include = ['src/**/*'];
 
   const isReactComponent = app.type === 'react-component';
@@ -79,16 +60,8 @@ export default async function buildPackageWithRollup({
   ];
 
   let external: string[] = [];
-  let umdExternal: string[] = [];
 
-  if (libraryTargets.includes('umd')) {
-    const customExternals = app.meta.externalDependencies
-      ? app.meta.externalDependencies.umd
-      : {};
-    umdExternal = ['react', 'react-dom', ...Object.keys(customExternals || {})];
-  }
-
-  if (libraryTargets.includes('esm') || libraryTargets.includes('commonjs')) {
+  if (libraryTarget === 'esm' || libraryTarget === 'commonjs') {
     const customExternals = app.meta.externalDependencies
       ? app.meta.externalDependencies.commonjs
       : {};
@@ -132,7 +105,7 @@ export default async function buildPackageWithRollup({
     }),
   ];
 
-  const rollupConfig: RollupOptions[] = [];
+  let rollupConfig: RollupOptions = {};
 
   const createExternalFn = (externals: string[]) => {
     return (id: string) => {
@@ -148,29 +121,9 @@ export default async function buildPackageWithRollup({
     return newPath;
   };
 
-  if (libraryTargets.includes('umd')) {
-    const outDir = path.join(app.paths.build, 'umd');
-    buildResult.umd = makePathRootRelative(path.join(outDir, 'index.js'));
-    const umdConfig: RollupOptions = {
-      input: entryPath,
-      external: createExternalFn(umdExternal),
-      output: {
-        name: camalize(app.name),
-        dir: outDir,
-        format: 'umd',
-        sourcemap: true,
-        exports: 'named',
-        // Is this ok?
-        inlineDynamicImports: true,
-      },
-      plugins: commonPlugins,
-    };
-    rollupConfig.push(umdConfig);
-  }
-
-  if (libraryTargets.includes('commonjs')) {
+  if (libraryTarget === 'commonjs') {
     const outDir = path.join(app.paths.build, 'cjs');
-    buildResult.cjs = makePathRootRelative(path.join(outDir, 'index.js'));
+    relativeEntryPath = makePathRootRelative(path.join(outDir, 'index.js'));
     const commonJsConfig: RollupOptions = {
       input: entryPath,
       external: createExternalFn(external),
@@ -184,12 +137,12 @@ export default async function buildPackageWithRollup({
       ],
       plugins: commonPlugins,
     };
-    rollupConfig.push(commonJsConfig);
+    rollupConfig = commonJsConfig;
   }
 
-  if (libraryTargets.includes('esm')) {
+  if (libraryTarget === 'esm') {
     const outDir = path.join(app.paths.build, 'esm');
-    buildResult.esm = makePathRootRelative(path.join(outDir, 'index.js'));
+    relativeEntryPath = makePathRootRelative(path.join(outDir, 'index.js'));
     const esmConfig: RollupOptions = {
       input: entryPath,
       external: createExternalFn(external),
@@ -203,20 +156,18 @@ export default async function buildPackageWithRollup({
       ],
       plugins: commonPlugins,
     };
-    rollupConfig.push(esmConfig);
+    rollupConfig = esmConfig;
   }
 
-  for (const config of rollupConfig) {
-    const buildResult = await rollup(config);
-    if (config.output) {
-      const outputs = Array.isArray(config.output)
-        ? config.output
-        : [config.output];
-      await Promise.all(outputs.map(buildResult.write));
-    }
+  const bundle = await rollup(rollupConfig);
+  if (rollupConfig.output) {
+    const outputs = Array.isArray(rollupConfig.output)
+      ? rollupConfig.output
+      : [rollupConfig.output];
+    await Promise.all(outputs.map(bundle.write));
   }
 
   process.chdir(workingDirBefore);
 
-  return buildResult;
+  return relativeEntryPath;
 }

@@ -8,6 +8,7 @@ interface LogBuildTimeParams {
 
 export function logBuildTime({ toolName, stepName }: LogBuildTimeParams) {
   const startTime = Date.now();
+  console.log(`${c.cyan(`[${toolName}]`)} ${c.gray(`${stepName}...`)}`);
 
   return () => {
     const elapsed = Date.now() - startTime;

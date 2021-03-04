@@ -10,7 +10,6 @@ export interface BundlerConfigParams {
   include?: string[];
   mode?: 'production' | 'development';
   libraryTarget?: LibraryTarget;
-  libraryTargets?: LibraryTarget[];
   /** Set this to true if you want to skip type checks and
    * other things which should just be executed once.
    * Set to true if you need to compile multiple

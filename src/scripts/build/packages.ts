@@ -9,6 +9,8 @@ import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
 import { logBuildTime } from './util';
 import buildPackageWithRollup from '../../util/config/buildPackageWithRollup';
+import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
+import { BundlerConfigParams } from '../../util/config/types';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
@@ -22,6 +24,12 @@ function compile(config: webpack.Configuration) {
       resolve(true);
     });
   });
+}
+
+interface BuildResult {
+  cjs?: string;
+  umd?: string;
+  esm?: string;
 }
 
 export default async function buildPackage(app: CantaraApplication) {
@@ -41,19 +49,58 @@ export default async function buildPackage(app: CantaraApplication) {
     libraryTargets = ['esm'];
   }
 
-  const onBundleCreated = logBuildTime({
-    stepName: `Creating distribution bundles (${libraryTargets.join(', ')})`,
-    toolName: 'Rollup',
-  });
-  const buildResult = await buildPackageWithRollup({
+  const commonBundlerConfig: BundlerConfigParams = {
     alias: allAliases,
     app,
     env,
     projectDir,
     include: internalPackages,
-    libraryTargets,
-  });
-  onBundleCreated();
+  };
+
+  const buildResult: BuildResult = {};
+
+  if (libraryTargets.includes('esm')) {
+    const onBundleCreated = logBuildTime({
+      stepName: `Creating ESM bundle`,
+      toolName: 'Rollup',
+    });
+    buildResult.esm = await buildPackageWithRollup({
+      ...commonBundlerConfig,
+      libraryTarget: 'esm',
+    });
+    onBundleCreated();
+  }
+
+  if (libraryTargets.includes('commonjs')) {
+    const onBundleCreated = logBuildTime({
+      stepName: `Creating CommonJS bundle`,
+      toolName: 'Rollup',
+    });
+    buildResult.cjs = await buildPackageWithRollup({
+      ...commonBundlerConfig,
+      libraryTarget: 'commonjs',
+    });
+    onBundleCreated();
+  }
+
+  if (libraryTargets.includes('umd')) {
+    const onBundleCreated = logBuildTime({
+      stepName: `Creating UMD bundle`,
+      toolName: 'Rollup',
+    });
+    // Create UMD build using webpack because it supports lazy loading
+    const webpackUmdConfig = createLibraryWebpackConfig({
+      ...commonBundlerConfig,
+      libraryTarget: 'umd',
+    });
+    await compile(webpackUmdConfig);
+    onBundleCreated();
+
+    buildResult.umd = path.join(
+      webpackUmdConfig.output!.path!,
+      webpackUmdConfig.output!.filename as string,
+    );
+  }
 
   if (!app.meta.skipTypeGeneration) {
     // Generate types
