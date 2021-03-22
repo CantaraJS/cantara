@@ -40,6 +40,12 @@ Cantara is a CLI tool to create Fullstack React applications in minutes
 
 [Learn how to use Cantara for your next project](https://cantara.js.org/docs/introduction).
 
+## Sponsors
+
+The development of this project is sponsored by [Crystal Design GmbH](https://diva-portal.de).
+
+![Crystal Design](https://avatars.githubusercontent.com/u/68067035?s=200&v=4)
+
 ## Table of contents
 
 - [Installation](#installation)
