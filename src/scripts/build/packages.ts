@@ -86,7 +86,7 @@ export default async function buildPackage(app: CantaraApplication) {
   if (libraryTargets.includes('umd')) {
     const onBundleCreated = logBuildTime({
       stepName: `Creating UMD bundle`,
-      toolName: 'Rollup',
+      toolName: 'Webpack',
     });
     // Create UMD build using webpack because it supports lazy loading
     const webpackUmdConfig = createLibraryWebpackConfig({
