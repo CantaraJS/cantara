@@ -4,7 +4,6 @@ import path from 'path';
 import { CantaraApplication } from '../../util/types';
 import { readFileAsJSON, writeJson } from '../../util/fs';
 import execCmd from '../../util/exec';
-import slash from 'slash';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
 import { logBuildTime } from './util';
@@ -104,6 +103,7 @@ export default async function buildPackage(app: CantaraApplication) {
 
   if (!app.meta.skipTypeGeneration) {
     // Generate types
+
     const tsConfigPath = path.join(app.paths.root, '.tsconfig.local.json');
     const suppress = app.meta.suppressTsErrors
       ? ` --suppress ${app.meta.suppressTsErrors.join(',')}@`

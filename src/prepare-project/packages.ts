@@ -70,6 +70,10 @@ export default async function prepareJsPackage(app: CantaraApplication) {
   tsConfig = {
     ...tsConfig,
     include: [...(tsConfig.include || []), ...customTypes],
+    compilerOptions: {
+      ...tsConfig.compilerOptions,
+      paths: [],
+    },
   };
   writeJson(packageTsConfigPath, tsConfig);
 
