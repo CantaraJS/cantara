@@ -10,6 +10,7 @@ import { logBuildTime } from './util';
 import buildPackageWithRollup from '../../util/config/buildPackageWithRollup';
 import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { BundlerConfigParams } from '../../util/config/types';
+import slash from 'slash';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
@@ -95,10 +96,17 @@ export default async function buildPackage(app: CantaraApplication) {
     await compile(webpackUmdConfig);
     onBundleCreated();
 
-    buildResult.umd = path.join(
+    const relativeBuildPath = path.relative(
+      app.paths.root,
       webpackUmdConfig.output!.path!,
+    );
+
+    const realtiveOutPath = path.join(
+      relativeBuildPath,
       webpackUmdConfig.output!.filename as string,
     );
+
+    buildResult.umd = slash(realtiveOutPath);
   }
 
   if (!app.meta.skipTypeGeneration) {
