@@ -27,12 +27,11 @@ import slash from 'slash';
  * build using the Rollup bundler.
  */
 export default async function buildPackageWithRollup({
-  include: includePaths = [],
-  projectDir,
   alias: buildAliases = {},
   env = {},
   libraryTarget,
   app,
+  sourceMaps,
 }: BundlerConfigParams): Promise<string> {
   // This path just acts as a result of this process
   let relativeEntryPath: string = '';
@@ -132,7 +131,7 @@ export default async function buildPackageWithRollup({
           dir: outDir,
           format: 'cjs',
           exports: 'named',
-          sourcemap: true,
+          sourcemap: sourceMaps,
         },
       ],
       plugins: commonPlugins,
@@ -151,7 +150,7 @@ export default async function buildPackageWithRollup({
           dir: outDir,
           format: 'es',
           exports: 'named',
-          sourcemap: true,
+          sourcemap: sourceMaps,
         },
       ],
       plugins: commonPlugins,

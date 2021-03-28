@@ -44,7 +44,7 @@ export default async function buildPackage(app: CantaraApplication) {
   const { env } = getRuntimeConfig();
   const allAliases = { ...packageAliases };
 
-  let { libraryTargets = ['umd', 'commonjs', 'esm'], skipBundling } = app.meta;
+  let { libraryTargets = ['umd', 'commonjs', 'esm'], sourceMaps } = app.meta;
 
   if (libraryTargets.length === 0) {
     libraryTargets = ['esm'];
@@ -59,6 +59,7 @@ export default async function buildPackage(app: CantaraApplication) {
     env,
     projectDir,
     include: internalPackages,
+    sourceMaps,
   };
 
   const buildResult: BuildResult = {};
