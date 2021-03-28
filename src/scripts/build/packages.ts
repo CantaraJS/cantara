@@ -11,6 +11,7 @@ import buildPackageWithRollup from '../../util/config/buildPackageWithRollup';
 import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { BundlerConfigParams } from '../../util/config/types';
 import slash from 'slash';
+import del from 'del';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
@@ -48,6 +49,9 @@ export default async function buildPackage(app: CantaraApplication) {
   if (libraryTargets.length === 0) {
     libraryTargets = ['esm'];
   }
+
+  // Delete build folder
+  await del(app.paths.build, { force: true });
 
   const commonBundlerConfig: BundlerConfigParams = {
     alias: allAliases,
