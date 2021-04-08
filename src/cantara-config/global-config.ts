@@ -5,6 +5,7 @@ import getAllApps, {
   loadSecrets,
   getCantaraDepenciesInstallationPath,
   getDependecyVersions,
+  getTailwindConfiguration,
 } from './util';
 import {
   CantaraApplication,
@@ -109,6 +110,19 @@ interface CantaraGlobalConfig {
    * at the project's root */
   globalCantaraSettings: GlobalCantaraSettings;
   projectPersistanceData: CantaraProjectPersistenceData;
+  /**
+   * If user created a tailwind.config.js
+   * file in the project's root, this
+   * property will be created
+   */
+  tailwind?: {
+    pathToTailwindCss: string;
+    /**
+     * Parsed configuration object inside
+     * tailwind.config.js
+     */
+    config: any;
+  };
 }
 
 let globalConfig: CantaraGlobalConfig | undefined = undefined;
@@ -152,6 +166,8 @@ export async function loadCantaraGlobalConfig(
       tempFolder,
     });
   }
+
+  const tailwind = await getTailwindConfiguration(projectDir);
 
   const allApps = await getAllApps({
     rootDir: projectDir,
@@ -222,6 +238,7 @@ export async function loadCantaraGlobalConfig(
       temp: tempFolder,
       nodeModules: nodeModulesPath,
     },
+    tailwind,
   };
   globalConfig = configToUse;
 

@@ -3,11 +3,22 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 interface GetCssLoadersOptions {
   /** If true, use MiniCssExtractPlugin, otherwise style-loader */
   useExtractLoader: boolean;
+  pathToTailwindCss?: string;
 }
 
 export default function getCssLoaders({
   useExtractLoader,
+  pathToTailwindCss,
 }: GetCssLoadersOptions) {
+  const postCssPlugins: { [key: string]: any } = {
+    'postcss-preset-env': {},
+    // autoprefixer: {},
+  };
+
+  if (pathToTailwindCss) {
+    postCssPlugins[pathToTailwindCss] = {};
+  }
+
   const cssLoaders = (modules: boolean, extractCss: boolean) => [
     ...(extractCss
       ? [
@@ -49,7 +60,7 @@ export default function getCssLoaders({
       loader: 'postcss-loader',
       options: {
         postcssOptions: {
-          plugins: ['postcss-preset-env'],
+          plugins: postCssPlugins,
         },
       },
     },

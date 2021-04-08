@@ -27,6 +27,7 @@ export default function createReactWebpackConfig({
   include = [],
   projectDir,
   resolveModules,
+  pathToTailwindCss,
 }: BundlerConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -141,7 +142,12 @@ export default function createReactWebpackConfig({
       isProduction ? new MiniCssExtractPlugin() : undefined,
     ].filter(Boolean),
     module: {
-      rules: [...getCssLoaders({ useExtractLoader: isProduction })],
+      rules: [
+        ...getCssLoaders({
+          useExtractLoader: isProduction,
+          pathToTailwindCss,
+        }),
+      ],
     },
     performance: {
       hints: false,

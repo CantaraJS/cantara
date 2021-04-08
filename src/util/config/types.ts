@@ -23,4 +23,5 @@ export interface BundlerConfigParams {
   env?: { [key: string]: string };
   resolveModules?: string[];
   sourceMaps?: boolean;
+  pathToTailwindCss?: string;
 }

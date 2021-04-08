@@ -10,6 +10,7 @@ function compile(config: webpack.Configuration): Promise<void> {
   return new Promise((resolve, reject) => {
     compiler.run((err) => {
       if (err) {
+        console.log('Error::::::', err);
         reject(new Error('Error while compiling.'));
         return;
       }
@@ -31,6 +32,9 @@ export default async function buildReactApp(app: CantaraApplication) {
     aliases: { otherAliases },
     // resolveModulesInDevelopment,
   } = getRuntimeConfig();
+
+  // This needs to be set so that PurgeCSS runs when tailwind is enabled
+  process.env.NODE_ENV = 'production';
 
   const webpackConfig = createReactWebpackConfig({
     alias: {

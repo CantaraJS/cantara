@@ -239,3 +239,31 @@ export function getDependecyVersions(dependencies: string[]) {
   }, {} as { [key: string]: string });
   return versionMap;
 }
+
+/**
+ * Only returns something if a
+ * tailwind.config.js file
+ * exists
+ */
+export async function getTailwindConfiguration(projectDir: string) {
+  const tailwindConfigPath = path.join(projectDir, 'tailwind.config.js');
+
+  if (await fsExists(tailwindConfigPath)) {
+    const config = require(tailwindConfigPath);
+    const pathToTailwindCss = path.join(
+      projectDir,
+      'node_modules',
+      'tailwindcss',
+    );
+    if (!(await fsExists(pathToTailwindCss))) {
+      throw new Error('Tailwind CSS is not installed.');
+    }
+
+    return {
+      config,
+      pathToTailwindCss,
+    };
+  }
+
+  return undefined;
+}
