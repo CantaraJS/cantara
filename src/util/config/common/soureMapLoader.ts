@@ -1,19 +1,23 @@
-import webpack from "webpack";
+import webpack from 'webpack';
 
 interface GetSourceMapLoaderOptions {
-    sourceMaps?: boolean | string[]
+  sourceMaps?: boolean | string[];
 }
 
-export default function getSourceMapLoader({sourceMaps}:GetSourceMapLoaderOptions): webpack.RuleSetRule[] {
+export default function getSourceMapLoader({
+  sourceMaps,
+}: GetSourceMapLoaderOptions): webpack.RuleSetRule[] {
+  if (!sourceMaps) {
+    return [];
+  }
 
-    if(!sourceMaps) {
-        return [];
-    }
-
-    return [ {
-        test: /\.js$/,
-        use: ["source-map-loader"],
-        enforce: "pre",
-        include: typeof sourceMaps === 'boolean' ? undefined: sourceMaps
-      } ]
+  return [
+    {
+      test: /\.js$/,
+      use: ['source-map-loader'],
+      enforce: 'pre',
+      exclude: /node_modules/,
+      include: typeof sourceMaps === 'boolean' ? undefined : sourceMaps,
+    },
+  ];
 }
