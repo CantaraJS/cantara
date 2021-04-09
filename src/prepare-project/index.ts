@@ -19,6 +19,10 @@ import { fsWriteFile } from '../util/fs';
 
 const ncp = promisify(ncpCb);
 
+function replaceAll(str: string, search: string, replacement: string) {
+  return str.split(search).join(replacement);
+}
+
 /** Prepares user's project */
 async function prepareUserProject() {
   const globalCantaraConfig = getGlobalConfig();
@@ -79,10 +83,12 @@ async function prepareUserProject() {
   if (globalCantaraConfig.tailwind) {
     const globRoot = slash(rootDir);
     const projectNodeModules = slash(path.join(rootDir, 'node_modules'));
+    const PLUGIN_START_DEL = '<-p0->';
+    const PLUGIN_END_DEL = '<-p1->';
     const plugins = Array.isArray(globalCantaraConfig.tailwind.config.plugins)
       ? globalCantaraConfig.tailwind.config.plugins.map(
           (pluginPath: string) => {
-            return `${projectNodeModules}/${pluginPath}`;
+            return `${PLUGIN_START_DEL}${projectNodeModules}/${pluginPath}${PLUGIN_END_DEL}`;
           },
         )
       : [];
@@ -95,9 +101,21 @@ async function prepareUserProject() {
       ],
       plugins,
     };
-    const newTailwindConfigContent = `
+    let newTailwindConfigContent = `
       module.exports = ${JSON.stringify(newTailwindConfig)}
     `;
+
+    newTailwindConfigContent = replaceAll(
+      newTailwindConfigContent,
+      `"${PLUGIN_START_DEL}`,
+      `require('`,
+    );
+    newTailwindConfigContent = replaceAll(
+      newTailwindConfigContent,
+      `${PLUGIN_END_DEL}"`,
+      `')`,
+    );
+
     const newTailwindFilePath = path.join(
       globalCantaraConfig.internalPaths.root,
       'tailwind.config.js',
