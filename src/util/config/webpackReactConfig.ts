@@ -53,7 +53,10 @@ export default function createReactWebpackConfig({
 
   const webpackReactAppConfig: Configuration = {
     resolve: {
-      alias,
+      alias: {
+        ...alias,
+        '~': app.paths.src,
+      },
       modules: resolveModules,
     },
     externals,

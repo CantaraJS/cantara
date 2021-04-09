@@ -84,7 +84,10 @@ export function createGlobalTsConfig() {
 
   const {
     aliases: { linkedPackageAliases, otherAliases },
+    currentCommand: { app },
   } = getRuntimeConfig();
+
+  const appRootAlias = { '~': app.paths.src };
 
   const newTsConfig = {
     ...tsConfig,
@@ -94,6 +97,7 @@ export function createGlobalTsConfig() {
         ...packageAliases,
         ...linkedPackageAliases,
         ...otherAliases,
+        ...appRootAlias,
       }),
     },
   };
