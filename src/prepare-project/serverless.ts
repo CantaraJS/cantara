@@ -63,6 +63,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   const allAliases = {
     ...globalCantaraConfig.aliases.packageAliases,
     ...runtimeConfig.aliases.otherAliases,
+    '~': app.paths.src,
   };
   // Externals must not contain aliases
   const externals = externalsAsStringArray({
@@ -83,7 +84,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   const templateVariables = {
     BABEL_CONFIG_PATH: slash(babelConfigPath),
     MODULES_PATH,
-    TSCONFIG_PATH: slash(path.join(app.paths.root, '.tsconfig.local.json')),
+    TSCONFIG_PATH: slash(path.join(app.paths.root, 'tsconfig.json')),
     INCLUDES: JSON.stringify(allIncludes),
     ALIASES: JSON.stringify(allAliases),
     ENV_VARS: JSON.stringify(runtimeConfig.env || {}),

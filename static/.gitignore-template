@@ -126,8 +126,10 @@ jest.config.js
 jest.setup.ts
 
 tsconfig.json
-.tsconfig.local.json
+tsconfig.json
 
 serverless.yml
 
 src/presets
+
+.tsconfig.local.json

@@ -59,7 +59,10 @@ export default function createNodeWebpackConfig({
         '.tsx',
         '.d.ts',
       ],
-      alias,
+      alias: {
+        ...alias,
+        '~': app.paths.src,
+      },
       modules: resolveModules,
     },
     module: {
@@ -88,7 +91,7 @@ export default function createNodeWebpackConfig({
       new FriendlyErrorsWebpackPlugin(),
       new ForkTsCheckerWebpackPlugin({
         typescript: {
-          configFile: path.join(app.paths.root, '.tsconfig.local.json'),
+          configFile: path.join(app.paths.root, 'tsconfig.json'),
           diagnosticOptions: {
             semantic: true,
             syntactic: true,

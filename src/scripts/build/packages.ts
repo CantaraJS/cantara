@@ -117,7 +117,7 @@ export default async function buildPackage(app: CantaraApplication) {
   if (!app.meta.skipTypeGeneration) {
     // Generate types
 
-    const tsConfigPath = path.join(app.paths.root, '.tsconfig.local.json');
+    const tsConfigPath = path.join(app.paths.root, 'tsconfig.json');
     const suppress = app.meta.suppressTsErrors
       ? ` --suppress ${app.meta.suppressTsErrors.join(',')}@`
       : '';

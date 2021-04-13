@@ -66,7 +66,10 @@ export default function createLibraryWebpackConfig({
         '.html',
         '.htm',
       ],
-      alias,
+      alias: {
+        ...alias,
+        '~': app.paths.src,
+      },
     },
     externals,
     mode: 'production',
