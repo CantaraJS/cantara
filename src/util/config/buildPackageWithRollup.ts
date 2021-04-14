@@ -90,10 +90,7 @@ export default async function buildPackageWithRollup({
       exclude: [/node_modules/],
     }),
     alias({
-      entries: {
-        ...buildAliases,
-        '~': app.paths.src,
-      },
+      entries: buildAliases,
     }),
     injectProcessEnv(env),
     babel({

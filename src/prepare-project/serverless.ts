@@ -8,7 +8,7 @@ import renderTemplate from '../util/configTemplates';
 import { externalsAsStringArray } from '../util/externals';
 import { createOrUpdatePackageJSON } from './util/yarn';
 import { createNodeJestConfig } from './util/testing';
-import { createLocalAppTsConfig } from './util/typescript';
+import { createLocalTsConfig } from './util/typescript';
 import getGlobalConfig from '../cantara-config/global-config';
 import getRuntimeConfig from '../cantara-config/runtime-config';
 import { generateRuntimePresetCode } from './util/runtime-presets';
@@ -188,7 +188,11 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
 
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
-  createLocalAppTsConfig({ app, indexFileName: 'index.tsx' });
+  createLocalTsConfig({
+    app,
+    indexFileName: 'index.tsx',
+    templateFileName: 'appLocalTsConfigTemplate.json',
+  });
 
   await generateRuntimePresetCode(app);
 }
