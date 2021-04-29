@@ -1,6 +1,6 @@
 import path from 'path';
 import ncpCb from 'ncp';
-import { existsSync, readFileSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { promisify } from 'util';
 
 import prepareReactApps from './react';
@@ -16,6 +16,8 @@ import execCmd from '../util/exec';
 import { createGlobalTsConfig } from './util/typescript';
 import slash from 'slash';
 import { fsWriteFile } from '../util/fs';
+
+const stringifyToModule = require('code-stringify');
 
 const ncp = promisify(ncpCb);
 
@@ -102,17 +104,17 @@ async function prepareUserProject() {
       plugins,
     };
     let newTailwindConfigContent = `
-      module.exports = ${JSON.stringify(newTailwindConfig)}
+      module.exports = ${stringifyToModule(newTailwindConfig)}
     `;
 
     newTailwindConfigContent = replaceAll(
       newTailwindConfigContent,
-      `"${PLUGIN_START_DEL}`,
+      `'${PLUGIN_START_DEL}`,
       `require('`,
     );
     newTailwindConfigContent = replaceAll(
       newTailwindConfigContent,
-      `${PLUGIN_END_DEL}"`,
+      `${PLUGIN_END_DEL}'`,
       `')`,
     );
 
