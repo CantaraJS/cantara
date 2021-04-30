@@ -49,7 +49,7 @@ export default async function buildReactApp(app: CantaraApplication) {
     include: internalPackages,
     // TODO: Evaluate if this should also be set for prod builds
     // resolveModules: resolveModulesInDevelopment,
-    pathToTailwindCss: tailwind?.pathToTailwindCss,
+    pathToTailwindCss: tailwind ? tailwind.pathToTailwindCss : undefined,
   });
 
   const onComplete = logBuildTime({

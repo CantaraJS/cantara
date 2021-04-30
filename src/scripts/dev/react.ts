@@ -36,7 +36,7 @@ export function startReactAppDevelopmentServer() {
     env,
     include: [...internalPackages, ...linkedPackages],
     resolveModules: resolveModulesInDevelopment,
-    pathToTailwindCss: tailwind?.pathToTailwindCss,
+    pathToTailwindCss: tailwind ? tailwind.pathToTailwindCss : undefined,
   });
 
   const compiler = webpack(webpackConfig);
