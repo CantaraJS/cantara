@@ -12,4 +12,6 @@ custom:
     includeModules:
       packagePath: './package.json'
     packager: 'yarn'
+    packagerOptions:
+      noFrozenLockfile: true
 # <--CANTARA specific configuration END -->
