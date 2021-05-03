@@ -20,7 +20,7 @@ function aliasesToTypeScriptPaths(aliases: { [key: string]: string }) {
   }, {});
 }
 
-interface createLocalTsConfigOptions {
+interface CreateLocalTsConfigOptions {
   indexFileName: string;
   app: CantaraApplication;
   templateFileName: string;
@@ -33,7 +33,7 @@ export function createLocalTsConfig({
   indexFileName,
   app,
   templateFileName,
-}: createLocalTsConfigOptions) {
+}: CreateLocalTsConfigOptions) {
   const globalCantaraConfig = getGlobalConfig();
   const { tsFilesToInclude } = getRuntimeConfig();
   const appLocalTsConfigTemplate = readFileSync(
@@ -60,14 +60,19 @@ export function createLocalTsConfig({
   let tsConfig = JSON.parse(renderedTsConfig);
   const customTypes = app.meta.customTypes || [];
 
-  // Create app root alias (for Node and React Apps only)
-  let appRootPathAlias = {};
-  if (
-    app.type === 'react' ||
-    app.type === 'node' ||
-    app.type === 'serverless'
-  ) {
-    appRootPathAlias = { '~': app.paths.src };
+  const shouldCreateAliases =
+    app.type === 'react' || app.type === 'node' || app.type === 'serverless';
+
+  // Create all aliases (for Node and React Apps only)
+  let allAliases = {};
+  if (shouldCreateAliases) {
+    const appRootPathAlias = { '~': app.paths.src };
+    allAliases = aliasesToTypeScriptPaths({
+      ...appRootPathAlias,
+      ...packageAliases,
+      ...linkedPackageAliases,
+      ...otherAliases,
+    });
   }
 
   tsConfig = {
@@ -75,12 +80,7 @@ export function createLocalTsConfig({
     include: [...(tsConfig.include || []), ...customTypes, ...tsFilesToInclude],
     compilerOptions: {
       ...tsConfig.compilerOptions,
-      paths: aliasesToTypeScriptPaths({
-        ...appRootPathAlias,
-        ...packageAliases,
-        ...linkedPackageAliases,
-        ...otherAliases,
-      }),
+      paths: allAliases,
     },
   };
 
