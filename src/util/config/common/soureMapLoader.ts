@@ -13,7 +13,7 @@ export default function getSourceMapLoader({
 
   return [
     {
-      test: /\.js$/,
+      test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
       use: ['source-map-loader'],
       enforce: 'pre',
       exclude: /node_modules/,
