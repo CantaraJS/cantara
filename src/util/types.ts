@@ -80,6 +80,20 @@ export interface CantaraApplicationMetaInformation {
    * If Set to true, the commonjs target will not be bundled.
    */
   skipBundling?: boolean;
+  /**
+   * Do not autogenerate manifest
+   * when sw.js file is found
+   */
+  disableManifest?: boolean;
+  /**
+   * Currently, the SW
+   * is only generated for
+   * production builds.
+   * If you want to test it
+   * during dev, set this
+   * to true.
+   */
+  generateServiceWorkerInDev?: boolean;
 }
 
 export interface CantaraApplication {

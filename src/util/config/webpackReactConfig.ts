@@ -36,7 +36,10 @@ export default function createReactWebpackConfig({
   const appIconPathSvg = path.join(app.paths.assets!, 'app_icon.svg');
   const serviceWorkerPath = path.join(app.paths.src, 'sw.js');
   const doesServiceWorkerExist = existsSync(serviceWorkerPath);
-  const enablePwa = isProduction;
+  const enableServiceWorker =
+    doesServiceWorkerExist &&
+    (isProduction || app.meta.generateServiceWorkerInDev);
+  const generateManifest = enableServiceWorker && !app.meta.disableManifest;
 
   if (existsSync(appIconPathPng)) {
     iconPathToUse = appIconPathPng;
@@ -98,7 +101,7 @@ export default function createReactWebpackConfig({
       //     })
       //   : undefined,
       isDevelopment ? new ReactRefreshWebpackPlugin() : undefined,
-      enablePwa && doesServiceWorkerExist
+      generateManifest
         ? new WebpackPwaManifest({
             // gcm_sender_id,
             theme_color: app.meta.themeColor,
@@ -117,7 +120,7 @@ export default function createReactWebpackConfig({
             ...app.meta.pwaManifest,
           })
         : undefined,
-      enablePwa && doesServiceWorkerExist
+      enableServiceWorker
         ? new InjectManifest({
             swSrc: serviceWorkerPath,
           })
