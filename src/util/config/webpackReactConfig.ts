@@ -93,6 +93,7 @@ export default function createReactWebpackConfig({
         title: app.meta.displayName,
         template: path.join(app.paths.assets!, 'index.html'),
         favicon: iconPathToUse,
+        templateParameters: env,
       }),
       // iconPathToUse
       //   ? new FaviconsWebpackPlugin({
