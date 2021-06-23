@@ -94,6 +94,15 @@ export interface CantaraApplicationMetaInformation {
    * to true.
    */
   generateServiceWorkerInDev?: boolean;
+  /**
+   * If set, Cantara will extract
+   * react-i18n translations automatically
+   * to translation files. The object
+   * specified here will be passed
+   * directly to
+   * https://github.com/gilbsgilbs/babel-plugin-i18next-extract
+   */
+  i18n?: any;
 }
 
 export interface CantaraApplication {

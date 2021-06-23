@@ -1,4 +1,11 @@
-export function getBabelReactConfig(mode: 'development' | 'production') {
+interface Options {
+  i18n?: any;
+}
+
+export function getBabelReactConfig(
+  mode: 'development' | 'production',
+  { i18n }: Options = {},
+) {
   return {
     presets: [
       [
@@ -16,6 +23,9 @@ export function getBabelReactConfig(mode: 'development' | 'production') {
       require('@babel/plugin-proposal-optional-chaining'),
       require('@babel/plugin-proposal-nullish-coalescing-operator'),
       mode === 'development' ? 'react-refresh/babel' : undefined,
+      mode === 'development' && i18n
+        ? [require('babel-plugin-i18next-extract'), i18n]
+        : undefined,
     ].filter(Boolean) as string[],
   };
 }

@@ -24,6 +24,16 @@ export default function createCommonReactWebpackConfig({
 }: CreateCommonReactWebpackConfigParams): Configuration {
   const isProduction = mode === 'production';
 
+  let i18n = app.meta.i18n;
+  if (i18n) {
+    i18n = {
+      ...i18n,
+      outputPath: path.join(app.paths.src, i18n.outputPath ?? 'locales'),
+    };
+  }
+
+  const babelConfig = getBabelReactConfig(mode, { i18n });
+
   return {
     entry: path.join(app.paths.src, 'index.tsx'),
     resolve: {
@@ -76,7 +86,7 @@ export default function createCommonReactWebpackConfig({
           // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
-            options: getBabelReactConfig(mode),
+            options: babelConfig,
           },
           include: [app.paths.src, ...include],
           // exclude: [/node_modules/],
