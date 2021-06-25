@@ -1,7 +1,7 @@
 import { CantaraApplication } from '../util/types';
 import { createOrUpdatePackageJSON } from './util/yarn';
 import { createNodeJestConfig } from './util/testing';
-import { createLocalAppTsConfig } from './util/typescript';
+import { createLocalTsConfig } from './util/typescript';
 import { generateRuntimePresetCode } from './util/runtime-presets';
 
 export default async function prepareNodeApp(app: CantaraApplication) {
@@ -9,7 +9,11 @@ export default async function prepareNodeApp(app: CantaraApplication) {
   createNodeJestConfig(app);
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
-  createLocalAppTsConfig({ app, indexFileName: 'index.ts' });
+  createLocalTsConfig({
+    app,
+    indexFileName: 'index.ts',
+    templateFileName: 'appLocalTsConfigTemplate.json',
+  });
 
   await generateRuntimePresetCode(app);
 }

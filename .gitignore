@@ -118,3 +118,5 @@ gen
 .temp
 
 dist/
+
+tailwind.config.js

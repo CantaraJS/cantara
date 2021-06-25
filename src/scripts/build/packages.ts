@@ -2,14 +2,16 @@ import webpack from 'webpack';
 import path from 'path';
 
 import { CantaraApplication } from '../../util/types';
-import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { readFileAsJSON, writeJson } from '../../util/fs';
 import execCmd from '../../util/exec';
-import slash from 'slash';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
-import { transpile } from '../../util/babel';
 import { logBuildTime } from './util';
+import buildPackageWithRollup from '../../util/config/buildPackageWithRollup';
+import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
+import { BundlerConfigParams } from '../../util/config/types';
+import slash from 'slash';
+import del from 'del';
 
 function compile(config: webpack.Configuration) {
   const compiler = webpack(config);
@@ -25,6 +27,12 @@ function compile(config: webpack.Configuration) {
   });
 }
 
+interface BuildResult {
+  cjs?: string;
+  umd?: string;
+  esm?: string;
+}
+
 export default async function buildPackage(app: CantaraApplication) {
   const {
     includes: { internalPackages },
@@ -36,57 +44,80 @@ export default async function buildPackage(app: CantaraApplication) {
   const { env } = getRuntimeConfig();
   const allAliases = { ...packageAliases };
 
-  const commonOptions = {
+  let { libraryTargets = ['umd', 'commonjs', 'esm'], sourceMaps } = app.meta;
+
+  if (libraryTargets.length === 0) {
+    libraryTargets = ['esm'];
+  }
+
+  // Delete build folder
+  await del(app.paths.build, { force: true });
+
+  const commonBundlerConfig: BundlerConfigParams = {
     alias: allAliases,
     app,
     env,
     projectDir,
     include: internalPackages,
+    sourceMaps,
   };
 
-  const webpackCommonJsConfig = createLibraryWebpackConfig({
-    ...commonOptions,
-    libraryTarget: 'commonjs2',
-    noChecks: true,
-  });
+  const buildResult: BuildResult = {};
 
-  const webpackUmdConfig = createLibraryWebpackConfig({
-    ...commonOptions,
-    libraryTarget: 'umd',
-    noChecks: false,
-  });
-
-  const { libraryTargets = ['umd', 'commonjs'], skipBundling } = app.meta;
+  if (libraryTargets.includes('esm')) {
+    const onBundleCreated = logBuildTime({
+      stepName: `Creating ESM bundle`,
+      toolName: 'Rollup',
+    });
+    buildResult.esm = await buildPackageWithRollup({
+      ...commonBundlerConfig,
+      libraryTarget: 'esm',
+    });
+    onBundleCreated();
+  }
 
   if (libraryTargets.includes('commonjs')) {
-    if (skipBundling) {
-      const onTranspiled = logBuildTime({
-        stepName: 'Transpiling',
-        toolName: 'Babel',
-      });
-      await transpile(app);
-      onTranspiled();
-    } else {
-      const onCompiled = logBuildTime({
-        stepName: 'Bundling as CommonJS module',
-        toolName: 'Webpack',
-      });
-      await compile(webpackCommonJsConfig);
-      onCompiled();
-    }
+    const onBundleCreated = logBuildTime({
+      stepName: `Creating CommonJS bundle`,
+      toolName: 'Rollup',
+    });
+    buildResult.cjs = await buildPackageWithRollup({
+      ...commonBundlerConfig,
+      libraryTarget: 'commonjs',
+    });
+    onBundleCreated();
   }
+
   if (libraryTargets.includes('umd')) {
-    const onCompiled = logBuildTime({
-      stepName: 'Creating optimized UMD build',
+    const onBundleCreated = logBuildTime({
+      stepName: `Creating UMD bundle`,
       toolName: 'Webpack',
     });
+    // Create UMD build using webpack because it supports lazy loading
+    const webpackUmdConfig = createLibraryWebpackConfig({
+      ...commonBundlerConfig,
+      libraryTarget: 'umd',
+    });
     await compile(webpackUmdConfig);
-    onCompiled();
+    onBundleCreated();
+
+    const relativeBuildPath = path.relative(
+      app.paths.root,
+      webpackUmdConfig.output!.path!,
+    );
+
+    const realtiveOutPath = path.join(
+      relativeBuildPath,
+      webpackUmdConfig.output!.filename as string,
+    );
+
+    buildResult.umd = slash(realtiveOutPath);
   }
 
   if (!app.meta.skipTypeGeneration) {
     // Generate types
-    const tsConfigPath = path.join(app.paths.root, '.tsconfig.local.json');
+
+    const tsConfigPath = path.join(app.paths.root, 'tsconfig.json');
     const suppress = app.meta.suppressTsErrors
       ? ` --suppress ${app.meta.suppressTsErrors.join(',')}@`
       : '';
@@ -113,16 +144,9 @@ export default async function buildPackage(app: CantaraApplication) {
   // Set correct path to index.js in packageJson's "main" field
   const packageJsonPath = path.join(app.paths.root, 'package.json');
   const packageJson = readFileAsJSON(packageJsonPath);
-  const newPackageJson = {
-    ...packageJson,
-    main: `./${slash(
-      path.join(
-        path.relative(app.paths.root, app.paths.build),
-        path.basename(app.name),
-        'src',
-        'index.js',
-      ),
-    )}`,
-  };
-  writeJson(packageJsonPath, newPackageJson);
+  packageJson.main = buildResult.cjs;
+  packageJson.module = buildResult.esm;
+  packageJson.browser = buildResult.umd;
+  packageJson.types = './build/types/index.d.ts';
+  writeJson(packageJsonPath, packageJson);
 }

@@ -1,5 +1,5 @@
 import webpack, { Configuration } from 'webpack';
-import { CreateWebpackConfigParams } from './types';
+import { BundlerConfigParams } from './types';
 import fs from 'fs';
 import path from 'path';
 import babelConfig from './babelNodeConfig';
@@ -13,7 +13,7 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
-interface CreateNodeWebpackConfigOptions extends CreateWebpackConfigParams {
+interface CreateNodeWebpackConfigOptions extends BundlerConfigParams {
   nodemonOptions?: string[];
 }
 
@@ -59,7 +59,10 @@ export default function createNodeWebpackConfig({
         '.tsx',
         '.d.ts',
       ],
-      alias,
+      alias: {
+        ...alias,
+        '~': app.paths.src,
+      },
       modules: resolveModules,
     },
     module: {
@@ -88,7 +91,7 @@ export default function createNodeWebpackConfig({
       new FriendlyErrorsWebpackPlugin(),
       new ForkTsCheckerWebpackPlugin({
         typescript: {
-          configFile: path.join(app.paths.root, '.tsconfig.local.json'),
+          configFile: path.join(app.paths.root, 'tsconfig.json'),
           diagnosticOptions: {
             semantic: true,
             syntactic: true,

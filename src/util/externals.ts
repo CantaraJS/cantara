@@ -105,7 +105,7 @@ interface GetAllWebpackExternalsOptions {
   ignore?: string[];
 }
 
-export function webpackExternalsAsStringArray({
+export function externalsAsStringArray({
   peerOnly,
   ignore,
 }: GetAllWebpackExternalsOptions = {}) {
@@ -142,7 +142,7 @@ export default function getAllWebpackExternals({
   custom,
   ignore,
 }: GetAllWebpackExternalsOptions = {}) {
-  const externals = webpackExternalsAsStringArray({ peerOnly, ignore });
+  const externals = externalsAsStringArray({ peerOnly, ignore });
 
   let externalsObj = externals.reduce((retObj, externalName) => {
     return {

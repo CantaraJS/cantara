@@ -5,7 +5,7 @@ import { getBabelReactConfig } from './babelReactConfig';
 import getAllWebpackExternals from '../externals';
 import { camalize } from '../string-manipulation';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
-import { CreateWebpackConfigParams } from './types';
+import { BundlerConfigParams } from './types';
 import getCssLoaders from './common/cssLoaders';
 import getSourceMapLoader from './common/soureMapLoader';
 
@@ -27,7 +27,7 @@ export default function createLibraryWebpackConfig({
   libraryTarget,
   noChecks,
   env,
-}: CreateWebpackConfigParams): Configuration {
+}: BundlerConfigParams): Configuration {
   const isReactComponent = app.type === 'react-component';
 
   const entryPath = isReactComponent
@@ -47,13 +47,7 @@ export default function createLibraryWebpackConfig({
       ...externals,
     };
   } else {
-    const customExternals = app.meta.externalDependencies
-      ? app.meta.externalDependencies.commonjs
-      : {};
-    externals = {
-      ...customExternals,
-    };
-    externals = getAllWebpackExternals({ custom: externals });
+    throw new Error(`${libraryTarget} builds need to be done using Rollup.`);
   }
 
   const commonLibraryConfig: Configuration = {
@@ -79,20 +73,14 @@ export default function createLibraryWebpackConfig({
     devtool: app.meta.sourceMaps ? 'source-map' : undefined,
     output: {
       // publicPath: '/',
-      filename:
-        libraryTarget === 'commonjs2'
-          ? 'index.js'
-          : `${path.basename(app.name)}.umd.min.js`,
-      path:
-        libraryTarget === 'commonjs2'
-          ? path.join(app.paths.build, path.basename(app.name), 'src')
-          : app.paths.build,
+      filename: `${path.basename(app.name)}.umd.min.js`,
+      path: path.join(app.paths.build, 'umd'),
       library: camalize(app.name),
       /** For bundlers and NodeJS, CommonJS is used.
        * As soon webpack supports ESM as a libraryTarget,
        * ESMs are favoured
        */
-      libraryTarget,
+      // libraryTarget,
     },
     plugins: [
       noChecks
@@ -105,9 +93,6 @@ export default function createLibraryWebpackConfig({
       noChecks ? undefined : new WebpackNotifierPlugin(),
       new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
-      libraryTarget === 'commonjs2'
-        ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
-        : undefined,
     ].filter(Boolean),
     module: {
       rules: [...getCssLoaders({ useExtractLoader: false })],
@@ -116,8 +101,7 @@ export default function createLibraryWebpackConfig({
       hints: false,
     },
     optimization: {
-      // Only minify for UMD
-      minimize: libraryTarget === 'umd',
+      minimize: true,
     },
     stats: {
       warningsFilter: [/Failed to parse source map/],

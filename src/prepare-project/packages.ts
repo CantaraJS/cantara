@@ -3,11 +3,11 @@ import path from 'path';
 import { CantaraApplication } from '../util/types';
 
 import { readFileAsJSON, writeJson } from '../util/fs';
-import renderTemplate from '../util/configTemplates';
-import { readFileSync, copyFileSync } from 'fs';
+import { copyFileSync } from 'fs';
 import { createOrUpdatePackageJSON } from './util/yarn';
 import { createReactJestConfig, createNodeJestConfig } from './util/testing';
 import getGlobalConfig from '../cantara-config/global-config';
+import { createLocalTsConfig } from './util/typescript';
 
 function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
   const packageJson = readFileAsJSON(packageJsonPath);
@@ -54,24 +54,11 @@ export default async function prepareJsPackage(app: CantaraApplication) {
 
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
-  const packageTsConfigTemplate = readFileSync(
-    path.join(staticFilesFolder, 'packageTsConfigTemplate.json'),
-  ).toString();
-  const renderedTsConfig = renderTemplate({
-    template: packageTsConfigTemplate,
-    variables: {
-      INDEX_FILE_NAME: indexFileName,
-      JEST_SETUP_FILE: './jest.setup.ts',
-    },
+  createLocalTsConfig({
+    app,
+    indexFileName,
+    templateFileName: 'packageTsConfigTemplate.json',
   });
-  const packageTsConfigPath = path.join(app.paths.root, '.tsconfig.local.json');
-  let tsConfig = JSON.parse(renderedTsConfig);
-  const customTypes = app.meta.customTypes || [];
-  tsConfig = {
-    ...tsConfig,
-    include: [...(tsConfig.include || []), ...customTypes],
-  };
-  writeJson(packageTsConfigPath, tsConfig);
 
   // Copy .npmignore ignore file
   const npmignorePath = path.join(staticFilesFolder, '.npmignore-template');

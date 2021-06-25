@@ -30,6 +30,7 @@ module.exports = {
       'css',
       'external_dependencies',
       'css_modules_types',
+      'tailwindcss',
       'cantara_config_js',
     ],
     ['Other']: ['starter_templates'],

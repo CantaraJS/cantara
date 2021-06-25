@@ -4,7 +4,7 @@ import { copyFileSync, existsSync, mkdirSync } from 'fs';
 import { CantaraApplication } from '../util/types';
 import { createOrUpdatePackageJSON } from './util/yarn';
 import { createReactJestConfig } from './util/testing';
-import { createLocalAppTsConfig } from './util/typescript';
+import { createLocalTsConfig } from './util/typescript';
 import getGlobalConfig from '../cantara-config/global-config';
 import { generateRuntimePresetCode } from './util/runtime-presets';
 
@@ -40,7 +40,11 @@ export default async function prepareReactApps(app: CantaraApplication) {
 
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
-  createLocalAppTsConfig({ app, indexFileName: 'index.tsx' });
+  createLocalTsConfig({
+    app,
+    indexFileName: 'index.tsx',
+    templateFileName: 'appLocalTsConfigTemplate.json',
+  });
 
   await generateRuntimePresetCode(app);
 }

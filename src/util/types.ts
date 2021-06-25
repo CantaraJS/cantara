@@ -26,7 +26,7 @@ export interface CantaraApplicationMetaInformation {
    * if you need this.
    */
   skipCacheInvalidation?: boolean;
-  libraryTargets?: ('umd' | 'commonjs')[];
+  libraryTargets?: ('umd' | 'commonjs' | 'esm')[];
   /** Required env vars,
    * either defined in process.env or
    * in the current environment's env file.
@@ -80,6 +80,29 @@ export interface CantaraApplicationMetaInformation {
    * If Set to true, the commonjs target will not be bundled.
    */
   skipBundling?: boolean;
+  /**
+   * Do not autogenerate manifest
+   * when sw.js file is found
+   */
+  disableManifest?: boolean;
+  /**
+   * Currently, the SW
+   * is only generated for
+   * production builds.
+   * If you want to test it
+   * during dev, set this
+   * to true.
+   */
+  generateServiceWorkerInDev?: boolean;
+  /**
+   * If set, Cantara will extract
+   * react-i18n translations automatically
+   * to translation files. The object
+   * specified here will be passed
+   * directly to
+   * https://github.com/gilbsgilbs/babel-plugin-i18next-extract
+   */
+  i18n?: any;
 }
 
 export interface CantaraApplication {

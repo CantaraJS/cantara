@@ -12,6 +12,7 @@ export function startReactAppDevelopmentServer() {
     includes: { internalPackages },
     aliases: { packageAliases },
     projectDir,
+    tailwind,
   } = getGlobalConfig();
 
   const {
@@ -35,6 +36,7 @@ export function startReactAppDevelopmentServer() {
     env,
     include: [...internalPackages, ...linkedPackages],
     resolveModules: resolveModulesInDevelopment,
+    pathToTailwindCss: tailwind ? tailwind.pathToTailwindCss : undefined,
   });
 
   const compiler = webpack(webpackConfig);

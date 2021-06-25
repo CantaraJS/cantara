@@ -7,8 +7,7 @@
     "declarationMap": true,
     "declaration": true,
     "noEmit": false,
-    "outDir": "./build",
-    "skipLibCheck": true,
-    "rootDir": ".."
+    "outDir": "./build/types",
+    "skipLibCheck": true
   }
 }

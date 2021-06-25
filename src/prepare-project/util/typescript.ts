@@ -20,42 +20,68 @@ function aliasesToTypeScriptPaths(aliases: { [key: string]: string }) {
   }, {});
 }
 
-interface CreateLocalAppTsConfigOptions {
+interface CreateLocalTsConfigOptions {
   indexFileName: string;
   app: CantaraApplication;
+  templateFileName: string;
 }
 /**
  * Create local tsconfig which extends from global one.
  * Needed to correctly generate types
  */
-export function createLocalAppTsConfig({
+export function createLocalTsConfig({
   indexFileName,
   app,
-}: CreateLocalAppTsConfigOptions) {
+  templateFileName,
+}: CreateLocalTsConfigOptions) {
   const globalCantaraConfig = getGlobalConfig();
   const { tsFilesToInclude } = getRuntimeConfig();
   const appLocalTsConfigTemplate = readFileSync(
-    path.join(
-      globalCantaraConfig.internalPaths.static,
-      'appLocalTsConfigTemplate.json',
-    ),
+    path.join(globalCantaraConfig.internalPaths.static, templateFileName),
   ).toString();
+
   const renderedTsConfig = renderTemplate({
     template: appLocalTsConfigTemplate,
     variables: {
       INDEX_FILE_NAME: indexFileName,
     },
   });
-  const appLocalTsConfigPath = path.join(
-    app.paths.root,
-    '.tsconfig.local.json',
-  );
+
+  const appLocalTsConfigPath = path.join(app.paths.root, 'tsconfig.json');
+
+  let {
+    aliases: { packageAliases },
+  } = globalCantaraConfig;
+
+  const {
+    aliases: { linkedPackageAliases, otherAliases },
+  } = getRuntimeConfig();
 
   let tsConfig = JSON.parse(renderedTsConfig);
   const customTypes = app.meta.customTypes || [];
+
+  const shouldCreateAliases =
+    app.type === 'react' || app.type === 'node' || app.type === 'serverless';
+
+  // Create all aliases (for Node and React Apps only)
+  let allAliases = {};
+  if (shouldCreateAliases) {
+    const appRootPathAlias = { '~': app.paths.src };
+    allAliases = aliasesToTypeScriptPaths({
+      ...appRootPathAlias,
+      ...packageAliases,
+      ...linkedPackageAliases,
+      ...otherAliases,
+    });
+  }
+
   tsConfig = {
     ...tsConfig,
     include: [...(tsConfig.include || []), ...customTypes, ...tsFilesToInclude],
+    compilerOptions: {
+      ...tsConfig.compilerOptions,
+      paths: allAliases,
+    },
   };
 
   writeJson(appLocalTsConfigPath, tsConfig);
@@ -82,23 +108,8 @@ export function createGlobalTsConfig() {
     aliases: { packageAliases },
   } = globalCantaraConfig;
 
-  const {
-    aliases: { linkedPackageAliases, otherAliases },
-  } = getRuntimeConfig();
-
-  const newTsConfig = {
-    ...tsConfig,
-    compilerOptions: {
-      ...tsConfig.compilerOptions,
-      paths: aliasesToTypeScriptPaths({
-        ...packageAliases,
-        ...linkedPackageAliases,
-        ...otherAliases,
-      }),
-    },
-  };
   writeJson(
     path.join(globalCantaraConfig.projectDir, 'tsconfig.json'),
-    newTsConfig,
+    tsConfig,
   );
 }

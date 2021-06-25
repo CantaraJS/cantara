@@ -1,13 +1,15 @@
 import { CantaraApplication } from '../types';
 
-export interface CreateWebpackConfigParams {
+type LibraryTarget = 'commonjs' | 'umd' | 'esm';
+
+export interface BundlerConfigParams {
   app: CantaraApplication;
   /** Root of user's project */
   projectDir: string;
   alias?: { [key: string]: string };
   include?: string[];
   mode?: 'production' | 'development';
-  libraryTarget?: 'commonjs2' | 'umd';
+  libraryTarget?: LibraryTarget;
   /** Set this to true if you want to skip type checks and
    * other things which should just be executed once.
    * Set to true if you need to compile multiple
@@ -20,4 +22,6 @@ export interface CreateWebpackConfigParams {
    */
   env?: { [key: string]: string };
   resolveModules?: string[];
+  sourceMaps?: boolean;
+  pathToTailwindCss?: string;
 }

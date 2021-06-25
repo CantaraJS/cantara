@@ -1,7 +1,7 @@
 import webpack, { Configuration } from 'webpack';
 import path from 'path';
 
-import { CreateWebpackConfigParams } from '../types';
+import { BundlerConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
 
@@ -10,8 +10,7 @@ const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const cssnano = require('cssnano');
 
-interface CreateCommonReactWebpackConfigParams
-  extends CreateWebpackConfigParams {
+interface CreateCommonReactWebpackConfigParams extends BundlerConfigParams {
   /** Set to true for NPM packages */
   alwaysInlineImages?: boolean;
 }
@@ -24,6 +23,16 @@ export default function createCommonReactWebpackConfig({
   alwaysInlineImages,
 }: CreateCommonReactWebpackConfigParams): Configuration {
   const isProduction = mode === 'production';
+
+  let i18n = app.meta.i18n;
+  if (i18n) {
+    i18n = {
+      ...i18n,
+      outputPath: path.join(app.paths.src, i18n.outputPath ?? 'locales'),
+    };
+  }
+
+  const babelConfig = getBabelReactConfig(mode, { i18n });
 
   return {
     entry: path.join(app.paths.src, 'index.tsx'),
@@ -77,7 +86,7 @@ export default function createCommonReactWebpackConfig({
           // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
-            options: getBabelReactConfig(mode),
+            options: babelConfig,
           },
           include: [app.paths.src, ...include],
           // exclude: [/node_modules/],

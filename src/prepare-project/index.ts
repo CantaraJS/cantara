@@ -1,6 +1,6 @@
 import path from 'path';
 import ncpCb from 'ncp';
-import { existsSync, readFileSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { promisify } from 'util';
 
 import prepareReactApps from './react';
@@ -14,8 +14,16 @@ import { createJestConfig } from './util/testing';
 import getGlobalConfig from '../cantara-config/global-config';
 import execCmd from '../util/exec';
 import { createGlobalTsConfig } from './util/typescript';
+import slash from 'slash';
+import { fsWriteFile } from '../util/fs';
+
+const stringifyToModule = require('code-stringify');
 
 const ncp = promisify(ncpCb);
+
+function replaceAll(str: string, search: string, replacement: string) {
+  return str.split(search).join(replacement);
+}
 
 /** Prepares user's project */
 async function prepareUserProject() {
@@ -70,6 +78,52 @@ async function prepareUserProject() {
     dir: rootDir,
     configTemplateFileName: 'jestGlobalConfig.template.js',
   });
+
+  // Create tailwind config inside Cantara install folder
+  // if user opted-in to use tailwind
+
+  if (globalCantaraConfig.tailwind) {
+    const globRoot = slash(rootDir);
+    const projectNodeModules = slash(path.join(rootDir, 'node_modules'));
+    const PLUGIN_START_DEL = '<-p0->';
+    const PLUGIN_END_DEL = '<-p1->';
+    const plugins = Array.isArray(globalCantaraConfig.tailwind.config.plugins)
+      ? globalCantaraConfig.tailwind.config.plugins.map(
+          (pluginPath: string) => {
+            return `${PLUGIN_START_DEL}${projectNodeModules}/${pluginPath}${PLUGIN_END_DEL}`;
+          },
+        )
+      : [];
+
+    const newTailwindConfig = {
+      ...globalCantaraConfig.tailwind.config,
+      purge: [
+        `${globRoot}/react-apps/**/*.{js,ts,jsx,tsx}`,
+        `${globRoot}/packages/**/*.{js,ts,jsx,tsx}`,
+      ],
+      plugins,
+    };
+    let newTailwindConfigContent = `
+      module.exports = ${stringifyToModule(newTailwindConfig)}
+    `;
+
+    newTailwindConfigContent = replaceAll(
+      newTailwindConfigContent,
+      `'${PLUGIN_START_DEL}`,
+      `require('`,
+    );
+    newTailwindConfigContent = replaceAll(
+      newTailwindConfigContent,
+      `${PLUGIN_END_DEL}'`,
+      `')`,
+    );
+
+    const newTailwindFilePath = path.join(
+      globalCantaraConfig.internalPaths.root,
+      'tailwind.config.js',
+    );
+    await fsWriteFile(newTailwindFilePath, newTailwindConfigContent);
+  }
 }
 
 /**

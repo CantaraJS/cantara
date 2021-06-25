@@ -1,21 +1,32 @@
-export function getBabelReactConfig(mode: 'development' | 'production') {
+interface Options {
+  i18n?: any;
+}
+
+export function getBabelReactConfig(
+  mode: 'development' | 'production',
+  { i18n }: Options = {},
+) {
   return {
     presets: [
       [
-        '@babel/preset-react',
+        require('@babel/preset-react'),
         {
           runtime: 'automatic',
         },
       ],
-      '@babel/typescript',
+      require('@babel/preset-typescript'),
     ],
     plugins: [
-      '@babel/plugin-proposal-class-properties',
-      '@babel/plugin-proposal-object-rest-spread',
-      '@babel/plugin-proposal-optional-chaining',
-      '@babel/plugin-proposal-nullish-coalescing-operator',
+      require('@babel/plugin-transform-runtime'),
+      require('@babel/plugin-proposal-class-properties'),
+      require('@babel/plugin-proposal-object-rest-spread'),
+      require('@babel/plugin-proposal-optional-chaining'),
+      require('@babel/plugin-proposal-nullish-coalescing-operator'),
       mode === 'development' ? 'react-refresh/babel' : undefined,
-    ].filter(Boolean),
+      mode === 'development' && i18n
+        ? [require('babel-plugin-i18next-extract'), i18n]
+        : undefined,
+    ].filter(Boolean) as string[],
   };
 }
 

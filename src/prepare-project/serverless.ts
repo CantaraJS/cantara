@@ -5,10 +5,10 @@ import slash from 'slash';
 import { CantaraApplication } from '../util/types';
 import renderTemplate from '../util/configTemplates';
 
-import { webpackExternalsAsStringArray } from '../util/externals';
+import { externalsAsStringArray } from '../util/externals';
 import { createOrUpdatePackageJSON } from './util/yarn';
 import { createNodeJestConfig } from './util/testing';
-import { createLocalAppTsConfig } from './util/typescript';
+import { createLocalTsConfig } from './util/typescript';
 import getGlobalConfig from '../cantara-config/global-config';
 import getRuntimeConfig from '../cantara-config/runtime-config';
 import { generateRuntimePresetCode } from './util/runtime-presets';
@@ -63,9 +63,10 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   const allAliases = {
     ...globalCantaraConfig.aliases.packageAliases,
     ...runtimeConfig.aliases.otherAliases,
+    '~': app.paths.src,
   };
   // Externals must not contain aliases
-  const externals = webpackExternalsAsStringArray({
+  const externals = externalsAsStringArray({
     ignore: Object.keys(allAliases),
   });
 
@@ -83,7 +84,7 @@ function createWebpackAndBabelConfigFromTemplate(app: CantaraApplication) {
   const templateVariables = {
     BABEL_CONFIG_PATH: slash(babelConfigPath),
     MODULES_PATH,
-    TSCONFIG_PATH: slash(path.join(app.paths.root, '.tsconfig.local.json')),
+    TSCONFIG_PATH: slash(path.join(app.paths.root, 'tsconfig.json')),
     INCLUDES: JSON.stringify(allIncludes),
     ALIASES: JSON.stringify(allAliases),
     ENV_VARS: JSON.stringify(runtimeConfig.env || {}),
@@ -187,7 +188,11 @@ export default async function prepareServerlessApp(app: CantaraApplication) {
 
   // Create local tsconfig which extends from global one.
   // Needed to correctly generate types
-  createLocalAppTsConfig({ app, indexFileName: 'index.tsx' });
+  createLocalTsConfig({
+    app,
+    indexFileName: 'index.tsx',
+    templateFileName: 'appLocalTsConfigTemplate.json',
+  });
 
   await generateRuntimePresetCode(app);
 }

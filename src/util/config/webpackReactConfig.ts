@@ -2,7 +2,7 @@ import webpack, { Configuration } from 'webpack';
 import { existsSync } from 'fs';
 import path from 'path';
 
-import { CreateWebpackConfigParams } from './types';
+import { BundlerConfigParams } from './types';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import getCssLoaders from './common/cssLoaders';
 import slash from 'slash';
@@ -27,7 +27,8 @@ export default function createReactWebpackConfig({
   include = [],
   projectDir,
   resolveModules,
-}: CreateWebpackConfigParams): Configuration {
+  pathToTailwindCss,
+}: BundlerConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
   let iconPathToUse = undefined;
@@ -35,7 +36,10 @@ export default function createReactWebpackConfig({
   const appIconPathSvg = path.join(app.paths.assets!, 'app_icon.svg');
   const serviceWorkerPath = path.join(app.paths.src, 'sw.js');
   const doesServiceWorkerExist = existsSync(serviceWorkerPath);
-  const enablePwa = isProduction;
+  const enableServiceWorker =
+    doesServiceWorkerExist &&
+    (isProduction || app.meta.generateServiceWorkerInDev);
+  const generateManifest = enableServiceWorker && !app.meta.disableManifest;
 
   if (existsSync(appIconPathPng)) {
     iconPathToUse = appIconPathPng;
@@ -52,7 +56,10 @@ export default function createReactWebpackConfig({
 
   const webpackReactAppConfig: Configuration = {
     resolve: {
-      alias,
+      alias: {
+        ...alias,
+        '~': app.paths.src,
+      },
       modules: resolveModules,
     },
     externals,
@@ -68,7 +75,7 @@ export default function createReactWebpackConfig({
     plugins: [
       new ForkTsCheckerWebpackPlugin({
         typescript: {
-          configFile: path.join(app.paths.root, '.tsconfig.local.json'),
+          configFile: path.join(app.paths.root, 'tsconfig.json'),
           diagnosticOptions: {
             semantic: true,
             syntactic: true,
@@ -86,6 +93,7 @@ export default function createReactWebpackConfig({
         title: app.meta.displayName,
         template: path.join(app.paths.assets!, 'index.html'),
         favicon: iconPathToUse,
+        templateParameters: env,
       }),
       // iconPathToUse
       //   ? new FaviconsWebpackPlugin({
@@ -94,7 +102,7 @@ export default function createReactWebpackConfig({
       //     })
       //   : undefined,
       isDevelopment ? new ReactRefreshWebpackPlugin() : undefined,
-      enablePwa && doesServiceWorkerExist
+      generateManifest
         ? new WebpackPwaManifest({
             // gcm_sender_id,
             theme_color: app.meta.themeColor,
@@ -113,7 +121,7 @@ export default function createReactWebpackConfig({
             ...app.meta.pwaManifest,
           })
         : undefined,
-      enablePwa && doesServiceWorkerExist
+      enableServiceWorker
         ? new InjectManifest({
             swSrc: serviceWorkerPath,
           })
@@ -146,7 +154,12 @@ export default function createReactWebpackConfig({
         : undefined,
     ].filter(Boolean),
     module: {
-      rules: [...getCssLoaders({ useExtractLoader: isProduction })],
+      rules: [
+        ...getCssLoaders({
+          useExtractLoader: isProduction,
+          pathToTailwindCss,
+        }),
+      ],
     },
     performance: {
       hints: false,
