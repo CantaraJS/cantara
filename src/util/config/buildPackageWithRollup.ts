@@ -1,20 +1,21 @@
 import { RollupOptions, rollup } from 'rollup';
 import injectProcessEnv from 'rollup-plugin-inject-process-env';
-
-//@ts-expect-error
-import { string } from 'rollup-plugin-string';
+import json from '@rollup/plugin-json';
 import alias from '@rollup/plugin-alias';
-
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
 //@ts-expect-error
+import { string } from 'rollup-plugin-string';
+//@ts-expect-error
 import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 //@ts-expect-error
 import url from '@rollup/plugin-url';
-import postcss from 'rollup-plugin-postcss-modules';
+import postcss from 'rollup-plugin-postcss';
 //@ts-expect-error
-import postCssPresetEnv from 'postcss-preset-env';
+import postcssurl from 'postcss-url';
+//@ts-expect-error
+import postcsspresetenv from 'postcss-preset-env';
 
 import { BundlerConfigParams } from './types';
 import { externalsAsStringArray } from '../externals';
@@ -77,13 +78,19 @@ export default async function buildPackageWithRollup({
   const commonPlugins: RollupOptions['plugins'] = [
     resolve({ extensions }), // so Rollup can find commonjs deps
     commonjs(), // so Rollup can convert commonjs deps to ES modules
+    json(),
     postcss({
+      namedExports: true,
       modules: {
         localsConvention: 'camelCaseOnly',
         generateScopedName: '[local]-[hash:base64:5]',
       },
-      plugins: [postCssPresetEnv],
-      include,
+      plugins: [
+        postcssurl({
+          url: 'inline',
+        }),
+        postcsspresetenv(),
+      ],
     }),
     string({
       include: /\.html?$/,
