@@ -146,7 +146,12 @@ export default function createReactWebpackConfig({
             ],
           })
         : undefined,
-      isProduction ? new MiniCssExtractPlugin() : undefined,
+      isProduction
+        ? new MiniCssExtractPlugin({
+            filename: '[name].[hash:4].css',
+            chunkFilename: '[name].[chunkhash:4].css',
+          })
+        : undefined,
     ].filter(Boolean),
     module: {
       rules: [
