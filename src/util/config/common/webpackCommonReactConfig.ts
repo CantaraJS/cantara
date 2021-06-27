@@ -28,7 +28,7 @@ export default function createCommonReactWebpackConfig({
   if (i18n) {
     i18n = {
       ...i18n,
-      outputPath: path.join(app.paths.src, i18n.outputPath ?? 'locales'),
+      outputPath: path.join(app.paths.src, i18n.outputPath || 'locales'),
     };
   }
 
