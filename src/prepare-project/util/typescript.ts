@@ -60,22 +60,19 @@ export function createLocalTsConfig({
   let tsConfig = JSON.parse(renderedTsConfig);
   const customTypes = app.meta.customTypes || [];
 
-  // Create all aliases
-  let allAliases = aliasesToTypeScriptPaths({
-    ...packageAliases,
-    ...linkedPackageAliases,
-    ...otherAliases,
-  });
-
-  const shouldCreateRootAlias =
+  const shouldCreateAliases =
     app.type === 'react' || app.type === 'node' || app.type === 'serverless';
 
-  if (shouldCreateRootAlias) {
-    const rootAlias = aliasesToTypeScriptPaths({ '~': app.paths.src });
-    allAliases = {
-      ...allAliases,
-      ...rootAlias,
-    };
+  // Create all aliases (for Node and React Apps only)
+  let allAliases = {};
+  if (shouldCreateAliases) {
+    const appRootPathAlias = { '~': app.paths.src };
+    allAliases = aliasesToTypeScriptPaths({
+      ...appRootPathAlias,
+      ...packageAliases,
+      ...linkedPackageAliases,
+      ...otherAliases,
+    });
   }
 
   tsConfig = {
