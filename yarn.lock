@@ -16479,6 +16479,16 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+rollup-plugin-dynamic-import-vars-for-grown-ups@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-dynamic-import-vars-for-grown-ups/-/rollup-plugin-dynamic-import-vars-for-grown-ups-1.4.0.tgz#afb3ba420dc56d42d313435dd3744d92b0ce041b"
+  integrity sha512-JcGjMcamonF3EUokzu7flyqZ8ChwRpl36eJfI3Oc9KIroJYsbr+mnxD8ibMZTE/K0WPKOs+XjG65+kaLIfaZdA==
+  dependencies:
+    "@rollup/pluginutils" "^3.1.0"
+    estree-walker "^2.0.1"
+    globby "^11.0.1"
+    magic-string "^0.25.7"
+
 rollup-plugin-inject-process-env@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/rollup-plugin-inject-process-env/-/rollup-plugin-inject-process-env-1.3.1.tgz#2d7660fe76f2b221b976cb35597763ffcaad3db3"
