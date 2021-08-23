@@ -146,7 +146,6 @@ export default async function buildPackage(app: CantaraApplication) {
   const packageJson = readFileAsJSON(packageJsonPath);
   packageJson.main = buildResult.cjs;
   packageJson.module = buildResult.esm;
-  packageJson.browser = buildResult.umd;
   packageJson.types = './build/types/index.d.ts';
   writeJson(packageJsonPath, packageJson);
 }
