@@ -10,7 +10,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
 // Removed
 import dynamicImportVars from 'rollup-plugin-dynamic-import-vars-for-grown-ups';
-//@ts-expect-error
 import url from '@rollup/plugin-url';
 import postcss from 'rollup-plugin-postcss-modules';
 //@ts-expect-error
