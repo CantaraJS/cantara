@@ -16469,10 +16469,10 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-rollup-plugin-dynamic-import-vars-for-grown-ups@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-dynamic-import-vars-for-grown-ups/-/rollup-plugin-dynamic-import-vars-for-grown-ups-1.4.0.tgz#afb3ba420dc56d42d313435dd3744d92b0ce041b"
-  integrity sha512-JcGjMcamonF3EUokzu7flyqZ8ChwRpl36eJfI3Oc9KIroJYsbr+mnxD8ibMZTE/K0WPKOs+XjG65+kaLIfaZdA==
+rollup-plugin-dynamic-import-vars-for-grown-ups@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-dynamic-import-vars-for-grown-ups/-/rollup-plugin-dynamic-import-vars-for-grown-ups-1.4.1.tgz#03deeef67b8fb0560ca2422da4ad94b3df68657b"
+  integrity sha512-ZT2l6rrYuHMOey09pxd5i1VZk3q2Ep/Z3i+Id5dG9EH5y0dLxPsskgG3AY+iHyoHUwpW3PdS+e6uFDJRJ1HZVQ==
   dependencies:
     "@rollup/pluginutils" "^3.1.0"
     estree-walker "^2.0.1"
