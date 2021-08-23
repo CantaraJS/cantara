@@ -64,10 +64,6 @@ export function createLocalTsConfig({
   const shouldCreateRootAlias =
     app.type === 'react' || app.type === 'node' || app.type === 'serverless';
 
-  const shouldExcludeAliases =
-    (app.type === 'js-package' || app.type === 'react-component') &&
-    currentCommand.name === 'build';
-
   // Create all aliases (for Node and React Apps only)
   let allAliases = {
     ...packageAliases,
@@ -85,7 +81,7 @@ export function createLocalTsConfig({
     include: [...(tsConfig.include || []), ...customTypes, ...tsFilesToInclude],
     compilerOptions: {
       ...tsConfig.compilerOptions,
-      paths: shouldExcludeAliases ? {} : allAliases,
+      paths: allAliases,
     },
   };
 

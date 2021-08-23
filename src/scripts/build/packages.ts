@@ -6,7 +6,7 @@ import { readFileAsJSON, writeJson } from '../../util/fs';
 import execCmd from '../../util/exec';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
-import { logBuildTime } from './util';
+import { logBuildTime, prepareTypesOutputFolder } from './util';
 import buildPackageWithRollup from '../../util/config/buildPackageWithRollup';
 import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { BundlerConfigParams } from '../../util/config/types';
@@ -143,9 +143,14 @@ export default async function buildPackage(app: CantaraApplication) {
 
   // Set correct path to index.js in packageJson's "main" field
   const packageJsonPath = path.join(app.paths.root, 'package.json');
+  const typesFolder = path.join(app.paths.build, 'types');
+  const packageFolderName = path.basename(app.paths.root);
   const packageJson = readFileAsJSON(packageJsonPath);
   packageJson.main = buildResult.cjs;
   packageJson.module = buildResult.esm;
-  packageJson.types = './build/types/index.d.ts';
+  packageJson.types = await prepareTypesOutputFolder({
+    packageFolderName,
+    typesFolder,
+  });
   writeJson(packageJsonPath, packageJson);
 }
