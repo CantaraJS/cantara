@@ -8,6 +8,7 @@ import alias from '@rollup/plugin-alias';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
+// Removed
 import dynamicImportVars from 'rollup-plugin-dynamic-import-vars-for-grown-ups';
 //@ts-expect-error
 import url from '@rollup/plugin-url';
