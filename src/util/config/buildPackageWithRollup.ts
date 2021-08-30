@@ -21,6 +21,13 @@ import path from 'path';
 import { getBabelReactConfig } from './babelReactConfig';
 import slash from 'slash';
 
+const postcssUrl = require('postcss-url');
+
+const postcssUrlPlugin = postcssUrl({
+  url: 'inline',
+  maxSize: Number.MAX_VALUE,
+});
+
 /**
  * Create a package production
  * build using the Rollup bundler.
@@ -81,7 +88,7 @@ export default async function buildPackageWithRollup({
         localsConvention: 'camelCaseOnly',
         generateScopedName: '[local]-[hash:base64:5]',
       },
-      plugins: [postCssPresetEnv],
+      plugins: [postCssPresetEnv, postcssUrlPlugin],
       include,
     }),
     string({

@@ -85,6 +85,7 @@
     "postcss": "^8.2.4",
     "postcss-loader": "^4.2.0",
     "postcss-preset-env": "^6.7.0",
+    "postcss-url": "9.0.0",
     "prettier": "^2.2.1",
     "pretty-ms": "^7.0.1",
     "process": "^0.11.10",
