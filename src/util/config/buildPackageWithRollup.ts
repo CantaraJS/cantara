@@ -87,6 +87,8 @@ export default async function buildPackageWithRollup({
       modules: {
         localsConvention: 'camelCaseOnly',
         generateScopedName: '[local]-[hash:base64:5]',
+        // Include css globally for all non-css modules
+        globalModulePaths: [/^((?!module).)*$/],
       },
       plugins: [postCssPresetEnv, postcssUrlPlugin],
       include,
