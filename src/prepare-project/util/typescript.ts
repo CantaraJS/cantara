@@ -55,25 +55,26 @@ export function createLocalTsConfig({
 
   const {
     aliases: { linkedPackageAliases, otherAliases },
+    currentCommand,
   } = getRuntimeConfig();
 
   let tsConfig = JSON.parse(renderedTsConfig);
   const customTypes = app.meta.customTypes || [];
 
-  const shouldCreateAliases =
+  const shouldCreateRootAlias =
     app.type === 'react' || app.type === 'node' || app.type === 'serverless';
 
   // Create all aliases (for Node and React Apps only)
-  let allAliases = {};
-  if (shouldCreateAliases) {
-    const appRootPathAlias = { '~': app.paths.src };
-    allAliases = aliasesToTypeScriptPaths({
-      ...appRootPathAlias,
-      ...packageAliases,
-      ...linkedPackageAliases,
-      ...otherAliases,
-    });
+  let allAliases = {
+    ...packageAliases,
+    ...linkedPackageAliases,
+    ...otherAliases,
+  };
+  if (shouldCreateRootAlias) {
+    allAliases = { ...allAliases, '~': app.paths.src };
   }
+
+  allAliases = aliasesToTypeScriptPaths(allAliases);
 
   tsConfig = {
     ...tsConfig,

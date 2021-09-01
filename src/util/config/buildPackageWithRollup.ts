@@ -1,27 +1,32 @@
 import { RollupOptions, rollup } from 'rollup';
 import injectProcessEnv from 'rollup-plugin-inject-process-env';
-import json from '@rollup/plugin-json';
+
+//@ts-expect-error
+import { string } from 'rollup-plugin-string';
 import alias from '@rollup/plugin-alias';
+
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
-//@ts-expect-error
-import { string } from 'rollup-plugin-string';
-//@ts-expect-error
-import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
-//@ts-expect-error
+// Removed
+import dynamicImportVars from 'rollup-plugin-dynamic-import-vars-for-grown-ups';
 import url from '@rollup/plugin-url';
-import postcss from 'rollup-plugin-postcss';
+import postcss from 'rollup-plugin-postcss-modules';
 //@ts-expect-error
-import postcssurl from 'postcss-url';
-//@ts-expect-error
-import postcsspresetenv from 'postcss-preset-env';
+import postCssPresetEnv from 'postcss-preset-env';
 
 import { BundlerConfigParams } from './types';
 import { externalsAsStringArray } from '../externals';
 import path from 'path';
 import { getBabelReactConfig } from './babelReactConfig';
 import slash from 'slash';
+
+const postcssUrl = require('postcss-url');
+
+const postcssUrlPlugin = postcssUrl({
+  url: 'inline',
+  maxSize: Number.MAX_VALUE,
+});
 
 /**
  * Create a package production
@@ -78,19 +83,15 @@ export default async function buildPackageWithRollup({
   const commonPlugins: RollupOptions['plugins'] = [
     resolve({ extensions }), // so Rollup can find commonjs deps
     commonjs(), // so Rollup can convert commonjs deps to ES modules
-    json(),
     postcss({
-      namedExports: true,
       modules: {
         localsConvention: 'camelCaseOnly',
         generateScopedName: '[local]-[hash:base64:5]',
+        // Include css globally for all non-css modules
+        globalModulePaths: [/^((?!module).)*$/],
       },
-      plugins: [
-        postcssurl({
-          url: 'inline',
-        }),
-        postcsspresetenv(),
-      ],
+      plugins: [postCssPresetEnv, postcssUrlPlugin],
+      include,
     }),
     string({
       include: /\.html?$/,

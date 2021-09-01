@@ -16,6 +16,7 @@ export default function getSourceMapLoader({
       test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
       use: ['source-map-loader'],
       enforce: 'pre',
+      exclude: /node_modules/,
       include: typeof sourceMaps === 'boolean' ? undefined : sourceMaps,
     },
   ];
