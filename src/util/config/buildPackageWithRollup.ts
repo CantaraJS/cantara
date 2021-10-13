@@ -109,7 +109,7 @@ export default async function buildPackageWithRollup({
     }),
     dynamicImportVars({ include }),
     url({
-      exclude: [/\.(js|jsx|ts|tsx|mjs)$/, /\.html?$/, /\.json$/, /\.css$/],
+      exclude: [/\.(js|jsx|ts|tsx|mjs)$/, /\.html?$/, /\.json$/],
       limit: Number.MAX_VALUE,
     }),
   ];

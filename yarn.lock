@@ -19422,7 +19422,7 @@ workbox-broadcast-update@^6.0.2:
   dependencies:
     workbox-core "^6.0.2"
 
-workbox-build@^6.0.2:
+workbox-build@^6.0.2, workbox-build@~6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/workbox-build/-/workbox-build-6.0.2.tgz#a23eebd6556cf473fedda77c08421b2d093efc32"
   integrity sha512-Dukbt+p62Yzb12SXAmycTYvHngJ8aRtXy3hymsC8B6gxTCZmCZ0u5JuKhu7lNLbDwDkYE78lhFvT9SF+MXFz5A==
