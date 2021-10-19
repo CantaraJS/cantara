@@ -112,7 +112,7 @@
     "ts-jest": "^26.4.4",
     "tsc-silent": "^1.2.1",
     "tty-browserify": "^0.0.1",
-    "typescript": "^4.1.3",
+    "typescript": "^4.4.3",
     "typescript-plugin-css-modules": "^3.2.0",
     "update-notifier": "^5.0.1",
     "url-loader": "^4.1.1",
