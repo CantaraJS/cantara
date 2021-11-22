@@ -3,6 +3,12 @@ id: migrations
 title: Migrating to newer Cantara versions
 ---
 
+# 3.x -> 3.13.x
+
+**Webpack 5 Upgrade**
+
+- `disableHostCheck` and `public` don't work anymore (`cantara.config.js -> devServer`). Remove them.
+
 ## 1.x/2.x -> 3.x
 
 To migrate to the newest Cantara version, first make sure to install the latest version:

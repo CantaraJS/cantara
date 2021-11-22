@@ -15,6 +15,8 @@ function compile(config: webpack.Configuration): Promise<void> {
         return;
       }
       console.log('Successfully compiled!');
+      compiler.close(() => {});
+
       resolve();
     });
   });

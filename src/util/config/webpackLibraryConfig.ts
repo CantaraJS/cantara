@@ -12,7 +12,6 @@ import getSourceMapLoader from './common/soureMapLoader';
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -81,15 +80,9 @@ export default function createLibraryWebpackConfig({
        * ESMs are favoured
        */
       // libraryTarget,
+      clean: noChecks,
     },
     plugins: [
-      noChecks
-        ? new CleanWebpackPlugin({
-            cleanOnceBeforeBuildPatterns: [app.paths.build],
-            dangerouslyAllowCleanPatternsOutsideProject: true,
-            dry: false,
-          })
-        : undefined,
       noChecks ? undefined : new WebpackNotifierPlugin(),
       new CaseSensitivePathsPlugin(),
       new FriendlyErrorsWebpackPlugin(),
@@ -130,7 +123,7 @@ export default function createLibraryWebpackConfig({
         },
         {
           exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/],
-          loader: 'url-loader',
+          type: 'asset/inline',
         },
       ],
     },

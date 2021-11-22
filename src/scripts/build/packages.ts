@@ -22,6 +22,8 @@ function compile(config: webpack.Configuration) {
         return;
       }
       console.log('Successfully compiled!');
+      compiler.close(() => {});
+
       resolve(true);
     });
   });
