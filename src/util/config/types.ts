@@ -24,4 +24,5 @@ export interface BundlerConfigParams {
   resolveModules?: string[];
   sourceMaps?: boolean;
   pathToTailwindCss?: string;
+  enableBundleAnalyzer?: boolean;
 }

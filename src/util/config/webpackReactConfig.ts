@@ -11,6 +11,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { InjectManifest } from 'workbox-webpack-plugin';
 const WebpackNotifierPlugin = require('webpack-notifier');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
@@ -29,6 +30,7 @@ export default function createReactWebpackConfig({
   projectDir,
   resolveModules,
   pathToTailwindCss,
+  enableBundleAnalyzer,
 }: BundlerConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -150,6 +152,9 @@ export default function createReactWebpackConfig({
             chunkFilename: '[name].[chunkhash:4].css',
           })
         : undefined,
+      isProduction && enableBundleAnalyzer
+        ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
+        : undefined,
     ].filter(Boolean),
     module: {
       rules: [
@@ -181,6 +186,7 @@ export default function createReactWebpackConfig({
     env,
     include,
     projectDir,
+    enableBundleAnalyzer,
   });
   const mergedConfig = webpackMerge(
     webpackReactAppConfig,

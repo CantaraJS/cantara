@@ -33,6 +33,10 @@ interface GlobalCantaraSettings {
     portsToWaitFor: number[];
     testCommand: string;
   };
+  /**
+   * Defaults to true
+   */
+  bundleAnalyzer: boolean;
 }
 
 interface CantaraLoadGlobalConfigOptions {
@@ -186,7 +190,7 @@ export async function loadCantaraGlobalConfig(
   )
     ? require(globalCantaraSettingsFilePath)
     : {};
-  const globalCantaraSettings: GlobalCantaraSettings = {
+  let globalCantaraSettings: GlobalCantaraSettings = {
     e2e: {
       executeBefore: globalCantaraUserSettings.e2e
         ? globalCantaraUserSettings.e2e.executeBefore || []
@@ -198,7 +202,18 @@ export async function loadCantaraGlobalConfig(
         ? globalCantaraUserSettings.e2e.testCommand || ''
         : '',
     },
+    bundleAnalyzer:
+      globalCantaraUserSettings?.bundleAnalyzer !== undefined
+        ? globalCantaraUserSettings?.bundleAnalyzer
+        : true,
   };
+
+  if (
+    process.env.DISABLE_BUNDLE_ANALYZER &&
+    process.env.DISABLE_BUNDLE_ANALYZER === 'true'
+  ) {
+    globalCantaraSettings.bundleAnalyzer = false;
+  }
 
   const nodeModulesPath = getCantaraDepenciesInstallationPath();
 

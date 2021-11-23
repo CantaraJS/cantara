@@ -28,6 +28,7 @@ export default async function buildReactApp(app: CantaraApplication) {
     projectDir,
     aliases: { packageAliases },
     tailwind,
+    globalCantaraSettings,
   } = getGlobalConfig();
 
   const {
@@ -52,6 +53,7 @@ export default async function buildReactApp(app: CantaraApplication) {
     // TODO: Evaluate if this should also be set for prod builds
     // resolveModules: resolveModulesInDevelopment,
     pathToTailwindCss: tailwind ? tailwind.pathToTailwindCss : undefined,
+    enableBundleAnalyzer: globalCantaraSettings.bundleAnalyzer,
   });
 
   const onComplete = logBuildTime({

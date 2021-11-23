@@ -41,6 +41,7 @@ export default async function buildPackage(app: CantaraApplication) {
     projectDir,
     aliases: { packageAliases },
     internalPaths: { root: cantaraRoot },
+    globalCantaraSettings,
   } = getGlobalConfig();
 
   const { env } = getRuntimeConfig();
@@ -62,6 +63,7 @@ export default async function buildPackage(app: CantaraApplication) {
     projectDir,
     include: internalPackages,
     sourceMaps,
+    enableBundleAnalyzer: globalCantaraSettings.bundleAnalyzer,
   };
 
   const buildResult: BuildResult = {};

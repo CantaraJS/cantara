@@ -11,6 +11,7 @@ import getSourceMapLoader from './common/soureMapLoader';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -25,6 +26,7 @@ export default function createLibraryWebpackConfig({
   libraryTarget,
   noChecks,
   env,
+  enableBundleAnalyzer,
 }: BundlerConfigParams): Configuration {
   const isReactComponent = app.type === 'react-component';
 
@@ -82,8 +84,12 @@ export default function createLibraryWebpackConfig({
       clean: noChecks,
     },
     plugins: [
+      new FriendlyErrorsWebpackPlugin(),
       noChecks ? undefined : new WebpackNotifierPlugin(),
       new CaseSensitivePathsPlugin(),
+      enableBundleAnalyzer
+        ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
+        : undefined,
     ].filter(Boolean),
     module: {
       rules: [...getCssLoaders({ useExtractLoader: false })],
@@ -146,6 +152,7 @@ export default function createLibraryWebpackConfig({
       include,
       projectDir,
       alwaysInlineImages: true,
+      enableBundleAnalyzer,
     });
   }
 
