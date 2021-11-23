@@ -212,6 +212,9 @@ export async function loadCantaraGlobalConfig(
     process.env.DISABLE_BUNDLE_ANALYZER &&
     process.env.DISABLE_BUNDLE_ANALYZER === 'true'
   ) {
+    console.log(
+      `Disabling Bundle analyzer because the 'DISABLE_BUNDLE_ANALYZER' environment variable was set to 'true'.`,
+    );
     globalCantaraSettings.bundleAnalyzer = false;
   }
 
