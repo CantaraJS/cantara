@@ -21,6 +21,8 @@ import path from 'path';
 import { getBabelReactConfig } from './babelReactConfig';
 import slash from 'slash';
 
+import { visualizer } from 'rollup-plugin-visualizer';
+
 const postcssUrl = require('postcss-url');
 
 const postcssUrlPlugin = postcssUrl({
@@ -38,6 +40,7 @@ export default async function buildPackageWithRollup({
   libraryTarget,
   app,
   sourceMaps,
+  enableBundleAnalyzer,
 }: BundlerConfigParams): Promise<string> {
   // This path just acts as a result of this process
   let relativeEntryPath: string = '';
@@ -113,6 +116,15 @@ export default async function buildPackageWithRollup({
       limit: Number.MAX_VALUE,
     }),
   ];
+
+  if (enableBundleAnalyzer) {
+    commonPlugins.push(
+      visualizer({
+        open: true,
+        title: `${app.name} (Rollup: ${libraryTarget})`,
+      }),
+    );
+  }
 
   let rollupConfig: RollupOptions = {};
 

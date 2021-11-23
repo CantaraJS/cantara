@@ -88,7 +88,10 @@ export default function createLibraryWebpackConfig({
       noChecks ? undefined : new WebpackNotifierPlugin(),
       new CaseSensitivePathsPlugin(),
       enableBundleAnalyzer
-        ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
+        ? new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            reportTitle: `${app.name} (Webpack: ${libraryTarget})`,
+          })
         : undefined,
     ].filter(Boolean),
     module: {
