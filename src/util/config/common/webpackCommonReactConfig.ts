@@ -129,7 +129,7 @@ export default function createCommonReactWebpackConfig({
       ? {
           minimizer: [
             new CssMinimizerPlugin({
-              processorOptions: {
+              minimizerOptions: {
                 discardComments: {
                   removeAll: true,
                 },

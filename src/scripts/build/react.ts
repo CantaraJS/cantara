@@ -59,7 +59,10 @@ export default async function buildReactApp(app: CantaraApplication) {
     toolName: 'Webpack',
   });
 
-  await compile(webpackConfig);
+  await compile({
+    ...webpackConfig,
+    stats: 'normal',
+  });
 
   onComplete();
 }

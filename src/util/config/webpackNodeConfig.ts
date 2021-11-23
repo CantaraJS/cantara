@@ -10,6 +10,7 @@ const NodemonPlugin = require('nodemon-webpack-plugin');
 
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 interface CreateNodeWebpackConfigOptions extends BundlerConfigParams {
@@ -91,6 +92,7 @@ export default function createNodeWebpackConfig({
       ],
     },
     plugins: [
+      isProduction ? new FriendlyErrorsWebpackPlugin() : undefined,
       new CaseSensitivePathsPlugin(),
       new webpack.EnvironmentPlugin(env),
       new ForkTsCheckerWebpackPlugin({
