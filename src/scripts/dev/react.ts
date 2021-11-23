@@ -52,6 +52,12 @@ export function startReactAppDevelopmentServer() {
       // Enable gzip compression of generated files.
       compress: true,
       open: true,
+      client: {
+        logging: 'none',
+        overlay: {
+          warnings: false,
+        },
+      },
 
       // Silence WebpackDevServer's own logs since they're generally not useful.
       // It will still show compile warnings and errors with this setting.
