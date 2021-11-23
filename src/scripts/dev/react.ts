@@ -39,7 +39,10 @@ export function startReactAppDevelopmentServer() {
     pathToTailwindCss: tailwind ? tailwind.pathToTailwindCss : undefined,
   });
 
-  const compiler = webpack(webpackConfig);
+  const compiler = webpack({
+    ...webpackConfig,
+    stats: 'minimal',
+  });
   const devServerConfig = activeApp.meta.devServer || { port: 8080 };
   const devServer = new WebpackDevServer(
     {

@@ -5,9 +5,9 @@ import { BundlerConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
 
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 interface CreateCommonReactWebpackConfigParams extends BundlerConfigParams {
   /** Set to true for NPM packages */
@@ -58,8 +58,8 @@ export default function createCommonReactWebpackConfig({
     },
     mode,
     plugins: [
+      new NodePolyfillPlugin(),
       new CaseSensitivePathsPlugin(),
-      new FriendlyErrorsWebpackPlugin(),
       new webpack.EnvironmentPlugin({
         ...env,
         WEBPACK_BUILD_TIMESTAMP: Date.now(),
@@ -73,6 +73,12 @@ export default function createCommonReactWebpackConfig({
     ].filter(Boolean),
     module: {
       rules: [
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
         {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           /** For some reason, using 'javascript/esm' causes ReactRefresh to fail */

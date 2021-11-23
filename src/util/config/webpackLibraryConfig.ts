@@ -2,7 +2,7 @@ import { Configuration } from 'webpack';
 import path from 'path';
 
 import { getBabelReactConfig } from './babelReactConfig';
-import getAllWebpackExternals from '../externals';
+
 import { camalize } from '../string-manipulation';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import { BundlerConfigParams } from './types';
@@ -10,7 +10,6 @@ import getCssLoaders from './common/cssLoaders';
 import getSourceMapLoader from './common/soureMapLoader';
 
 const WebpackNotifierPlugin = require('webpack-notifier');
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -85,7 +84,6 @@ export default function createLibraryWebpackConfig({
     plugins: [
       noChecks ? undefined : new WebpackNotifierPlugin(),
       new CaseSensitivePathsPlugin(),
-      new FriendlyErrorsWebpackPlugin(),
     ].filter(Boolean),
     module: {
       rules: [...getCssLoaders({ useExtractLoader: false })],
@@ -105,6 +103,12 @@ export default function createLibraryWebpackConfig({
   const jsPackageConfig: Configuration = {
     module: {
       rules: [
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
         {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           // type: 'javascript/esm',
