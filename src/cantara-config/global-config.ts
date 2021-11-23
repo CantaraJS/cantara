@@ -205,7 +205,7 @@ export async function loadCantaraGlobalConfig(
     bundleAnalyzer:
       globalCantaraUserSettings?.bundleAnalyzer !== undefined
         ? globalCantaraUserSettings?.bundleAnalyzer
-        : true,
+        : false,
   };
 
   if (
