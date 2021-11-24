@@ -118,6 +118,10 @@ export interface CantaraApplication {
   };
   type: CantaraApplicationType;
   meta: CantaraApplicationMetaInformation;
+  /**
+   * app specific aliases
+   */
+  aliases: { [key: string]: string };
 }
 
 /**

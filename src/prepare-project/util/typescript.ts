@@ -54,25 +54,19 @@ export function createLocalTsConfig({
   } = globalCantaraConfig;
 
   const {
-    aliases: { linkedPackageAliases, otherAliases },
+    aliases: { linkedPackageAliases },
     currentCommand,
   } = getRuntimeConfig();
 
   let tsConfig = JSON.parse(renderedTsConfig);
   const customTypes = app.meta.customTypes || [];
 
-  const shouldCreateRootAlias =
-    app.type === 'react' || app.type === 'node' || app.type === 'serverless';
-
   // Create all aliases (for Node and React Apps only)
   let allAliases = {
     ...packageAliases,
     ...linkedPackageAliases,
-    ...otherAliases,
+    ...app.aliases,
   };
-  if (shouldCreateRootAlias) {
-    allAliases = { ...allAliases, '~': app.paths.src };
-  }
 
   allAliases = aliasesToTypeScriptPaths(allAliases);
 
