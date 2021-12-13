@@ -11,7 +11,7 @@ import { babel } from '@rollup/plugin-babel';
 // Removed
 import dynamicImportVars from 'rollup-plugin-dynamic-import-vars-for-grown-ups';
 import url from '@rollup/plugin-url';
-import postcss from 'rollup-plugin-postcss-modules';
+import postcss from 'rollup-plugin-postcss';
 //@ts-expect-error
 import postCssPresetEnv from 'postcss-preset-env';
 
@@ -87,6 +87,7 @@ export default async function buildPackageWithRollup({
     resolve({ extensions }), // so Rollup can find commonjs deps
     commonjs(), // so Rollup can convert commonjs deps to ES modules
     postcss({
+      namedExports: true,
       modules: {
         localsConvention: 'camelCaseOnly',
         generateScopedName: '[local]-[hash:base64:5]',
