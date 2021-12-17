@@ -1,5 +1,5 @@
 import c from 'ansi-colors';
-import { existsSync, readdirSync, statSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
 import path from 'path';
 import prettyMs from 'pretty-ms';
 import del from 'del';
@@ -27,6 +27,8 @@ export function logBuildTime({ toolName, stepName }: LogBuildTimeParams) {
 interface PrepareTypesOutputFolderParams {
   typesFolder: string;
   packageFolderName: string;
+  customTypeFiles: string[];
+  appRootPath: string;
 }
 
 /**
@@ -41,22 +43,38 @@ interface PrepareTypesOutputFolderParams {
 export async function prepareTypesOutputFolder({
   typesFolder,
   packageFolderName,
+  customTypeFiles,
+  appRootPath,
 }: PrepareTypesOutputFolderParams) {
+  let typesSrcFolder = '';
   const indexDeclarationFilePath = path.join(typesFolder, 'index.d.ts');
   const isIndexFileAvailable = existsSync(indexDeclarationFilePath);
   if (isIndexFileAvailable) {
-    return './build/types/index.d.ts';
-  }
+    typesSrcFolder = './build/types';
+  } else {
+    // Delete all non relevant folders
+    const folderContents = readdirSync(typesFolder);
+    for (const folderEntry of folderContents) {
+      const fullPath = path.join(typesFolder, folderEntry);
+      const isDir = statSync(fullPath).isDirectory();
+      if (isDir && folderEntry !== packageFolderName) {
+        await del(fullPath, { force: true });
+      }
+    }
 
-  // Delete all non relevant folders
-  const folderContents = readdirSync(typesFolder);
-  for (const folderEntry of folderContents) {
-    const fullPath = path.join(typesFolder, folderEntry);
-    const isDir = statSync(fullPath).isDirectory();
-    if (isDir && folderEntry !== packageFolderName) {
-      await del(fullPath, { force: true });
+    // Copy custom .d.ts files to the output folder
+
+    typesSrcFolder = `./build/types/${packageFolderName}/src`;
+
+    mkdirSync(typesSrcFolder, { recursive: true });
+
+    for (const customTypeFile of customTypeFiles) {
+      copyFileSync(
+        customTypeFile,
+        path.join(appRootPath, typesSrcFolder, path.basename(customTypeFile)),
+      );
     }
   }
 
-  return `./build/types/${packageFolderName}/src/index.d.ts`;
+  return `${typesSrcFolder}/index.d.ts`;
 }
