@@ -1,5 +1,13 @@
 import c from 'ansi-colors';
-import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from 'fs';
 import path from 'path';
 import prettyMs from 'pretty-ms';
 import del from 'del';
@@ -22,6 +30,28 @@ export function logBuildTime({ toolName, stepName }: LogBuildTimeParams) {
       )} ${c.cyanBright(elapsedTimePretty)}`,
     );
   };
+}
+
+interface AddReferenceToIndexTypeFileParams {
+  refFileNames: string[];
+  indexDeclarationFilePath: string;
+}
+
+function addReferenceToIndexTypeFile({
+  refFileNames,
+  indexDeclarationFilePath,
+}: AddReferenceToIndexTypeFileParams) {
+  const indexDeclarationFileContent = readFileSync(
+    indexDeclarationFilePath,
+    'utf8',
+  );
+  const newIndexDeclarationFileContent = `
+${refFileNames
+  .map((refFileName) => `/// <reference path="./${refFileName}" />`)
+  .join('\n')}
+${indexDeclarationFileContent}
+  `;
+  writeFileSync(indexDeclarationFilePath, newIndexDeclarationFileContent);
 }
 
 interface PrepareTypesOutputFolderParams {
@@ -63,18 +93,25 @@ export async function prepareTypesOutputFolder({
     }
 
     // Copy custom .d.ts files to the output folder
-
     typesSrcFolder = `./build/types/${packageFolderName}/src`;
-
-    mkdirSync(typesSrcFolder, { recursive: true });
-
-    for (const customTypeFile of customTypeFiles) {
-      copyFileSync(
-        customTypeFile,
-        path.join(appRootPath, typesSrcFolder, path.basename(customTypeFile)),
-      );
-    }
   }
+
+  mkdirSync(typesSrcFolder, { recursive: true });
+
+  for (const customTypeFile of customTypeFiles) {
+    const typeFileName = path.basename(customTypeFile);
+    copyFileSync(
+      customTypeFile,
+      path.join(appRootPath, typesSrcFolder, typeFileName),
+    );
+  }
+
+  addReferenceToIndexTypeFile({
+    refFileNames: customTypeFiles.map((customTypeFile) =>
+      path.basename(customTypeFile),
+    ),
+    indexDeclarationFilePath,
+  });
 
   return `${typesSrcFolder}/index.d.ts`;
 }
