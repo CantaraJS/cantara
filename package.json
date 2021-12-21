@@ -67,7 +67,6 @@
     "del": "^6.0.0",
     "enquirer": "^2.3.6",
     "fork-ts-checker-webpack-plugin": "^6.4.1",
-    "friendly-errors-webpack-plugin": "^1.7.0",
     "html-loader": "^3.0.1",
     "html-webpack-plugin": "^5.5.0",
     "jest": "^27.3.1",
