@@ -10,7 +10,6 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 import { InjectManifest } from 'workbox-webpack-plugin';
 const WebpackNotifierPlugin = require('webpack-notifier');
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
@@ -77,7 +76,6 @@ export default function createReactWebpackConfig({
       clean: isProduction,
     },
     plugins: [
-      isProduction ? new FriendlyErrorsWebpackPlugin() : undefined,
       new ForkTsCheckerWebpackPlugin({
         typescript: {
           configFile: path.join(app.paths.root, 'tsconfig.json'),
