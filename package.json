@@ -117,7 +117,7 @@
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-dev-server": "^4.5.0",
     "webpack-merge": "^5.8.0",
-    "webpack-notifier": "^1.14.1",
+    "webpack-notifier": "^1.15.0",
     "webpack-pwa-manifest": "^4.3.0",
     "workbox-build": "~6.4.1",
     "workbox-webpack-plugin": "^6.4.1",

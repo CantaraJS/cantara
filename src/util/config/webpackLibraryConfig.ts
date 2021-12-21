@@ -9,7 +9,7 @@ import { BundlerConfigParams } from './types';
 import getCssLoaders from './common/cssLoaders';
 import getSourceMapLoader from './common/soureMapLoader';
 
-const WebpackNotifierPlugin = require('webpack-notifier');
+import WebpackNotifierPlugin from 'webpack-notifier';
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');

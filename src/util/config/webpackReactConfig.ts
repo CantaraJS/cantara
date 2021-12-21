@@ -9,7 +9,7 @@ import slash from 'slash';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 import { InjectManifest } from 'workbox-webpack-plugin';
-const WebpackNotifierPlugin = require('webpack-notifier');
+import WebpackNotifierPlugin from 'webpack-notifier';
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
