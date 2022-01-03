@@ -5,10 +5,9 @@ import { BundlerConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
 
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const cssnano = require('cssnano');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 interface CreateCommonReactWebpackConfigParams extends BundlerConfigParams {
   /** Set to true for NPM packages */
@@ -37,6 +36,13 @@ export default function createCommonReactWebpackConfig({
   return {
     entry: path.join(app.paths.src, 'index.tsx'),
     resolve: {
+      fallback: {
+        fs: false,
+        dns: false,
+        net: false,
+        tls: false,
+        module: false,
+      },
       extensions: [
         '.web.js',
         '.mjs',
@@ -52,26 +58,13 @@ export default function createCommonReactWebpackConfig({
     },
     mode,
     plugins: [
+      new NodePolyfillPlugin(),
       new CaseSensitivePathsPlugin(),
-      new FriendlyErrorsWebpackPlugin(),
       new webpack.EnvironmentPlugin({
         ...env,
         WEBPACK_BUILD_TIMESTAMP: Date.now(),
       }),
-      isProduction
-        ? new OptimizeCSSAssetsPlugin({
-            cssProcessor: cssnano,
-            cssProcessorOptions: {
-              discardComments: {
-                removeAll: true,
-              },
-              // Run cssnano in safe mode to avoid
-              // potentially unsafe transformations.
-              safe: true,
-            },
-            canPrint: false,
-          })
-        : undefined,
+
       isProduction
         ? new webpack.BannerPlugin({
             banner: 'filename:[name]',
@@ -80,6 +73,12 @@ export default function createCommonReactWebpackConfig({
     ].filter(Boolean),
     module: {
       rules: [
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
         {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           /** For some reason, using 'javascript/esm' causes ReactRefresh to fail */
@@ -107,11 +106,15 @@ export default function createCommonReactWebpackConfig({
             /\.css$/,
             app.paths.assets || '',
           ],
-          loader: 'url-loader',
-          options: {
-            limit: alwaysInlineImages ? Number.MAX_VALUE : 15000,
-            name: 'static/media/[name].[hash:8].[ext]',
+          parser: {
+            dataUrlCondition: {
+              maxSize: alwaysInlineImages ? Number.MAX_VALUE : 15000,
+            },
           },
+          generator: {
+            filename: 'static/media/[name].[contenthash:8].[ext]',
+          },
+          type: 'asset',
         },
         // {
         //   loader: 'file-loader',
@@ -122,15 +125,24 @@ export default function createCommonReactWebpackConfig({
         // },
       ],
     },
+    optimization: isProduction
+      ? {
+          minimizer: [
+            new CssMinimizerPlugin({
+              minimizerOptions: {
+                discardComments: {
+                  removeAll: true,
+                },
+                // Run cssnano in safe mode to avoid
+                // potentially unsafe transformations.
+                safe: true,
+              },
+            }),
+          ],
+        }
+      : undefined,
     stats: {
       warningsFilter: [/Failed to parse source map/],
-    },
-    node: {
-      fs: 'empty',
-      dns: 'empty',
-      net: 'empty',
-      tls: 'empty',
-      module: 'empty',
     },
   };
 }

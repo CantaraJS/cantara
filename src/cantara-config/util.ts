@@ -62,11 +62,8 @@ interface GetAllAppsOptions {
 export default async function getAllApps({
   rootDir,
 }: GetAllAppsOptions): Promise<CantaraApplication[]> {
-  const {
-    nodeAppsRootDir,
-    packagesAppsRootDir,
-    reactAppsRootDir,
-  } = getAllCantaraProjectFolders(rootDir);
+  const { nodeAppsRootDir, packagesAppsRootDir, reactAppsRootDir } =
+    getAllCantaraProjectFolders(rootDir);
 
   const allAppsDirectories: { dir: string; type: string }[] = [
     ...getDirectories(reactAppsRootDir).map((dir) => ({ dir, type: 'react' })),
@@ -82,10 +79,15 @@ export default async function getAllApps({
       let typeToUse: CantaraApplicationType = type as CantaraApplicationType;
       let displayName = path.basename(dir);
 
+      const appSrc = path.join(dir, 'src');
+      const runtimePresetsPath = path.join(dir, 'presets');
+      let runtimePresetEntryPath = path.join(appSrc, 'app-preset/index.ts');
+
       let appName = displayName;
-      let userAddedMetadata:
-        | CantaraApplicationMetaInformation
-        | undefined = undefined;
+      let userAddedMetadata: CantaraApplicationMetaInformation | undefined =
+        undefined;
+
+      let aliases: { [key: string]: string } = {};
 
       const packageJsonPath = path.join(dir, 'package.json');
       let packageJsonName = '';
@@ -129,6 +131,22 @@ export default async function getAllApps({
         typeToUse = doesNewServerlessYmlExist ? 'serverless' : 'node';
       }
 
+      if (
+        typeToUse === 'node' ||
+        typeToUse === 'react' ||
+        typeToUse === 'serverless'
+      ) {
+        aliases = {
+          '~': appSrc,
+        };
+        if (await fsExists(runtimePresetsPath)) {
+          aliases = {
+            ...aliases,
+            '@app-preset': runtimePresetEntryPath,
+          };
+        }
+      }
+
       const cantaraConfigPath = path.join(dir, 'cantara.config.js');
       if (await fsExists(cantaraConfigPath)) {
         userAddedMetadata = require(cantaraConfigPath);
@@ -144,8 +162,6 @@ export default async function getAllApps({
         ? path.join(dir, appMeta.staticFolder)
         : path.join(dir, 'static');
 
-      const appSrc = path.join(dir, 'src');
-
       return {
         name: appName,
         type: typeToUse,
@@ -159,6 +175,7 @@ export default async function getAllApps({
           runtimePresetEntry: path.join(appSrc, 'app-preset/index.ts'),
         },
         meta: appMeta,
+        aliases,
       };
     }),
   );

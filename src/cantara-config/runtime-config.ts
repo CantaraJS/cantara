@@ -10,6 +10,7 @@ import {
 } from '../util/live-link';
 import path from 'path';
 import { existsSync } from 'fs';
+import { fsExists } from '../util/fs';
 
 export interface CantaraRuntimeConfig {
   /** Information about current command */
@@ -152,9 +153,14 @@ export async function loadCantaraRuntimeConfig({
     projectRoot: projectDir,
   });
 
-  const otherAliases = {
-    '@app-preset': currentActiveApp.paths.runtimePresetEntry,
-  };
+  const doRuntimePresetsExist = await fsExists(
+    currentActiveApp.paths.runtimePresets,
+  );
+
+  // Set app aliases as global aliases. Those aliases will be ignored
+  // by TypeScript, so they don't overwrite each other with local
+  // app aliases
+  const otherAliases: { [key: string]: string } = currentActiveApp.aliases;
 
   runtimeConfig = {
     env: envVars,

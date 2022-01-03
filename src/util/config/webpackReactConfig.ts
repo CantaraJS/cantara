@@ -6,17 +6,18 @@ import { BundlerConfigParams } from './types';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import getCssLoaders from './common/cssLoaders';
 import slash from 'slash';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-const CopyPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebpackPwaManifest = require('webpack-pwa-manifest');
+import { InjectManifest } from 'workbox-webpack-plugin';
+import WebpackNotifierPlugin from 'webpack-notifier';
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const WebpackPwaManifest = require('webpack-pwa-manifest');
+const CopyPlugin = require('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const WebpackNotifierPlugin = require('webpack-notifier');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { InjectManifest } = require('workbox-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
 
 export default function createReactWebpackConfig({
@@ -28,6 +29,7 @@ export default function createReactWebpackConfig({
   projectDir,
   resolveModules,
   pathToTailwindCss,
+  enableBundleAnalyzer,
 }: BundlerConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -67,10 +69,11 @@ export default function createReactWebpackConfig({
     devtool:
       isDevelopment || app.meta.sourceMaps ? 'eval-source-map' : undefined,
     output: {
-      filename: '[name].[hash:4].js',
+      filename: '[name].[contenthash:4].js',
       path: app.paths.build,
       chunkFilename: '[name].[chunkhash:4].js',
       publicPath: '/',
+      clean: isProduction,
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin({
@@ -84,7 +87,6 @@ export default function createReactWebpackConfig({
         },
         // watch: app.paths.src,
       }),
-      isDevelopment ? new webpack.HotModuleReplacementPlugin() : undefined,
       new WebpackNotifierPlugin({
         excludeWarnings: true,
         title: app.meta.displayName,
@@ -124,13 +126,9 @@ export default function createReactWebpackConfig({
       enableServiceWorker
         ? new InjectManifest({
             swSrc: serviceWorkerPath,
-          })
-        : undefined,
-      isProduction
-        ? new CleanWebpackPlugin({
-            cleanOnceBeforeBuildPatterns: [app.paths.build],
-            dangerouslyAllowCleanPatternsOutsideProject: true,
-            dry: false,
+            maximumFileSizeToCacheInBytes: isProduction
+              ? undefined
+              : Number.MAX_VALUE,
           })
         : undefined,
       doesStaticFolderExist
@@ -148,9 +146,12 @@ export default function createReactWebpackConfig({
         : undefined,
       isProduction
         ? new MiniCssExtractPlugin({
-            filename: '[name].[hash:4].css',
+            filename: '[name].[contenthash:4].css',
             chunkFilename: '[name].[chunkhash:4].css',
           })
+        : undefined,
+      isProduction && enableBundleAnalyzer
+        ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
         : undefined,
     ].filter(Boolean),
     module: {
@@ -167,7 +168,7 @@ export default function createReactWebpackConfig({
     optimization: isProduction
       ? {
           splitChunks: {
-            chunks: 'initial',
+            chunks: 'all',
           },
           runtimeChunk: {
             name: 'manifest',
@@ -183,6 +184,7 @@ export default function createReactWebpackConfig({
     env,
     include,
     projectDir,
+    enableBundleAnalyzer,
   });
   const mergedConfig = webpackMerge(
     webpackReactAppConfig,

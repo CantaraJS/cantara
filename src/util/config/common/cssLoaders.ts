@@ -24,23 +24,22 @@ export default function getCssLoaders({
       ? [
           {
             loader: MiniCssExtractPlugin.loader,
-            options: {
-              esModule: true,
-              modules: {
-                namedExport: true,
-              },
-            },
+            // options: {
+            //   esModule: true,
+            //   modules: {
+            //     namedExport: true,
+            //   },
+            // },
           },
         ]
       : [
           {
             loader: 'style-loader',
-            options: {
-              esModule: true,
-              modules: {
-                namedExport: true,
-              },
-            },
+            // options: {
+            //   modules: {
+            //     namedExport: true,
+            //   },
+            // },
           },
         ]),
     {

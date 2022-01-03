@@ -2,17 +2,15 @@ import { Configuration } from 'webpack';
 import path from 'path';
 
 import { getBabelReactConfig } from './babelReactConfig';
-import getAllWebpackExternals from '../externals';
+
 import { camalize } from '../string-manipulation';
 import createCommonReactWebpackConfig from './common/webpackCommonReactConfig';
 import { BundlerConfigParams } from './types';
 import getCssLoaders from './common/cssLoaders';
 import getSourceMapLoader from './common/soureMapLoader';
 
-const WebpackNotifierPlugin = require('webpack-notifier');
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+import WebpackNotifierPlugin from 'webpack-notifier';
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -27,6 +25,7 @@ export default function createLibraryWebpackConfig({
   libraryTarget,
   noChecks,
   env,
+  enableBundleAnalyzer,
 }: BundlerConfigParams): Configuration {
   const isReactComponent = app.type === 'react-component';
 
@@ -81,18 +80,17 @@ export default function createLibraryWebpackConfig({
        * ESMs are favoured
        */
       // libraryTarget,
+      clean: noChecks,
     },
     plugins: [
-      noChecks
-        ? new CleanWebpackPlugin({
-            cleanOnceBeforeBuildPatterns: [app.paths.build],
-            dangerouslyAllowCleanPatternsOutsideProject: true,
-            dry: false,
-          })
-        : undefined,
       noChecks ? undefined : new WebpackNotifierPlugin(),
       new CaseSensitivePathsPlugin(),
-      new FriendlyErrorsWebpackPlugin(),
+      enableBundleAnalyzer
+        ? new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            reportTitle: `${app.name} (Webpack: ${libraryTarget})`,
+          })
+        : undefined,
     ].filter(Boolean),
     module: {
       rules: [...getCssLoaders({ useExtractLoader: false })],
@@ -113,6 +111,12 @@ export default function createLibraryWebpackConfig({
     module: {
       rules: [
         {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
+        {
           test: [/\.js$/, /\.jsx$/, /\.ts$/, /\.tsx$/],
           // type: 'javascript/esm',
           use: {
@@ -130,7 +134,7 @@ export default function createLibraryWebpackConfig({
         },
         {
           exclude: [/\.(js|jsx|ts|tsx)$/, /\.html?$/, /\.json$/, /\.css$/],
-          loader: 'url-loader',
+          type: 'asset/inline',
         },
       ],
     },
@@ -149,6 +153,7 @@ export default function createLibraryWebpackConfig({
       include,
       projectDir,
       alwaysInlineImages: true,
+      enableBundleAnalyzer,
     });
   }
 

@@ -7,10 +7,9 @@ import getAllWebpackExternals from '../externals';
 import slash from 'slash';
 
 const NodemonPlugin = require('nodemon-webpack-plugin');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 interface CreateNodeWebpackConfigOptions extends BundlerConfigParams {
@@ -38,7 +37,7 @@ export default function createNodeWebpackConfig({
 
   return {
     entry: app.paths.src,
-    output: { path: app.paths.build },
+    output: { path: app.paths.build, clean: isProduction },
     node: { __dirname: false, __filename: false },
     target: 'node',
     devtool: isDevelopment
@@ -68,6 +67,12 @@ export default function createNodeWebpackConfig({
     module: {
       rules: [
         {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
+        {
           test: [/\.js$/, /\.tsx?$/],
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],
@@ -77,18 +82,17 @@ export default function createNodeWebpackConfig({
           },
         },
         {
-          loader: 'file-loader',
           exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-          options: {
-            name: 'static/media/[name].[hash:8].[ext]',
+          generator: {
+            filename: 'static/media/[name].[contenthash:8].[ext]',
           },
+          type: 'asset/resource',
         },
       ],
     },
     plugins: [
       new CaseSensitivePathsPlugin(),
       new webpack.EnvironmentPlugin(env),
-      new FriendlyErrorsWebpackPlugin(),
       new ForkTsCheckerWebpackPlugin({
         typescript: {
           configFile: path.join(app.paths.root, 'tsconfig.json'),
@@ -104,15 +108,8 @@ export default function createNodeWebpackConfig({
         ? new NodemonPlugin({
             ext: 'js,graphql,ts,ps1,json,yaml',
             nodeArgs: nodemonOptions,
-            watch: app.paths.build,
-            restartable: true,
-          })
-        : undefined,
-      isProduction
-        ? new CleanWebpackPlugin({
-            cleanOnceBeforeBuildPatterns: [app.paths.build],
-            dangerouslyAllowCleanPatternsOutsideProject: true,
-            dry: false,
+            watch: [app.paths.build],
+            restartable: 'true',
           })
         : undefined,
       doesStaticFolderExist

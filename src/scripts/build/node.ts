@@ -41,5 +41,6 @@ export default async function buildNodeApp(app: CantaraApplication) {
       throw new Error('Error while compiling.');
     }
     console.log('Successfully compiled!');
+    compiler.close(() => {});
   });
 }

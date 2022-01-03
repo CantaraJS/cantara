@@ -3,6 +3,14 @@ id: migrations
 title: Migrating to newer Cantara versions
 ---
 
+# 3.x -> 4.x
+
+**Webpack 5 Upgrade**
+
+- `disableHostCheck` and `public` don't work anymore (`cantara.config.js -> devServer`). Remove them.
+- Problems with Node.js core modules used in client-side apps/libs: Webpack 5 removes all polyfills per default, but Cantara tries to mimic the behaviour of Webpack 4 by using the `node-polyfill-webpack-plugin` webpack. There could still come up errors regarding modules like `stream` or `buffer`. The plugin is **only** included for React Application builds.
+- Hint: To remove warnings of the kind `export 'TypeName' (reexported as 'TypeName') was not found in './file'`, rewrite the type import/export from `import { TypeName } from './file'` to `import type { TypeName } from './file'` or `export type { TypeName } from './file'`
+
 ## 1.x/2.x -> 3.x
 
 To migrate to the newest Cantara version, first make sure to install the latest version:

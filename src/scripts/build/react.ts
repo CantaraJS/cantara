@@ -15,6 +15,8 @@ function compile(config: webpack.Configuration): Promise<void> {
         return;
       }
       console.log('Successfully compiled!');
+      compiler.close(() => {});
+
       resolve();
     });
   });
@@ -26,6 +28,7 @@ export default async function buildReactApp(app: CantaraApplication) {
     projectDir,
     aliases: { packageAliases },
     tailwind,
+    globalCantaraSettings,
   } = getGlobalConfig();
 
   const {
@@ -50,6 +53,7 @@ export default async function buildReactApp(app: CantaraApplication) {
     // TODO: Evaluate if this should also be set for prod builds
     // resolveModules: resolveModulesInDevelopment,
     pathToTailwindCss: tailwind ? tailwind.pathToTailwindCss : undefined,
+    enableBundleAnalyzer: globalCantaraSettings.bundleAnalyzer,
   });
 
   const onComplete = logBuildTime({
@@ -57,7 +61,10 @@ export default async function buildReactApp(app: CantaraApplication) {
     toolName: 'Webpack',
   });
 
-  await compile(webpackConfig);
+  await compile({
+    ...webpackConfig,
+    stats: 'normal',
+  });
 
   onComplete();
 }

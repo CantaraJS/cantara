@@ -22,6 +22,8 @@ function compile(config: webpack.Configuration) {
         return;
       }
       console.log('Successfully compiled!');
+      compiler.close(() => {});
+
       resolve(true);
     });
   });
@@ -39,6 +41,7 @@ export default async function buildPackage(app: CantaraApplication) {
     projectDir,
     aliases: { packageAliases },
     internalPaths: { root: cantaraRoot },
+    globalCantaraSettings,
   } = getGlobalConfig();
 
   const { env } = getRuntimeConfig();
@@ -60,6 +63,7 @@ export default async function buildPackage(app: CantaraApplication) {
     projectDir,
     include: internalPackages,
     sourceMaps,
+    enableBundleAnalyzer: globalCantaraSettings.bundleAnalyzer,
   };
 
   const buildResult: BuildResult = {};
@@ -141,6 +145,10 @@ export default async function buildPackage(app: CantaraApplication) {
     onTypesGenerated();
   }
 
+  const customTypeFiles = (app.meta.customTypes ?? []).map((relativePath) =>
+    path.join(app.paths.root, relativePath),
+  );
+
   // Set correct path to index.js in packageJson's "main" field
   const packageJsonPath = path.join(app.paths.root, 'package.json');
   const typesFolder = path.join(app.paths.build, 'types');
@@ -151,6 +159,8 @@ export default async function buildPackage(app: CantaraApplication) {
   packageJson.types = await prepareTypesOutputFolder({
     packageFolderName,
     typesFolder,
+    customTypeFiles,
+    appRootPath: app.paths.root,
   });
   writeJson(packageJsonPath, packageJson);
 }

@@ -11,7 +11,7 @@ import { babel } from '@rollup/plugin-babel';
 // Removed
 import dynamicImportVars from 'rollup-plugin-dynamic-import-vars-for-grown-ups';
 import url from '@rollup/plugin-url';
-import postcss from 'rollup-plugin-postcss-modules';
+import postcss from 'rollup-plugin-postcss';
 //@ts-expect-error
 import postCssPresetEnv from 'postcss-preset-env';
 
@@ -20,6 +20,8 @@ import { externalsAsStringArray } from '../externals';
 import path from 'path';
 import { getBabelReactConfig } from './babelReactConfig';
 import slash from 'slash';
+
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const postcssUrl = require('postcss-url');
 
@@ -38,6 +40,7 @@ export default async function buildPackageWithRollup({
   libraryTarget,
   app,
   sourceMaps,
+  enableBundleAnalyzer,
 }: BundlerConfigParams): Promise<string> {
   // This path just acts as a result of this process
   let relativeEntryPath: string = '';
@@ -84,6 +87,7 @@ export default async function buildPackageWithRollup({
     resolve({ extensions }), // so Rollup can find commonjs deps
     commonjs(), // so Rollup can convert commonjs deps to ES modules
     postcss({
+      namedExports: true,
       modules: {
         localsConvention: 'camelCaseOnly',
         generateScopedName: '[local]-[hash:base64:5]',
@@ -113,6 +117,15 @@ export default async function buildPackageWithRollup({
       limit: Number.MAX_VALUE,
     }),
   ];
+
+  if (enableBundleAnalyzer) {
+    commonPlugins.push(
+      visualizer({
+        open: true,
+        title: `${app.name} (Rollup: ${libraryTarget})`,
+      }),
+    );
+  }
 
   let rollupConfig: RollupOptions = {};
 

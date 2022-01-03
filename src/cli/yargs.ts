@@ -95,7 +95,7 @@ export default async function buildYargsCommands({
             alias: 'p',
             type: 'string',
             describe: `Runtime preset name inside 'presets' folder`,
-            default: 'default',
+            // default: 'default',
           });
         }
 
@@ -211,7 +211,8 @@ export default async function buildYargsCommands({
             const newRuntimePresetName = await chooseRuntimePresetName({
               availablePresetName,
             });
-            runtimeConfig.activeRuntimeApplicationPresetName = newRuntimePresetName;
+            runtimeConfig.activeRuntimeApplicationPresetName =
+              newRuntimePresetName;
           }
 
           await prepareCantaraProject();
