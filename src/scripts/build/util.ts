@@ -110,7 +110,11 @@ export async function prepareTypesOutputFolder({
     refFileNames: customTypeFiles.map((customTypeFile) =>
       path.basename(customTypeFile),
     ),
-    indexDeclarationFilePath,
+    indexDeclarationFilePath: path.join(
+      appRootPath,
+      typesSrcFolder,
+      'index.d.ts',
+    ),
   });
 
   return `${typesSrcFolder}/index.d.ts`;
