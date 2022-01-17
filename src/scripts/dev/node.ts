@@ -37,7 +37,18 @@ export function startNodeAppDevelopmentServer() {
   const compiler = webpack(webpackConfig);
   compiler.watch({}, (err, stats) => {
     if (err) {
-      throw new Error('Build error.');
+      console.error(err.stack);
+      if ((err as any).details) {
+        console.error((err as any).details);
+      }
+      return;
     }
+
+    console.log(
+      stats?.toString({
+        chunks: false,
+        colors: true,
+      }),
+    );
   });
 }

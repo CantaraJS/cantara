@@ -36,11 +36,22 @@ export default async function buildNodeApp(app: CantaraApplication) {
   });
 
   const compiler = webpack(webpackConfig);
-  compiler.run((err) => {
+  compiler.run((err, stats) => {
     if (err) {
-      throw new Error('Error while compiling.');
+      console.error(err.stack);
+      if ((err as any).details) {
+        console.error((err as any).details);
+      }
+      return;
     }
-    console.log('Successfully compiled!');
+
+    console.log(
+      stats?.toString({
+        chunks: false,
+        colors: true,
+      }),
+    );
     compiler.close(() => {});
+    onComplete();
   });
 }
