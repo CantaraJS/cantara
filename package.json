@@ -71,7 +71,7 @@
     "html-webpack-plugin": "^5.5.0",
     "jest": "^27.3.1",
     "lerna": "^4.0.0",
-    "mini-css-extract-plugin": "^2.4.5",
+    "mini-css-extract-plugin": "2.4.5",
     "ncp": "^2.0.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "nodemon-webpack-plugin": "^4.6.0",
