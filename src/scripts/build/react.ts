@@ -6,17 +6,34 @@ import getRuntimeConfig from '../../cantara-config/runtime-config';
 import { logBuildTime } from './util';
 
 function compile(config: webpack.Configuration): Promise<void> {
+  const onComplete = logBuildTime({
+    stepName: 'Compiling optimized bundle',
+    toolName: 'Webpack',
+  });
   const compiler = webpack(config);
   return new Promise((resolve, reject) => {
-    compiler.run((err) => {
+    compiler.run((err, stats) => {
       if (err) {
-        console.log('Error::::::', err);
+        console.error(err.stack);
+        if ((err as any).details) {
+          console.error((err as any).details);
+        }
         reject(new Error('Error while compiling.'));
         return;
       }
-      console.log('Successfully compiled!');
-      compiler.close(() => {});
 
+      console.log(
+        stats?.toString({
+          chunks: false,
+          colors: true,
+        }),
+      );
+      compiler.close(() => {});
+      onComplete();
+      if (stats?.hasErrors()) {
+        reject(new Error('Error while compiling.'));
+        return;
+      }
       resolve();
     });
   });
@@ -56,15 +73,8 @@ export default async function buildReactApp(app: CantaraApplication) {
     enableBundleAnalyzer: globalCantaraSettings.bundleAnalyzer,
   });
 
-  const onComplete = logBuildTime({
-    stepName: 'Compiling optimized bundle',
-    toolName: 'Webpack',
-  });
-
   await compile({
     ...webpackConfig,
     stats: 'normal',
   });
-
-  onComplete();
 }
