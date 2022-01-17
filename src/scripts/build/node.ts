@@ -42,7 +42,7 @@ export default async function buildNodeApp(app: CantaraApplication) {
       if ((err as any).details) {
         console.error((err as any).details);
       }
-      return;
+      process.exit(1);
     }
 
     console.log(
@@ -53,5 +53,8 @@ export default async function buildNodeApp(app: CantaraApplication) {
     );
     compiler.close(() => {});
     onComplete();
+    if (stats?.hasErrors()) {
+      process.exit(1);
+    }
   });
 }
