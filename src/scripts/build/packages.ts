@@ -6,28 +6,12 @@ import { readFileAsJSON, writeJson } from '../../util/fs';
 import execCmd from '../../util/exec';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
-import { logBuildTime, prepareTypesOutputFolder } from './util';
+import { compile, logBuildTime, prepareTypesOutputFolder } from './util';
 import buildPackageWithRollup from '../../util/config/buildPackageWithRollup';
 import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { BundlerConfigParams } from '../../util/config/types';
 import slash from 'slash';
 import del from 'del';
-
-function compile(config: webpack.Configuration) {
-  const compiler = webpack(config);
-  return new Promise((resolve, reject) => {
-    compiler.run((err) => {
-      if (err) {
-        reject(new Error('Error while compiling.'));
-        return;
-      }
-      console.log('Successfully compiled!');
-      compiler.close(() => {});
-
-      resolve(true);
-    });
-  });
-}
 
 interface BuildResult {
   cjs?: string;
@@ -36,6 +20,8 @@ interface BuildResult {
 }
 
 export default async function buildPackage(app: CantaraApplication) {
+  console.log('Build package', app.type);
+
   const {
     includes: { internalPackages },
     projectDir,
@@ -93,17 +79,12 @@ export default async function buildPackage(app: CantaraApplication) {
   }
 
   if (libraryTargets.includes('umd')) {
-    const onBundleCreated = logBuildTime({
-      stepName: `Creating UMD bundle`,
-      toolName: 'Webpack',
-    });
     // Create UMD build using webpack because it supports lazy loading
     const webpackUmdConfig = createLibraryWebpackConfig({
       ...commonBundlerConfig,
       libraryTarget: 'umd',
     });
     await compile(webpackUmdConfig);
-    onBundleCreated();
 
     const relativeBuildPath = path.relative(
       app.paths.root,

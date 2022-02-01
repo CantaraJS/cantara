@@ -11,6 +11,7 @@ import {
 import path from 'path';
 import prettyMs from 'pretty-ms';
 import del from 'del';
+import webpack from 'webpack';
 
 interface LogBuildTimeParams {
   toolName: string;
@@ -118,4 +119,38 @@ export async function prepareTypesOutputFolder({
   });
 
   return `${typesSrcFolder}/index.d.ts`;
+}
+
+export function compile(config: webpack.Configuration): Promise<void> {
+  const onComplete = logBuildTime({
+    stepName: 'Compiling optimized bundle',
+    toolName: 'Webpack',
+  });
+  const compiler = webpack(config);
+  return new Promise((resolve, reject) => {
+    compiler.run((err, stats) => {
+      if (err) {
+        console.error(err.stack);
+        if ((err as any).details) {
+          console.error((err as any).details);
+        }
+        reject(new Error('Error while compiling.'));
+        return;
+      }
+
+      console.log(
+        stats?.toString({
+          chunks: false,
+          colors: true,
+        }),
+      );
+      compiler.close(() => {});
+      onComplete();
+      if (stats?.hasErrors()) {
+        reject(new Error('Error while compiling.'));
+        return;
+      }
+      resolve();
+    });
+  });
 }
