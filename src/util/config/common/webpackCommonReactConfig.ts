@@ -8,7 +8,7 @@ import getSourceMapLoader from './soureMapLoader';
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+import TerserPlugin from 'terser-webpack-plugin';
 
 interface CreateCommonReactWebpackConfigParams extends BundlerConfigParams {
   /** Set to true for NPM packages */
@@ -139,7 +139,11 @@ export default function createCommonReactWebpackConfig({
                 safe: true,
               },
             }),
-            new TerserPlugin(),
+            new TerserPlugin({
+              terserOptions: {
+                keep_fnames: true,
+              },
+            }),
           ],
         }
       : undefined,
