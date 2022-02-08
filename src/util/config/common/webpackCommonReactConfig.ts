@@ -4,11 +4,11 @@ import path from 'path';
 import { BundlerConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
+import TerserPlugin from 'terser-webpack-plugin';
 
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 
 interface CreateCommonReactWebpackConfigParams extends BundlerConfigParams {
   /** Set to true for NPM packages */
@@ -139,7 +139,12 @@ export default function createCommonReactWebpackConfig({
                 safe: true,
               },
             }),
-            new TerserPlugin(),
+            new TerserPlugin({
+              terserOptions: {
+                //tersers sometimes minifies functionnames of size 1 (alredy minified) to size 0
+                keep_fnames: /./,
+              },
+            }),
           ],
         }
       : undefined,
