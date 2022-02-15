@@ -113,7 +113,7 @@
     "typescript-plugin-css-modules": "^3.4.0",
     "update-notifier": "^5.1.0",
     "wait-port": "^0.2.9",
-    "webpack": "^5.64.2",
+    "webpack": "^5.69.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-dev-server": "^4.5.0",
     "webpack-merge": "^5.8.0",
