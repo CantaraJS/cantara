@@ -32,7 +32,7 @@ function getModuleName(request) {
   return req.split(delimiter)[0];
 }
 
-function shouldExternalize(_, request, callback) {
+function shouldExternalize({context, request}, callback) {
   const moduleName = getModuleName(request);
     if (<--EXTERNALS_ARRAY-->.includes(moduleName)) {
       // mark this module as external
@@ -45,6 +45,7 @@ function shouldExternalize(_, request, callback) {
 module.exports = {
   entry: slsw.lib.entries,
   target: 'node',
+  node: { __dirname: false, __filename: false },
   mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
   resolve: {
     extensions: [
@@ -117,7 +118,6 @@ module.exports = {
     minimizer: [
       new TerserPlugin({
         parallel: true,
-        cache: true,
         // sourceMap: true,
         terserOptions: {
           keep_classnames: true,
