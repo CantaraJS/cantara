@@ -8,6 +8,7 @@ import c from 'ansi-colors';
 import { camalize } from '../../util/string-manipulation';
 import getGlobalConfig from '../../cantara-config/global-config';
 import { CantaraApplicationType } from '../../util/types';
+import { fsExists } from '../../util/fs';
 
 const ncp = promisify(ncpCb);
 
@@ -90,6 +91,9 @@ export default async function createNewAppOrPackage({
       'app-templates/serverless',
     );
     indexFilePath = 'handler.js';
+    if (await fsExists(path.join(destinationPath, 'src', 'handler.ts'))) {
+      indexFilePath = 'handler.ts';
+    }
   }
   if (type === 'js-package') {
     destinationPath = path.join(projectDir, 'packages', name);
