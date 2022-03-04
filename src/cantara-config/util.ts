@@ -194,7 +194,12 @@ export default async function getAllApps({
       doesIndexFileExist = existsSync(path.join(app.paths.src, 'index.tsx'));
     }
     if (app.type === 'serverless') {
-      doesIndexFileExist = existsSync(path.join(app.paths.root, 'handler.js'));
+      doesIndexFileExist = existsSync(path.join(app.paths.root, 'handler.ts'));
+      if (!doesIndexFileExist) {
+        doesIndexFileExist = existsSync(
+          path.join(app.paths.root, 'handler.js'),
+        );
+      }
     }
 
     if (!doesIndexFileExist) {

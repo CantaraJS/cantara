@@ -5,14 +5,11 @@
 module.exports = {
   presets: [
     '<--MODULES_PATH-->@babel/preset-typescript',
-    ['<--MODULES_PATH-->@babel/preset-env', { targets: { node: '12.0.0' } }],
+    ['<--MODULES_PATH-->@babel/preset-env', { targets: { node: '14.0.0' } }],
   ],
   plugins: [
-    '<--MODULES_PATH-->babel-plugin-transform-typescript-metadata',
     ['<--MODULES_PATH-->@babel/plugin-proposal-decorators', { legacy: true }],
-    [
-      '<--MODULES_PATH-->@babel/plugin-proposal-class-properties',
-      { loose: true },
-    ],
+    '<--MODULES_PATH-->babel-plugin-transform-typescript-metadata',
+    ['<--MODULES_PATH-->@babel/plugin-proposal-class-properties'],
   ],
 };

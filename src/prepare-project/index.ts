@@ -97,7 +97,7 @@ async function prepareUserProject() {
 
     const newTailwindConfig = {
       ...globalCantaraConfig.tailwind.config,
-      purge: [
+      content: [
         `${globRoot}/react-apps/**/*.{js,ts,jsx,tsx}`,
         `${globRoot}/packages/**/*.{js,ts,jsx,tsx}`,
       ],
