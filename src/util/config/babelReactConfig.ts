@@ -17,15 +17,15 @@ export function getBabelReactConfig(
       require('@babel/preset-typescript'),
     ],
     plugins: [
-      require('@babel/plugin-transform-runtime'),
-      require('@babel/plugin-proposal-class-properties'),
-      require('@babel/plugin-proposal-object-rest-spread'),
-      require('@babel/plugin-proposal-optional-chaining'),
-      require('@babel/plugin-proposal-nullish-coalescing-operator'),
-      mode === 'development' ? 'react-refresh/babel' : undefined,
-      mode === 'development' && i18n
-        ? [require('babel-plugin-i18next-extract'), i18n]
-        : undefined,
+      // require('@babel/plugin-transform-runtime'),
+      // require('@babel/plugin-proposal-class-properties'),
+      // require('@babel/plugin-proposal-object-rest-spread'),
+      // require('@babel/plugin-proposal-optional-chaining'),
+      // require('@babel/plugin-proposal-nullish-coalescing-operator'),
+      // mode === 'development' ? 'react-refresh/babel' : undefined,
+      // mode === 'development' && i18n
+      //   ? [require('babel-plugin-i18next-extract'), i18n]
+      //   : undefined,
     ].filter(Boolean) as string[],
   };
 }
