@@ -145,7 +145,7 @@ export default function createCommonReactWebpackConfig({
             new TerserPlugin({
               terserOptions: {
                 //tersers sometimes minifies functionnames of size 1 (alredy minified) to size 0
-                keep_fnames: /./,
+                // keep_fnames: /./,
               },
             }),
           ],

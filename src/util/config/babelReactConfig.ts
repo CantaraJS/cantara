@@ -16,13 +16,13 @@ export function getBabelReactConfig(
         },
       ],
       require('@babel/preset-typescript'),
-      // [
-      //   '@babel/preset-env',
-      //   {
-      //     useBuiltIns: 'entry',
-      //     configPath: projectDir,
-      //   },
-      // ],
+      [
+        '@babel/preset-env',
+        {
+          useBuiltIns: 'entry',
+          configPath: projectDir,
+        },
+      ],
     ],
     plugins: [
       // require('@babel/plugin-transform-runtime'),
