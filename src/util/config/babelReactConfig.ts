@@ -1,10 +1,11 @@
 interface Options {
   i18n?: any;
+  projectDir: string;
 }
 
 export function getBabelReactConfig(
   mode: 'development' | 'production',
-  { i18n }: Options = {},
+  { i18n, projectDir }: Options,
 ) {
   return {
     presets: [
@@ -15,6 +16,13 @@ export function getBabelReactConfig(
         },
       ],
       require('@babel/preset-typescript'),
+      [
+        '@babel/preset-env',
+        {
+          useBuiltIns: 'entry',
+          configPath: projectDir,
+        },
+      ],
     ],
     plugins: [
       // require('@babel/plugin-transform-runtime'),
@@ -22,15 +30,15 @@ export function getBabelReactConfig(
       // require('@babel/plugin-proposal-object-rest-spread'),
       // require('@babel/plugin-proposal-optional-chaining'),
       // require('@babel/plugin-proposal-nullish-coalescing-operator'),
-      // mode === 'development' ? 'react-refresh/babel' : undefined,
-      // mode === 'development' && i18n
-      //   ? [require('babel-plugin-i18next-extract'), i18n]
-      //   : undefined,
+      mode === 'development' ? 'react-refresh/babel' : undefined,
+      mode === 'development' && i18n
+        ? [require('babel-plugin-i18next-extract'), i18n]
+        : undefined,
     ].filter(Boolean) as string[],
   };
 }
 
 // So it can be used as input for babel cli
 // Since this is only relevant for packages we can always use 'production'
-const reactConfig = getBabelReactConfig('production');
-export default reactConfig;
+// const reactConfig = getBabelReactConfig('production');
+// export default reactConfig;

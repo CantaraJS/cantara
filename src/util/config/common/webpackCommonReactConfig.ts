@@ -32,7 +32,10 @@ export default function createCommonReactWebpackConfig({
     };
   }
 
-  const babelConfig = getBabelReactConfig(mode, { i18n });
+  const babelConfig = getBabelReactConfig(mode, {
+    i18n,
+    projectDir: app.paths.root,
+  });
 
   return {
     entry: path.join(app.paths.src, 'index.tsx'),
