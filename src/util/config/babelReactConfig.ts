@@ -22,6 +22,7 @@ export function getBabelReactConfig(
           useBuiltIns: 'entry',
           configPath: projectDir,
           corejs: 2,
+          exclude: '@babel/plugin-transform-literals',
         },
       ],
     ],
