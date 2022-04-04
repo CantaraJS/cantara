@@ -37,7 +37,17 @@ export default function createNodeWebpackConfig({
 
   return {
     entry: app.paths.src,
-    output: { path: app.paths.build, clean: isProduction },
+    output: {
+      path: app.paths.build,
+      clean: isProduction,
+      devtoolModuleFilenameTemplate: (info: any) => {
+        const rel = path.relative(
+          path.join(app.paths.root, '../..'),
+          info.absoluteResourcePath,
+        );
+        return `webpack:///${rel}`;
+      },
+    },
     node: { __dirname: false, __filename: false },
     target: 'node',
     devtool: isDevelopment
