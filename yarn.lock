@@ -15795,9 +15795,9 @@ ts-jest@^27.0.7:
     yn "3.1.1"
 
 tsc-silent@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/tsc-silent/-/tsc-silent-1.2.1.tgz#c219789b7b1ab8e475fe3069d061d5ab49167d3f"
-  integrity sha512-uV/JYkTW/3nFj6wRY89UV77X5W8oWOHHw4HW7437DbkZPUqTqUcn24zcEl0Vh2dz7o9icJnx+QTX04fybhfHJQ==
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/tsc-silent/-/tsc-silent-1.2.2.tgz#414239cfc15cb70f8d2c29139f64b1c13d2daa11"
+  integrity sha512-XeNoMlREutyMotsQX7EijrgxXeyLscHUOV2W1goCZlEGvLH/7eFQ1snlPQf8cdQSdABqWEfvap0ab7s7FeCMrw==
   dependencies:
     "@types/node" "10.12.7"
     yargs "12 - 15"
