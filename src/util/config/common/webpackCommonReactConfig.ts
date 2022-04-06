@@ -5,7 +5,6 @@ import { BundlerConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
 import TerserPlugin from 'terser-webpack-plugin';
-import { browserslistToEsbuild } from '../../esbuild';
 
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
@@ -89,11 +88,8 @@ export default function createCommonReactWebpackConfig({
           /** For some reason, using 'javascript/esm' causes ReactRefresh to fail */
           // type: 'javascript/esm',
           use: {
-            loader: 'esbuild-loader',
-            options: {
-              loader: 'tsx',
-              target: browserslistToEsbuild(app.paths.root),
-            },
+            loader: 'babel-loader',
+            options: babelConfig,
           },
           include: [app.paths.src, ...include],
           // exclude: [/node_modules/],
