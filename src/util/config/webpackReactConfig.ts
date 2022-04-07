@@ -165,13 +165,16 @@ export default function createReactWebpackConfig({
     performance: {
       hints: false,
     },
-    // optimization: isProduction
-    //   ? {
-    //       runtimeChunk: {
-    //         name: 'manifest',
-    //       },
-    //     }
-    //   : undefined,
+    optimization: isProduction
+      ? {
+          splitChunks: {
+            chunks: 'all',
+          },
+          runtimeChunk: {
+            name: 'manifest',
+          },
+        }
+      : undefined,
   };
 
   const commonConfig = createCommonReactWebpackConfig({
