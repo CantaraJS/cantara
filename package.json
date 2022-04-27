@@ -89,7 +89,7 @@
     "querystring-es3": "^0.2.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-refresh": "^0.11.0",
+    "react-refresh": "^0.13.0",
     "readable-stream": "^3.6.0",
     "rollup": "^2.60.1",
     "rollup-plugin-dynamic-import-vars-for-grown-ups": "^1.4.1",
