@@ -5,7 +5,8 @@ plugins:
 
 custom:
   serverless-offline:
-    useChildProcesses: true
+    # Re-enable as soon https://github.com/dherault/serverless-offline/issues/1377 is fixed
+    #useChildProcesses: true
     noPrependStageInUrl: true
   webpack:
     webpackConfig: '<--WEBPACK_CONFIG_PATH-->'
