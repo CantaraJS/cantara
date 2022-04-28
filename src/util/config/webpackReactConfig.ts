@@ -8,8 +8,8 @@ import getCssLoaders from './common/cssLoaders';
 import slash from 'slash';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-import { InjectManifest } from 'workbox-webpack-plugin';
 import WebpackNotifierPlugin from 'webpack-notifier';
+const { InjectManifest } = require('workbox-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
