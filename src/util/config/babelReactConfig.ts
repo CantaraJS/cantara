@@ -8,6 +8,7 @@ export function getBabelReactConfig(
 ) {
   return {
     presets: [
+      require('@babel/preset-env'),
       [
         require('@babel/preset-react'),
         {
