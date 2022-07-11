@@ -69,9 +69,9 @@ export default function createReactWebpackConfig({
     devtool:
       isDevelopment || app.meta.sourceMaps ? 'eval-source-map' : undefined,
     output: {
-      filename: '[name].[contenthash:8].js',
+      filename: '[name].[contenthash:4].js',
       path: app.paths.build,
-      chunkFilename: '[name].[chunkhash:8].js',
+      chunkFilename: '[name].[chunkhash:4].js',
       publicPath: '/',
       clean: isProduction,
     },
@@ -146,8 +146,8 @@ export default function createReactWebpackConfig({
         : undefined,
       isProduction
         ? new MiniCssExtractPlugin({
-            filename: '[name].[contenthash:8].css',
-            chunkFilename: '[name].[chunkhash:8].css',
+            filename: '[name].[contenthash:4].css',
+            chunkFilename: '[name].[chunkhash:4].css',
           })
         : undefined,
       isProduction && enableBundleAnalyzer
