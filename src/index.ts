@@ -7,4 +7,3 @@ function main() {
 }
 
 main();
-//build
