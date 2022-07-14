@@ -131,7 +131,6 @@ export default function createCommonReactWebpackConfig({
     },
     optimization: isProduction
       ? {
-          minimize: false,
           minimizer: [
             new CssMinimizerPlugin({
               minimizerOptions: {
