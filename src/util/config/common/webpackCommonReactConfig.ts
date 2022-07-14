@@ -142,12 +142,12 @@ export default function createCommonReactWebpackConfig({
                 safe: true,
               },
             }),
-            new TerserPlugin({
-              terserOptions: {
-                //tersers sometimes minifies functionnames of size 1 (alredy minified) to size 0
-                keep_fnames: /./,
-              },
-            }),
+            // new TerserPlugin({
+            //   terserOptions: {
+            //     //tersers sometimes minifies functionnames of size 1 (alredy minified) to size 0
+            //     keep_fnames: /./,
+            //   },
+            // }),
           ],
         }
       : undefined,
