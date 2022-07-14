@@ -4,7 +4,6 @@ import path from 'path';
 import { BundlerConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
-import TerserPlugin from 'terser-webpack-plugin';
 
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
