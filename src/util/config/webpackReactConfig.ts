@@ -8,7 +8,6 @@ import getCssLoaders from './common/cssLoaders';
 import slash from 'slash';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-import { InjectManifest } from 'workbox-webpack-plugin';
 import WebpackNotifierPlugin from 'webpack-notifier';
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -19,6 +18,8 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
+
+const { InjectManifest } = require('workbox-webpack-plugin');
 
 export default function createReactWebpackConfig({
   app,
