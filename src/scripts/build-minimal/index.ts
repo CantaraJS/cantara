@@ -7,6 +7,8 @@ import { compile } from '../build/util';
 import createWebpackProdConfig from './configs/webpack/prod';
 
 export async function buildMinimal() {
+  process.env.NODE_ENV = 'production';
+
   const {
     includes: { internalPackages },
     projectDir,
