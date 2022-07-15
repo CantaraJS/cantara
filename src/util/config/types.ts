@@ -25,4 +25,5 @@ export interface BundlerConfigParams {
   sourceMaps?: boolean;
   pathToTailwindCss?: string;
   enableBundleAnalyzer?: boolean;
+  publicPath?: string;
 }

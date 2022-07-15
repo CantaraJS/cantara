@@ -31,6 +31,7 @@ export default function createReactWebpackConfig({
   resolveModules,
   pathToTailwindCss,
   enableBundleAnalyzer,
+  publicPath = '/',
 }: BundlerConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -73,7 +74,7 @@ export default function createReactWebpackConfig({
       filename: '[name].[contenthash:4].js',
       path: app.paths.build,
       chunkFilename: '[name].[chunkhash:4].js',
-      publicPath: '/',
+      publicPath,
       clean: isProduction,
     },
     plugins: [

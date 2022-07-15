@@ -34,7 +34,11 @@ export async function buildMinimal() {
     type: 'react',
   };
 
-  const webpackProdConfig = createReactWebpackConfig({ projectDir, app });
+  const webpackProdConfig = createReactWebpackConfig({
+    projectDir,
+    app,
+    publicPath: '/standard',
+  });
 
   // const webpackProdConfig = createWebpackProdConfig(projectDir);
 
