@@ -24,7 +24,7 @@ export async function buildMinimal() {
     meta: { displayName: 'Minimal App' },
     name: 'minimal-app',
     paths: {
-      build: path.join(appDir, 'dist'),
+      build: path.join(projectDir, 'minimal-app/dist'),
       root: appDir,
       runtimePresetEntry: path.join(srcDir, 'app-preset/index.ts'),
       runtimePresets: path.join(srcDir, 'presets'),
