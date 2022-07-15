@@ -41,6 +41,7 @@ export async function buildMinimal() {
     projectDir,
     app,
     publicPath: '/standard',
+    mode: 'production',
   });
 
   // const webpackProdConfig = createWebpackProdConfig(projectDir);
