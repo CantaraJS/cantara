@@ -36,7 +36,7 @@ export default function (projectDir = '') {
         '.htm',
       ],
     },
-    context: srcDir,
+    // context: srcDir,
     module: {
       rules: [
         {
