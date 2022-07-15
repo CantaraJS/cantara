@@ -8,10 +8,11 @@ const webpack = require('webpack');
 import babelConfig from '../babel.config';
 
 export default function (projectDir = '') {
-  const srcDir = path.join(projectDir, 'minimal-app/src');
+  const minimalAppDir = path.join(projectDir, 'minimal-app');
+  const srcDir = path.join(minimalAppDir, 'src');
 
   return {
-    entry: './index.tsx',
+    entry: path.join(srcDir, 'index.tsx'),
     resolve: {
       alias: {
         '~': srcDir,
@@ -58,10 +59,6 @@ export default function (projectDir = '') {
           use: ['style-loader', 'css-loader'],
         },
         {
-          test: /\.(scss|sass)$/,
-          use: ['style-loader', 'css-loader', 'sass-loader'],
-        },
-        {
           exclude: [
             /\.(js|jsx|ts|tsx|mjs|ejs|scss)$/,
             /\.html?$/,
@@ -81,7 +78,7 @@ export default function (projectDir = '') {
       ],
     },
     plugins: [
-      new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
+      new HtmlWebpackPlugin({ template: path.join(srcDir, 'index.html.ejs') }),
       new webpack.EnvironmentPlugin({
         WEBPACK_BUILD_TIMESTAMP: Date.now(),
       }),
