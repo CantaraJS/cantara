@@ -15,20 +15,21 @@ export async function buildMinimal() {
     globalCantaraSettings,
   } = getGlobalConfig();
 
-  const minimalAppDir = path.join(projectDir, 'minimal-app');
-  const srcDir = path.join(minimalAppDir, 'src');
+  // const appDir = path.join(projectDir, 'minimal-app');
+  const appDir = path.join(projectDir, 'react-apps/app');
+  const srcDir = path.join(appDir, 'src');
 
   const app: CantaraApplication = {
     aliases: {},
     meta: { displayName: 'Minimal App' },
     name: 'minimal-app',
     paths: {
-      build: path.join(minimalAppDir, 'dist'),
-      root: minimalAppDir,
+      build: path.join(appDir, 'dist'),
+      root: appDir,
       runtimePresetEntry: path.join(srcDir, 'app-preset/index.ts'),
       runtimePresets: path.join(srcDir, 'presets'),
-      assets: path.join(minimalAppDir, 'assets'),
-      static: path.join(minimalAppDir, 'static'),
+      assets: path.join(appDir, 'assets'),
+      static: path.join(appDir, 'static'),
       src: srcDir,
     },
     type: 'react',
