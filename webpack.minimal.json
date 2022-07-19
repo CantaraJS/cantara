@@ -85,7 +85,7 @@
         "include": {},
         "use": [
           {
-            "loader": "C:\\Users\\maxim\\DEV\\cantara\\node_modules\\mini-css-extract-plugin\\dist\\loader.js"
+            "loader": "style-loader"
           },
           {
             "loader": "css-loader",
@@ -115,7 +115,7 @@
         "exclude": {},
         "use": [
           {
-            "loader": "C:\\Users\\maxim\\DEV\\cantara\\node_modules\\mini-css-extract-plugin\\dist\\loader.js"
+            "loader": "style-loader"
           },
           {
             "loader": "css-loader",
@@ -147,7 +147,7 @@
         "WEBPACK_BUILD_TIMESTAMP"
       ],
       "defaultValues": {
-        "WEBPACK_BUILD_TIMESTAMP": 1658218131894
+        "WEBPACK_BUILD_TIMESTAMP": 1658219298667
       }
     },
     {

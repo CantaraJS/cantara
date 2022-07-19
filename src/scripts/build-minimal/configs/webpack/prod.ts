@@ -42,7 +42,7 @@ export default function (projectDir = '') {
     module: {
       rules: [
         ...getCssLoaders({
-          useExtractLoader: false,
+          useExtractLoader: true,
         }),
       ],
     },
