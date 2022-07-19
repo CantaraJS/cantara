@@ -54,10 +54,10 @@ export default function (projectDir = '') {
           },
           exclude: /node_modules/,
         },
-        {
-          test: /\.css$/,
-          use: ['style-loader', 'css-loader'],
-        },
+        // {
+        //   test: /\.css$/,
+        //   use: ['style-loader', 'css-loader'],
+        // },
         {
           exclude: [
             /\.(js|jsx|ts|tsx|mjs|ejs|scss)$/,
