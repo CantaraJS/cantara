@@ -24,8 +24,8 @@ export default function (projectDir = '') {
       clean: true,
     },
     externals: {
-      react: 'React',
-      'react-dom': 'ReactDOM',
+      // react: 'React',
+      // 'react-dom': 'ReactDOM',
     },
     performance: {
       hints: false,

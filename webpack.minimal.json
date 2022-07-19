@@ -1,0 +1,189 @@
+{
+  "entry": "C:\\Users\\maxim\\DEV\\cantara-hex-bug-test\\minimal-app\\src\\index.tsx",
+  "resolve": {
+    "alias": {
+      "~": "C:\\Users\\maxim\\DEV\\cantara-hex-bug-test\\minimal-app\\src"
+    },
+    "fallback": {
+      "fs": false,
+      "dns": false,
+      "net": false,
+      "tls": false,
+      "module": false
+    },
+    "extensions": [
+      ".web.js",
+      ".mjs",
+      ".js",
+      ".json",
+      ".web.jsx",
+      ".jsx",
+      ".ts",
+      ".tsx",
+      ".html",
+      ".htm"
+    ]
+  },
+  "module": {
+    "rules": [
+      {
+        "test": {},
+        "resolve": {
+          "fullySpecified": false
+        }
+      },
+      {
+        "test": [{}, {}],
+        "use": {
+          "loader": "babel-loader",
+          "options": {
+            "presets": [
+              [
+                {},
+                {
+                  "runtime": "automatic"
+                }
+              ],
+              {},
+              [
+                "@babel/preset-env",
+                {
+                  "useBuiltIns": "entry",
+                  "corejs": 2
+                }
+              ]
+            ],
+            "plugins": [{}]
+          }
+        },
+        "exclude": {}
+      },
+      {
+        "test": {},
+        "use": ["style-loader", "css-loader"]
+      },
+      {
+        "exclude": [{}, {}, {}, {}],
+        "parser": {
+          "dataUrlCondition": {
+            "maxSize": 15000
+          }
+        },
+        "generator": {
+          "filename": "static/media/[name].[contenthash:8].[ext]"
+        },
+        "type": "asset"
+      }
+    ]
+  },
+  "plugins": [
+    {
+      "userOptions": {
+        "template": "C:\\Users\\maxim\\DEV\\cantara-hex-bug-test\\minimal-app\\src\\index.html.ejs"
+      },
+      "version": 5
+    },
+    {
+      "keys": ["WEBPACK_BUILD_TIMESTAMP"],
+      "defaultValues": {
+        "WEBPACK_BUILD_TIMESTAMP": 1658212931064
+      }
+    },
+    {
+      "options": {
+        "excludeAliases": [],
+        "includeAliases": []
+      }
+    },
+    {
+      "options": {},
+      "logger": {},
+      "pathCache": {},
+      "fsOperations": 0,
+      "primed": false
+    },
+    {
+      "options": {
+        "banner": "filename:[name]"
+      }
+    },
+    {
+      "options": {
+        "typescript": {
+          "configFile": "C:\\Users\\maxim\\DEV\\cantara-hex-bug-test\\minimal-app\\tsconfig.json",
+          "diagnosticOptions": {
+            "semantic": true,
+            "syntactic": true
+          },
+          "mode": "write-references"
+        }
+      }
+    },
+    {
+      "options": {
+        "excludeWarnings": true,
+        "title": "Anti-Hex-Bug-Division"
+      },
+      "lastBuildSucceeded": false,
+      "isFirstBuild": true
+    },
+    {
+      "_sortedModulesCache": {},
+      "options": {
+        "filename": "[name].[contenthash:4].css",
+        "ignoreOrder": false,
+        "runtime": true,
+        "chunkFilename": "[name].[chunkhash:4].css"
+      },
+      "runtimeOptions": {
+        "linkType": "text/css"
+      }
+    },
+    {
+      "opts": {
+        "analyzerMode": "static",
+        "analyzerHost": "127.0.0.1",
+        "reportFilename": null,
+        "defaultSizes": "parsed",
+        "openAnalyzer": true,
+        "generateStatsFile": false,
+        "statsFilename": "stats.json",
+        "statsOptions": null,
+        "excludeAssets": null,
+        "logLevel": "info",
+        "startAnalyzer": true,
+        "analyzerPort": 8888
+      },
+      "server": null,
+      "logger": {
+        "activeLevels": {}
+      }
+    }
+  ],
+  "stats": {
+    "warningsFilter": [{}]
+  },
+  "mode": "production",
+  "output": {
+    "filename": "js/[name].[contenthash:4].js",
+    "chunkFilename": "[name].[chunkhash:4].js",
+    "path": "C:\\Users\\maxim\\DEV\\cantara-hex-bug-test\\minimal-app\\dist",
+    "publicPath": "/standard",
+    "clean": true
+  },
+  "externals": {
+    "react": "React",
+    "react-dom": "ReactDOM"
+  },
+  "performance": {
+    "hints": false
+  },
+  "optimization": {
+    "splitChunks": {
+      "chunks": "all"
+    },
+    "runtimeChunk": {
+      "name": "manifest"
+    }
+  }
+}

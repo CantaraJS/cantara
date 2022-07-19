@@ -1,10 +1,16 @@
+import { writeFileSync } from 'fs';
 import path from 'path';
+import { Configuration } from 'webpack';
 import getGlobalConfig from '../../cantara-config/global-config';
 import createReactWebpackConfig from '../../util/config/webpackReactConfig';
 import { CantaraApplication } from '../../util/types';
 import { compile } from '../build/util';
 
 import createWebpackProdConfig from './configs/webpack/prod';
+
+function webpackConfigToJson(config: Configuration, configName: string) {
+  writeFileSync(`webpack.${configName}.json`, JSON.stringify(config, null, 2));
+}
 
 export async function buildMinimal() {
   // process.env.NODE_ENV = 'production';
@@ -44,7 +50,10 @@ export async function buildMinimal() {
     mode: 'production',
   });
 
-  // const webpackProdConfig = createWebpackProdConfig(projectDir);
+  const webpackMinimalProdConfig = createWebpackProdConfig(projectDir);
 
-  await compile(webpackProdConfig);
+  // webpackConfigToJson(webpackProdConfig, 'cantara');
+  // webpackConfigToJson(webpackMinimalProdConfig, 'minimal');
+
+  await compile(webpackMinimalProdConfig);
 }
