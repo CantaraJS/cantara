@@ -66,8 +66,8 @@ export default function (projectDir = '') {
         title: 'Anti-Hex-Bug-Division',
       }),
       new MiniCssExtractPlugin({
-        filename: '[name].[contenthash:4].css',
-        chunkFilename: '[name].[chunkhash:4].css',
+        // filename: '[name].[contenthash:4].css',
+        // chunkFilename: '[name].[chunkhash:4].css',
       }),
       new BundleAnalyzerPlugin({ analyzerMode: 'static' }),
     ],
