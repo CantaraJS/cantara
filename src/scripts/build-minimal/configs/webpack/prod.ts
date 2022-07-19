@@ -9,6 +9,7 @@ const WebpackNotifierPlugin = require('webpack-notifier');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
+import getCssLoaders from '../../../../util/config/common/cssLoaders';
 import commonConfig from './common';
 
 export default function (projectDir = '') {
@@ -37,6 +38,13 @@ export default function (projectDir = '') {
       runtimeChunk: {
         name: 'manifest',
       },
+    },
+    module: {
+      rules: [
+        ...getCssLoaders({
+          useExtractLoader: true,
+        }),
+      ],
     },
     plugins: [
       new webpack.BannerPlugin({

@@ -86,6 +86,59 @@
           "filename": "static/media/[name].[contenthash:8].[ext]"
         },
         "type": "asset"
+      },
+      {
+        "test": {},
+        "include": {},
+        "use": [
+          {
+            "loader": "C:\\Users\\maxim\\DEV\\cantara\\node_modules\\mini-css-extract-plugin\\dist\\loader.js"
+          },
+          {
+            "loader": "css-loader",
+            "options": {
+              "modules": {
+                "localIdentName": "[name]--[hash:base64:5]",
+                "exportLocalsConvention": "camelCaseOnly",
+                "namedExport": true
+              },
+              "esModule": true
+            }
+          },
+          {
+            "loader": "postcss-loader",
+            "options": {
+              "postcssOptions": {
+                "plugins": {
+                  "postcss-preset-env": {}
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "test": {},
+        "exclude": {},
+        "use": [
+          {
+            "loader": "C:\\Users\\maxim\\DEV\\cantara\\node_modules\\mini-css-extract-plugin\\dist\\loader.js"
+          },
+          {
+            "loader": "css-loader",
+            "options": {}
+          },
+          {
+            "loader": "postcss-loader",
+            "options": {
+              "postcssOptions": {
+                "plugins": {
+                  "postcss-preset-env": {}
+                }
+              }
+            }
+          }
+        ]
       }
     ]
   },
@@ -101,7 +154,7 @@
         "WEBPACK_BUILD_TIMESTAMP"
       ],
       "defaultValues": {
-        "WEBPACK_BUILD_TIMESTAMP": 1658214726609
+        "WEBPACK_BUILD_TIMESTAMP": 1658216201534
       }
     },
     {
