@@ -17,7 +17,7 @@ export function getBabelReactConfig(
       ],
       require('@babel/preset-typescript'),
       [
-        '@babel/preset-env',
+        require('@babel/preset-env'),
         {
           useBuiltIns: 'entry',
           configPath: projectDir,
