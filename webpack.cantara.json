@@ -88,9 +88,11 @@
       "primed": false
     },
     {
-      "keys": ["WEBPACK_BUILD_TIMESTAMP"],
+      "keys": [
+        "WEBPACK_BUILD_TIMESTAMP"
+      ],
       "defaultValues": {
-        "WEBPACK_BUILD_TIMESTAMP": 1658212930895
+        "WEBPACK_BUILD_TIMESTAMP": 1658214726438
       }
     },
     {
@@ -161,7 +163,12 @@
         }
       },
       {
-        "test": [{}, {}, {}, {}],
+        "test": [
+          {},
+          {},
+          {},
+          {}
+        ],
         "use": {
           "loader": "babel-loader",
           "options": {
@@ -182,7 +189,9 @@
                 }
               ]
             ],
-            "plugins": [{}]
+            "plugins": [
+              {}
+            ]
           }
         },
         "include": [
@@ -232,6 +241,8 @@
   },
   "entry": "C:\\Users\\maxim\\DEV\\cantara-hex-bug-test\\minimal-app\\src\\index.tsx",
   "stats": {
-    "warningsFilter": [{}]
+    "warningsFilter": [
+      {}
+    ]
   }
 }

@@ -52,8 +52,8 @@ export async function buildMinimal() {
 
   const webpackMinimalProdConfig = createWebpackProdConfig(projectDir);
 
-  // webpackConfigToJson(webpackProdConfig, 'cantara');
-  // webpackConfigToJson(webpackMinimalProdConfig, 'minimal');
+  webpackConfigToJson(webpackProdConfig, 'cantara');
+  webpackConfigToJson(webpackMinimalProdConfig, 'minimal');
 
-  await compile(webpackMinimalProdConfig);
+  await compile(webpackProdConfig);
 }

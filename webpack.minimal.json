@@ -33,7 +33,10 @@
         }
       },
       {
-        "test": [{}, {}],
+        "test": [
+          {},
+          {}
+        ],
         "use": {
           "loader": "babel-loader",
           "options": {
@@ -53,17 +56,27 @@
                 }
               ]
             ],
-            "plugins": [{}]
+            "plugins": [
+              {}
+            ]
           }
         },
         "exclude": {}
       },
       {
         "test": {},
-        "use": ["style-loader", "css-loader"]
+        "use": [
+          "style-loader",
+          "css-loader"
+        ]
       },
       {
-        "exclude": [{}, {}, {}, {}],
+        "exclude": [
+          {},
+          {},
+          {},
+          {}
+        ],
         "parser": {
           "dataUrlCondition": {
             "maxSize": 15000
@@ -84,9 +97,11 @@
       "version": 5
     },
     {
-      "keys": ["WEBPACK_BUILD_TIMESTAMP"],
+      "keys": [
+        "WEBPACK_BUILD_TIMESTAMP"
+      ],
       "defaultValues": {
-        "WEBPACK_BUILD_TIMESTAMP": 1658212931064
+        "WEBPACK_BUILD_TIMESTAMP": 1658214726609
       }
     },
     {
@@ -161,7 +176,9 @@
     }
   ],
   "stats": {
-    "warningsFilter": [{}]
+    "warningsFilter": [
+      {}
+    ]
   },
   "mode": "production",
   "output": {
@@ -171,10 +188,7 @@
     "publicPath": "/standard",
     "clean": true
   },
-  "externals": {
-    "react": "React",
-    "react-dom": "ReactDOM"
-  },
+  "externals": {},
   "performance": {
     "hints": false
   },
