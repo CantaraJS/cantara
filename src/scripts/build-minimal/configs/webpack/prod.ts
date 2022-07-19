@@ -39,13 +39,13 @@ export default function (projectDir = '') {
         name: 'manifest',
       },
     },
-    module: {
-      rules: [
-        ...getCssLoaders({
-          useExtractLoader: true,
-        }),
-      ],
-    },
+    // module: {
+    //   rules: [
+    //     ...getCssLoaders({
+    //       useExtractLoader: true,
+    //     }),
+    //   ],
+    // },
     plugins: [
       new webpack.BannerPlugin({
         banner: 'filename:[name]',
