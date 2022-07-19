@@ -64,13 +64,6 @@
         "exclude": {}
       },
       {
-        "test": {},
-        "use": [
-          "style-loader",
-          "css-loader"
-        ]
-      },
-      {
         "exclude": [
           {},
           {},
@@ -154,7 +147,7 @@
         "WEBPACK_BUILD_TIMESTAMP"
       ],
       "defaultValues": {
-        "WEBPACK_BUILD_TIMESTAMP": 1658216201534
+        "WEBPACK_BUILD_TIMESTAMP": 1658217693539
       }
     },
     {
