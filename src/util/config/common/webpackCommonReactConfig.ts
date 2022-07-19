@@ -5,6 +5,8 @@ import { BundlerConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
 
+import TerserPlugin from 'terser-webpack-plugin';
+
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
@@ -128,28 +130,30 @@ export default function createCommonReactWebpackConfig({
         // },
       ],
     },
-    // optimization: isProduction
-    //   ? {
-    //       minimizer: [
-    //         new CssMinimizerPlugin({
-    //           minimizerOptions: {
-    //             discardComments: {
-    //               removeAll: true,
-    //             },
-    //             // Run cssnano in safe mode to avoid
-    //             // potentially unsafe transformations.
-    //             safe: true,
-    //           },
-    //         }),
-    //         new TerserPlugin({
-    //           terserOptions: {
-    //             //tersers sometimes minifies functionnames of size 1 (alredy minified) to size 0
-    //             keep_fnames: /./,
-    //           },
-    //         }),
-    //       ],
-    //     }
-    //   : undefined,
+    optimization: isProduction
+      ? {
+          minimizer: [
+            new CssMinimizerPlugin({
+              minimizerOptions: {
+                discardComments: {
+                  removeAll: true,
+                },
+                // Run cssnano in safe mode to avoid
+                // potentially unsafe transformations.
+                safe: true,
+              },
+            }),
+            new TerserPlugin({
+              terserOptions: {
+                //tersers sometimes minifies functionnames of size 1 (alredy minified) to size 0
+                keep_fnames: /./,
+              },
+            }),
+          ],
+          // Temporarily fixes https://github.com/webpack-contrib/mini-css-extract-plugin/issues/960
+          realContentHash: false,
+        }
+      : undefined,
     stats: {
       warningsFilter: [/Failed to parse source map/],
     },

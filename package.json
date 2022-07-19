@@ -108,6 +108,7 @@
     "source-map-loader": "^4.0.0",
     "style-loader": "^3.3.1",
     "terminal-link": "2.1.1",
+    "terser-webpack-plugin": "^5.3.3",
     "ts-jest": "^28.0.6",
     "tsc-silent": "^1.2.2",
     "tty-browserify": "^0.0.1",

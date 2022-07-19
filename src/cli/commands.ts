@@ -89,18 +89,6 @@ export interface CantaraCommand<TParameters = any> {
   };
 }
 
-const buildMinimalCommand: CantaraCommand = {
-  name: 'build-minimal',
-  description: 'Test build script for debugging purposes',
-  configuration: {
-    needsActiveApp: false,
-  },
-  execute: async () => {
-    const { buildMinimal } = await import('../scripts/build-minimal');
-    await buildMinimal();
-  },
-};
-
 const devCommand: CantaraCommand = {
   name: 'dev',
   description: 'Start the development server',
@@ -355,7 +343,6 @@ const allCliCommands: CantaraCommand[] = [
   onPrePushCommand,
   onPreCommitCommand,
   buildChangedCommand,
-  buildMinimalCommand,
 ];
 
 export default allCliCommands;
