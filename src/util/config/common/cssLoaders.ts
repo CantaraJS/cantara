@@ -24,12 +24,12 @@ export default function getCssLoaders({
       ? [
           {
             loader: MiniCssExtractPlugin.loader,
-            // options: {
-            //   esModule: true,
-            //   modules: {
-            //     namedExport: true,
-            //   },
-            // },
+            options: {
+              esModule: false,
+              // modules: {
+              //   namedExport: true,
+              // },
+            },
           },
         ]
       : [
