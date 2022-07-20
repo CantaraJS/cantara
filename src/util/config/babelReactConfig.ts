@@ -15,7 +15,6 @@ export function getBabelReactConfig(
           runtime: 'automatic',
         },
       ],
-      require('@babel/preset-typescript'),
       [
         require('@babel/preset-env'),
         {
@@ -24,6 +23,7 @@ export function getBabelReactConfig(
           corejs: 2,
         },
       ],
+      require('@babel/preset-typescript'),
     ],
     plugins: [
       require('@babel/plugin-transform-runtime'),
