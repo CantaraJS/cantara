@@ -107,19 +107,11 @@ export default async function buildPackage(app: CantaraApplication) {
     const suppress = app.meta.suppressTsErrors
       ? ` --suppress ${app.meta.suppressTsErrors.join(',')}@`
       : '';
-    const tsPath = path.join(
-      cantaraRoot,
-      'node_modules/typescript/lib/typescript.js',
-    );
 
-    const tsConfigExists = existsSync(tsPath);
-    console.log(
-      '<<<<<<<<<<<<<<<<<<<<<<< tsConfigExists <<<<<<<<<<<<<<<<<<<<<<<',
-      tsConfigExists,
-    );
+    const tsModulePath = require.resolve('typescript');
+    const tsPath = path.join(tsModulePath, 'lib/typescript.js');
 
-    const dirContents = await fsReaddir(path.join(cantaraRoot, 'node_modules'));
-    console.log(`node_modules`, dirContents);
+    console.log('<<<<<<<<<<<< TS Path <<<<<<<<<<<<<<<', tsPath);
 
     const tscSilentBin = path.join(cantaraRoot, 'node_modules/.bin/tsc-silent');
     const onTypesGenerated = logBuildTime({
