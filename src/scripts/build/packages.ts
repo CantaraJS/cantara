@@ -2,7 +2,7 @@ import webpack from 'webpack';
 import path from 'path';
 
 import { CantaraApplication } from '../../util/types';
-import { readFileAsJSON, writeJson } from '../../util/fs';
+import { fsReaddir, readFileAsJSON, writeJson } from '../../util/fs';
 import execCmd from '../../util/exec';
 import getGlobalConfig from '../../cantara-config/global-config';
 import getRuntimeConfig from '../../cantara-config/runtime-config';
@@ -12,6 +12,7 @@ import createLibraryWebpackConfig from '../../util/config/webpackLibraryConfig';
 import { BundlerConfigParams } from '../../util/config/types';
 import slash from 'slash';
 import del from 'del';
+import { existsSync } from 'fs';
 
 interface BuildResult {
   cjs?: string;
@@ -110,6 +111,15 @@ export default async function buildPackage(app: CantaraApplication) {
       cantaraRoot,
       'node_modules/typescript/lib/typescript.js',
     );
+
+    const tsConfigExists = existsSync(tsPath);
+    console.log(
+      '<<<<<<<<<<<<<<<<<<<<<<< tsConfigExists <<<<<<<<<<<<<<<<<<<<<<<',
+      tsConfigExists,
+    );
+
+    const dirContents = await fsReaddir(path.join(cantaraRoot, 'node_modules'));
+    console.log(`node_modules`, dirContents);
 
     const tscSilentBin = path.join(cantaraRoot, 'node_modules/.bin/tsc-silent');
     const onTypesGenerated = logBuildTime({
