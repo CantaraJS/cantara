@@ -150,8 +150,6 @@ export default function createCommonReactWebpackConfig({
               },
             }),
           ],
-          // Temporarily fixes https://github.com/webpack-contrib/mini-css-extract-plugin/issues/960
-          realContentHash: false,
         }
       : undefined,
     stats: {
