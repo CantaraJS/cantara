@@ -108,10 +108,7 @@ export default async function buildPackage(app: CantaraApplication) {
       ? ` --suppress ${app.meta.suppressTsErrors.join(',')}@`
       : '';
 
-    const tsModulePath = require.resolve('typescript');
-    const tsPath = path.join(tsModulePath, 'lib/typescript.js');
-
-    console.log('<<<<<<<<<<<< TS Path <<<<<<<<<<<<<<<', tsPath);
+    const tsPath = require.resolve('typescript');
 
     const tscSilentBin = path.join(cantaraRoot, 'node_modules/.bin/tsc-silent');
     const onTypesGenerated = logBuildTime({
