@@ -8,13 +8,13 @@ export default function executeTests() {
     currentCommand: { app: activeApp },
   } = getRuntimeConfig();
 
-  const {
-    additionalCliOptions,
-    internalPaths: { root: cantaraRootPath },
-  } = getGlobalConfig();
-  const jestInstallPath = path.join(
-    cantaraRootPath,
-    'node_modules/jest/bin/jest.js',
+  const { additionalCliOptions } = getGlobalConfig();
+  let jestInstallPath = path.join(
+    require.resolve('jest'),
+    '..',
+    '..',
+    'bin',
+    'jest.js',
   );
 
   let newAdditionalCliOptions = additionalCliOptions;
