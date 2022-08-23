@@ -4,6 +4,7 @@ import path from 'path';
 import { BundlerConfigParams } from '../types';
 import { getBabelReactConfig } from '../babelReactConfig';
 import getSourceMapLoader from './soureMapLoader';
+
 import TerserPlugin from 'terser-webpack-plugin';
 
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -32,7 +33,10 @@ export default function createCommonReactWebpackConfig({
     };
   }
 
-  const babelConfig = getBabelReactConfig(mode, { i18n });
+  const babelConfig = getBabelReactConfig(mode, {
+    i18n,
+    projectDir: app.paths.root,
+  });
 
   return {
     entry: path.join(app.paths.src, 'index.tsx'),

@@ -121,7 +121,9 @@ export default function createLibraryWebpackConfig({
           // type: 'javascript/esm',
           use: {
             loader: 'babel-loader',
-            options: getBabelReactConfig('production'),
+            options: getBabelReactConfig('production', {
+              projectDir: app.paths.root,
+            }),
           },
           include: [app.paths.src, ...include],
           exclude: [/node_modules/],

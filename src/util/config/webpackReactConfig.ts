@@ -8,7 +8,6 @@ import getCssLoaders from './common/cssLoaders';
 import slash from 'slash';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-import { InjectManifest } from 'workbox-webpack-plugin';
 import WebpackNotifierPlugin from 'webpack-notifier';
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -20,6 +19,8 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
 
+const { InjectManifest } = require('workbox-webpack-plugin');
+
 export default function createReactWebpackConfig({
   app,
   alias = {},
@@ -30,6 +31,7 @@ export default function createReactWebpackConfig({
   resolveModules,
   pathToTailwindCss,
   enableBundleAnalyzer,
+  publicPath = '/',
 }: BundlerConfigParams): Configuration {
   const isDevelopment = mode === 'development';
   const isProduction = mode === 'production';
@@ -69,10 +71,10 @@ export default function createReactWebpackConfig({
     devtool:
       isDevelopment || app.meta.sourceMaps ? 'eval-source-map' : undefined,
     output: {
-      filename: '[name].[contenthash:4].js',
+      filename: '[name].[contenthash:8].js',
       path: app.paths.build,
-      chunkFilename: '[name].[chunkhash:4].js',
-      publicPath: '/',
+      chunkFilename: '[name].[chunkhash:8].js',
+      publicPath,
       clean: isProduction,
     },
     plugins: [
@@ -146,8 +148,8 @@ export default function createReactWebpackConfig({
         : undefined,
       isProduction
         ? new MiniCssExtractPlugin({
-            filename: '[name].[contenthash:4].css',
-            chunkFilename: '[name].[chunkhash:4].css',
+            filename: '[name].[contenthash:8].css',
+            chunkFilename: '[name].[chunkhash:8].css',
           })
         : undefined,
       isProduction && enableBundleAnalyzer

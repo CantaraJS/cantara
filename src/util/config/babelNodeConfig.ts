@@ -1,7 +1,7 @@
 export default {
   presets: [
-    '@babel/typescript',
     ['@babel/env', { targets: { node: '14.0.0' } }],
+    '@babel/typescript',
   ],
   plugins: [
     ['@babel/plugin-proposal-decorators', { legacy: true }],

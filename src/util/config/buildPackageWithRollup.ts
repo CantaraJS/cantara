@@ -50,7 +50,9 @@ export default async function buildPackageWithRollup({
   const include = ['src/**/*'];
 
   const isReactComponent = app.type === 'react-component';
-  const babelConfig = getBabelReactConfig('production');
+  const babelConfig = getBabelReactConfig('production', {
+    projectDir: app.paths.root,
+  });
 
   const entryPath = isReactComponent
     ? path.join(app.paths.src, 'index.tsx')
