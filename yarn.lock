@@ -17157,7 +17157,6 @@ ts-jest@^28.0.6:
   version "28.0.6"
   resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-28.0.6.tgz#d63df9a9908044cd891e066ad869b1a432e70d67"
   integrity sha512-yLAWoaSJ6c9o+IT7+nyutp5uvwGzhMYb/LD5WEQAi2tBq4ZSAPay4Lf69pP/IU+GFYg87pdg5eADSzuNAFSK4g==
-
   dependencies:
     bs-logger "0.x"
     fast-json-stable-stringify "2.x"
@@ -17186,7 +17185,6 @@ ts-jest@^28.0.6:
     make-error "^1.1.1"
     v8-compile-cache-lib "^3.0.0"
     yn "3.1.1"
-
 
 tsc-silent@^1.2.2:
   version "1.2.2"
@@ -17332,15 +17330,15 @@ typescript-plugin-css-modules@^3.4.0:
     stylus "^0.54.8"
     tsconfig-paths "^3.9.0"
 
+typescript@4.7.4:
+  version "4.7.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
+  integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
+
 typescript@^4.4.3:
   version "4.5.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.5.tgz#d8c953832d28924a9e3d37c73d729c846c5896f3"
   integrity sha512-TCTIul70LyWe6IJWT8QSYeA54WQe8EjQFU4wY52Fasj5UKx88LNYKCgBEHcOMOrFF1rKGbD8v/xcNWVUq9SymA==
-
-typescript@^4.7.4:
-  version "4.7.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
-  integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
 
 uglify-js@^3.1.4:
   version "3.15.1"
