@@ -69,7 +69,7 @@
     "css-minimizer-webpack-plugin": "^4.0.0",
     "del": "^6.1.1",
     "enquirer": "^2.3.6",
-    "fork-ts-checker-webpack-plugin": "^7.2.12",
+    "fork-ts-checker-webpack-plugin": "^8.0.0",
     "html-loader": "^4.1.0",
     "html-webpack-plugin": "^5.5.0",
     "jest": "^28.1.3",
