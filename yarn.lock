@@ -4467,10 +4467,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.7.tgz#195808b2d4b2e7c33e75e7d9b24aeee88f94660d"
   integrity sha512-Zh5Z4kACfbeE8aAOYh9mqotRxaZMro8MbBQtR8vEXOMiZo2rGEh2LayJijKdlu48YnS6y2EFU/oo2NCe5P6jGw==
 
-"@types/node@15.9.0":
-  version "15.9.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.9.0.tgz#0b7f6c33ca5618fe329a9d832b478b4964d325a8"
-  integrity sha512-AR1Vq1Ei1GaA5FjKL5PBqblTZsL5M+monvGSZwe6sSIdGiuu7Xr/pNwWJY+0ZQuN8AapD/XMB5IzBAyYRFbocA==
+"@types/node@16.18.1":
+  version "16.18.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.18.1.tgz#fd860a5efc505a5417d25a99cbff78077447a391"
+  integrity sha512-Z659t5cj2Tt2SaqbJxXRo5EaU86E4l2CxtklCY1VftxYXhR81Z75UsugwdI7l5MUAR1I+l8sdt3B5Y++ZV76WQ==
 
 "@types/nodemon@latest":
   version "1.19.1"
@@ -4652,6 +4652,11 @@
   integrity sha512-wDeUwiUmem9FzsyysEwRukaEdDNcwbROvQ9QGRKaLI6t+IltNzbn4/i4asmB10auvZGQCzSQ6t0GSczEThlUXw==
   dependencies:
     "@types/yargs-parser" "*"
+
+"@typescript/lib-dom@npm:@types/web":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@types/web/-/web-0.0.93.tgz#348678452d38a86134d21e5866f0681381e6d9b6"
+  integrity sha512-nlGDXbcLkCHDhxq8knetIm9FzT3lfh2H+kPCA1eyKy9QYWvRea9B3XrProrY3FolENHFe2PYLwhnSZSnewmAFg==
 
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
@@ -17330,10 +17335,10 @@ typescript-plugin-css-modules@^3.4.0:
     stylus "^0.54.8"
     tsconfig-paths "^3.9.0"
 
-typescript@4.7.4:
-  version "4.7.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
-  integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
+typescript@4.9.5:
+  version "4.9.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
+  integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
 
 typescript@^4.4.3:
   version "4.5.5"
