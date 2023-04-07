@@ -113,11 +113,19 @@ export default async function buildPackageWithRollup({
       include,
       extensions,
     }),
-    dynamicImportVars({ include }),
     url({
       exclude: [/\.(js|jsx|ts|tsx|mjs)$/, /\.html?$/, /\.json$/],
       limit: Number.MAX_VALUE,
+      include: [
+        '**/*.svg',
+        '**/*.png',
+        '**/*.jp(e)?g',
+        '**/*.gif',
+        '**/*.webp',
+        '**/*.wav',
+      ],
     }),
+    dynamicImportVars({ include }),
   ];
 
   if (enableBundleAnalyzer) {
