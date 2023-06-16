@@ -17,9 +17,8 @@ interface ActualInstalledDependencies {
  */
 export async function autoInstallMissingPackages(rootDir: string) {
   const localPackageJsonPath = path.join(rootDir, 'package.json');
-  const { devDependencies = {}, dependencies = {} } = readFileAsJSON(
-    localPackageJsonPath,
-  );
+  const { devDependencies = {}, dependencies = {} } =
+    readFileAsJSON(localPackageJsonPath);
   const {
     devDependencies: actualDevDependencies = {},
     dependencies: actualDependencies = {},
@@ -75,8 +74,9 @@ function getInstalledDependencies({
         if (existsSync(depPath)) {
           let actualVersion = 'not_specified';
           try {
-            actualVersion = readFileAsJSON(path.join(depPath, 'package.json'))
-              .version;
+            actualVersion = readFileAsJSON(
+              path.join(depPath, 'package.json'),
+            ).version;
           } catch (e) {}
           // Version missmatch
           if (!version.includes(actualVersion)) {
@@ -177,10 +177,22 @@ export async function createOrUpdatePackageJSON({
       ...expectedDependencies,
     },
   };
-  if (workspaces) {
+  if (
+    workspaces &&
+    (!packageJsonContent.workspaces ||
+      Array.isArray(packageJsonContent.workspaces))
+  ) {
     packageJsonContent = {
       ...packageJsonContent,
       workspaces,
+    };
+  } else if (workspaces) {
+    packageJsonContent = {
+      ...packageJsonContent,
+      workspaces: {
+        ...packageJsonContent.workspaces,
+        packages: workspaces,
+      },
     };
   }
   writeJson(localPackageJsonPath, packageJsonContent);
