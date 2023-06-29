@@ -19,7 +19,7 @@ export default async function setupCliInterface() {
     // Make sure deprecation warnings show stack trace
     console.log('Tracing depreactions...');
     process.traceDeprecation = true;
-    clearConsole();
+    //clearConsole();
     // Load envs from .env for development
     loadEnv();
   }
@@ -38,7 +38,7 @@ export default async function setupCliInterface() {
   cmdToUse = cmdToUse.filter(Boolean);
 
   // Determine commands which can be executed in current folder.
-  const availableCommands = allCliCommands.filter(command => {
+  const availableCommands = allCliCommands.filter((command) => {
     const { needsGlobalConfig = true } = command.configuration;
     if (needsGlobalConfig && !isCwdCantaraProject) {
       return false;

@@ -21,6 +21,23 @@ const { merge: webpackMerge } = require('webpack-merge');
 
 const { InjectManifest } = require('workbox-webpack-plugin');
 
+class WatchRunPlugin {
+  apply(compiler: any) {
+    compiler.hooks.watchRun.tap('WatchRun', (comp: any) => {
+      const logger = comp.getInfrastructureLogger('WatchRun');
+      if (comp.modifiedFiles) {
+        const changedFiles = Array.from(
+          comp.modifiedFiles,
+          (file) => `\n  ${file}`,
+        ).join('');
+        console.log('===============================');
+        console.log('FILES CHANGED:', changedFiles);
+        console.log('===============================');
+      }
+    });
+  }
+}
+
 export default function createReactWebpackConfig({
   app,
   alias = {},
@@ -78,6 +95,7 @@ export default function createReactWebpackConfig({
       clean: isProduction,
     },
     plugins: [
+      //    new WatchRunPlugin(),     // for debugging
       new ForkTsCheckerWebpackPlugin({
         typescript: {
           configFile: path.join(app.paths.root, 'tsconfig.json'),
@@ -156,6 +174,9 @@ export default function createReactWebpackConfig({
         ? new BundleAnalyzerPlugin({ analyzerMode: 'static' })
         : undefined,
     ].filter(Boolean),
+    watchOptions: {
+      ignored: /node_modules/,
+    },
     module: {
       rules: [
         ...getCssLoaders({

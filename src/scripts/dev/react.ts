@@ -70,6 +70,6 @@ export function startReactAppDevelopmentServer() {
     compiler,
   );
   devServer.startCallback(() => {
-    clearConsole();
+    //   clearConsole();
   });
 }

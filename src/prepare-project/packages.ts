@@ -11,14 +11,17 @@ import { createLocalTsConfig } from './util/typescript';
 
 function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
   const packageJson = readFileAsJSON(packageJsonPath);
-  const newPackageJson = {
-    ...packageJson,
-    peerDependencies: {
-      ...(packageJson.peerDependencies || {}),
-      ...deps,
-    },
+  const peerDeps = {
+    ...(packageJson.peerDependencies || {}),
+    ...deps,
   };
-  writeJson(packageJsonPath, newPackageJson);
+  if (Object.keys(peerDeps).length) {
+    const newPackageJson = {
+      ...packageJson,
+      peerDependencies: peerDeps,
+    };
+    writeJson(packageJsonPath, newPackageJson);
+  }
 }
 
 /** Prepares a JavaScript package or React Component */

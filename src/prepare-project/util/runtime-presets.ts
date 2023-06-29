@@ -19,7 +19,16 @@ import { CantaraApplication } from '../../util/types';
  * exists inside the application folder
  */
 export async function generateRuntimePresetCode(app: CantaraApplication) {
-  const { activeRuntimeApplicationPresetName } = getRuntimeConfig();
+  const {
+    activeRuntimeApplicationPresetName,
+    currentCommand: { app: runningApp },
+  } = getRuntimeConfig();
+
+  if (runningApp.name != app.name) {
+    //update presets only for the current running app, because otherwise activeRuntimeApplicationPresetName is of wrong app
+    return;
+  }
+
   if (!(await fsExists(app.paths.runtimePresets))) {
     // Remove runtimePresetEntry index file if it exists
     // but not more app presets

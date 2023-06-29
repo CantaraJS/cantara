@@ -165,35 +165,41 @@ export async function createOrUpdatePackageJSON({
   if (!doesExist) {
     await execCmd('yarn init -y', { workingDirectory: rootDir });
   }
-  let packageJsonContent = readFileAsJSON(localPackageJsonPath);
-  packageJsonContent = {
-    ...packageJsonContent,
-    devDependencies: {
-      ...packageJsonContent.devDependencies,
-      ...expectedDevDependencies,
-    },
-    dependencies: {
-      ...packageJsonContent.dependencies,
-      ...expectedDependencies,
-    },
+  let currentpackageJsonContent = readFileAsJSON(localPackageJsonPath);
+  let newPackageJsonContent = {
+    ...currentpackageJsonContent,
   };
+  let devDependencies = {
+    ...currentpackageJsonContent.devDependencies,
+    ...expectedDevDependencies,
+  };
+  if (Object.keys(devDependencies).length) {
+    newPackageJsonContent.devDependencies = devDependencies;
+  }
+  let dependencies = {
+    ...currentpackageJsonContent.dependencies,
+    ...expectedDependencies,
+  };
+  if (Object.keys(dependencies).length) {
+    newPackageJsonContent.dependencies = dependencies;
+  }
   if (
     workspaces &&
-    (!packageJsonContent.workspaces ||
-      Array.isArray(packageJsonContent.workspaces))
+    (!newPackageJsonContent.workspaces ||
+      Array.isArray(newPackageJsonContent.workspaces))
   ) {
-    packageJsonContent = {
-      ...packageJsonContent,
+    newPackageJsonContent = {
+      ...newPackageJsonContent,
       workspaces,
     };
   } else if (workspaces) {
-    packageJsonContent = {
-      ...packageJsonContent,
+    newPackageJsonContent = {
+      ...newPackageJsonContent,
       workspaces: {
-        ...packageJsonContent.workspaces,
+        ...newPackageJsonContent.workspaces,
         packages: workspaces,
       },
     };
   }
-  writeJson(localPackageJsonPath, packageJsonContent);
+  writeJson(localPackageJsonPath, newPackageJsonContent);
 }

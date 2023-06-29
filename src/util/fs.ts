@@ -10,7 +10,7 @@ import {
   existsSync,
 } from 'fs';
 import path from 'path';
-import { promisify } from 'util';
+import { isDeepStrictEqual, promisify } from 'util';
 
 export function readFileAsJSON(path: string) {
   return JSON.parse(readFileSync(path).toString());
@@ -18,9 +18,16 @@ export function readFileAsJSON(path: string) {
 
 export function writeJson(path: string, content: any) {
   let jsonLineBreak = '\n';
+  let jsonFileContent;
   if (existsSync(path)) {
-    const jsonFileContent = readFileSync(path).toString();
-    jsonLineBreak = jsonFileContent.includes('\r\n') ? '\r\n' : '\n';
+    jsonFileContent = readFileSync(path).toString();
+    jsonFileContent.includes('\r\n') ? '\r\n' : '\n';
+  }
+
+  const oldContent = jsonFileContent ? JSON.parse(jsonFileContent) : undefined;
+  //only update file if there are changes
+  if (isDeepStrictEqual(oldContent, content)) {
+    return;
   }
 
   let prettyPrintedJson = JSON.stringify(content, null, 2);
