@@ -1,6 +1,9 @@
 import { RollupOptions, rollup } from 'rollup';
 import injectProcessEnv from 'rollup-plugin-inject-process-env';
 
+//@ts-ignore
+import replace from '@rollup/plugin-replace';
+
 //@ts-expect-error
 import { string } from 'rollup-plugin-string';
 import alias from '@rollup/plugin-alias';
@@ -86,6 +89,11 @@ export default async function buildPackageWithRollup({
   process.chdir(app.paths.root);
 
   const commonPlugins: RollupOptions['plugins'] = [
+    replace({
+      values: { 'process.env.NODE_ENV': JSON.stringify('production') },
+      preventAssignment: true,
+    }),
+
     resolve({ extensions }), // so Rollup can find commonjs deps
     commonjs(), // so Rollup can convert commonjs deps to ES modules
     postcss({
