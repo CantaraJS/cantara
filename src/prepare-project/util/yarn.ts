@@ -170,16 +170,17 @@ export async function createOrUpdatePackageJSON({
     ...currentpackageJsonContent,
   };
   let devDependencies = {
-    ...currentpackageJsonContent.devDependencies,
     ...expectedDevDependencies,
+    ...currentpackageJsonContent.devDependencies,
   };
   if (Object.keys(devDependencies).length) {
     newPackageJsonContent.devDependencies = devDependencies;
   }
   let dependencies = {
-    ...currentpackageJsonContent.dependencies,
     ...expectedDependencies,
+    ...currentpackageJsonContent.dependencies,
   };
+
   if (Object.keys(dependencies).length) {
     newPackageJsonContent.dependencies = dependencies;
   }
