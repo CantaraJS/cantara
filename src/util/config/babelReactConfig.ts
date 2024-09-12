@@ -27,16 +27,17 @@ export function getBabelReactConfig(
     ],
     plugins: [
       require('@babel/plugin-transform-runtime'),
-      [require('@babel/plugin-proposal-decorators'), { legacy: true }],
-      require('@babel/plugin-proposal-class-properties'),
-      // require('@babel/plugin-proposal-object-rest-spread'),
-      // require('@babel/plugin-proposal-optional-chaining'),
-      // require('@babel/plugin-proposal-nullish-coalescing-operator'),
+      ['@babel/plugin-proposal-decorators', { version: 'legacy' }],
+      'babel-plugin-transform-typescript-metadata',
+      '@babel/plugin-transform-class-properties',
       mode === 'development' ? 'react-refresh/babel' : undefined,
       mode === 'development' && i18n
         ? [require('babel-plugin-i18next-extract'), i18n]
         : undefined,
     ].filter(Boolean) as string[],
+    assumptions: {
+      setPublicClassFields: false,
+    },
   };
 }
 

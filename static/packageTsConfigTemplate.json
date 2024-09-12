@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["./src/**/*", "../../global.d.ts"],
+  "include": ["./src/**/*", "../../global.d.ts", "../../types/**/*"],
   "exclude": ["node_modules", "build"],
   "compilerOptions": {
     "emitDeclarationOnly": true,

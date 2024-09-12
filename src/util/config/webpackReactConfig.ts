@@ -19,7 +19,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { merge: webpackMerge } = require('webpack-merge');
 
-const { InjectManifest } = require('workbox-webpack-plugin');
+//const { InjectManifest } = require('workbox-webpack-plugin');
 
 class WatchRunPlugin {
   apply(compiler: any) {
@@ -143,14 +143,14 @@ export default function createReactWebpackConfig({
             ...app.meta.pwaManifest,
           })
         : undefined,
-      enableServiceWorker
-        ? new InjectManifest({
-            swSrc: serviceWorkerPath,
-            maximumFileSizeToCacheInBytes: isProduction
-              ? undefined
-              : Number.MAX_VALUE,
-          })
-        : undefined,
+      // enableServiceWorker
+      //   ? new InjectManifest({
+      //       swSrc: serviceWorkerPath,
+      //       maximumFileSizeToCacheInBytes: isProduction
+      //         ? undefined
+      //         : Number.MAX_VALUE,
+      //     })
+      //   : undefined,
       doesStaticFolderExist
         ? new CopyPlugin({
             patterns: [

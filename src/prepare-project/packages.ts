@@ -12,10 +12,10 @@ import { createLocalTsConfig } from './util/typescript';
 function addPeerDeps(packageJsonPath: string, deps: { [key: string]: string }) {
   const packageJson = readFileAsJSON(packageJsonPath);
   const peerDeps = {
-    ...(packageJson.peerDependencies || {}),
     ...deps,
+    ...(packageJson.peerDependencies || {}),
   };
-  if (Object.keys(peerDeps).length) {
+  if (packageJson.peerDependencies || Object.keys(peerDeps).length) {
     const newPackageJson = {
       ...packageJson,
       peerDependencies: peerDeps,
