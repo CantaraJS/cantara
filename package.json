@@ -140,10 +140,6 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "resolutions": {
-    "@babel/core": "7.24.7",
-    "@babel/traverse": "7.25.4"
-  },
   "overrides": {
     "@babel/core": "7.24.7",
     "@babel/traverse": "7.25.4"
