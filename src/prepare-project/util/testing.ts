@@ -56,7 +56,8 @@ export function createJestConfig({
   );
   const moduleNameMapper = {
     ...jestAliases,
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': fileMockFilePath,
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      fileMockFilePath,
     '\\.(css|less)$': styleMockFilePath,
   };
 
@@ -85,10 +86,7 @@ export function createReactJestConfig(app: CantaraApplication) {
   createJestConfig({
     dir: app.paths.root,
     configTemplateFileName: 'jestReactConfig.template.js',
-    setupScriptImports: [
-      '@testing-library/jest-dom',
-      '@testing-library/jest-dom/extend-expect',
-    ],
+    setupScriptImports: ['@testing-library/jest-dom'],
   });
 }
 
