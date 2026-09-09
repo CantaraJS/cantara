@@ -4290,6 +4290,16 @@
         "node": ">=6.0.0"
       }
     },
+    "node_modules/@jridgewell/source-map": {
+      "version": "0.3.11",
+      "resolved": "https://registry.npmjs.org/@jridgewell/source-map/-/source-map-0.3.11.tgz",
+      "integrity": "sha512-ZMp1V8ZFcPG5dIWnQLr3NSI1MiCU7UETdS/A0G8V/XWHvJv3ZsFqutJn1Y5RPmAPX6F3BiE397OqveU/9NCuIA==",
+      "license": "MIT",
+      "dependencies": {
+        "@jridgewell/gen-mapping": "^0.3.5",
+        "@jridgewell/trace-mapping": "^0.3.25"
+      }
+    },
     "node_modules/@jridgewell/sourcemap-codec": {
       "version": "1.4.11",
       "resolved": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.11.tgz",
@@ -7934,9 +7944,10 @@
       }
     },
     "node_modules/acorn": {
-      "version": "8.7.0",
-      "resolved": "https://registry.npmjs.org/acorn/-/acorn-8.7.0.tgz",
-      "integrity": "sha1-kJUf3g+PCd+TVJSB5fwUFEW3kc8= sha512-V/LGr1APy+PXIwKebEWrkZPwoeoF+w1jiOBUmuxuiUIaOHtob8Qc9BTrYo7VuI5fR8tqsy+buA2WFooR5olqvQ==",
+      "version": "8.18.0",
+      "resolved": "https://registry.npmjs.org/acorn/-/acorn-8.18.0.tgz",
+      "integrity": "sha512-lGq+9yr1/GuAWaVYIHRjvvySG5/4VfKIvC8EWxStPdcDh/Ka7FG3twP6v4d5BkravUilhIAsG4Qj83t02LWUPQ==",
+      "license": "MIT",
       "bin": {
         "acorn": "bin/acorn"
       },
@@ -29556,12 +29567,14 @@
       }
     },
     "node_modules/terser": {
-      "version": "5.10.0",
-      "resolved": "https://registry.npmjs.org/terser/-/terser-5.10.0.tgz",
-      "integrity": "sha1-uGOQgJwDiRBesKC2I5dWMJbdr8w= sha512-AMmF99DMfEDiRJfxfY5jj5wNH/bYO09cniSqhfoyxc8sFoYIgkJy86G04UoZU5VjlpnplVu0K6Tx6E9b5+DlHA==",
+      "version": "5.51.2",
+      "resolved": "https://registry.npmjs.org/terser/-/terser-5.51.2.tgz",
+      "integrity": "sha512-bWnjSNscmuI+GJze6ZupnHP8G/cTcsJF+bXCeQknk2SHQsgbNJnLrqiH9jZ2W4STPVXH2mDKKRX3iwPhc9Cn/Q==",
+      "license": "BSD-2-Clause",
       "dependencies": {
+        "@jridgewell/source-map": "^0.3.3",
+        "acorn": "^8.15.0",
         "commander": "^2.20.0",
-        "source-map": "~0.7.2",
         "source-map-support": "~0.5.20"
       },
       "bin": {
@@ -29569,14 +29582,6 @@
       },
       "engines": {
         "node": ">=10"
-      },
-      "peerDependencies": {
-        "acorn": "^8.5.0"
-      },
-      "peerDependenciesMeta": {
-        "acorn": {
-          "optional": true
-        }
       }
     },
     "node_modules/terser-webpack-plugin": {
@@ -29627,14 +29632,6 @@
       "funding": {
         "type": "opencollective",
         "url": "https://opencollective.com/webpack"
-      }
-    },
-    "node_modules/terser/node_modules/source-map": {
-      "version": "0.7.3",
-      "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.7.3.tgz",
-      "integrity": "sha1-UwL4FpAxc1ImVECS5kmB91F1A4M= sha512-CkCj6giN3S+n9qrYiBTX5gystlENnRW5jZeNLHpe6aue+SrHcG5VYwujhW9s4dY31mEGsxBDrHR6oI69fTXsaQ==",
-      "engines": {
-        "node": ">= 8"
       }
     },
     "node_modules/test-exclude": {

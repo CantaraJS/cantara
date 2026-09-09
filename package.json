@@ -141,6 +141,7 @@
     }
   },
   "overrides": {
+    "terser": "5.51.2",
     "@babel/core": "7.24.7",
     "@babel/traverse": "7.25.4",
     "stylus": "0.0.1-security"
